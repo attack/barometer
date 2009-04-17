@@ -1,7 +1,80 @@
 = barometer
 
-Description goes here.
+A multi API consuming weather conditioning superstar.
+
+Barometer provides a common public API to one or more weather services (APIs)
+of your choice.  Weather services can co-exist to retrieve extensive
+information, or they can be used in a hierarchical configuration where lower
+preferred weather services are only used if previous services are
+unavailable.
+
+= dependencies
+
+=== HTTParty
+
+Why? HTTParty was created and designed specifically for consuming web services.
+I choose to use this over using the Net::HTTP library directly to allow for
+faster development of this project.
+
+=== Graticule (soft dependency, but recommended)
+
+Why? Barometer returns the weather for a given location.  Most weather service
+APIs are somewhat restricted on the location input they receive.  To bridge
+this gap and allow for maximum flexibility on the 'barometer' location input,
+the location input will geo-coded using the Google geocoding service.
+Graticule provides this interface.
+
+Using Graticule requires a free Google API key for geocoding.  It is possible
+to use barometer without geocoding, though your location input will be
+limited to that of the weather service api.
+
+=== tzinfo
+
+Why? Barometer will return both current and forecast weather information for
+a given location.  Barometer can also be asked to only return the information
+for a specific time in the future.  Obviously this feature relies on
+translating the time in the future to the correct time zone of the location.
+Tzinfo handles this time zone manipulation.
+
+= usage
+
+You can use barometer right out of the box, as it is configured to use one
+register-less (no api key required) international weather service
+(wunderground.com).
+
+For better results, signup for a google-map key and enhance your barometer
+with geo-coding.
+
+  require 'barometer'
+  
+  barometer = Barometer.location("Paris")
+  weather = barometer.measure
+  
+  puts weather.current.temperture
+
+= design
+
+- create a Barometer instance
+- supply a location, there are very little restrictions on the location format:
+  - city, country, specific address (basically anything Google will geocode)
+  - US zip code (skips geocoding if configured weather services accept this)
+  - postal code (skips geocoding if configured weather services accept this)
+  - latitude and longitude (skips geocoding if configured weather services
+    accept this)
+  - international airport code (skips geocoding if configured weather services
+    accept this)
+- if geocoding required, geocode the location
+- determine which weather services will be queried (one or multiple)
+- query the weather services
+- save the data
+- repeat weather service queries as needed
+
+= Extending
+
+Barometer trys to be a common API to any weather service API.  I have included
+several weather service 'drivers', but I know there are many more available.
+Please use the provided ones as examples to create more.
 
 == Copyright
 
-Copyright (c) 2009 Mark. See LICENSE for details.
+Copyright (c) 2009 Mark G. See LICENSE for details.
