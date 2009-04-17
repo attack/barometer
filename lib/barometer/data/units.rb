@@ -1,5 +1,4 @@
 module Barometer
-  
   class Units
     
     attr_accessor :metric
