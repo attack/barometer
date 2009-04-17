@@ -9,19 +9,18 @@ module Barometer
   # All comparison operations will be done in the absolute
   # scale of Kelvin (K)
   #
-  class Temperature
+  class Temperature < Barometer::Units
     
     METRIC_UNITS = "C"
     IMPERIAL_UNITS = "F"
     
     attr_accessor :celsius, :fahrenheit, :kelvin
-    attr_accessor :metric
     
     def initialize(metric=true)
       @celsius = nil
       @fahrenheit = nil
       @kelvin = nil
-      @metric = metric
+      super(metric)
     end
     
     #
@@ -133,18 +132,6 @@ module Barometer
     #
     # HELPERS
     #
-    
-    def metric?
-      @metric
-    end
-    
-    def metric!
-      @metric=true
-    end
-    
-    def imperial!
-      @metric=false
-    end
     
     # will just return the value (no units)
     def to_i(metric=nil)

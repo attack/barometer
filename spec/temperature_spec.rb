@@ -30,17 +30,6 @@ describe "Temperature" do
       @temp.kelvin.should be_nil
     end
     
-    it "responds to metric, defaults to true" do
-      @temp.metric.should be_true
-    end
-    
-    it "allows metric to be set" do
-      @temp.metric.should be_true
-      
-      @temp2 = Barometer::Temperature.new(false)
-      @temp2.metric.should be_false
-    end
-    
   end
   
   describe "conversion" do
@@ -350,27 +339,6 @@ describe "Temperature" do
       @k = Barometer::Temperature.c_to_k(@c)
       @temp = Barometer::Temperature.new
       @temp.k = @k
-    end
-    
-    it "indicates if metric?" do
-      @temp.metric.should be_true
-      @temp.metric?.should be_true
-      @temp.metric = false
-      @temp.metric.should be_false
-      @temp.metric?.should be_false
-    end
-    
-    it "changes to imperial" do
-      @temp.metric?.should be_true
-      @temp.imperial!
-      @temp.metric?.should be_false
-    end
-    
-    it "changes to metric" do
-      @temp.metric = false
-      @temp.metric?.should be_false
-      @temp.metric!
-      @temp.metric?.should be_true
     end
     
     it "returns just the integer value (no units)" do
