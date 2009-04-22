@@ -8,7 +8,7 @@ module Barometer
   #
   class CurrentMeasurement
     
-    attr_accessor :time, :humidity, :icon
+    attr_reader :time, :humidity, :icon
     attr_reader :temperature, :dew_point, :heat_index, :wind_chill
     attr_reader :wind, :pressure, :visibility
     
