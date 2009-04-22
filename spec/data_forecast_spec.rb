@@ -32,15 +32,15 @@ describe "Forecast Measurement" do
       @forecast = Barometer::ForecastMeasurement.new
     end
     
-    # it "only accepts Date for date" do
-    #   invalid_data = 1
-    #   invalid_data.class.should_not == Time::Date
-    #   lambda { @forecast.date = invalid_data }.should raise_error(ArgumentError)
-    #   
-    #   valid_data = Time::Date.new
-    #   valid_data.class.should == Time::Date
-    #   lambda { @forecast.date = valid_data }.should_not raise_error(ArgumentError)
-    # end
+    it "only accepts Date for date" do
+      invalid_data = 1
+      invalid_data.class.should_not == Date
+      lambda { @forecast.date = invalid_data }.should raise_error(ArgumentError)
+      
+      valid_data = Date.new
+      valid_data.class.should == Date
+      lambda { @forecast.date = valid_data }.should_not raise_error(ArgumentError)
+    end
     
     it "only accepts String for icon" do
       invalid_data = 1

@@ -1,3 +1,4 @@
+require 'date'
 module Barometer
   #
   # Forecast Measurement
@@ -11,10 +12,10 @@ module Barometer
     attr_reader :date, :icon
     attr_reader :low, :high
     
-    # def date=(date)
-    #   raise ArgumentError unless date.class == Time::Date
-    #   @date = date
-    # end
+    def date=(date)
+      raise ArgumentError unless date.class == Date
+      @date = date
+    end
     
     def icon=(icon)
       raise ArgumentError unless icon.class == String
