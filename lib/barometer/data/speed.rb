@@ -92,26 +92,6 @@ module Barometer
       self.kph <=> other.kph
     end
     
-    def <(other)
-      self.kph < other.kph
-    end
-    
-    def >(other)
-      self.kph > other.kph
-    end
-    
-    def ==(other)
-      self.kph == other.kph
-    end
-    
-    def <=(other)
-      self.kph <= other.kph
-    end
-      
-    def >=(other)
-      self.kph >= other.kph
-    end
-    
     #
     # HELPERS
     #

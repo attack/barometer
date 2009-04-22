@@ -1,5 +1,6 @@
 module Barometer
   class Units
+    include Comparable
     
     attr_accessor :metric
     

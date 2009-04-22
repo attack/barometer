@@ -109,26 +109,6 @@ module Barometer
       @kelvin <=> other.kelvin
     end
     
-    def <(other)
-      @kelvin < other.kelvin
-    end
-    
-    def >(other)
-      @kelvin > other.kelvin
-    end
-    
-    def ==(other)
-      @kelvin == other.kelvin
-    end
-    
-    def <=(other)
-      @kelvin <= other.kelvin
-    end
-      
-    def >=(other)
-      @kelvin >= other.kelvin
-    end
-    
     #
     # HELPERS
     #

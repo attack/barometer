@@ -78,26 +78,6 @@ module Barometer
       self.mb <=> other.mb
     end
     
-    def <(other)
-      self.mb < other.mb
-    end
-    
-    def >(other)
-      self.mb > other.mb
-    end
-    
-    def ==(other)
-      self.mb == other.mb
-    end
-    
-    def <=(other)
-      self.mb <= other.mb
-    end
-      
-    def >=(other)
-      self.mb >= other.mb
-    end
-    
     #
     # HELPERS
     #

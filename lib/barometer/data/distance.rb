@@ -76,26 +76,6 @@ module Barometer
       self.km <=> other.km
     end
     
-    def <(other)
-      self.km < other.km
-    end
-    
-    def >(other)
-      self.km > other.km
-    end
-    
-    def ==(other)
-      self.km == other.km
-    end
-    
-    def <=(other)
-      self.km <= other.km
-    end
-      
-    def >=(other)
-      self.km >= other.km
-    end
-    
     #
     # HELPERS
     #
