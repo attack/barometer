@@ -34,10 +34,10 @@ module Barometer
       [:zipcode, :postalcode, :coordinates, :geocode]
     end
     
-    def self.measure_all(query, metric=true)
-      raise ArgumentError unless query.is_a?(Barometer::Query)
-      measurement = Measurement.new(:wunderground)
-      # TODO: these next 2 lines have no tests
+    def self.measure_all(measurement, query, metric=true)
+      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      raise ArgumentError unless query.is_a?(String)
+      measurement.source = :wunderground
       measurement = self.measure_current(measurement, query, metric)
       measurement = self.measure_forecast(measurement, query, metric)
       measurement
@@ -58,18 +58,14 @@ module Barometer
     
     def self.measure_current(measurement, query, metric=true)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)      
-      raise ArgumentError unless query.is_a?(Barometer::Query)
-      # TODO: this next line has no test
-      return nil unless self.meets_requirements?(query)
+      raise ArgumentError unless query.is_a?(String)
       measurement.source = :wunderground
-      
-      preferred_query = query.convert!(self.accepted_formats)
       
       #puts
       #puts "  - Wunderground Service: measuring current"
-      #puts "  - Wunderground Service: current-query with: '#{preferred_query}'"
+      #puts "  - Wunderground Service: current-query with: '#{query}'"
       
-      current_result = self.get_current(preferred_query)
+      current_result = self.get_current(query)
       
       #puts " --- wunderground: start current-response ---"
       #puts current_result.inspect
@@ -87,18 +83,14 @@ module Barometer
     
     def self.measure_forecast(measurement, query, metric=true)
       raise ArgumentError unless measurement.is_a?(Measurement)
-      raise ArgumentError unless query.is_a?(Barometer::Query)
-      # TODO: this next line has no test
-      return nil unless self.meets_requirements?(query)
+      raise ArgumentError unless query.is_a?(String)
       measurement.source = :wunderground
-      
-      preffered_query = query.convert!(self.accepted_formats)
       
       #puts
       #puts "  - Wunderground Service: measuring future"
-      #puts "  - Wunderground Service: future-query with: '#{preffered_query}'"
+      #puts "  - Wunderground Service: future-query with: '#{query}'"
       
-      forecast_result = self.get_forecast(preffered_query)
+      forecast_result = self.get_forecast(query)
       
       #puts " --- wunderground: start future-response ---"
       #puts future_result.inspect

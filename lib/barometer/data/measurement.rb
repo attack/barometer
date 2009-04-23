@@ -23,7 +23,6 @@ module Barometer
     
     def initialize(source=nil)
       @source = source
-      @forecast = []
       @success = false
     end
     

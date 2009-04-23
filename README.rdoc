@@ -8,6 +8,20 @@ information, or they can be used in a hierarchical configuration where lower
 preferred weather services are only used if previous services are
 unavailable.
 
+== status
+
+Currently this project is in development and does not completely work as described
+below, although it is really close.
+
+- DONE data classes (distance, pressure, speed, temperature, units)
+- DONE measurement classes (measurement, current_measurement, forecast_measurement)
+- DONE weather service drivers (wunderground)
+- DONE general weather service class (service)
+ 
+- TODO barometer class
+- TODO weather class
+- TODO weather service drivers (google, yahoo, etc.)
+
 = dependencies
 
 === HTTParty
@@ -16,7 +30,7 @@ Why? HTTParty was created and designed specifically for consuming web services.
 I choose to use this over using the Net::HTTP library directly to allow for
 faster development of this project.
 
-=== Graticule (soft dependency, but recommended)
+=== graticule (soft dependency, but recommended)
 
 Why? Barometer returns the weather for a given location.  Most weather service
 APIs are somewhat restricted on the query format they receive.  To bridge
@@ -52,7 +66,7 @@ with geo-coding.
   
   puts weather.current.temperture
   
-== Set multiple Weather API hierarchy
+== multiple weather API, with hierarchy
 
   require 'barometer'
 
@@ -65,7 +79,7 @@ with geo-coding.
 
   puts weather.current.temperture
   
-=== Fail
+=== fail
 
 What would cause a weather service to fail?  The most obvious is that the
 particular weather service in currently un-available or not reachable.
@@ -79,7 +93,7 @@ to a city in France.  Both Yahoo and Google weather services only support
 weather results for USA (at least at the time of writing).  Therefore, 
 Barometer would not use Yahoo or Google but failover to use Wunderground.
 
-=== Bootstrapping
+=== bootstrapping
 
 You can use weather service drivers directly.  Below is an example to use
 Wunderground, but since the driver interface is abstracted it will be the
@@ -88,9 +102,17 @@ same for all supported services.
   require 'barometer'
   
   query = Barometer::Query.new("Paris")
-  weather = Barometer::Wunderground.measure(query)
+  weather = Barometer::Service.source(:wunderground).measure(query)
   
   puts weather.current.temperture
+  
+  # OR, even more raw
+  
+  measurement = Barometer::Measurement.new
+  weather = Barometer::Wunderground.measure_all(measurement, "Paris")
+  
+  puts weather.current.temperture
+  
   
 NOTE: The disadvantage to using the drivers directly is that you lose the
 advantage of redundancy/failover added by the Module as a whole.
@@ -117,12 +139,12 @@ regular String doesn't have.
 - save the data
 - repeat weather service queries as needed
 
-= Extending
+= extending
 
 Barometer trys to be a common API to any weather service API.  I have included
 several weather service 'drivers', but I know there are many more available.
 Please use the provided ones as examples to create more.
 
-== Copyright
+== copyright
 
 Copyright (c) 2009 Mark G. See LICENSE for details.

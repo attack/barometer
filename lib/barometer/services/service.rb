@@ -16,6 +16,15 @@ module Barometer
     # all service drivers will use the HTTParty gem
     include HTTParty
     
+    # Retrieves the weather source Service object
+    def self.source(source_name)
+      raise ArgumentError unless (source_name.is_a?(String) || source_name.is_a?(Symbol))
+      source_name = source_name.to_s.split("_").collect{ |s| s.capitalize }.join('')
+      raise ArgumentError unless Barometer.const_defined?(source_name)
+      raise ArgumentError unless Barometer.const_get(source_name).superclass == Barometer::Service
+      Barometer.const_get(source_name)
+    end
+
     #
     # Some weather services require multiple api calls to get current
     # weather and future (forecasted) weather.  In an attempt to reduce
@@ -23,34 +32,47 @@ module Barometer
     # interested in and only get that
     #
     def self.measure(query, time=nil, metric=true)
-    #   # TODO: check that all api keys are present?
-    #   # TODO: check if country supported?
-    #   # return nil unless self.supports_country?(location.country_code)
-      raise ArgumentError unless (query && query.is_a?(Barometer::Query))
-    #   preffered_formats = self.accepted_formats
-    #   query = location.convert_query!(preffered_formats)
-    #
-    #   measurement = nil
-    #   if time && time.current?
-    #     # only need to get the current weather
-    #     measurement = self.measure_current(query, metric)
-    #   elsif time && time.all?
-    #     # we need all the weather data
-    #     measurement = self.measure_all(query, metric)
-    #   elsif time && time.future? && time.today?
-    #     # the future time is actually still during the current
-    #     # day.  we will need a mix of the forecasted data and
-    #     # the current data
-    #     measurement = self.measure_all(query, metric)
-    #   elsif time && time.future? && !time.today?
-    #     # only need to get the future weather
-    #     measurement = self.measure_future(query, metric)
-    #   else
-    #     # time is not defined, default to getting all
-    #     # the weather data
-    #     measurement = self.measure_all(query, metric)
-    #   end
-    #   measurement
+      raise ArgumentError unless query.is_a?(Barometer::Query)
+      raise ArgumentError unless (!time || time.is_a?(Time))
+      # TODO: this next line has no test
+      return nil unless self.meets_requirements?(query)
+      
+      # configurable paramter
+      seconds_in_future_but_still_current = (60 * 10)
+
+      now = Time.now
+      current = false
+      future = false
+      today = false
+      if time
+        current = true if (time - now) <= seconds_in_future_but_still_current
+      end
+      unless !time || current
+        future = true if time > now
+      end
+      unless !time || current
+        today = true if (now.day == time.day) && (now.month == time.month) &&
+                        (now.year == time.year)
+      end
+      
+      preferred_query = query.convert!(self.accepted_formats)
+      measurement = Barometer::Measurement.new
+      if time && current
+        # only get the current weather
+        measurement = self.measure_current(measurement, preferred_query, metric)
+      elsif time && future && today
+        # the future time is actually still during the current
+        # day.  we will need a mix of the forecasted data and
+        # the current data
+        measurement = self.measure_all(measurement, preferred_query, metric)
+      elsif time && future && !today
+        # only need to get the future weather
+        measurement = self.measure_forecast(measurement, preferred_query, metric)
+      else
+        # time not defined, get all weather data
+        measurement = self.measure_all(measurement, preferred_query, metric)
+      end
+      measurement
     end
     
     def self.meets_requirements?(query=nil)
@@ -67,17 +89,17 @@ module Barometer
     end
     
     # STUB: define this method to measure the current & future weather
-    def self.measure_all
+    def self.measure_all(measurement=nil, query=nil, metric=true)
       raise NotImplementedError
     end
 
     # STUB: define this method to measure the current weather
-    def self.measure_current
+    def self.measure_current(measurement=nil, query=nil, metric=true)
       raise NotImplementedError
     end
 
     # STUB: define this method to measure the future weather
-    def self.measure_future
+    def self.measure_forecast(measurement=nil, query=nil, metric=true)
       raise NotImplementedError
     end
 
@@ -113,4 +135,62 @@ module Barometer
     
   end
   
-end
+end  
+  
+ # def self.
+  
+  # def supported_countries
+  #   # all, or
+  #   
+  #   # list
+  #   # - US
+  #   # - CA
+  # end
+  # 
+  # def supoorted_inputs
+  #   
+  #   # this list is also an order of preference
+  #   
+  #   # zip_code
+  #   # postal_code
+  #   # coordinates
+  #   # location_name
+  #   # IACO
+  # end
+  # 
+  # def requires_key
+  #   return false
+  # end
+  # 
+  # def key_name
+  #   # what variables holds the api key?
+  # end
+  # 
+  # def retrieve
+  #   # may require multiple queries
+  #   self.retrieve_current
+  #   self.retrieve_forecast
+  #   self.retrieve_all
+  # end
+  # 
+  # def retrieve_current
+  # end
+  # 
+  # def retrieve_forecast
+  # end
+  # 
+  # def retrieve_all
+  # end
+  # 
+  # def temperature
+  # end
+  # def location
+  # end
+  # def station
+  # end
+  # def current
+  # end
+  # def forecast
+  # end
+  # def zone
+  # end

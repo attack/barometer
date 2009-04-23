@@ -24,7 +24,7 @@ describe "Measurement" do
     end
     
     it "responds to forecast (and defaults to an empty Array)" do
-      @measurement.forecast.should == []
+      @measurement.forecast.should be_nil
     end
     
     it "responds to timezone" do
