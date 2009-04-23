@@ -1,6 +1,6 @@
 = barometer
 
-A multi API consuming weather conditioning superstar.
+A multi API consuming weather forecasting superstar.
 
 Barometer provides a common public API to one or more weather services (APIs)
 of your choice.  Weather services can co-exist to retrieve extensive
@@ -19,19 +19,19 @@ faster development of this project.
 === Graticule (soft dependency, but recommended)
 
 Why? Barometer returns the weather for a given location.  Most weather service
-APIs are somewhat restricted on the location input they receive.  To bridge
-this gap and allow for maximum flexibility on the 'barometer' location input,
-the location input will geo-coded using the Google geocoding service.
-Graticule provides this interface.
+APIs are somewhat restricted on the query format they receive.  To bridge
+this gap and allow for maximum flexibility on the 'barometer' query format,
+the query will geo-coded using the Google geocoding service, if available
+and if required. Graticule provides this geocoding interface.
 
 Using Graticule requires a free Google API key for geocoding.  It is possible
-to use barometer without geocoding, though your location input will be
-limited to that of the weather service api.
+to use barometer without geocoding, though your query format will be
+limited to that of the weather service API.
 
 === tzinfo
 
 Why? Barometer will return both current and forecast weather information for
-a given location.  Barometer can also be asked to only return the information
+a given query.  Barometer can also be asked to only return the information
 for a specific time in the future.  Obviously this feature relies on
 translating the time in the future to the correct time zone of the location.
 Tzinfo handles this time zone manipulation.
@@ -39,7 +39,7 @@ Tzinfo handles this time zone manipulation.
 = usage
 
 You can use barometer right out of the box, as it is configured to use one
-register-less (no api key required) international weather service
+register-less (no API key required) international weather service
 (wunderground.com).
 
 For better results, signup for a google-map key and enhance your barometer
@@ -47,23 +47,71 @@ with geo-coding.
 
   require 'barometer'
   
-  barometer = Barometer.location("Paris")
+  barometer = Barometer.new("Paris")
   weather = barometer.measure
   
   puts weather.current.temperture
+  
+== Set multiple Weather API hierarchy
+
+  require 'barometer'
+
+  barometer = Barometer.new("Paris")
+  
+  # use yahoo and google, if they both fail, use wunderground
+  barometer.configure!({ 1 => [:yahoo, :google], 2 => :wunderground })
+  
+  weather = barometer.measure
+
+  puts weather.current.temperture
+  
+=== Fail
+
+What would cause a weather service to fail?  The most obvious is that the
+particular weather service in currently un-available or not reachable.
+Other possible reasons would include not having the API (or a valid API
+key for the particular weather service, if required), not providing a
+valid query, or providing a query for a location not supported by the
+weather service.
+
+For example, if you look at the example above, the query of "Paris" refers
+to a city in France.  Both Yahoo and Google weather services only support
+weather results for USA (at least at the time of writing).  Therefore, 
+Barometer would not use Yahoo or Google but failover to use Wunderground.
+
+=== Bootstrapping
+
+You can use weather service drivers directly.  Below is an example to use
+Wunderground, but since the driver interface is abstracted it will be the
+same for all supported services.
+
+  require 'barometer'
+  
+  query = Barometer::Query.new("Paris")
+  weather = Barometer::Wunderground.measure(query)
+  
+  puts weather.current.temperture
+  
+NOTE: The disadvantage to using the drivers directly is that you lose the
+advantage of redundancy/failover added by the Module as a whole.
+
+NOTE: You still must create the Barometer::Query object with your query
+string instead of directly feeding the query string to the driver.  The
+Barometer::Query object has behavior required by the driver that a
+regular String doesn't have.
 
 = design
 
 - create a Barometer instance
-- supply a location, there are very little restrictions on the location format:
+- supply a location query, there are very little restrictions on the format:
   - city, country, specific address (basically anything Google will geocode)
   - US zip code (skips geocoding if configured weather services accept this)
   - postal code (skips geocoding if configured weather services accept this)
   - latitude and longitude (skips geocoding if configured weather services
     accept this)
-  - international airport code (skips geocoding if configured weather services
-    accept this)
-- if geocoding required, geocode the location
+  - TODO: international airport code (skips geocoding if configured weather
+    services accept this)
+- if geocoding required, geocode the location query
 - determine which weather services will be queried (one or multiple)
 - query the weather services
 - save the data

@@ -18,8 +18,8 @@ module Barometer
     attr_reader :source
     # current and forecasted data
     attr_reader :current, :forecast
-    attr_accessor :timezone, :station
-    attr_accessor :success
+    attr_reader :timezone, :station
+    attr_reader :success
     
     def initialize(source=nil)
       @source = source
@@ -64,27 +64,27 @@ module Barometer
     end
     
     def source=(source)
-      raise ArgumentError unless source.class == Symbol
+      raise ArgumentError unless source.is_a?(Symbol)
       @source = source
     end
     
     def current=(current)
-      raise ArgumentError unless current.class == Barometer::CurrentMeasurement
+      raise ArgumentError unless current.is_a?(Barometer::CurrentMeasurement)
       @current = current
     end
     
     def forecast=(forecast)
-      raise ArgumentError unless forecast.class == Array
+      raise ArgumentError unless forecast.is_a?(Array)
       @forecast = forecast
     end
     
     def timezone=(timezone)
-      raise ArgumentError unless timezone.class == String
+      raise ArgumentError unless timezone.is_a?(String)
       @timezone = timezone
     end
     
     def station=(station)
-      raise ArgumentError unless station.class == Hash
+      raise ArgumentError unless station.is_a?(Hash)
       @station = station
     end
     

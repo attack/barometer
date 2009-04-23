@@ -13,21 +13,21 @@ module Barometer
     attr_reader :low, :high
     
     def date=(date)
-      raise ArgumentError unless date.class == Date
+      raise ArgumentError unless date.is_a?(Date)
       @date = date
     end
     
     def icon=(icon)
-      raise ArgumentError unless icon.class == String
+      raise ArgumentError unless icon.is_a?(String)
       @icon = icon
     end
     def high=(high)
-      raise ArgumentError unless high.class == Barometer::Temperature
+      raise ArgumentError unless high.is_a?(Barometer::Temperature)
       @high = high
     end
     
     def low=(low)
-      raise ArgumentError unless low.class == Barometer::Temperature
+      raise ArgumentError unless low.is_a?(Barometer::Temperature)
       @low = low
     end
     

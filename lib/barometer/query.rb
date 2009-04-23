@@ -1,26 +1,22 @@
 module Barometer
   #
-  # This class represents a location and can answer the
+  # This class represents a query and can answer the
   # questions that a Barometer will need to measure the weather
-  # 
-  # You need to have a location before you can use a barometer, so you
-  # actually measure the weather from the location object
   #
-  # 
   # Summary:
-  #   When you create a new Location, you set the location query string
+  #   When you create a new Query, you set the query string
   #   ie: "New York, NY" or "90210"
   #   The class will then determine the query string format
   #   ie: :zipcode, :postalcode, :geocode, :coordinates
-  #   Now, when a Weather API driver asks for the location, it will prefer
-  #   certain formats, and only permit certain formats.  The Location class
+  #   Now, when a Weather API driver asks for the query, it will prefer
+  #   certain formats, and only permit certain formats.  The Query class
   #   will attempt to either return the query string as-is if acceptable,
   #   or it will attempt to convert it to a format that is acceptable
   #   (most likely this conversion will in Googles geocoding service using
   #   the Graticule gem).  Worst case scenario is that the Weather API will
   #   not accept the query string.
   #
-  class Location
+  class Query
     
     # OPTIONAL
     # used by Graticule for geocoding
@@ -28,35 +24,37 @@ module Barometer
     def self.google_api_key; @@google_api_key; end;
     def self.google_api_key=(key); @@google_api_key = key; end;
     
-    attr_reader   :format, :preffered_query
-    attr_accessor :query
+    attr_reader   :format, :preferred
+    attr_accessor :q, :country_code
     
     def initialize(query=nil)
-      @query = query
+      @q = query
       self.determine_format!
       
       # DEVELOPMENT FEEDBACK
-      # puts "Location: the query '#{@query}' is of format '#{@format.to_s}'"
+      #puts "Query: the query '#{@q}' is of format '#{@format.to_s}'"
     end
     
     def determine_format!
-      return unless @query
-      if Barometer::Location.is_zipcode?(@query)
+      return unless @q
+      if Barometer::Query.is_zipcode?(@q)
         @format = :zipcode
-      elsif Barometer::Location.is_canadian_postcode?(@query)
+        @country_code = 'US'
+      elsif Barometer::Query.is_canadian_postcode?(@q)
         @format = :postalcode
-      elsif Barometer::Location.is_coordinates?(@query)
+        @country_code = 'CA'
+      elsif Barometer::Query.is_coordinates?(@q)
         @format = :coordinates
       else
         @format = :geocode
       end
     end
     
-    def convert_query!(preffered_formats=nil)
-      raise StandardError unless (preffered_formats && preffered_formats.size > 0)
+    def convert!(preferred_formats=nil)
+      raise ArgumentError unless (preferred_formats && preferred_formats.size > 0)
 
       # first off, if the format we currently have is in the list, just use that
-      return (@preffered_query = @query) if preffered_formats.include?(@format)
+      return (@preferred = @q) if preferred_formats.include?(@format)
       
       # some formats do not convert, so raise an error (or just exit)
       #non_converting_formats = []
@@ -65,36 +63,17 @@ module Barometer
       
       # looks like we will have to attempt converting the query
       # go through each acceptable format and try to convert to that
-      preffered_formats.each do |preffered_format|
-        case preffered_format
+      preferred_formats.each do |preferred_format|
+        case preferred_format
         when :coordinates
-          @preffered_query = Barometer::Location.to_coordinates(@query, @format)
+          @preferred, @country_code = Barometer::Query.to_coordinates(@q, @format)
         when :geocode
-          @preffered_query = Barometer::Location.to_geocode(@query, @format)
+          @preferred, @country_code = Barometer::Query.to_geocode(@q, @format)
         end
       end
       
-      @preffered_query || nil
+      @preferred || nil
     end
-    
-    # def optimize_query!(preffered_formats = [:geocode])
-    #    
-    #   # looks like we will have to attempt converting the query
-    #   # go through each acceptable format and try to convert to that
-    #   preffered_formats.each do |preffered_format|
-    #     case preffered_format
-    #     when :coordinates
-    #       @preffered_query = Barometer::Location.to_coordinates(@query, @format)
-    #       return @preffered_query if @preffered_query
-    #     when :geocode
-    #       @preffered_query = Barometer::Location.to_geocode(@query, @format)
-    #       return @preffered_query if @preffered_query
-    #     end
-    #   end
-    #   
-    #   # if we got this far then nothing could be converted
-    #   return (@preffered_query = nil)
-    # end
     
     #
     # HELPERS
@@ -170,9 +149,11 @@ module Barometer
       geocoder = Graticule.service(:google).new(self.google_api_key)
       location = geocoder.locate(query, country_code)
       
+      country_code ||= location.country_code if location
+      
       # return coordinates
       return nil unless location && location.longitude && location.latitude
-      "#{location.latitude},#{location.longitude}"
+      ["#{location.latitude},#{location.longitude}", country_code]
     end
     
     # this will take all query formats and convert them to coorinates
@@ -201,27 +182,29 @@ module Barometer
         end
       end
       
+      # Google via Graticule will accept a country code to bias the results
+      case format
+      when :zipcode
+        country_code = "US"
+      when :postalcode
+        country_code = "CA"
+      else
+        country_code = nil
+      end
+        
       if use_graticule
-        # Google via Graticule will accept a country code to bias the results
-        case format
-        when :zipcode
-          country_code = "US"
-        when :postalcode
-          country_code = "CA"
-        else
-          country_code = nil
-        end
-      
         geocoder = Graticule.service(:google).new(self.google_api_key)
         location = geocoder.locate(query, country_code)
+        
+        country_code ||= location.country_code if location
       
         # return geocode
         return nil unless location && location.locality && location.region && location.country
-        return "#{location.locality}, #{location.region}, #{location.country}"
+        return ["#{location.locality}, #{location.region}, #{location.country}", country_code]
       else
         # without geocoding, the best we can do is just make use the given query as
         # the query for the "geocode" format
-        return query
+        return [query, country_code]
       end
       return nil
     end

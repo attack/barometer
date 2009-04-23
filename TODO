@@ -1,1 +1,3 @@
 - create a Barometer::Station data class, use in Barometer::Measurement
+- rdoc compatible documentation
+- uses webrat in tests
