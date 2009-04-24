@@ -17,9 +17,8 @@ below, although it is really close.
 - DONE measurement classes (measurement, current_measurement, forecast_measurement)
 - DONE weather service drivers (wunderground)
 - DONE general weather service class (service)
- 
-- TODO barometer class
-- TODO weather class
+- DONE weather class
+- DONE barometer class
 - TODO weather service drivers (google, yahoo, etc.)
 
 = dependencies
