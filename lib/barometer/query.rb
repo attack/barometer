@@ -51,7 +51,8 @@ module Barometer
       raise ArgumentError unless (preferred_formats && preferred_formats.size > 0)
 
       # first off, if the format we currently have is in the list, just use that
-      return (@preferred = @q) if preferred_formats.include?(@format)
+      # WRONG ... get one of higher preference
+      #return (@preferred = @q) if preferred_formats.include?(@format)
       
       # some formats do not convert, so raise an error (or just exit)
       #non_converting_formats = []
@@ -61,6 +62,8 @@ module Barometer
       # looks like we will have to attempt converting the query
       # go through each acceptable format and try to convert to that
       preferred_formats.each do |preferred_format|
+        # we are already in this format, return this
+        return (@preferred ||= @q) if preferred_format == @format
         case preferred_format
         when :coordinates
           @preferred, @country_code = Barometer::Query.to_coordinates(@q, @format)
@@ -205,6 +208,7 @@ module Barometer
         },
         :format => :xml
       )['kml']['Response']
+      #puts location.inspect
       geo = Barometer::Geo.new(location)
     end
     

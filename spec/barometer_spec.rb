@@ -4,6 +4,7 @@ describe "Barometer" do
   
   before(:each) do
     @preference_hash = { 1 => [:wunderground] }
+    @key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
   end
   
   describe "and class methods" do
@@ -23,9 +24,8 @@ describe "Barometer" do
     it "sets the Graticule Google geocoding API key" do
       Barometer.respond_to?("google_geocode_key").should be_true
       Barometer.google_geocode_key.should be_nil
-      key = "TEST_KEY"
-      Barometer.google_geocode_key = key
-      Barometer.google_geocode_key.should == key
+      Barometer.google_geocode_key = @key
+      Barometer.google_geocode_key.should == @key
     end
     
     it "skips the use of Graticule" do
@@ -78,6 +78,7 @@ describe "Barometer" do
   describe "when measuring" do
     
     before(:each) do
+      Barometer.google_geocode_key = @key
       query_term = "Calgary,AB"
       @barometer = Barometer::Base.new(query_term)
       @time = Time.now
@@ -95,6 +96,30 @@ describe "Barometer" do
           'forecast_calgary_ab.xml')
         )
       )
+      FakeWeb.register_uri(:get, 
+        "http://maps.google.com:80/maps/geo?gl=&q=Calgary%2CAB&output=xml&key=#{@key}",
+        :string => File.read(File.join(File.dirname(__FILE__), 
+          'fixtures', 
+          'geocode_calgary_ab.xml')
+        )
+      )
+      
+      
+      FakeWeb.register_uri(:get, 
+        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=51.055149%2C-114.062438",
+        :string => File.read(File.join(File.dirname(__FILE__), 
+          'fixtures', 
+          'current_calgary_ab.xml')
+        )
+      )  
+      FakeWeb.register_uri(:get, 
+        "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=51.055149%2C-114.062438",
+        :string => File.read(File.join(File.dirname(__FILE__), 
+          'fixtures', 
+          'forecast_calgary_ab.xml')
+        )
+      )
+      
     end
     
     it "responds to measure" do

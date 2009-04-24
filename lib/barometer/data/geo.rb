@@ -16,10 +16,23 @@ module Barometer
     #
     def initialize(location=nil)
       return unless location
-      raise ArgumentError unless
-        (location.is_a?(Graticule::Location) || location.is_a?(Hash))
       
-      if location.class == Graticule::Location
+      has_graticule = false
+      begin
+        Graticule
+        has_graticule = true
+      rescue
+        # do nothing, Graticule not available
+      end
+      
+      if has_graticule
+        raise ArgumentError unless
+          (location.is_a?(Graticule::Location) || location.is_a?(Hash))
+      else
+        raise ArgumentError unless location.is_a?(Hash)
+      end
+      
+      if has_graticule && location.class == Graticule::Location
         self.build_from_graticule(location)
       elsif location.class == Hash
         self.build_from_httparty(location)
@@ -62,8 +75,13 @@ module Barometer
       end
       if placemark && placemark["AddressDetails"] && placemark["AddressDetails"]["Country"]
         if placemark["AddressDetails"]["Country"]["AdministrativeArea"]
-          if placemark["AddressDetails"]["Country"]["AdministrativeArea"]["Locality"]
-            @locality = placemark["AddressDetails"]["Country"]["AdministrativeArea"]["Locality"]["LocalityName"]
+          if placemark["AddressDetails"]["Country"]["AdministrativeArea"]["SubAdministrativeArea"]
+            locality = placemark["AddressDetails"]["Country"]["AdministrativeArea"]["SubAdministrativeArea"]["Locality"]
+          else
+            locality = placemark["AddressDetails"]["Country"]["AdministrativeArea"]["Locality"]
+          end
+          if locality
+            @locality = locality["LocalityName"]
           end
           @region = placemark["AddressDetails"]["Country"]["AdministrativeArea"]["AdministrativeAreaName"]
         end
@@ -72,9 +90,10 @@ module Barometer
       end
     end
     
-    #def coordinates
-    #  [@latitude, @longitude].join(',')
-    #end
+    # TODO: not tested
+    def coordinates
+      [@latitude, @longitude].join(',')
+    end
     
   end
 end

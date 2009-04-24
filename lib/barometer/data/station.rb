@@ -11,9 +11,10 @@ module Barometer
     attr_accessor :state_name, :state_code, :country_code, :zip_code
     attr_accessor :latitude, :longitude
     
-    #def coordinates
-    #  [@latitude, @longitude].join(',')
-    #end
+    # TODO: not tested
+    def coordinates
+      [@latitude, @longitude].join(',')
+    end
     
   end
 end

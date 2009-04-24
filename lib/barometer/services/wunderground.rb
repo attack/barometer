@@ -57,6 +57,7 @@ module Barometer
       
       # get current measurement
       current_result = self.get_current(query)
+      #puts current_result.inspect
       current_measurement = self.build_current(current_result)
       measurement.station = self.build_station(current_result)
       # TODO: this next line has no test
@@ -66,6 +67,7 @@ module Barometer
       
       # get forecast measurement
       forecast_result = self.get_forecast(query)
+      #puts forecast_result.inspect
       forecast_measurements = self.build_forecast(forecast_result)
       # TODO: this next line has no test
       #measurement.success! if (forecast_measurements &&
