@@ -66,19 +66,18 @@ describe "Wunderground" do
   describe "when measuring" do
 
     before(:each) do
-      query_term = "Calgary,AB"
-      @query = "valid"
+      @query = "Calgary,AB"
       @measurement = Barometer::Measurement.new
       
       FakeWeb.register_uri(:get, 
-        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{query_term}",
+        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
           'fixtures', 
           'current_calgary_ab.xml')
         )
       )  
       FakeWeb.register_uri(:get, 
-        "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{query_term}",
+        "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
           'fixtures', 
           'forecast_calgary_ab.xml')
@@ -158,7 +157,7 @@ describe "Wunderground" do
 
       it "requires a Barometer::Measurement object" do
         lambda { Barometer::Wunderground.measure_forecast(nil, @query) }.should raise_error(ArgumentError)
-        lambda { Barometer::Wunderground.measure_forecast("invlaid", @query) }.should raise_error(ArgumentError)
+        lambda { Barometer::Wunderground.measure_forecast("invalid", @query) }.should raise_error(ArgumentError)
 
         lambda { Barometer::Wunderground.measure_forecast(@measurement, @query) }.should_not raise_error(ArgumentError)
       end

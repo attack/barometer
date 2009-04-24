@@ -69,12 +69,11 @@ with geo-coding.
 == multiple weather API, with hierarchy
 
   require 'barometer'
-
-  barometer = Barometer.new("Paris")
   
   # use yahoo and google, if they both fail, use wunderground
-  barometer.configure!({ 1 => [:yahoo, :google], 2 => :wunderground })
-  
+  Barometer.selection = { 1 => [:yahoo, :google], 2 => :wunderground }
+
+  barometer = Barometer.new("Paris")
   weather = barometer.measure
 
   puts weather.current.temperture
@@ -118,9 +117,10 @@ NOTE: The disadvantage to using the drivers directly is that you lose the
 advantage of redundancy/failover added by the Module as a whole.
 
 NOTE: You still must create the Barometer::Query object with your query
-string instead of directly feeding the query string to the driver.  The
-Barometer::Query object has behavior required by the driver that a
-regular String doesn't have.
+string instead of directly feeding the query string to the service (as in
+bootstrap example #1).  The Barometer::Query object has behavior required
+by the service that a regular String doesn't have. Using a driver directly
+WILL accept a String (as in bootstrap example #2).
 
 = design
 

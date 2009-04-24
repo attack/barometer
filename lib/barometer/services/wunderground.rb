@@ -233,7 +233,8 @@ module Barometer
     def self.get_current(query)
       Barometer::Wunderground.get(
        "/WXCurrentObXML/index.xml",
-       :query => {:query => query}
+       :query => {:query => query},
+       :format => :xml
        )['current_observation']
     end
     

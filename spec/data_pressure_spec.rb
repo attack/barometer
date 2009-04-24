@@ -4,6 +4,10 @@ describe "Pressure" do
   
   describe "when initialized" do
     
+    before(:each) do
+      @pressure = Barometer::Pressure.new
+    end
+    
     it "defines METRIC_UNITS" do
       Barometer::Pressure.const_defined?("METRIC_UNITS").should be_true
       Barometer::Pressure::METRIC_UNITS.should == "mb"
@@ -12,10 +16,6 @@ describe "Pressure" do
     it "defines IMPERIAL_UNITS" do
       Barometer::Pressure.const_defined?("IMPERIAL_UNITS").should be_true
       Barometer::Pressure::IMPERIAL_UNITS.should == "in"
-    end
-    
-    before(:each) do
-      @pressure = Barometer::Pressure.new
     end
     
     it "responds to millibars" do
