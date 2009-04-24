@@ -20,9 +20,9 @@ module Barometer
     
     # OPTIONAL
     # used by Graticule for geocoding
-    @@google_api_key = nil
-    def self.google_api_key; @@google_api_key; end;
-    def self.google_api_key=(key); @@google_api_key = key; end;
+    @@google_geocode_key = nil
+    def self.google_geocode_key; @@google_geocode_key || Barometer.google_geocode_key; end;
+    def self.google_geocode_key=(key); @@google_geocode_key = key; end;
     
     attr_reader   :format, :preferred
     attr_accessor :q, :country_code
@@ -122,7 +122,7 @@ module Barometer
     # returns- :coordinates
     def self.to_coordinates(query, format)
       # quick check to see that the Google API key used by Graticule exists
-      return nil unless (self.google_api_key && !self.google_api_key.nil?)
+      return nil unless (self.google_geocode_key && !self.google_geocode_key.nil?)
       
       # attempt to load Graticule
       begin
@@ -146,7 +146,7 @@ module Barometer
         country_code = nil
       end
       
-      geocoder = Graticule.service(:google).new(self.google_api_key)
+      geocoder = Graticule.service(:google).new(self.google_geocode_key)
       location = geocoder.locate(query, country_code)
       
       country_code ||= location.country_code if location
@@ -162,7 +162,7 @@ module Barometer
     def self.to_geocode(query, format)
       use_graticule = false
       # quick check to see that the Google API key used by Graticule exists
-      use_graticule = true if (self.google_api_key && !self.google_api_key.nil?)
+      use_graticule = true if (self.google_geocode_key && !self.google_geocode_key.nil?)
       
       # some formats can't convert, no need to use Graticule
       skip_formats = [:postalcode]
@@ -193,7 +193,7 @@ module Barometer
       end
         
       if use_graticule
-        geocoder = Graticule.service(:google).new(self.google_api_key)
+        geocoder = Graticule.service(:google).new(self.google_geocode_key)
         location = geocoder.locate(query, country_code)
         
         country_code ||= location.country_code if location

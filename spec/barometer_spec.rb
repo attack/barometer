@@ -20,6 +20,14 @@ describe "Barometer" do
       Barometer.source(:wunderground).should == Barometer::Wunderground
     end
     
+    it "sets the Graticule Google geocoding API key" do
+      Barometer.respond_to?("google_geocode_key").should be_true
+      Barometer.google_geocode_key.should be_nil
+      key = "TEST_KEY"
+      Barometer.google_geocode_key = key
+      Barometer.google_geocode_key.should == key
+    end
+    
   end
 
   describe "when initialized" do
@@ -98,9 +106,9 @@ describe "Barometer" do
       @barometer.measure.is_a?(Barometer::Weather).should be_true
     end
     
-    it "raises RuntimeError if no services successful" do
+    it "raises OutOfSources if no services successful" do
       Barometer::Base.selection = { 1 => [] }
-      lambda { @barometer.measure }.should raise_error(RuntimeError)
+      lambda { @barometer.measure }.should raise_error(Barometer::OutOfSources)
     end
     
   end

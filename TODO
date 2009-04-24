@@ -1,4 +1,4 @@
 - create a Barometer::Station data class, use in Barometer::Measurement
 - redo time_zone handling
 - rdoc compatible documentation
-- uses fakeweb in tests (for Graticule geocoding)
+- Weather Service API key setting

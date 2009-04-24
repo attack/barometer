@@ -7,7 +7,7 @@ module Barometer
     @@selection = { 1 => [:wunderground] }
     def self.selection; @@selection; end;
     def self.selection=(hash); @@selection = hash; end;
-
+    
     attr_reader   :query
     attr_accessor :weather, :success
     
@@ -36,8 +36,7 @@ module Barometer
             @weather.measurements << measurement
           end
         else
-          # ran out of services
-          raise RuntimeError
+          raise OutOfSources
         end
         level += 1
       end

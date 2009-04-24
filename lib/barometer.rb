@@ -8,6 +8,10 @@ require 'barometer/data'
  
 module Barometer
   
+  @@google_geocode_key = nil
+  def self.google_geocode_key; @@google_geocode_key; end;
+  def self.google_geocode_key=(key); @@google_geocode_key = key; end;
+  
   def self.new(query=nil)
     Barometer::Base.new(query)
   end
@@ -21,6 +25,9 @@ module Barometer
   def self.source(source)
     Barometer::Service.source(source)
   end
+
+  # custom errors
+  class OutOfSources < StandardError; end
   
 end
 

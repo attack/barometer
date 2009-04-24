@@ -14,6 +14,9 @@ describe "Query" do
     @postalcode_to_coordinates = "53.570447,-113.456083"
     @geocode_to_coordinates = "40.756054,-73.986951"
     @coordinates_to_geocode = "New York, NY, USA"
+    
+    Barometer.google_geocode_key = nil
+    Barometer::Query.google_geocode_key = nil
   end
   
   describe "the class methods" do
@@ -132,31 +135,73 @@ describe "Query" do
     end
     
     it "responds to google_api_key" do
-      Barometer::Query.google_api_key.should be_nil
+      Barometer::Query.google_geocode_key.should be_nil
     end
     
     it "sets the google_api_key" do
       key = "KEY"
-      Barometer::Query.google_api_key = key
-      Barometer::Query.google_api_key.should == key
+      Barometer::Query.google_geocode_key = key
+      Barometer::Query.google_geocode_key.should == key
+    end
+    
+    it "defaults to the Module geocode key" do
+      key = "KEY"
+      Barometer::Query.google_geocode_key.should be_nil
+      Barometer.google_geocode_key = key
+      Barometer::Query.google_geocode_key.should == key
     end
     
   end
   
-  use_graticule = false
+  use_graticule = true
   
   if use_graticule
   describe "when converting queries" do
     
+    before(:each) do
+      @key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
+      url_start = "http://maps.google.com/maps/geo?"
+      FakeWeb.register_uri(:get, 
+        "#{url_start}gl=&key=#{@key}&output=xml&q=New%20York,%20NY",
+        :string => File.read(File.join(File.dirname(__FILE__), 
+          'fixtures', 
+          'geocode_newyork_ny.xml')
+        )
+      )
+      FakeWeb.register_uri(:get, 
+        "#{url_start}gl=US&key=#{@key}&output=xml&q=90210",
+        :string => File.read(File.join(File.dirname(__FILE__), 
+          'fixtures', 
+          'geocode_90210.xml')
+        )
+      )
+      FakeWeb.register_uri(:get, 
+        "#{url_start}gl=CA&key=#{@key}&output=xml&q=T5B%204M9",
+        :string => File.read(File.join(File.dirname(__FILE__), 
+          'fixtures', 
+          'geocode_T5B4M9.xml')
+        )
+      )
+      FakeWeb.register_uri(:get, 
+        "#{url_start}gl=&key=#{@key}&output=xml&q=40.756054,-73.986951",
+        :string => File.read(File.join(File.dirname(__FILE__), 
+          'fixtures', 
+          'geocode_40_73.xml')
+        )
+      )
+    end
+
     describe "to coordinates," do
       
       before(:each) do
-        Barometer::Query.google_api_key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
+        Barometer::Query.google_geocode_key = @key
       end
 
       it "skips conversion unless Graticule enabled or no API key" do
-        Barometer::Query.google_api_key = nil
-        Barometer::Query.google_api_key.should be_nil
+        Barometer::Query.google_geocode_key = nil
+        Barometer::Query.google_geocode_key.should be_nil
+        Barometer.google_geocode_key = nil
+        Barometer.google_geocode_key.should be_nil
         Barometer::Query.to_coordinates(@geocode, :geocode).should be_nil
       end
       
@@ -180,6 +225,10 @@ describe "Query" do
     
     describe "to geocode" do
       
+      before(:each) do
+        Barometer::Query.google_geocode_key = @key
+      end
+      
       describe "when Graticule enabled," do
         
         it "converts from coordinates" do
@@ -199,20 +248,26 @@ describe "Query" do
       describe "when Graticule disabled," do
         
         it "uses coordinates" do
-          Barometer::Query.google_api_key = nil
-          Barometer::Query.google_api_key.should be_nil
+          Barometer::Query.google_geocode_key = nil
+          Barometer::Query.google_geocode_key.should be_nil
+          Barometer.google_geocode_key = nil
+          Barometer.google_geocode_key.should be_nil
           Barometer::Query.to_geocode(@coordinates, :coordinates).first.should == @coordinates
         end
 
         it "uses zipcode" do
-          Barometer::Query.google_api_key = nil
-          Barometer::Query.google_api_key.should be_nil
+          Barometer::Query.google_geocode_key = nil
+          Barometer::Query.google_geocode_key.should be_nil
+          Barometer.google_geocode_key = nil
+          Barometer.google_geocode_key.should be_nil
           Barometer::Query.to_geocode(@zipcode, :zipcode).first.should == @zipcode
         end
 
         it "uses postalcode" do
-          Barometer::Query.google_api_key = nil
-          Barometer::Query.google_api_key.should be_nil
+          Barometer::Query.google_geocode_key = nil
+          Barometer::Query.google_geocode_key.should be_nil
+          Barometer.google_geocode_key = nil
+          Barometer.google_geocode_key.should be_nil
           Barometer::Query.to_geocode(@postal_code, :postalcode).first.should == @postal_code
         end
         
@@ -270,7 +325,7 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@zipcode)
-          Barometer::Query.google_api_key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
+          Barometer::Query.google_geocode_key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
         end
         
         it "converts to coordinates" do
@@ -297,7 +352,7 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@postal_code)
-          Barometer::Query.google_api_key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
+          Barometer::Query.google_geocode_key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
         end
         
         it "converts to coordinates" do
@@ -324,7 +379,7 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@geocode)
-          Barometer::Query.google_api_key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
+          Barometer::Query.google_geocode_key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
         end
         
         it "converts to coordinates" do
@@ -351,7 +406,7 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@coordinates)
-          Barometer::Query.google_api_key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
+          Barometer::Query.google_geocode_key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
         end
         
         it "converts to geocode" do
