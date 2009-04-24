@@ -87,13 +87,13 @@ describe "Measurement" do
       lambda { @measurement.timezone = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Barometer::Temperature for station" do
+    it "only accepts Barometer::Station for station" do
       invalid_data = 1
-      invalid_data.class.should_not == Hash
+      invalid_data.class.should_not == Barometer::Station
       lambda { @measurement.station = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = {}
-      valid_data.class.should == Hash
+      valid_data = Barometer::Station.new
+      valid_data.class.should == Barometer::Station
       lambda { @measurement.station = valid_data }.should_not raise_error(ArgumentError)
     end
     

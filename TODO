@@ -1,4 +1,5 @@
-- create a Barometer::Station data class, use in Barometer::Measurement
 - redo time_zone handling
 - rdoc compatible documentation
 - Weather Service API key setting
+- support IACO as a query format
+- a few methods in Barometer::Query have been added through refactoring, adjust tests!

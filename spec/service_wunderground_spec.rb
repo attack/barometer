@@ -63,6 +63,24 @@ describe "Wunderground" do
     
   end
   
+  describe "building the station data" do
+    
+    it "defines the build method" do
+      Barometer::Wunderground.respond_to?("build_station").should be_true
+    end
+    
+    it "requires Hash input" do
+      lambda { Barometer::Wunderground.build_station }.should raise_error(ArgumentError)
+      lambda { Barometer::Wunderground.build_station({}) }.should_not raise_error(ArgumentError)
+    end
+    
+    it "returns Barometer::Station object" do
+      station = Barometer::Wunderground.build_station({})
+      station.is_a?(Barometer::Station).should be_true
+    end
+    
+  end
+  
   describe "when measuring" do
 
     before(:each) do

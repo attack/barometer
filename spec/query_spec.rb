@@ -17,6 +17,7 @@ describe "Query" do
     
     Barometer.google_geocode_key = nil
     Barometer::Query.google_geocode_key = nil
+    #Barometer.skip_graticule = true
   end
   
   describe "the class methods" do
@@ -161,13 +162,9 @@ describe "Query" do
     before(:each) do
       @key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
       url_start = "http://maps.google.com/maps/geo?"
-      FakeWeb.register_uri(:get, 
-        "#{url_start}gl=&key=#{@key}&output=xml&q=New%20York,%20NY",
-        :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
-          'geocode_newyork_ny.xml')
-        )
-      )
+      #
+      # for Graticule and/or HTTParty geocoding
+      #
       FakeWeb.register_uri(:get, 
         "#{url_start}gl=US&key=#{@key}&output=xml&q=90210",
         :string => File.read(File.join(File.dirname(__FILE__), 
@@ -182,8 +179,35 @@ describe "Query" do
           'geocode_T5B4M9.xml')
         )
       )
+      #
+      # for Graticule geocoding
+      #
+      FakeWeb.register_uri(:get, 
+        "#{url_start}gl=&key=#{@key}&output=xml&q=New%20York,%20NY",
+        :string => File.read(File.join(File.dirname(__FILE__), 
+          'fixtures', 
+          'geocode_newyork_ny.xml')
+        )
+      )
       FakeWeb.register_uri(:get, 
         "#{url_start}gl=&key=#{@key}&output=xml&q=40.756054,-73.986951",
+        :string => File.read(File.join(File.dirname(__FILE__), 
+          'fixtures', 
+          'geocode_40_73.xml')
+        )
+      )
+      #
+      # for HTTParty geocoding
+      #
+      FakeWeb.register_uri(:get, 
+        "#{url_start}output=xml&q=New%20York%2C%20NY&gl=&key=#{@key}",
+        :string => File.read(File.join(File.dirname(__FILE__), 
+          'fixtures', 
+          'geocode_newyork_ny.xml')
+        )
+      )
+      FakeWeb.register_uri(:get, 
+        "#{url_start}gl=&output=xml&q=#{CGI.escape("40.756054,-73.986951")}&key=#{@key}",
         :string => File.read(File.join(File.dirname(__FILE__), 
           'fixtures', 
           'geocode_40_73.xml')

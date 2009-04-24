@@ -26,6 +26,10 @@ module Barometer
   #    * airport code (3-letter or 4-letter)
   #    * lat,lon
   #
+  # NOTE: measure_all, measure_current, measure_forecast all call _measure_all
+  # because only the current data has the station data and only the forecast data
+  # has the time zone info
+  #
   class Wunderground < Service
     
     base_uri "api.wunderground.com/auto/wui/geo"
@@ -35,76 +39,41 @@ module Barometer
     end
     
     def self.measure_all(measurement, query, metric=true)
+      self._measure_all(measurement, query, metric)
+    end
+    
+    def self.measure_current(measurement, query, metric=true)
+      self._measure_all(measurement, query, metric)
+    end
+    
+    def self.measure_forecast(measurement, query, metric=true)
+      self._measure_all(measurement, query, metric)
+    end
+    
+    def self._measure_all(measurement, query, metric=true)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
       raise ArgumentError unless query.is_a?(String)
       measurement.source = :wunderground
-      measurement = self.measure_current(measurement, query, metric)
-      measurement = self.measure_forecast(measurement, query, metric)
-      measurement
-    end
-    
-    # station information
-    # station = Location.new
-    # station.id = current_result['station_id']
-    # station.name = current_result['observation_location']['full']
-    # station.city = current_result['observation_location']['city']
-    # station.state_name = current_result['observation_location']['state_name']
-    # station.state_code = current_result['observation_location']['state']
-    # station.country_code = current_result['observation_location']['country']
-    # station.zip_code = current_result['observation_location']['zip']
-    # station.latitude = current_result['observation_location']['latitude']
-    # station.longitude = current_result['observation_location']['longitude']
-    # current_measurement.station = station
-    
-    def self.measure_current(measurement, query, metric=true)
-      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)      
-      raise ArgumentError unless query.is_a?(String)
-      measurement.source = :wunderground
       
-      #puts
-      #puts "  - Wunderground Service: measuring current"
-      #puts "  - Wunderground Service: current-query with: '#{query}'"
-      
+      # get current measurement
       current_result = self.get_current(query)
-      
-      #puts " --- wunderground: start current-response ---"
-      #puts current_result.inspect
-      #puts " --- wunderground: end current-response ---"
-      #puts
-      
       current_measurement = self.build_current(current_result)
-      
+      measurement.station = self.build_station(current_result)
       # TODO: this next line has no test
       measurement.success! if
         (current_measurement.temperature && !current_measurement.temperature.c.nil?)
       measurement.current = current_measurement
-      measurement
-    end
-    
-    def self.measure_forecast(measurement, query, metric=true)
-      raise ArgumentError unless measurement.is_a?(Measurement)
-      raise ArgumentError unless query.is_a?(String)
-      measurement.source = :wunderground
       
-      #puts
-      #puts "  - Wunderground Service: measuring future"
-      #puts "  - Wunderground Service: future-query with: '#{query}'"
-      
+      # get forecast measurement
       forecast_result = self.get_forecast(query)
-      
-      #puts " --- wunderground: start future-response ---"
-      #puts future_result.inspect
-      #puts " --- wunderground: end future-response ---"
-      #puts
-      
       forecast_measurements = self.build_forecast(forecast_result)
-      
       # TODO: this next line has no test
-      measurement.success! if (forecast_measurements &&
-                              forecast_measurements.first &&
-                              forecast_measurements.first.high &&
-                              !forecast_measurements.first.high.c.nil?)
+      #measurement.success! if (forecast_measurements &&
+      #                        forecast_measurements.first &&
+      #                        forecast_measurements.first.high &&
+      #                        !forecast_measurements.first.high.c.nil?)
       measurement.forecast = forecast_measurements
+      
       measurement
     end
 
@@ -187,19 +156,6 @@ module Barometer
       # - we are only given todays data for this, so create it here and
       # use the same values for the remaing forcasted days
 
-      # TODO time_zone
-      # the time zone is the same for all days, so creat one here and
-      # use it throughout
-      # <simpleforecast>
-      #   <forecastday>
-      #     <date>
-      #       <isdst>0</isdst>
-      #       <tz_short>CST</tz_short>
-      #       <tz_long>America/Chicago</tz_long>
-      #     </date>
-      #   </forecastday>
-      # </simpleforecast>
-
       # go through each forecast and create an instance
       if forecast_result && forecast_result['simpleforecast'] &&
         forecast_result['simpleforecast']['forecastday']
@@ -227,6 +183,25 @@ module Barometer
       end
       
       forecasts
+    end
+    
+    def self.build_station(station_result)
+      raise ArgumentError unless station_result.is_a?(Hash)
+      
+      station = Station.new
+      station.id = station_result['station_id']
+      if station_result['observation_location']
+        station.name = station_result['observation_location']['full']
+        station.city = station_result['observation_location']['city']
+        station.state_name = station_result['observation_location']['state_name']
+        station.state_code = station_result['observation_location']['state']
+        station.country_code = station_result['observation_location']['country']
+        station.zip_code = station_result['observation_location']['zip']
+        station.latitude = station_result['observation_location']['latitude']
+        station.longitude = station_result['observation_location']['longitude']
+      end
+      
+      station
     end
     
     # use HTTParty to get the current weather

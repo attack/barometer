@@ -83,7 +83,7 @@ module Barometer
     end
     
     def station=(station)
-      raise ArgumentError unless station.is_a?(Hash)
+      raise ArgumentError unless station.is_a?(Barometer::Station)
       @station = station
     end
     

@@ -28,6 +28,13 @@ describe "Barometer" do
       Barometer.google_geocode_key.should == key
     end
     
+    it "skips the use of Graticule" do
+      Barometer.respond_to?("skip_graticule").should be_true
+      Barometer.skip_graticule.should be_false
+      Barometer.skip_graticule = true
+      Barometer.skip_graticule.should be_true
+    end
+    
   end
 
   describe "when initialized" do

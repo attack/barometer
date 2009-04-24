@@ -30,9 +30,6 @@ module Barometer
     def initialize(query=nil)
       @q = query
       self.determine_format!
-      
-      # DEVELOPMENT FEEDBACK
-      #puts "Query: the query '#{@q}' is of format '#{@format.to_s}'"
     end
     
     def determine_format!
@@ -117,59 +114,57 @@ module Barometer
     # CONVERTERS
     #
     
-    # this will take all query formats and convert them to coorinates
+    # this will take all query formats and convert them to coordinates
     # accepts- :zipcode, :postalcode, :geocode
     # returns- :coordinates
+    # if the conversion fails, return nil
     def self.to_coordinates(query, format)
-      # quick check to see that the Google API key used by Graticule exists
-      return nil unless (self.google_geocode_key && !self.google_geocode_key.nil?)
-      
-      # attempt to load Graticule
-      begin
-        require 'rubygems'
-        require 'graticule'
-        $:.unshift(File.dirname(__FILE__))
-        # load some changes to Graticule
-        # TODO: attempt to get changes into Graticule gem
-        require 'extensions/graticule'
-      rescue LoadError
-        return nil
-      end
-      
-      # Google via Graticule will accept a country code to bias the results
-      case format
-      when :zipcode
-        country_code = "US"
-      when :postalcode
-        country_code = "CA"
-      else
-        country_code = nil
-      end
-      
-      geocoder = Graticule.service(:google).new(self.google_geocode_key)
-      location = geocoder.locate(query, country_code)
-      
-      country_code ||= location.country_code if location
-      
-      # return coordinates
-      return nil unless location && location.longitude && location.latitude
-      ["#{location.latitude},#{location.longitude}", country_code]
+      country_code = self.format_to_country_code(format)
+      geo = self.geocode(query, country_code)
+      country_code ||= geo.country_code if geo
+      return nil unless geo && geo.longitude && geo.latitude
+      ["#{geo.latitude},#{geo.longitude}", country_code]
     end
     
     # this will take all query formats and convert them to coorinates
     # accepts- :zipcode, :postalcode, :coordinates
     # returns- :geocode
     def self.to_geocode(query, format)
-      use_graticule = false
-      # quick check to see that the Google API key used by Graticule exists
-      use_graticule = true if (self.google_geocode_key && !self.google_geocode_key.nil?)
+      perform_geocode = false
+      perform_geocode = true if self.has_geocode_key?
       
-      # some formats can't convert, no need to use Graticule
+      # some formats can't convert, no need to geocode then
       skip_formats = [:postalcode]
-      use_graticule = false if skip_formats.include?(format)
+      perform_geocode = false if skip_formats.include?(format)
       
-      # attempt to load Graticule
-      if use_graticule
+      country_code = self.format_to_country_code(format)
+      if perform_geocode
+        geo = self.geocode(query, country_code)
+        country_code ||= geo.country_code if geo
+        return nil unless geo && geo.locality && geo.region && geo.country
+        return ["#{geo.locality}, #{geo.region}, #{geo.country}", country_code]
+      else
+        # without geocoding, the best we can do is just make use the given query as
+        # the query for the "geocode" format
+        return [query, country_code]
+      end
+      return nil
+    end
+
+    #
+    # --- TODO ---
+    # The following methods need more coverage tests
+    #
+
+    def self.has_geocode_key?
+      # quick check to see that the Google API key exists for geocoding
+      self.google_geocode_key && !self.google_geocode_key.nil?
+    end
+    
+    # if Graticule exists, use it, otherwise use HTTParty
+    def self.geocode(query, country_code=nil)   
+      use_graticule = false
+      unless Barometer::skip_graticule
         begin
           require 'rubygems'
           require 'graticule'
@@ -177,12 +172,44 @@ module Barometer
           # load some changes to Graticule
           # TODO: attempt to get changes into Graticule gem
           require 'extensions/graticule'
+          use_graticule = true
         rescue LoadError
-          use_graticule = false
+          # do nothing, we will use HTTParty
         end
       end
-      
-      # Google via Graticule will accept a country code to bias the results
+  
+      if use_graticule
+        geo = self.geocode_graticule(query, country_code)
+      else
+        geo = self.geocode_httparty(query, country_code)
+      end
+      geo
+    end
+    
+    def self.geocode_graticule(query, country_code=nil)
+      return nil unless self.has_geocode_key?
+      geocoder = Graticule.service(:google).new(self.google_geocode_key)
+      location = geocoder.locate(query, country_code)
+      geo = Barometer::Geo.new(location)
+    end
+
+    def self.geocode_httparty(query, country_code=nil)
+      return nil unless self.has_geocode_key?
+      location = Barometer::Service.get(
+        "http://maps.google.com/maps/geo",
+        :query => {
+          :gl => country_code,
+          :key => self.google_geocode_key,
+          :output => "xml",
+          :q => query
+        },
+        :format => :xml
+      )['kml']['Response']
+      geo = Barometer::Geo.new(location)
+    end
+    
+    def self.format_to_country_code(format)
+      return nil unless format
       case format
       when :zipcode
         country_code = "US"
@@ -191,22 +218,7 @@ module Barometer
       else
         country_code = nil
       end
-        
-      if use_graticule
-        geocoder = Graticule.service(:google).new(self.google_geocode_key)
-        location = geocoder.locate(query, country_code)
-        
-        country_code ||= location.country_code if location
-      
-        # return geocode
-        return nil unless location && location.locality && location.region && location.country
-        return ["#{location.locality}, #{location.region}, #{location.country}", country_code]
-      else
-        # without geocoding, the best we can do is just make use the given query as
-        # the query for the "geocode" format
-        return [query, country_code]
-      end
-      return nil
+      country_code
     end
 
   end

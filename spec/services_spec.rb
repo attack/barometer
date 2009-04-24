@@ -143,11 +143,11 @@ describe "Services" do
     it "measures current only when current (or within 10 minutes)" do
       measurement = @service.measure(@query, @time)
       measurement.current.is_a?(Barometer::CurrentMeasurement).should be_true
-      measurement.forecast.is_a?(Array).should be_false
+      measurement.forecast.is_a?(Array).should be_true
       
       measurement = @service.measure(@query, @time + (9 * 60))
       measurement.current.is_a?(Barometer::CurrentMeasurement).should be_true
-      measurement.forecast.is_a?(Array).should be_false
+      measurement.forecast.is_a?(Array).should be_true
     end
     
     # this test will fail if ran between 11:50pm and midnight
@@ -166,7 +166,7 @@ describe "Services" do
     
     it "measures forecast only when in the future (but not today still)" do
       measurement = @service.measure(@query, @time + (24 * 60 * 60))
-      measurement.current.is_a?(Barometer::CurrentMeasurement).should be_false
+      measurement.current.is_a?(Barometer::CurrentMeasurement).should be_true
       measurement.forecast.is_a?(Array).should be_true
     end
     

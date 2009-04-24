@@ -10,16 +10,17 @@ unavailable.
 
 == status
 
-Currently this project is in development and does not completely work as described
-below, although it is really close.
+Currently this project is in development and will only work for one weather
+service (wunderground), and only for the current time.
 
-- DONE data classes (distance, pressure, speed, temperature, units)
-- DONE measurement classes (measurement, current_measurement, forecast_measurement)
-- DONE weather service drivers (wunderground)
-- DONE general weather service class (service)
-- DONE weather class
-- DONE barometer class
-- TODO weather service drivers (google, yahoo, etc.)
+Features to be added before first release:
+- more weather service drivers (yahoo, google)
+- ability to query weather for a specific time in the future
+
+Features to be added in future releases:
+- even more weather service drivers (noaa, weather.com, weatherbug)
+- ability to query multiple services and combine/average the results
+- support iaco as a query format
 
 = dependencies
 
@@ -29,18 +30,6 @@ Why? HTTParty was created and designed specifically for consuming web services.
 I choose to use this over using the Net::HTTP library directly to allow for
 faster development of this project.
 
-=== graticule (soft dependency, but recommended)
-
-Why? Barometer returns the weather for a given location.  Most weather service
-APIs are somewhat restricted on the query format they receive.  To bridge
-this gap and allow for maximum flexibility on the 'barometer' query format,
-the query will geo-coded using the Google geocoding service, if available
-and if required. Graticule provides this geocoding interface.
-
-Using Graticule requires a free Google API key for geocoding.  It is possible
-to use barometer without geocoding, though your query format will be
-limited to that of the weather service API.
-
 === tzinfo
 
 Why? Barometer will return both current and forecast weather information for
@@ -48,6 +37,27 @@ a given query.  Barometer can also be asked to only return the information
 for a specific time in the future.  Obviously this feature relies on
 translating the time in the future to the correct time zone of the location.
 Tzinfo handles this time zone manipulation.
+
+=== graticule (very soft dependency)
+
+Why? Barometer returns the weather for a given location.  Most weather service
+APIs are somewhat restricted on the query format they receive.  To bridge
+this gap and allow for maximum flexibility on the 'barometer' query format,
+the query will be geo-coded using the Google geocoding service, if required.
+Graticule can provide this geocoding interface.
+
+Using Graticule requires a free Google API key for geocoding.  It is possible
+to use barometer without geocoding, though your query format will be
+limited to that of the weather service API.
+
+ALTERNATE: If you supply a Google API key but don't install the Graticule gem,
+HTTParty will be used instead to provide the same geocoding.  Basically
+Graticule is only used if it exists.
+
+NOTE: you can force Barometer not to use Graticule, even if you have it installed
+using the following:
+
+  Barometer.skip_graticule = true
 
 = usage
 
@@ -60,6 +70,7 @@ with geo-coding.
 
   require 'barometer'
   
+  Barometer.google_geocode_key = "THE_GOOGLE_API_KEY"
   barometer = Barometer.new("Paris")
   weather = barometer.measure
   
@@ -69,6 +80,7 @@ with geo-coding.
 
   require 'barometer'
   
+  Barometer.google_geocode_key = "THE_GOOGLE_API_KEY"
   # use yahoo and google, if they both fail, use wunderground
   Barometer.selection = { 1 => [:yahoo, :google], 2 => :wunderground }
 
@@ -80,7 +92,7 @@ with geo-coding.
 === fail
 
 What would cause a weather service to fail?  The most obvious is that the
-particular weather service in currently un-available or not reachable.
+particular weather service in currently unavailable or not reachable.
 Other possible reasons would include not having the API (or a valid API
 key for the particular weather service, if required), not providing a
 valid query, or providing a query for a location not supported by the
@@ -98,6 +110,7 @@ Wunderground, but since the driver interface is abstracted it will be the
 same for all supported services.
 
   require 'barometer'
+  Barometer.google_geocode_key = "THE_GOOGLE_API_KEY"
   
   query = Barometer::Query.new("Paris")
   weather = Barometer::Service.source(:wunderground).measure(query)
@@ -124,15 +137,15 @@ WILL accept a String (as in bootstrap example #2).
 = design
 
 - create a Barometer instance
-- supply a location query, there are very little restrictions on the format:
+- supply a query, there are very little restrictions on the format:
   - city, country, specific address (basically anything Google will geocode)
-  - US zip code (skips geocoding if configured weather services accept this)
-  - postal code (skips geocoding if configured weather services accept this)
-  - latitude and longitude (skips geocoding if configured weather services
-    accept this)
-  - TODO: international airport code (skips geocoding if configured weather
-    services accept this)
-- if geocoding required, geocode the location query
+  - US zip code (skips geocoding if weather service accepts this directly)
+  - postal code (skips geocoding if weather service accepts this directly)
+  - latitude and longitude (skips geocoding if weather service accepts this
+    directly)
+  - TODO: international airport code (skips geocoding if weather service
+    accepts this directly)
+- if geocoding required, geocode the query
 - determine which weather services will be queried (one or multiple)
 - query the weather services
 - save the data
@@ -140,7 +153,7 @@ WILL accept a String (as in bootstrap example #2).
 
 = extending
 
-Barometer trys to be a common API to any weather service API.  I have included
+Barometer attempts to be a common API to any weather service API.  I have included
 several weather service 'drivers', but I know there are many more available.
 Please use the provided ones as examples to create more.
 
