@@ -81,6 +81,19 @@ describe "Wunderground" do
     
   end
   
+  describe "building the timezone" do
+    
+    it "defines the build method" do
+      Barometer::Wunderground.respond_to?("build_timezone").should be_true
+    end
+    
+    it "requires Hash input" do
+      lambda { Barometer::Wunderground.build_timezone }.should raise_error(ArgumentError)
+      lambda { Barometer::Wunderground.build_timezone({}) }.should_not raise_error(ArgumentError)
+    end
+    
+  end
+  
   describe "when measuring" do
 
     before(:each) do
@@ -106,98 +119,30 @@ describe "Wunderground" do
     describe "all" do
       
       it "responds to measure_all" do
-        Barometer::Wunderground.respond_to?("measure_all").should be_true
+        Barometer::Wunderground.respond_to?("_measure").should be_true
       end
       
       it "requires a Barometer::Measurement object" do
-        lambda { Barometer::Wunderground.measure_all(nil, @query) }.should raise_error(ArgumentError)
-        lambda { Barometer::Wunderground.measure_all("invlaid", @query) }.should raise_error(ArgumentError)
+        lambda { Barometer::Wunderground._measure(nil, @query) }.should raise_error(ArgumentError)
+        lambda { Barometer::Wunderground._measure("invlaid", @query) }.should raise_error(ArgumentError)
 
-        lambda { Barometer::Wunderground.measure_all(@measurement, @query) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::Wunderground._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
       end
 
       it "requires a String query" do
-        lambda { Barometer::Wunderground.measure_all }.should raise_error(ArgumentError)
-        lambda { Barometer::Wunderground.measure_all(@measurement, 1) }.should raise_error(ArgumentError)
+        lambda { Barometer::Wunderground._measure }.should raise_error(ArgumentError)
+        lambda { Barometer::Wunderground._measure(@measurement, 1) }.should raise_error(ArgumentError)
         
-        lambda { Barometer::Wunderground.measure_all(@measurement, @query) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::Wunderground._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
       end
       
       it "returns a Barometer::Measurement object" do
-        result = Barometer::Wunderground.measure_all(@measurement, @query)
-        result.is_a?(Barometer::Measurement).should be_true
-        
-        result.source.should == :wunderground
-      end
-      
-    end
-    
-    describe "current" do
-      
-      it "responds to measure_current" do
-        Barometer::Wunderground.respond_to?("measure_current").should be_true
-      end
-
-      it "requires a Barometer::Measurement object" do
-        lambda { Barometer::Wunderground.measure_current(nil, @query) }.should raise_error(ArgumentError)
-        lambda { Barometer::Wunderground.measure_current("invlaid", @query) }.should raise_error(ArgumentError)
-
-        lambda { Barometer::Wunderground.measure_current(@measurement, @query) }.should_not raise_error(ArgumentError)
-      end
-      
-      it "requires a String object" do
-        lambda { Barometer::Wunderground.measure_current(@measurement) }.should raise_error(ArgumentError)
-        lambda { Barometer::Wunderground.measure_current(@measurement, 1) }.should raise_error(ArgumentError)
-        
-        lambda { Barometer::Wunderground.measure_current(@measurement, @query) }.should_not raise_error(ArgumentError)
-      end
-      
-      it "returns a Barometer::Measurement object" do
-        result = Barometer::Wunderground.measure_current(@measurement, @query)
-        result.is_a?(Barometer::Measurement).should be_true
-        
-        result.source.should == :wunderground
-      end
-
-      it "returns a Barometer::Measurement object with a Barometer::CurrentMeasurement object" do
-        result = Barometer::Wunderground.measure_current(@measurement, @query)
+        result = Barometer::Wunderground._measure(@measurement, @query)
         result.is_a?(Barometer::Measurement).should be_true
         result.current.is_a?(Barometer::CurrentMeasurement).should be_true
-      end
-      
-    end
-    
-    describe "forecast" do
-      
-      it "responds to measure_forecast" do
-        Barometer::Wunderground.respond_to?("measure_forecast").should be_true
-      end
-
-      it "requires a Barometer::Measurement object" do
-        lambda { Barometer::Wunderground.measure_forecast(nil, @query) }.should raise_error(ArgumentError)
-        lambda { Barometer::Wunderground.measure_forecast("invalid", @query) }.should raise_error(ArgumentError)
-
-        lambda { Barometer::Wunderground.measure_forecast(@measurement, @query) }.should_not raise_error(ArgumentError)
-      end
-      
-      it "requires a String object" do
-        lambda { Barometer::Wunderground.measure_forecast(@measurement) }.should raise_error(ArgumentError)
-        lambda { Barometer::Wunderground.measure_forecast(@measurement, 1) }.should raise_error(ArgumentError)
-        
-        lambda { Barometer::Wunderground.measure_forecast(@measurement, @query) }.should_not raise_error(ArgumentError)
-      end
-      
-      it "returns a Barometer::Measurement object" do
-        result = Barometer::Wunderground.measure_forecast(@measurement, @query)
-        result.is_a?(Barometer::Measurement).should be_true
+        result.forecast.is_a?(Array).should be_true
         
         result.source.should == :wunderground
-      end
-
-      it "returns a Barometer::Measurement object with an Array object" do
-        result = Barometer::Wunderground.measure_forecast(@measurement, @query)
-        result.is_a?(Barometer::Measurement).should be_true
-        result.forecast.is_a?(Array).should be_true
       end
       
     end

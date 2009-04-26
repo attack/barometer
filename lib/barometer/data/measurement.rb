@@ -40,7 +40,8 @@ module Barometer
     #
     # credit: http://github.com/jdpace/weatherman/
     #
-    def for(date = Date.today)
+    def for(date=nil)
+      date = @timezone.today unless date || !@timezone
       return nil unless (@forecast && @forecast.size > 0)
       
       # Format date into a Date class
@@ -78,7 +79,8 @@ module Barometer
     end
     
     def timezone=(timezone)
-      raise ArgumentError unless timezone.is_a?(String)
+      #raise ArgumentError unless timezone.is_a?(String)
+      raise ArgumentError unless timezone.is_a?(Barometer::Zone)
       @timezone = timezone
     end
     

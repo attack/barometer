@@ -25,7 +25,7 @@ describe "Weather" do
     end
 
     it "responds to tommorrow" do
-      @weather.respond_to?("tommorrow").should be_true
+      @weather.respond_to?("tomorrow").should be_true
     end
 
     it "responds to for" do

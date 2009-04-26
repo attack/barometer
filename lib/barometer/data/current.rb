@@ -8,12 +8,13 @@ module Barometer
   #
   class CurrentMeasurement
     
-    attr_reader :time, :humidity, :icon
+    attr_accessor :time, :local_time
+    attr_reader :humidity, :icon
     attr_reader :temperature, :dew_point, :heat_index, :wind_chill
     attr_reader :wind, :pressure, :visibility
     
     def time=(time)
-      raise ArgumentError unless time.is_a?(Time)
+      #raise ArgumentError unless time.is_a?(Time)
       @time = time
     end
     

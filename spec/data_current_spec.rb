@@ -56,15 +56,15 @@ describe "Current Measurement" do
       @current = Barometer::CurrentMeasurement.new
     end
     
-    it "only accepts Time for time" do
-      invalid_data = 1
-      invalid_data.class.should_not == Time
-      lambda { @current.time = invalid_data }.should raise_error(ArgumentError)
-      
-      valid_data = Time.new
-      valid_data.class.should == Time
-      lambda { @current.time = valid_data }.should_not raise_error(ArgumentError)
-    end
+    # it "only accepts Time for time" do
+    #   invalid_data = 1
+    #   invalid_data.class.should_not == Time
+    #   lambda { @current.time = invalid_data }.should raise_error(ArgumentError)
+    #   
+    #   valid_data = Time.new
+    #   valid_data.class.should == Time
+    #   lambda { @current.time = valid_data }.should_not raise_error(ArgumentError)
+    # end
     
     it "only accepts Fixnum or Float for humidity" do
       invalid_data = "invalid"

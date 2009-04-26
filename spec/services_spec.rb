@@ -63,16 +63,8 @@ describe "Services" do
       @service = Barometer::Service.new
     end
     
-    it "stubs measure_current" do
-      lambda { Barometer::Service.measure_current }.should raise_error(NotImplementedError)
-    end
-    
-    it "stubs measure_forecast" do
-      lambda { Barometer::Service.measure_forecast }.should raise_error(NotImplementedError)
-    end
-    
-    it "stubs measure_all" do
-      lambda { Barometer::Service.measure_all }.should raise_error(NotImplementedError)
+    it "stubs _measure" do
+      lambda { Barometer::Service._measure }.should raise_error(NotImplementedError)
     end
     
     it "stubs get_current" do
@@ -124,48 +116,12 @@ describe "Services" do
       lambda { Barometer::Service.measure(@query) }.should_not raise_error(ArgumentError)
     end
     
-    it "requires a Time object" do
-      lambda { Barometer::Service.measure(@query, "invalid") }.should raise_error(ArgumentError)
-      @time.is_a?(Time).should be_true
-      lambda { Barometer::Service.measure(@query, @time) }.should_not raise_error(ArgumentError)
-    end
-    
     it "returns a Barometer::Measurement object" do
       @service.measure(@query).is_a?(Barometer::Measurement).should be_true
     end
     
-    it "returns current and future when no time specified" do
-      measurement = @service.measure(@query, nil)
-      measurement.current.is_a?(Barometer::CurrentMeasurement).should be_true
-      measurement.forecast.is_a?(Array).should be_true
-    end
-      
-    it "measures current only when current (or within 10 minutes)" do
-      measurement = @service.measure(@query, @time)
-      measurement.current.is_a?(Barometer::CurrentMeasurement).should be_true
-      measurement.forecast.is_a?(Array).should be_true
-      
-      measurement = @service.measure(@query, @time + (9 * 60))
-      measurement.current.is_a?(Barometer::CurrentMeasurement).should be_true
-      measurement.forecast.is_a?(Array).should be_true
-    end
-    
-    # this test will fail if ran between 11:50pm and midnight
-    it "measures all when time is still for today (but more then 10 minutes ahead)" do
-      if (@time.hour >= 23 && @time.min >= 49)
-        puts
-        puts " --- NOTE ---"
-        puts "Please re-run this after midnight"
-        false.should be_true
-      else  
-        measurement = @service.measure(@query, @time + (11 * 60))
-        measurement.current.is_a?(Barometer::CurrentMeasurement).should be_true
-        measurement.forecast.is_a?(Array).should be_true
-      end
-    end
-    
-    it "measures forecast only when in the future (but not today still)" do
-      measurement = @service.measure(@query, @time + (24 * 60 * 60))
+    it "returns current and future" do
+      measurement = @service.measure(@query)
       measurement.current.is_a?(Barometer::CurrentMeasurement).should be_true
       measurement.forecast.is_a?(Array).should be_true
     end

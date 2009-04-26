@@ -77,13 +77,13 @@ describe "Measurement" do
       lambda { @measurement.forecast = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts String for timezone" do
+    it "only accepts Barometer::Zone for timezone" do
       invalid_data = 1
-      invalid_data.class.should_not == String
+      invalid_data.class.should_not == Barometer::Zone
       lambda { @measurement.timezone = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = "valid"
-      valid_data.class.should == String
+      valid_data = Barometer::Zone.new
+      valid_data.class.should == Barometer::Zone
       lambda { @measurement.timezone = valid_data }.should_not raise_error(ArgumentError)
     end
     

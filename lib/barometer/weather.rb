@@ -41,13 +41,17 @@ module Barometer
     def forecast
       (default = self.default) ? default.forecast : nil
     end
+
+    def now
+      self.current
+    end
     
     def today
       default = self.default
       default && default.forecast ? default.forecast[0] : nil
     end
     
-    def tommorrow
+    def tomorrow
       default = self.default
       default && default.forecast ? default.forecast[1] : nil
     end

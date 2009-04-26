@@ -38,19 +38,7 @@ module Barometer
       [:zipcode, :postalcode, :coordinates, :geocode]
     end
     
-    def self.measure_all(measurement, query, metric=true)
-      self._measure_all(measurement, query, metric)
-    end
-    
-    def self.measure_current(measurement, query, metric=true)
-      self._measure_all(measurement, query, metric)
-    end
-    
-    def self.measure_forecast(measurement, query, metric=true)
-      self._measure_all(measurement, query, metric)
-    end
-    
-    def self._measure_all(measurement, query, metric=true)
+    def self._measure(measurement, query, metric=true)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
       raise ArgumentError unless query.is_a?(String)
       measurement.source = :wunderground
@@ -76,6 +64,9 @@ module Barometer
       #                        !forecast_measurements.first.high.c.nil?)
       measurement.forecast = forecast_measurements
       
+      # get time zone info
+      measurement.timezone = self.build_timezone(forecast_result)
+      
       measurement
     end
 
@@ -84,8 +75,10 @@ module Barometer
       
       current = CurrentMeasurement.new
       
-      current.time = Time.parse(current_result['observation_time_rfc822']) unless
-        current_result['observation_time_rfc822'].blank?
+      #current.time = Time.parse(current_result['observation_time_rfc822']) unless
+      #  current_result['observation_time_rfc822'].blank?
+      current.time = current_result['observation_time_rfc822']
+      current.local_time = current_result['observation_time']
       current.humidity = current_result['relative_humidity'].to_i
       current.icon = current_result['icon'] if current_result['icon']
 
@@ -128,27 +121,6 @@ module Barometer
       current
     end
     
-    # <forecastday>
-    #       <date>
-    #         <epoch>1200452404</epoch>
-    #         <pretty_short>9:00 PM CST</pretty_short>
-    #         <pretty>9:00 PM CST on January 15, 2008</pretty>
-    #         <day>15</day>
-    #         <month>1</month>
-    #         <year>2008</year>
-    #         <yday>14</yday>
-    #         <hour>21</hour>
-    #         <min>00</min>
-    #         <sec>4</sec>
-    #         <isdst>0</isdst>
-    #         <monthname>January</monthname>
-    #         <weekday_short/>
-    #         <weekday>Tuesday</weekday>
-    #         <ampm>PM</ampm>
-    #         <tz_short>CST</tz_short>
-    #         <tz_long>America/Chicago</tz_long>
-    #       </date>
-    #     </forecastday>
     def self.build_forecast(forecast_result)
       raise ArgumentError unless forecast_result.is_a?(Hash)
       
@@ -204,6 +176,40 @@ module Barometer
       end
       
       station
+    end
+    
+    # <forecastday>
+    #       <date>
+    #         <epoch>1200452404</epoch>
+    #         <pretty_short>9:00 PM CST</pretty_short>
+    #         <pretty>9:00 PM CST on January 15, 2008</pretty>
+    #         <day>15</day>
+    #         <month>1</month>
+    #         <year>2008</year>
+    #         <yday>14</yday>
+    #         <hour>21</hour>
+    #         <min>00</min>
+    #         <sec>4</sec>
+    #         <isdst>0</isdst>
+    #         <monthname>January</monthname>
+    #         <weekday_short/>
+    #         <weekday>Tuesday</weekday>
+    #         <ampm>PM</ampm>
+    #         <tz_short>CST</tz_short>
+    #         <tz_long>America/Chicago</tz_long>
+    #       </date>
+    #     </forecastday>
+    def self.build_timezone(timezone_result)
+      raise ArgumentError unless timezone_result.is_a?(Hash)
+      
+      timezone = nil
+      if timezone_result && timezone_result['simpleforecast'] &&
+         timezone_result['simpleforecast']['forecastday'] &&
+         timezone_result['simpleforecast']['forecastday'].first &&
+         timezone_result['simpleforecast']['forecastday'].first['date']
+        timezone = Barometer::Zone.new(Time.now.utc,timezone_result['simpleforecast']['forecastday'].first['date']['tz_long'])
+      end
+      timezone
     end
     
     # use HTTParty to get the current weather

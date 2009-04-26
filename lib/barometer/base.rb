@@ -17,8 +17,7 @@ module Barometer
       @success = false
     end
     
-    def measure(time=nil, metric=nil)
-      raise ArgumentError unless (!time || time.is_a?(Time))
+    def measure(metric=nil)
       return nil unless @query
 
       level = 1
@@ -26,12 +25,12 @@ module Barometer
         if sources = @@selection[level]
           if sources.is_a?(Array)
             sources.each do |source|
-              measurement = Barometer.source(source.to_sym).measure(@query, time, metric)
+              measurement = Barometer.source(source.to_sym).measure(@query, metric)
               @success = true if measurement.success?
               @weather.measurements << measurement
             end
           else  
-            measurement = Barometer.source(source.to_sym).measure(@query, time, metric)
+            measurement = Barometer.source(source.to_sym).measure(@query, metric)
             @success = true if measurement.success?
             @weather.measurements << measurement
           end

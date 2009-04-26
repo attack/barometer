@@ -126,14 +126,6 @@ describe "Barometer" do
       @barometer.respond_to?("measure").should be_true
     end
     
-    it "requires a Time (or nil)" do
-      lambda { @barometer.measure(1) }.should raise_error(ArgumentError)
-      @time.is_a?(Time).should be_true
-      @barometer.measure
-      lambda { @barometer.measure }.should_not raise_error(ArgumentError)
-      lambda { @barometer.measure(@time) }.should_not raise_error(ArgumentError)
-    end
-      
     it "returns a Barometer::Weather object" do
       @barometer.measure.is_a?(Barometer::Weather).should be_true
     end

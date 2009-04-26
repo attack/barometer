@@ -4,6 +4,7 @@ $:.unshift(File.dirname(__FILE__))
 require 'data/measurement'
 require 'data/current'
 require 'data/forecast'
+require 'data/zone'
 require 'data/geo'
 require 'data/station'
 require 'data/units'
