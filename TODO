@@ -1,4 +1,3 @@
-- redo time_zone handling
 - rdoc compatible documentation
 - Weather Service API key setting
 - support IACO as a query format

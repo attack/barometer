@@ -15,7 +15,6 @@ service (wunderground), and only for the current time.
 
 Features to be added before first release:
 - more weather service drivers (yahoo, google)
-- ability to query weather for a specific time in the future
 
 Features to be added in future releases:
 - even more weather service drivers (noaa, weather.com, weatherbug)
@@ -33,9 +32,9 @@ faster development of this project.
 === tzinfo
 
 Why? Barometer will return both current and forecast weather information for
-a given query.  Barometer can also be asked to only return the information
-for a specific time in the future.  Obviously this feature relies on
-translating the time in the future to the correct time zone of the location.
+a given query.  You can then query the dataset for information for a specific
+time in the future.  Obviously this feature relies on translating the time in
+the future to the correct time zone of the location.
 Tzinfo handles this time zone manipulation.
 
 === graticule (very soft dependency)
@@ -133,6 +132,51 @@ string instead of directly feeding the query string to the service (as in
 bootstrap example #1).  The Barometer::Query object has behavior required
 by the service that a regular String doesn't have. Using a driver directly
 WILL accept a String (as in bootstrap example #2).
+
+== searching
+
+After you have measured the data, Barometer provides several methods to help
+you get the data you are after. All examples assume you already have measured
+the data as shown in the above examples.
+
+=== by preference (default service)
+
+  weather.default         # returns measurement for default source
+  weather.current         # returns current_measurement for default
+  weather.now             # returns current_measurement for default
+  weather.forecast        # returns all forecast_measurements for default
+  weather.today           # returns forecast_measurement for default today
+  weather.tomorrow       # returns forecast_measurement for default tomorrow
+  
+  puts weather.now.temperature.c
+  puts weather.tomorrow.high.c
+
+=== by source
+
+  weather.source(:wunderground)   # returns measurement for specified source
+  weather.sources                 # lists all successful sources
+  
+  puts weather.source(:wunderground).current.temperature.c
+
+=== by date
+
+  # note, the date is the date of the locations weather, not the date of the
+  # user measuring the weather
+  date = Date.parse("01-01-2009")
+  weather.for(date)       # returns forecast_measurement for default on date 
+  weather.source(:wunderground).for(date)   # same as above but specific source
+  
+  puts weather.source(:wunderground).for(date).high.c
+
+=== by time
+
+  # note, the time is the time of the locations weather, not the time of the
+  # user measuring the weather
+  time = Time.parse("13:00 01-01-2009")
+  weather.for(time)       # returns forecast_measurement for default at time 
+  weather.source(:wunderground).for(time)   # same as above but specific source
+  
+  puts weather.source(:wunderground).for(time).low.f
 
 = design
 
