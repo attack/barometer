@@ -32,8 +32,9 @@ module Barometer
     
     def self._measure(measurement, query, metric=true)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
-      raise ArgumentError unless query.is_a?(String)
+      raise ArgumentError unless query.is_a?(String) || query.nil?
       measurement.source = :google
+      return measurement if query.nil?
     
       # get measurement
       result = self.get_all(query)
