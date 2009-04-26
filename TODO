@@ -5,3 +5,4 @@
 - use metric setting in queries
 
 - data collecting: save sunrise and sunset info
+- ability to get time zone info from timezone_code (non-standard)

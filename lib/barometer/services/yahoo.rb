@@ -31,11 +31,19 @@ module Barometer
       [:zipcode]
     end
     
+    def self.source_name
+      :yahoo
+    end
+    
+    # override, only supports US
+    def self.supports_country?(query=nil)
+      query && query.country_code && query.country_code.downcase == "us"
+    end
+
     def self._measure(measurement, query, metric=true)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
-      raise ArgumentError unless query.is_a?(String) || query.nil?
-      measurement.source = :yahoo
-      return measurement if query.nil?
+      raise ArgumentError unless query.is_a?(String)
+      measurement.source = self.source_name
     
       # get measurement
       result = self.get_all(query)

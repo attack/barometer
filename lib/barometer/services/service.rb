@@ -30,12 +30,13 @@ module Barometer
     #
     def self.measure(query, metric=true)
       raise ArgumentError unless query.is_a?(Barometer::Query)
-      # TODO: this next line has no test
-      return nil unless self.meets_requirements?(query)
       
-      preferred_query = query.convert!(self.accepted_formats)
       measurement = Barometer::Measurement.new
-      measurement = self._measure(measurement, preferred_query, metric)
+      measurement.source = self.source_name
+      if self.meets_requirements?(query)
+        preferred_query = query.convert!(self.accepted_formats)
+        measurement = self._measure(measurement, preferred_query, metric) if preferred_query
+      end
       measurement
     end
     
@@ -54,6 +55,11 @@ module Barometer
     
     # STUB: define this method to measure the current & future weather
     def self._measure(measurement=nil, query=nil, metric=true)
+      raise NotImplementedError
+    end
+
+    # STUB: define this method to actually retireve the source_name
+    def self.source_name
       raise NotImplementedError
     end
 

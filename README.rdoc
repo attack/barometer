@@ -10,14 +10,16 @@ unavailable.
 
 == status
 
-Currently this project is in development and will only work for two weather
-services (wunderground, google).
+Currently this project is in development and will only work for a few weather
+services (wunderground, google, yahoo).
 
 Features to be added before first release:
-- more weather service drivers (yahoo)
+- better metric awareness
+- gem setup/config, apply to rubyforge
 
 Features to be added in future releases:
 - even more weather service drivers (noaa, weather.com, weatherbug)
+- collect sunrise/sunset data
 - ability to query multiple services and combine/average the results
 - support iaco as a query format
 

@@ -30,7 +30,7 @@ module Barometer
               @weather.measurements << measurement
             end
           else  
-            measurement = Barometer.source(source.to_sym).measure(@query, metric)
+            measurement = Barometer.source(sources.to_sym).measure(@query, metric)
             @success = true if measurement.success?
             @weather.measurements << measurement
           end

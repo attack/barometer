@@ -30,11 +30,14 @@ module Barometer
       [:zipcode, :postalcode, :geocode]
     end
     
+    def self.source_name
+      :google
+    end
+    
     def self._measure(measurement, query, metric=true)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
-      raise ArgumentError unless query.is_a?(String) || query.nil?
-      measurement.source = :google
-      return measurement if query.nil?
+      raise ArgumentError unless query.is_a?(String)
+      measurement.source = self.source_name
     
       # get measurement
       result = self.get_all(query)
