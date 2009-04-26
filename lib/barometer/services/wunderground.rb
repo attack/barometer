@@ -26,13 +26,7 @@ module Barometer
   #    * airport code (3-letter or 4-letter)
   #    * lat,lon
   #
-  # NOTE: measure_all, measure_current, measure_forecast all call _measure_all
-  # because only the current data has the station data and only the forecast data
-  # has the time zone info
-  #
   class Wunderground < Service
-    
-    base_uri "api.wunderground.com/auto/wui/geo"
     
     def self.accepted_formats
       [:zipcode, :postalcode, :coordinates, :geocode]
@@ -215,7 +209,7 @@ module Barometer
     # use HTTParty to get the current weather
     def self.get_current(query)
       Barometer::Wunderground.get(
-       "/WXCurrentObXML/index.xml",
+       "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml",
        :query => {:query => query},
        :format => :xml
        )['current_observation']
@@ -224,7 +218,7 @@ module Barometer
     # use HTTParty to get the forecasted weather
     def self.get_forecast(query)
       Barometer::Wunderground.get(
-        "/ForecastXML/index.xml",
+        "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml",
         :query => {:query => query},
         :format => :xml
       )['forecast']

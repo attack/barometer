@@ -10,11 +10,11 @@ unavailable.
 
 == status
 
-Currently this project is in development and will only work for one weather
-service (wunderground), and only for the current time.
+Currently this project is in development and will only work for two weather
+services (wunderground, google).
 
 Features to be added before first release:
-- more weather service drivers (yahoo, google)
+- more weather service drivers (yahoo)
 
 Features to be added in future releases:
 - even more weather service drivers (noaa, weather.com, weatherbug)
@@ -29,13 +29,16 @@ Why? HTTParty was created and designed specifically for consuming web services.
 I choose to use this over using the Net::HTTP library directly to allow for
 faster development of this project.
 
-=== tzinfo
+=== tzinfo (soft dependency)
 
 Why? Barometer will return both current and forecast weather information for
 a given query.  You can then query the dataset for information for a specific
 time in the future.  Obviously this feature relies on translating the time in
 the future to the correct time zone of the location.
 Tzinfo handles this time zone manipulation.
+
+Tzinfo is not required, just don't expect the searching by date or time to
+work perfectly.
 
 === graticule (very soft dependency)
 

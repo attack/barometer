@@ -2,3 +2,4 @@
 - Weather Service API key setting
 - support IACO as a query format
 - a few methods in Barometer::Query have been added through refactoring, adjust tests!
+- use metric setting in queries

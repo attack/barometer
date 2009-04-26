@@ -49,6 +49,9 @@ module Barometer
     
     def convert!(preferred_formats=nil)
       raise ArgumentError unless (preferred_formats && preferred_formats.size > 0)
+      
+      # reset preffered_query
+      @preferred = nil
 
       # first off, if the format we currently have is in the list, just use that
       # WRONG ... get one of higher preference

@@ -13,9 +13,9 @@ describe "Wunderground" do
       Barometer::Wunderground.accepted_formats.should == @accepted_formats
     end
     
-    it "defines base_uri" do
-      Barometer::Wunderground.base_uri.should == @base_uri
-    end
+#    it "defines base_uri" do
+#      Barometer::Wunderground.base_uri.should == @base_uri
+#    end
     
     it "defines get_current" do
       Barometer::Wunderground.respond_to?("get_current").should be_true
@@ -118,7 +118,7 @@ describe "Wunderground" do
     
     describe "all" do
       
-      it "responds to measure_all" do
+      it "responds to _measure" do
         Barometer::Wunderground.respond_to?("_measure").should be_true
       end
       
