@@ -40,11 +40,11 @@ module Barometer
     
     def self._measure(measurement, query, metric=true)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
-      raise ArgumentError unless query.is_a?(String)
+      raise ArgumentError unless query.is_a?(Barometer::Query)
       measurement.source = self.source_name
     
       # get measurement
-      result = self.get_all(query, metric)
+      result = self.get_all(query.preferred, metric)
       
       # build current
       current_measurement = self.build_current(result, metric)
@@ -57,7 +57,8 @@ module Barometer
       forecast_measurements = self.build_forecast(result, metric)
       measurement.forecast = forecast_measurements
       
-      # get time zone info
+      # build extra data
+      measurement.location = self.build_location(query.geo)
       #measurement.timezone = self.build_timezone(forecast_result)
 
       measurement
@@ -151,6 +152,22 @@ module Barometer
       end
 
       forecasts
+    end
+    
+    def self.build_location(geo=nil)
+      raise ArgumentError unless (geo.nil? || geo.is_a?(Barometer::Geo))
+      
+      location = Location.new
+      if geo
+        location.city = geo.locality
+        location.state_code = geo.region
+        location.country = geo.country
+        location.country_code = geo.country_code
+        location.latitude = geo.latitude
+        location.longitude = geo.longitude
+      end
+      
+      location
     end
     
     # def self.build_timezone(timezone_result)

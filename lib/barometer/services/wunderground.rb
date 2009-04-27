@@ -46,18 +46,18 @@ module Barometer
     
     def self._measure(measurement, query, metric=true)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
-      raise ArgumentError unless query.is_a?(String)
+      raise ArgumentError unless query.is_a?(Barometer::Query)
       measurement.source = self.source_name
       
       # get current measurement
-      current_result = self.get_current(query)
+      current_result = self.get_current(query.preferred)
       current_measurement = self.build_current(current_result, metric)
       measurement.success! if
         (current_measurement.temperature && !current_measurement.temperature.c.nil?)
       measurement.current = current_measurement
       
       # get forecast measurement
-      forecast_result = self.get_forecast(query)
+      forecast_result = self.get_forecast(query.preferred)
       forecast_measurements = self.build_forecast(forecast_result, metric)
       measurement.forecast = forecast_measurements
       

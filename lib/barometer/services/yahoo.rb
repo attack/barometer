@@ -49,11 +49,11 @@ module Barometer
 
     def self._measure(measurement, query, metric=true)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
-      raise ArgumentError unless query.is_a?(String)
+      raise ArgumentError unless query.is_a?(Barometer::Query)
       measurement.source = self.source_name
     
       # get measurement
-      result = self.get_all(query, metric)
+      result = self.get_all(query.preferred, metric)
       
       # build current
       current_measurement = self.build_current(result, metric)
@@ -66,7 +66,7 @@ module Barometer
       measurement.forecast = forecast_measurements
       
       # build extra data
-      measurement.location = self.build_location(result)
+      measurement.location = self.build_location(result, query.geo)
       #measurement.timezone = self.build_timezone(forecast_result)
     
       measurement
@@ -177,17 +177,27 @@ module Barometer
       forecasts
     end
     
-    def self.build_location(location_result)
+    def self.build_location(location_result, geo=nil)
       raise ArgumentError unless location_result.is_a?(Hash)
+      raise ArgumentError unless (geo.nil? || geo.is_a?(Barometer::Geo))
       
       location = Location.new
-      if location_result && location_result['yweather:location']
-        location.city = location_result['yweather:location']['city']
-        location.state_code = location_result['yweather:location']['region']
-        location.country_code = location_result['yweather:location']['country']
-        if location_result['item']
-          location.latitude = location_result['item']['geo:lat']
-          location.longitude = location_result['item']['geo:long']
+      if geo
+        location.city = geo.locality
+        location.state_code = geo.region
+        location.country = geo.country
+        location.country_code = geo.country_code
+        location.latitude = geo.latitude
+        location.longitude = geo.longitude
+      else
+        if location_result && location_result['yweather:location']
+          location.city = location_result['yweather:location']['city']
+          location.state_code = location_result['yweather:location']['region']
+          location.country_code = location_result['yweather:location']['country']
+          if location_result['item']
+            location.latitude = location_result['item']['geo:lat']
+            location.longitude = location_result['item']['geo:long']
+          end
         end
       end
       

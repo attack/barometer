@@ -58,6 +58,26 @@ describe "Google" do
     end
     
   end
+  
+  describe "building the location data" do
+    
+    it "defines the build method" do
+      Barometer::Google.respond_to?("build_location").should be_true
+    end
+    
+    it "requires Barometer::Geo input" do
+      geo = Barometer::Geo.new({})
+      lambda { Barometer::Google.build_location({}) }.should raise_error(ArgumentError)
+      lambda { Barometer::Google.build_location(geo) }.should_not raise_error(ArgumentError)
+    end
+    
+    it "returns Barometer::Location object" do
+      geo = Barometer::Geo.new({})
+      location = Barometer::Google.build_location(geo)
+      location.is_a?(Barometer::Location).should be_true
+    end
+    
+  end
 
   # describe "building the timezone" do
   #   
@@ -75,11 +95,12 @@ describe "Google" do
   describe "when measuring" do
   
     before(:each) do
-      @query = "Calgary,AB"
+      @query = Barometer::Query.new("Calgary,AB")
+      @query.preferred = "Calgary,AB"
       @measurement = Barometer::Measurement.new
       
       FakeWeb.register_uri(:get, 
-        "http://google.com/ig/api?weather=#{CGI.escape(@query)}&hl=en-GB",
+        "http://google.com/ig/api?weather=#{CGI.escape(@query.preferred)}&hl=en-GB",
         :string => File.read(File.join(File.dirname(__FILE__), 
           'fixtures', 
           'google_calgary_ab.xml')
@@ -100,7 +121,7 @@ describe "Google" do
         lambda { Barometer::Google._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
       end
   
-      it "requires a String query" do
+      it "requires a Barometer::Query query" do
         lambda { Barometer::Google._measure }.should raise_error(ArgumentError)
         lambda { Barometer::Google._measure(@measurement, 1) }.should raise_error(ArgumentError)
         

@@ -152,6 +152,10 @@ describe "Query" do
       Barometer::Query.google_geocode_key.should == key
     end
     
+    it "responds to preferred" do
+      @query.preferred.should be_nil
+    end
+    
     it "responds to geo" do
       @query.geo.should be_nil
     end

@@ -24,7 +24,7 @@ module Barometer
     def self.google_geocode_key=(key); @@google_geocode_key = key; end;
     
     attr_reader   :format
-    attr_accessor :q, :country_code, :geo
+    attr_accessor :q, :preferred, :country_code, :geo
     
     def initialize(query=nil)
       @q = query
@@ -52,7 +52,8 @@ module Barometer
     # side effect of some conversions, the country_code might be known, then save it
     def convert!(preferred_formats=nil)
       raise ArgumentError unless (preferred_formats && preferred_formats.size > 0)
-      preferred = nil
+      # reset preferred
+      @preferred = nil
       
       # go through each acceptable format and try to convert to that
       converted = false
@@ -61,17 +62,17 @@ module Barometer
         # we are already in this format, return this
         if preferred_format == @format
           converted = true
-          preferred ||= @q
+          @preferred ||= @q
         end
         
         unless converted
           case preferred_format
           when :coordinates
             geocoded = true
-            preferred, @country_code, @geo = Barometer::Query.to_coordinates(@q, @format)
+            @preferred, @country_code, @geo = Barometer::Query.to_coordinates(@q, @format)
           when :geocode
             geocoded = true
-            preferred, @country_code, @geo = Barometer::Query.to_geocode(@q, @format)
+            @preferred, @country_code, @geo = Barometer::Query.to_geocode(@q, @format)
           end
         end
       end
@@ -81,7 +82,7 @@ module Barometer
         not_used_coords, not_used_code, @geo = Barometer::Query.to_coordinates(@q, @format)
       end
       
-      preferred
+      @preferred
     end
     
     #

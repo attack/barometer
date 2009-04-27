@@ -34,8 +34,8 @@ module Barometer
       measurement = Barometer::Measurement.new
       measurement.source = self.source_name
       if self.meets_requirements?(query)
-        preferred_query = query.convert!(self.accepted_formats)
-        measurement = self._measure(measurement, preferred_query, metric) if preferred_query
+        query.convert!(self.accepted_formats)
+        measurement = self._measure(measurement, query, metric) if query.preferred
       end
       measurement
     end

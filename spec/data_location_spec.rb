@@ -28,6 +28,10 @@ describe "Location" do
       @location.state_code.should be_nil
     end
     
+    it "responds to country" do
+      @location.country.should be_nil
+    end
+    
     it "responds to country_code" do
       @location.country_code.should be_nil
     end

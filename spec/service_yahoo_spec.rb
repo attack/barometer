@@ -70,6 +70,12 @@ describe "Yahoo" do
       lambda { Barometer::Yahoo.build_location({}) }.should_not raise_error(ArgumentError)
     end
     
+    it "requires Barometer::Geo input" do
+      geo = Barometer::Geo.new({})
+      lambda { Barometer::Yahoo.build_location({}, {}) }.should raise_error(ArgumentError)
+      lambda { Barometer::Yahoo.build_location({}, geo) }.should_not raise_error(ArgumentError)
+    end
+    
     it "returns Barometer::Location object" do
       location = Barometer::Yahoo.build_location({})
       location.is_a?(Barometer::Location).should be_true
@@ -93,11 +99,12 @@ describe "Yahoo" do
   describe "when measuring" do
   
     before(:each) do
-      @query = "90210"
+      @query = Barometer::Query.new("90210")
+      @query.preferred = "90210"
       @measurement = Barometer::Measurement.new
       
       FakeWeb.register_uri(:get, 
-        "http://weather.yahooapis.com:80/forecastrss?u=c&p=#{CGI.escape(@query)}",
+        "http://weather.yahooapis.com:80/forecastrss?u=c&p=#{CGI.escape(@query.preferred)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
           'fixtures', 
           'yahoo_90210.xml')
@@ -118,7 +125,7 @@ describe "Yahoo" do
         lambda { Barometer::Yahoo._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
       end
   
-      it "requires a String query" do
+      it "requires a Barometer::Query query" do
         lambda { Barometer::Yahoo._measure }.should raise_error(ArgumentError)
         lambda { Barometer::Yahoo._measure(@measurement, 1) }.should raise_error(ArgumentError)
         
