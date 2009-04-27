@@ -50,16 +50,24 @@ module Barometer
       measurement.source = self.source_name
       
       # get current measurement
-      current_result = self.get_current(query.preferred)
-      current_measurement = self.build_current(current_result, metric)
-      measurement.success! if
-        (current_measurement.temperature && !current_measurement.temperature.c.nil?)
-      measurement.current = current_measurement
+      begin
+        current_result = self.get_current(query.preferred)
+        current_measurement = self.build_current(current_result, metric)
+        measurement.success! if
+          (current_measurement.temperature && !current_measurement.temperature.c.nil?)
+        measurement.current = current_measurement
+      rescue Timeout::Error => e
+        return measurement
+      end
       
       # get forecast measurement
-      forecast_result = self.get_forecast(query.preferred)
-      forecast_measurements = self.build_forecast(forecast_result, metric)
-      measurement.forecast = forecast_measurements
+      begin
+        forecast_result = self.get_forecast(query.preferred)
+        forecast_measurements = self.build_forecast(forecast_result, metric)
+        measurement.forecast = forecast_measurements
+      rescue Timeout::Error => e
+        return measurement
+      end
       
       # build extra data
       measurement.location = self.build_location(current_result)
@@ -258,7 +266,8 @@ module Barometer
       Barometer::Wunderground.get(
        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml",
        :query => {:query => query},
-       :format => :xml
+       :format => :xml,
+       :timeout => Barometer.timeout
        )['current_observation']
     end
     
@@ -267,7 +276,8 @@ module Barometer
       Barometer::Wunderground.get(
         "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml",
         :query => {:query => query},
-        :format => :xml
+        :format => :xml,
+        :timeout => Barometer.timeout
       )['forecast']
     end
     

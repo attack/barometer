@@ -14,7 +14,6 @@ Currently this project is in development and will only work for a few weather
 services (wunderground, google, yahoo).
 
 Features to be added before first release:
-- better geo coding
 - gem setup/config, apply to rubyforge
 
 Features to be added in future releases:
@@ -30,6 +29,8 @@ Features to be added in future releases:
 Why? HTTParty was created and designed specifically for consuming web services.
 I choose to use this over using the Net::HTTP library directly to allow for
 faster development of this project.
+
+HTTParty is also extended to include configurable Timoout support.
 
 === tzinfo (soft dependency)
 

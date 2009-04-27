@@ -25,6 +25,11 @@ module Barometer
   @@force_geocode = false
   def self.force_geocode; @@force_geocode; end;
   def self.force_geocode=(value); @@force_geocode = value; end;
+  def self.force_geocode!; @@force_geocode = true; end;
+  
+  @@timeout = 15
+  def self.timeout; @@timeout; end;
+  def self.timeout=(value); @@timeout = value; end;
   
   def self.new(query=nil)
     Barometer::Base.new(query)

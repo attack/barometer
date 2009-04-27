@@ -42,9 +42,13 @@ module Barometer
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
       raise ArgumentError unless query.is_a?(Barometer::Query)
       measurement.source = self.source_name
-    
+      
       # get measurement
-      result = self.get_all(query.preferred, metric)
+      begin
+        result = self.get_all(query.preferred, metric)
+      rescue Timeout::Error => e
+        return measurement
+      end
       
       # build current
       current_measurement = self.build_current(result, metric)
@@ -188,7 +192,8 @@ module Barometer
       Barometer::Google.get(
         "http://google.com/ig/api",
         :query => {:weather => query, :hl => (metric ? "en-GB" : "en-US")},
-        :format => :xml
+        :format => :xml,
+        :timeout => Barometer.timeout
       )['xml_api_reply']['weather']
     end
     

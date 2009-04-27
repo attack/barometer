@@ -35,11 +35,26 @@ describe "Barometer" do
       Barometer.skip_graticule.should be_true
     end
     
-    it "foreces the geocoding of queries" do
+    it "forces the geocoding of queries" do
       Barometer.respond_to?("force_geocode").should be_true
       Barometer.force_geocode.should be_false
       Barometer.force_geocode = true
       Barometer.force_geocode.should be_true
+    end
+    
+    it "forces the geocoding of queries" do
+      Barometer.respond_to?("force_geocode!").should be_true
+      Barometer.force_geocode = false
+      Barometer.force_geocode.should be_false
+      Barometer.force_geocode!
+      Barometer.force_geocode.should be_true
+    end
+    
+    it "set the global service timeout" do
+      Barometer.respond_to?("timeout").should be_true
+      Barometer.timeout.should == 15
+      Barometer.timeout = 5
+      Barometer.timeout.should == 5
     end
     
   end

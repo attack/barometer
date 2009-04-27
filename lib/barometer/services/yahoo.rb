@@ -53,7 +53,11 @@ module Barometer
       measurement.source = self.source_name
     
       # get measurement
-      result = self.get_all(query.preferred, metric)
+      begin
+        result = self.get_all(query.preferred, metric)
+      rescue Timeout::Error => e
+        return measurement
+      end
       
       # build current
       current_measurement = self.build_current(result, metric)
@@ -222,7 +226,8 @@ module Barometer
       Barometer::Yahoo.get(
         "http://weather.yahooapis.com/forecastrss",
         :query => {:p => query, :u => (metric ? 'c' : 'f')},
-        :format => :xml
+        :format => :xml,
+        :timeout => Barometer.timeout
       )['rss']['channel']
     end
     
