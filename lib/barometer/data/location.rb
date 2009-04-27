@@ -1,11 +1,12 @@
 module Barometer
   #
-  # A simple Station class
+  # A simple Location class
   # 
   # Used to store location information about the station that
-  # gave the measurement data for a weather query
+  # gave the measurement data for a weather query, or the location
+  # that was queried
   #
-  class Station
+  class Location
     
     attr_accessor :id, :name, :city
     attr_accessor :state_name, :state_code, :country_code, :zip_code

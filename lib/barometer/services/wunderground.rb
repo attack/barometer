@@ -62,6 +62,7 @@ module Barometer
       measurement.forecast = forecast_measurements
       
       # build extra data
+      measurement.location = self.build_location(current_result)
       measurement.station = self.build_station(current_result)
       measurement.timezone = self.build_timezone(forecast_result)
       
@@ -180,11 +181,29 @@ module Barometer
       
       forecasts
     end
+
+    def self.build_location(location_result)
+      raise ArgumentError unless location_result.is_a?(Hash)
+      
+      location = Location.new
+      if location_result['display_location']
+        location.name = location_result['display_location']['full']
+        location.city = location_result['display_location']['city']
+        location.state_name = location_result['display_location']['state_name']
+        location.state_code = location_result['display_location']['state']
+        location.country_code = location_result['display_location']['country']
+        location.zip_code = location_result['display_location']['zip']
+        location.latitude = location_result['display_location']['latitude']
+        location.longitude = location_result['display_location']['longitude']
+      end
+      
+      location
+    end
     
     def self.build_station(station_result)
       raise ArgumentError unless station_result.is_a?(Hash)
       
-      station = Station.new
+      station = Location.new
       station.id = station_result['station_id']
       if station_result['observation_location']
         station.name = station_result['observation_location']['full']

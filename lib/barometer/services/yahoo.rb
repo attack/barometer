@@ -57,7 +57,6 @@ module Barometer
       
       # build current
       current_measurement = self.build_current(result, metric)
-      # TODO: this next line has no test
       measurement.success! if
         (current_measurement.temperature && !current_measurement.temperature.c.nil?)
       measurement.current = current_measurement
@@ -66,7 +65,8 @@ module Barometer
       forecast_measurements = self.build_forecast(result, metric)
       measurement.forecast = forecast_measurements
       
-      # get time zone info
+      # build extra data
+      measurement.location = self.build_location(result)
       #measurement.timezone = self.build_timezone(forecast_result)
     
       measurement
@@ -177,6 +177,23 @@ module Barometer
       forecasts
     end
     
+    def self.build_location(location_result)
+      raise ArgumentError unless location_result.is_a?(Hash)
+      
+      location = Location.new
+      if location_result && location_result['yweather:location']
+        location.city = location_result['yweather:location']['city']
+        location.state_code = location_result['yweather:location']['region']
+        location.country_code = location_result['yweather:location']['country']
+        if location_result['item']
+          location.latitude = location_result['item']['geo:lat']
+          location.longitude = location_result['item']['geo:long']
+        end
+      end
+      
+      location
+    end
+
     # def self.build_timezone(timezone_result)
     #   raise ArgumentError unless timezone_result.is_a?(Hash)
     #   

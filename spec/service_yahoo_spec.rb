@@ -58,6 +58,24 @@ describe "Yahoo" do
     end
     
   end
+  
+  describe "building the location data" do
+    
+    it "defines the build method" do
+      Barometer::Yahoo.respond_to?("build_location").should be_true
+    end
+    
+    it "requires Hash input" do
+      lambda { Barometer::Yahoo.build_location }.should raise_error(ArgumentError)
+      lambda { Barometer::Yahoo.build_location({}) }.should_not raise_error(ArgumentError)
+    end
+    
+    it "returns Barometer::Location object" do
+      location = Barometer::Yahoo.build_location({})
+      location.is_a?(Barometer::Location).should be_true
+    end
+    
+  end
 
   # describe "building the timezone" do
   #   

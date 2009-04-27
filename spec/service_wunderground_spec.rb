@@ -74,9 +74,27 @@ describe "Wunderground" do
       lambda { Barometer::Wunderground.build_station({}) }.should_not raise_error(ArgumentError)
     end
     
-    it "returns Barometer::Station object" do
+    it "returns Barometer::Location object" do
       station = Barometer::Wunderground.build_station({})
-      station.is_a?(Barometer::Station).should be_true
+      station.is_a?(Barometer::Location).should be_true
+    end
+    
+  end
+  
+  describe "building the location data" do
+    
+    it "defines the build method" do
+      Barometer::Wunderground.respond_to?("build_location").should be_true
+    end
+    
+    it "requires Hash input" do
+      lambda { Barometer::Wunderground.build_location }.should raise_error(ArgumentError)
+      lambda { Barometer::Wunderground.build_location({}) }.should_not raise_error(ArgumentError)
+    end
+    
+    it "returns Barometer::Location object" do
+      location = Barometer::Wunderground.build_location({})
+      location.is_a?(Barometer::Location).should be_true
     end
     
   end
