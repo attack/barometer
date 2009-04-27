@@ -18,87 +18,67 @@ module Barometer
   #
   class Query
     
-    # OPTIONAL
-    # used by Graticule for geocoding
+    # OPTIONAL: key required by Google for geocoding
     @@google_geocode_key = nil
     def self.google_geocode_key; @@google_geocode_key || Barometer.google_geocode_key; end;
     def self.google_geocode_key=(key); @@google_geocode_key = key; end;
     
-    attr_reader   :format, :preferred
+    attr_reader   :format
     attr_accessor :q, :country_code
     
     def initialize(query=nil)
       @q = query
-      self.determine_format!
+      self.analyze!
     end
     
-    def determine_format!
+    # analyze the saved query to determine the format.  for the format of
+    # :zipcode and :postalcode the country_code can also be set
+    def analyze!
       return unless @q
-      if Barometer::Query.is_zipcode?(@q)
+      if Barometer::Query.is_us_zipcode?(@q)
         @format = :zipcode
-        @country_code = 'US'
       elsif Barometer::Query.is_canadian_postcode?(@q)
         @format = :postalcode
-        @country_code = 'CA'
       elsif Barometer::Query.is_coordinates?(@q)
         @format = :coordinates
       else
         @format = :geocode
       end
+      @country_code = Barometer::Query.format_to_country_code(@format)
     end
     
+    # take a list of acceptable (and ordered by preference) formats and convert
+    # the current query (q) into the most preferred and acceptable format. as a
+    # side effect of some conversions, the country_code might be known, then save it
     def convert!(preferred_formats=nil)
       raise ArgumentError unless (preferred_formats && preferred_formats.size > 0)
+      preferred = nil
       
-      # reset preffered_query
-      @preferred = nil
-
-      # first off, if the format we currently have is in the list, just use that
-      # WRONG ... get one of higher preference
-      #return (@preferred = @q) if preferred_formats.include?(@format)
-      
-      # some formats do not convert, so raise an error (or just exit)
-      #non_converting_formats = []
-      #return (@preffered_query = nil) if
-      #  non_converting_formats && non_converting_formats.include?(@format)
-      
-      # looks like we will have to attempt converting the query
       # go through each acceptable format and try to convert to that
       preferred_formats.each do |preferred_format|
         # we are already in this format, return this
-        return (@preferred ||= @q) if preferred_format == @format
+        return (preferred ||= @q) if preferred_format == @format
         case preferred_format
         when :coordinates
-          @preferred, @country_code = Barometer::Query.to_coordinates(@q, @format)
+          preferred, @country_code = Barometer::Query.to_coordinates(@q, @format)
         when :geocode
-          @preferred, @country_code = Barometer::Query.to_geocode(@q, @format)
+          preferred, @country_code = Barometer::Query.to_geocode(@q, @format)
         end
       end
       
-      @preferred || nil
+      preferred
     end
     
     #
     # HELPERS
     #
     
-    def zipcode?
-      @format == :zipcode
-    end
+    def zipcode?; @format == :zipcode; end
+    def postalcode?; @format == :postalcode; end
+    def coordinates?; @format == :coordinates; end
+    def geocode?; @format == :geocode; end
     
-    def postalcode?
-      @format == :postalcode
-    end
-
-    def coordinates?
-      @format == :coordinates
-    end
-
-    def geocode?
-      @format == :geocode
-    end
-    
-    def self.is_zipcode?(query)
+    def self.is_us_zipcode?(query)
       us_zipcode_regex = /(^[0-9]{5}$)|(^[0-9]{5}-[0-9]{4}$)/
       return !(query =~ us_zipcode_regex).nil?
     end

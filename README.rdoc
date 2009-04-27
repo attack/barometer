@@ -14,7 +14,7 @@ Currently this project is in development and will only work for a few weather
 services (wunderground, google, yahoo).
 
 Features to be added before first release:
-- better metric awareness
+- better geo coding
 - gem setup/config, apply to rubyforge
 
 Features to be added in future releases:
@@ -103,9 +103,10 @@ valid query, or providing a query for a location not supported by the
 weather service.
 
 For example, if you look at the example above, the query of "Paris" refers
-to a city in France.  Both Yahoo and Google weather services only support
+to a city in France.  Yahoo weather services only supports
 weather results for USA (at least at the time of writing).  Therefore, 
-Barometer would not use Yahoo or Google but failover to use Wunderground.
+Barometer would not use Yahoo, just Google and failover to use Wunderground
+(if needed).
 
 === bootstrapping
 

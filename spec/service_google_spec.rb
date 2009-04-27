@@ -17,12 +17,8 @@ describe "Google" do
     #   Barometer::Google.base_uri.should == @base_uri
     # end
     
-    it "defines get_current" do
-      Barometer::Google.respond_to?("get_current").should be_true
-    end
-    
-    it "defines get_forecast" do
-      Barometer::Google.respond_to?("get_forecast").should be_true
+    it "defines get_all" do
+      Barometer::Google.respond_to?("get_all").should be_true
     end
     
   end
@@ -83,7 +79,7 @@ describe "Google" do
       @measurement = Barometer::Measurement.new
       
       FakeWeb.register_uri(:get, 
-        "http://google.com/ig/api?weather=#{CGI.escape(@query)}",
+        "http://google.com/ig/api?weather=#{CGI.escape(@query)}&hl=en-GB",
         :string => File.read(File.join(File.dirname(__FILE__), 
           'fixtures', 
           'google_calgary_ab.xml')

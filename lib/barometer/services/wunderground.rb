@@ -7,6 +7,14 @@ module Barometer
   # registration required: NO
   # supported countries: ALL
   #
+  # performs geo coding
+  # city: YES
+  # coordinates: YES
+  # NOTE: provides geo data for location and weather station
+  #
+  # timezone info
+  # provides zone: YES (but only in forecast query)
+  #
   # API: http://wiki.wunderground.com/index.php/API_-_XML
   #
   # Possible queries:
@@ -43,32 +51,24 @@ module Barometer
       
       # get current measurement
       current_result = self.get_current(query)
-      #puts current_result.inspect
-      current_measurement = self.build_current(current_result)
-      measurement.station = self.build_station(current_result)
-      # TODO: this next line has no test
+      current_measurement = self.build_current(current_result, metric)
       measurement.success! if
         (current_measurement.temperature && !current_measurement.temperature.c.nil?)
       measurement.current = current_measurement
       
       # get forecast measurement
       forecast_result = self.get_forecast(query)
-      #puts forecast_result.inspect
-      forecast_measurements = self.build_forecast(forecast_result)
-      # TODO: this next line has no test
-      #measurement.success! if (forecast_measurements &&
-      #                        forecast_measurements.first &&
-      #                        forecast_measurements.first.high &&
-      #                        !forecast_measurements.first.high.c.nil?)
+      forecast_measurements = self.build_forecast(forecast_result, metric)
       measurement.forecast = forecast_measurements
       
-      # get time zone info
+      # build extra data
+      measurement.station = self.build_station(current_result)
       measurement.timezone = self.build_timezone(forecast_result)
       
       measurement
     end
 
-    def self.build_current(current_result)
+    def self.build_current(current_result, metric=true)
       raise ArgumentError unless current_result.is_a?(Hash)
       
       current = CurrentMeasurement.new
@@ -80,46 +80,64 @@ module Barometer
       current.humidity = current_result['relative_humidity'].to_i
       current.icon = current_result['icon'] if current_result['icon']
 
-      temp = Temperature.new
-      temp.f = current_result['temp_f'].to_f
-      temp.c = current_result['temp_c'].to_f
+      temp = Temperature.new(metric)
+      if metric
+        temp.c = current_result['temp_c'].to_f
+      else
+        temp.f = current_result['temp_f'].to_f
+      end
       current.temperature = temp
 
-      wind = Speed.new
+      wind = Speed.new(metric)
       wind.mph = current_result['wind_mph'].to_f
       wind.degrees = current_result['wind_degrees'].to_i
       wind.direction = current_result['wind_dir']
       current.wind = wind
 
-      pressure = Pressure.new
-      pressure.in = current_result['pressure_in'].to_f
-      pressure.mb = current_result['pressure_mb'].to_f
+      pressure = Pressure.new(metric)
+      if metric
+        pressure.mb = current_result['pressure_mb'].to_f
+      else
+        pressure.in = current_result['pressure_in'].to_f
+      end
       current.pressure = pressure
 
-      dew_point = Temperature.new
-      dew_point.f = current_result['dewpoint_f'].to_f
-      dew_point.c = current_result['dewpoint_c'].to_f
+      dew_point = Temperature.new(metric)
+      if metric
+        dew_point.c = current_result['dewpoint_c'].to_f
+      else
+        dew_point.f = current_result['dewpoint_f'].to_f
+      end
       current.dew_point = dew_point
 
-      heat_index = Temperature.new
-      heat_index.f = current_result['heat_index_f'].to_f
-      heat_index.c = current_result['heat_index_c'].to_f
+      heat_index = Temperature.new(metric)
+      if metric
+        heat_index.c = current_result['heat_index_c'].to_f
+      else
+        heat_index.f = current_result['heat_index_f'].to_f
+      end
       current.heat_index = heat_index
 
-      wind_chill = Temperature.new
-      wind_chill.f = current_result['windchill_f'].to_f
-      wind_chill.c = current_result['windchill_c'].to_f
+      wind_chill = Temperature.new(metric)
+      if metric
+        wind_chill.c = current_result['windchill_c'].to_f
+      else
+        wind_chill.f = current_result['windchill_f'].to_f
+      end
       current.wind_chill = wind_chill
 
-      visibility = Distance.new
-      visibility.m = current_result['visibility_mi'].to_f
-      visibility.km = current_result['visibility_km'].to_f
+      visibility = Distance.new(metric)
+      if metric
+        visibility.km = current_result['visibility_km'].to_f
+      else
+        visibility.m = current_result['visibility_mi'].to_f
+      end
       current.visibility = visibility
       
       current
     end
     
-    def self.build_forecast(forecast_result)
+    def self.build_forecast(forecast_result, metric=true)
       raise ArgumentError unless forecast_result.is_a?(Hash)
       
       forecasts = []
@@ -140,14 +158,20 @@ module Barometer
 
           forecast_measurement.date = Date.parse(forecast['date']['pretty'])
 
-          high = Temperature.new
-          high.f = forecast['high']['fahrenheit'].to_f
-          high.c = forecast['high']['celsius'].to_f
+          high = Temperature.new(metric)
+          if metric
+            high.c = forecast['high']['celsius'].to_f
+          else
+            high.f = forecast['high']['fahrenheit'].to_f
+          end
           forecast_measurement.high = high
 
-          low = Temperature.new
-          low.f = forecast['low']['fahrenheit'].to_f
-          low.c = forecast['low']['celsius'].to_f
+          low = Temperature.new(metric)
+          if metric
+            low.c = forecast['low']['celsius'].to_f
+          else
+            low.f = forecast['low']['fahrenheit'].to_f
+          end
           forecast_measurement.low = low
 
           forecasts << forecast_measurement

@@ -2,7 +2,12 @@
 - Weather Service API key setting
 - support IACO as a query format
 - a few methods in Barometer::Query have been added through refactoring, adjust tests!
-- use metric setting in queries
 
 - data collecting: save sunrise and sunset info
 - ability to get time zone info from timezone_code (non-standard)
+
+- force the use of GeoCoding (even for zipcode, postalcode)
+- create bin
+
+- ability to get query geo-code info (coords, name, etc)
+- store links from weather reponse

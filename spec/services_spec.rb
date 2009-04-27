@@ -67,14 +67,6 @@ describe "Services" do
       lambda { Barometer::Service._measure }.should raise_error(NotImplementedError)
     end
     
-    it "stubs get_current" do
-      lambda { Barometer::Service.get_current }.should raise_error(NotImplementedError)
-    end
-    
-    it "stubs get_forecast" do
-      lambda { Barometer::Service.get_forecast }.should raise_error(NotImplementedError)
-    end
-    
     it "stubs accepted_formats" do
       lambda { Barometer::Service.accepted_formats }.should raise_error(NotImplementedError)
     end

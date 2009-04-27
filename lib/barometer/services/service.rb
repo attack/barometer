@@ -63,16 +63,6 @@ module Barometer
       raise NotImplementedError
     end
 
-    # STUB: define this method to actually retireve the current weather
-    def self.get_current
-      raise NotImplementedError
-    end
-
-    # STUB: define this method to actually retireve the forecast weather
-    def self.get_forecast
-      raise NotImplementedError
-    end
-
     # STUB: define this method to check for the existance of API keys,
     #       this method is NOT needed if requires_keys? returns false
     def self.has_keys?

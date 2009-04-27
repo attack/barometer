@@ -16,6 +16,10 @@ module Barometer
   def self.skip_graticule; @@skip_graticule; end;
   def self.skip_graticule=(value); @@skip_graticule = value; end;
   
+#  @@force_geocode = false
+#  def self.force_geocode; @@force_geocode; end;
+#  def self.force_geocode=(value); @@force_geocode = value; end;
+  
   def self.new(query=nil)
     Barometer::Base.new(query)
   end

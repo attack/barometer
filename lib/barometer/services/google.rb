@@ -9,6 +9,13 @@ module Barometer
   # registration required: NO
   # supported countries: ALL
   #
+  # performs geo coding
+  # city: YES (except postalcode)
+  # coordinates: NO
+  #
+  # timezone info
+  # provides zone: NO
+  #
   # API: http://unknown
   #
   # Possible queries:
@@ -20,9 +27,6 @@ module Barometer
   #    * city
   #    * state
   #    * country
-  #
-  # NOTE: google weather doesn't provide any timezone information for the
-  #       location.
   #
   class Google < Service
     
@@ -40,17 +44,17 @@ module Barometer
       measurement.source = self.source_name
     
       # get measurement
-      result = self.get_all(query)
+      result = self.get_all(query, metric)
       
       # build current
-      current_measurement = self.build_current(result)
+      current_measurement = self.build_current(result, metric)
       # TODO: this next line has no test
       measurement.success! if
         (current_measurement.temperature && !current_measurement.temperature.c.nil?)
       measurement.current = current_measurement
       
       # build forecast
-      forecast_measurements = self.build_forecast(result)
+      forecast_measurements = self.build_forecast(result, metric)
       measurement.forecast = forecast_measurements
       
       # get time zone info
@@ -59,7 +63,7 @@ module Barometer
       measurement
     end
 
-    def self.build_current(current_result)
+    def self.build_current(current_result, metric=true)
       raise ArgumentError unless current_result.is_a?(Hash)
       
       current = CurrentMeasurement.new
@@ -81,14 +85,21 @@ module Barometer
       end
       #current.condition = current_result['condition']['data']
       
-      temp = Temperature.new
-      temp.f = current_result['temp_f']['data'].to_f if current_result['temp_f']
-      temp.c = current_result['temp_c']['data'].to_f if current_result['temp_c']
+      temp = Temperature.new(metric)
+      if metric
+        temp.c = current_result['temp_c']['data'].to_f if current_result['temp_c']
+      else
+        temp.f = current_result['temp_f']['data'].to_f if current_result['temp_f']
+      end
       current.temperature = temp
     
       begin
-        wind = Speed.new
-        wind.mph = current_result['wind_condition']['data'].match(/[\d]+/)[0].to_i
+        wind = Speed.new(metric)
+        if metric
+          wind.kph = current_result['wind_condition']['data'].match(/[\d]+/)[0].to_i
+        else
+          wind.mph = current_result['wind_condition']['data'].match(/[\d]+/)[0].to_i
+        end
         wind.direction = current_result['wind_condition']['data'].match(/Wind:.*?([\w]+).*?at/)[1]
         current.wind = wind
       rescue
@@ -97,7 +108,7 @@ module Barometer
       current
     end
     
-    def self.build_forecast(forecast_result)
+    def self.build_forecast(forecast_result, metric=true)
       raise ArgumentError unless forecast_result.is_a?(Hash)
 
       forecasts = []
@@ -117,12 +128,20 @@ module Barometer
           forecast_measurement.date = start_date + d
         end
 
-        high = Temperature.new
-        high.f = forecast['high']['data'].to_f
+        high = Temperature.new(metric)
+        if metric
+          high.c = forecast['high']['data'].to_f
+        else
+          high.f = forecast['high']['data'].to_f
+        end
         forecast_measurement.high = high
 
-        low = Temperature.new
-        low.f = forecast['low']['data'].to_f
+        low = Temperature.new(metric)
+        if metric
+          low.c = forecast['low']['data'].to_f
+        else
+          low.f = forecast['low']['data'].to_f
+        end
         forecast_measurement.low = low
         
         #forecast_measurement.condition = forecast['condition']['data']
@@ -148,10 +167,10 @@ module Barometer
     # end
     
     # use HTTParty to get the current weather
-    def self.get_all(query)
+    def self.get_all(query, metric=true)
       Barometer::Google.get(
         "http://google.com/ig/api",
-        :query => {:weather => query},
+        :query => {:weather => query, :hl => (metric ? "en-GB" : "en-US")},
         :format => :xml
       )['xml_api_reply']['weather']
     end

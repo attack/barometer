@@ -17,12 +17,8 @@ describe "Yahoo" do
     #   Barometer::Google.base_uri.should == @base_uri
     # end
     
-    it "defines get_current" do
-      Barometer::Yahoo.respond_to?("get_current").should be_true
-    end
-    
-    it "defines get_forecast" do
-      Barometer::Yahoo.respond_to?("get_forecast").should be_true
+    it "defines get_all" do
+      Barometer::Yahoo.respond_to?("get_all").should be_true
     end
     
   end

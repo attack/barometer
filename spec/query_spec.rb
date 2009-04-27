@@ -23,9 +23,9 @@ describe "Query" do
   describe "the class methods" do
     
     it "detects a zipcode" do
-      Barometer::Query.is_zipcode?(@zipcode).should be_true
-      Barometer::Query.is_zipcode?(@postal_code).should be_false
-      Barometer::Query.is_zipcode?(@coordinates).should be_false
+      Barometer::Query.is_us_zipcode?(@zipcode).should be_true
+      Barometer::Query.is_us_zipcode?(@postal_code).should be_false
+      Barometer::Query.is_us_zipcode?(@coordinates).should be_false
     end
     
     it "detects a postalcode" do
@@ -52,7 +52,7 @@ describe "Query" do
     it "recognizes a zip code" do
       @query.q = @zipcode
       @query.format.should be_nil
-      @query.determine_format!
+      @query.analyze!
       @query.format.to_sym.should == :zipcode
       
       @query.country_code.should == "US"
@@ -65,7 +65,7 @@ describe "Query" do
     it "recognizes a postal code" do
       @query.q = @postal_code
       @query.format.should be_nil
-      @query.determine_format!
+      @query.analyze!
       @query.format.to_sym.should == :postalcode
       
       @query.country_code.should == "CA"
@@ -78,7 +78,7 @@ describe "Query" do
     it "recognizes latitude/longitude" do
       @query.q = @coordinates
       @query.format.should be_nil
-      @query.determine_format!
+      @query.analyze!
       @query.format.to_sym.should == :coordinates
       
       @query.country_code.should be_nil
@@ -91,7 +91,7 @@ describe "Query" do
     it "defaults to a general geo_location" do
       @query.q = @geocode
       @query.format.should be_nil
-      @query.determine_format!
+      @query.analyze!
       @query.format.to_sym.should == :geocode
       
       @query.country_code.should be_nil
@@ -113,9 +113,9 @@ describe "Query" do
       @query.q.should be_nil
     end
     
-    it "responds to preferred" do
-      @query.preferred.should be_nil
-    end
+#    it "responds to geo" do
+#      @query.geo.should be_nil
+#    end
     
     it "responds to format" do
       @query.format.should be_nil

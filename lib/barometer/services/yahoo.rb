@@ -7,6 +7,15 @@ module Barometer
   # registration required: NO
   # supported countries: US (by zipcode), International (by Yahoo Location ID)
   #
+  # performs geo coding
+  # city: YES
+  # coordinates: YES
+  #
+  # timezone info
+  # provides zone: NO (just short version)
+  # NOTE: since this only supports US, the short version can be used to get
+  #       full timezone (until yahoo location id support is added)
+  #
   # API: http://developer.yahoo.com/weather/
   #
   # Possible queries:
@@ -17,10 +26,8 @@ module Barometer
   # where query can be:
   #
   #    * zipcode (US)
-  #    * Yahoo Location ID (International)
+  #    * Yahoo Location ID (International) - not currently supported
   #
-  # NOTE: this service provides metric or imperial via separate calls, therefore this
-  #       driver will only make the metric call and convert for imperial
   # NOTE: the Yahoo Location ID is a propreitary number (possibly shared with weather.com)
   #       so this driver currently does not provide a way to get/use this number,
   #       therefore International support is currently missing
@@ -35,7 +42,7 @@ module Barometer
       :yahoo
     end
     
-    # override, only supports US
+    # override, only currently supports US
     def self.supports_country?(query=nil)
       query && query.country_code && query.country_code.downcase == "us"
     end
@@ -46,17 +53,17 @@ module Barometer
       measurement.source = self.source_name
     
       # get measurement
-      result = self.get_all(query)
+      result = self.get_all(query, metric)
       
       # build current
-      current_measurement = self.build_current(result)
+      current_measurement = self.build_current(result, metric)
       # TODO: this next line has no test
       measurement.success! if
         (current_measurement.temperature && !current_measurement.temperature.c.nil?)
       measurement.current = current_measurement
       
       # build forecast
-      forecast_measurements = self.build_forecast(result)
+      forecast_measurements = self.build_forecast(result, metric)
       measurement.forecast = forecast_measurements
       
       # get time zone info
@@ -65,7 +72,7 @@ module Barometer
       measurement
     end
     
-    def self.build_current(current_result)
+    def self.build_current(current_result, metric=true)
       raise ArgumentError unless current_result.is_a?(Hash)
       
       current = CurrentMeasurement.new
@@ -84,31 +91,51 @@ module Barometer
       current.icon = condition_result['code'] if condition_result
       #current.condition = condition_result['text'] if condition_result
 
-      temp = Temperature.new
-      temp.c = condition_result['temp'].to_f if condition_result
+      temp = Temperature.new(metric)
+      if metric
+        temp.c = condition_result['temp'].to_f if condition_result
+      else
+        temp.f = condition_result['temp'].to_f if condition_result
+      end
       current.temperature = temp
 
-      wind = Speed.new
-      wind.kph = wind_result['speed'].to_f if wind_result
+      wind = Speed.new(metric)
+      if metric
+        wind.kph = wind_result['speed'].to_f if wind_result
+      else
+        wind.mph = wind_result['speed'].to_f if wind_result
+      end
       wind.degrees = wind_result['degrees'].to_f if wind_result
       current.wind = wind
 
-      pressure = Pressure.new
-      pressure.mb = atmosphere_result['pressure'].to_f if atmosphere_result
+      pressure = Pressure.new(metric)
+      if metric
+        pressure.mb = atmosphere_result['pressure'].to_f if atmosphere_result
+      else
+        pressure.in = atmosphere_result['pressure'].to_f if atmosphere_result
+      end
       current.pressure = pressure
 
-      wind_chill = Temperature.new
-      wind_chill.c = wind_result['chill'].to_f if wind_result
+      wind_chill = Temperature.new(metric)
+      if metric
+        wind_chill.c = wind_result['chill'].to_f if wind_result
+      else
+        wind_chill.f = wind_result['chill'].to_f if wind_result
+      end
       current.wind_chill = wind_chill
 
-      visibility = Distance.new
-      visibility.km = atmosphere_result['visibility'].to_f if atmosphere_result
+      visibility = Distance.new(metric)
+      if metric
+        visibility.km = atmosphere_result['visibility'].to_f if atmosphere_result
+      else
+        visibility.m = atmosphere_result['visibility'].to_f if atmosphere_result
+      end
       current.visibility = visibility
 
       current
     end
     
-    def self.build_forecast(forecast_result)
+    def self.build_forecast(forecast_result, metric=true)
       raise ArgumentError unless forecast_result.is_a?(Hash)
       
       forecasts = []
@@ -124,12 +151,20 @@ module Barometer
           forecast_measurement.icon = forecast['code']
           forecast_measurement.date = Date.parse(forecast['date'])
             
-          high = Temperature.new
-          high.f = forecast['high'].to_f
+          high = Temperature.new(metric)
+          if metric
+            high.c = forecast['high'].to_f
+          else
+            high.f = forecast['high'].to_f
+          end
           forecast_measurement.high = high
             
-          low = Temperature.new
-          low.f = forecast['low'].to_f
+          low = Temperature.new(metric)
+          if metric
+            low.c = forecast['low'].to_f
+          else
+            low.f = forecast['low'].to_f
+          end
           forecast_measurement.low = low
         
           #forecast_measurement.condition = forecast['text']
@@ -156,10 +191,10 @@ module Barometer
     # end
     
     # use HTTParty to get the current weather
-    def self.get_all(query)
+    def self.get_all(query, metric=true)
       Barometer::Yahoo.get(
         "http://weather.yahooapis.com/forecastrss",
-        :query => {:p => query, :u => 'c'},
+        :query => {:p => query, :u => (metric ? 'c' : 'f')},
         :format => :xml
       )['rss']['channel']
     end
