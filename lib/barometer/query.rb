@@ -24,7 +24,7 @@ module Barometer
     def self.google_geocode_key=(key); @@google_geocode_key = key; end;
     
     attr_reader   :format
-    attr_accessor :q, :country_code
+    attr_accessor :q, :country_code, :geo
     
     def initialize(query=nil)
       @q = query
@@ -55,15 +55,30 @@ module Barometer
       preferred = nil
       
       # go through each acceptable format and try to convert to that
+      converted = false
+      geocoded = false
       preferred_formats.each do |preferred_format|
         # we are already in this format, return this
-        return (preferred ||= @q) if preferred_format == @format
-        case preferred_format
-        when :coordinates
-          preferred, @country_code = Barometer::Query.to_coordinates(@q, @format)
-        when :geocode
-          preferred, @country_code = Barometer::Query.to_geocode(@q, @format)
+        if preferred_format == @format
+          converted = true
+          preferred ||= @q
         end
+        
+        unless converted
+          case preferred_format
+          when :coordinates
+            geocoded = true
+            preferred, @country_code, @geo = Barometer::Query.to_coordinates(@q, @format)
+          when :geocode
+            geocoded = true
+            preferred, @country_code, @geo = Barometer::Query.to_geocode(@q, @format)
+          end
+        end
+      end
+      
+      # if we haven't already geocoded and we are forcing it, do it now
+      if !geocoded && Barometer.force_geocode
+        not_used_coords, not_used_code, @geo = Barometer::Query.to_coordinates(@q, @format)
       end
       
       preferred
@@ -109,7 +124,7 @@ module Barometer
       geo = self.geocode(query, country_code)
       country_code ||= geo.country_code if geo
       return nil unless geo && geo.longitude && geo.latitude
-      ["#{geo.latitude},#{geo.longitude}", country_code]
+      ["#{geo.latitude},#{geo.longitude}", country_code, geo]
     end
     
     # this will take all query formats and convert them to coorinates
@@ -128,11 +143,11 @@ module Barometer
         geo = self.geocode(query, country_code)
         country_code ||= geo.country_code if geo
         return nil unless geo && geo.locality && geo.region && geo.country
-        return ["#{geo.locality}, #{geo.region}, #{geo.country}", country_code]
+        return ["#{geo.locality}, #{geo.region}, #{geo.country}", country_code, geo]
       else
         # without geocoding, the best we can do is just make use the given query as
         # the query for the "geocode" format
-        return [query, country_code]
+        return [query, country_code, nil]
       end
       return nil
     end

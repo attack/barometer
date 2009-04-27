@@ -152,6 +152,10 @@ describe "Query" do
       Barometer::Query.google_geocode_key.should == key
     end
     
+    it "responds to geo" do
+      @query.geo.should be_nil
+    end
+    
   end
   
   use_graticule = true

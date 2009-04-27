@@ -35,6 +35,13 @@ describe "Barometer" do
       Barometer.skip_graticule.should be_true
     end
     
+    it "foreces the geocoding of queries" do
+      Barometer.respond_to?("force_geocode").should be_true
+      Barometer.force_geocode.should be_false
+      Barometer.force_geocode = true
+      Barometer.force_geocode.should be_true
+    end
+    
   end
 
   describe "when initialized" do

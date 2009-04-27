@@ -16,9 +16,15 @@ module Barometer
   def self.skip_graticule; @@skip_graticule; end;
   def self.skip_graticule=(value); @@skip_graticule = value; end;
   
-#  @@force_geocode = false
-#  def self.force_geocode; @@force_geocode; end;
-#  def self.force_geocode=(value); @@force_geocode = value; end;
+  # sometimes a query is used as is and never gets geocoded (ie zipcode)
+  # often, it is useful have queries geocoded to know where in the
+  # world that query points to.  you can force the geocoding of
+  # queries (even when not required) so that you have the geocoded
+  # data.  the reason this isn't the default is that it will use an
+  # extra web service query when not normally required
+  @@force_geocode = false
+  def self.force_geocode; @@force_geocode; end;
+  def self.force_geocode=(value); @@force_geocode = value; end;
   
   def self.new(query=nil)
     Barometer::Base.new(query)
