@@ -35,6 +35,12 @@ describe "Geo" do
       @geo.country.should be_nil
     end
     
+    it "responds to coordinates" do
+      @geo.longitude = "99.99"
+      @geo.latitude = "88.88"
+      @geo.coordinates.should == [@geo.latitude, @geo.longitude].join(',')
+    end
+    
     it "requires Graticule::Location or Hash object" do
       location = Graticule::Location.new
       lambda { Barometer::Geo.new(1) }.should raise_error(ArgumentError)

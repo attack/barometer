@@ -12,7 +12,6 @@ module Barometer
     attr_accessor :state_name, :state_code, :country, :country_code, :zip_code
     attr_accessor :latitude, :longitude
     
-    # TODO: not tested
     def coordinates
       [@latitude, @longitude].join(',')
     end

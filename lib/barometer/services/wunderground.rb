@@ -1,38 +1,40 @@
 module Barometer
   #
-  # Weather Underground
+  # = Weather Underground
   # www.wunderground.com
   #
-  # key required: NO
-  # registration required: NO
-  # supported countries: ALL
+  # - key required: NO
+  # - registration required: NO
+  # - supported countries: ALL
   #
-  # performs geo coding
-  # city: YES
-  # coordinates: YES
+  # === performs geo coding
+  # - city: YES
+  # - coordinates: YES
   # NOTE: provides geo data for location and weather station
   #
-  # timezone info
-  # provides zone: YES (but only in forecast query)
+  # === time info
+  # - sun rise/set: YES (today only)
+  # - provides timezone: YES
+  # - requires TZInfo: YES
   #
-  # API: http://wiki.wunderground.com/index.php/API_-_XML
+  # == resources
+  # - API: http://wiki.wunderground.com/index.php/API_-_XML
   #
-  # Possible queries:
-  #  - http://api.wunderground.com/auto/wui/geo/GeoLookupXML/index.xml?query=94107
-  #  - http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=KSFO
-  #  - http://api.wunderground.com/weatherstation/WXCurrentObXML.asp?ID=KCASANFR70
-  #  - http://api.wunderground.com/auto/wui/geo/AlertsXML/index.xml?query=86445
-  #  - http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=Chicago,IL
+  # === Possible queries:
+  # - http://api.wunderground.com/auto/wui/geo/GeoLookupXML/index.xml?query=94107
+  # - http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=KSFO
+  # - http://api.wunderground.com/weatherstation/WXCurrentObXML.asp?ID=KCASANFR70
+  # - http://api.wunderground.com/auto/wui/geo/AlertsXML/index.xml?query=86445
+  # - http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=Chicago,IL
   #
   # where query can be:
-  #
-  #    * zipcode (US or Canadian)
-  #    * city state; city, state
-  #    * city
-  #    * state
-  #    * country
-  #    * airport code (3-letter or 4-letter)
-  #    * lat,lon
+  # - zipcode (US or Canadian)
+  # - city state; city, state
+  # - city
+  # - state
+  # - country
+  # - airport code (3-letter or 4-letter)
+  # - lat,lon
   #
   class Wunderground < Service
     
@@ -52,10 +54,7 @@ module Barometer
       # get current measurement
       begin
         current_result = self.get_current(query.preferred)
-        current_measurement = self.build_current(current_result, metric)
-        measurement.success! if
-          (current_measurement.temperature && !current_measurement.temperature.c.nil?)
-        measurement.current = current_measurement
+        measurement.current = self.build_current(current_result, metric)
       rescue Timeout::Error => e
         return measurement
       end
@@ -63,167 +62,110 @@ module Barometer
       # get forecast measurement
       begin
         forecast_result = self.get_forecast(query.preferred)
-        forecast_measurements = self.build_forecast(forecast_result, metric)
-        measurement.forecast = forecast_measurements
+        measurement.forecast = self.build_forecast(forecast_result, metric)
       rescue Timeout::Error => e
         return measurement
       end
       
-      # build extra data
       measurement.location = self.build_location(current_result)
       measurement.station = self.build_station(current_result)
       measurement.timezone = self.build_timezone(forecast_result)
+      measurement.sun = self.build_sun(forecast_result, measurement.timezone)
       
       measurement
     end
 
-    def self.build_current(current_result, metric=true)
-      raise ArgumentError unless current_result.is_a?(Hash)
+    def self.build_current(data, metric=true)
+      raise ArgumentError unless data.is_a?(Hash)
       
       current = CurrentMeasurement.new
-      
       #current.time = Time.parse(current_result['observation_time_rfc822']) unless
       #  current_result['observation_time_rfc822'].blank?
-      current.time = current_result['observation_time_rfc822']
-      current.local_time = current_result['observation_time']
-      current.humidity = current_result['relative_humidity'].to_i
-      current.icon = current_result['icon'] if current_result['icon']
-
-      temp = Temperature.new(metric)
-      if metric
-        temp.c = current_result['temp_c'].to_f
-      else
-        temp.f = current_result['temp_f'].to_f
-      end
-      current.temperature = temp
-
-      wind = Speed.new(metric)
-      wind.mph = current_result['wind_mph'].to_f
-      wind.degrees = current_result['wind_degrees'].to_i
-      wind.direction = current_result['wind_dir']
-      current.wind = wind
-
-      pressure = Pressure.new(metric)
-      if metric
-        pressure.mb = current_result['pressure_mb'].to_f
-      else
-        pressure.in = current_result['pressure_in'].to_f
-      end
-      current.pressure = pressure
-
-      dew_point = Temperature.new(metric)
-      if metric
-        dew_point.c = current_result['dewpoint_c'].to_f
-      else
-        dew_point.f = current_result['dewpoint_f'].to_f
-      end
-      current.dew_point = dew_point
-
-      heat_index = Temperature.new(metric)
-      if metric
-        heat_index.c = current_result['heat_index_c'].to_f
-      else
-        heat_index.f = current_result['heat_index_f'].to_f
-      end
-      current.heat_index = heat_index
-
-      wind_chill = Temperature.new(metric)
-      if metric
-        wind_chill.c = current_result['windchill_c'].to_f
-      else
-        wind_chill.f = current_result['windchill_f'].to_f
-      end
-      current.wind_chill = wind_chill
-
-      visibility = Distance.new(metric)
-      if metric
-        visibility.km = current_result['visibility_km'].to_f
-      else
-        visibility.m = current_result['visibility_mi'].to_f
-      end
-      current.visibility = visibility
+      current.time = data['observation_time_rfc822']
+      current.local_time = data['observation_time']
+      current.humidity = data['relative_humidity'].to_i
+      current.icon = data['icon'] if data['icon']
+      
+      current.temperature = Temperature.new(metric)
+      current.temperature << [data['temp_c'], data['temp_f']]
+      
+      current.wind = Speed.new(metric)
+      current.wind.mph = data['wind_mph'].to_f
+      current.wind.degrees = data['wind_degrees'].to_i
+      current.wind.direction = data['wind_dir']
+      
+      current.pressure = Pressure.new(metric)
+      current.pressure << [data['pressure_mb'], data['pressure_in']]
+      
+      current.dew_point = Temperature.new(metric)
+      current.dew_point << [data['dewpoint_c'], data['dewpoint_f']]
+      
+      current.heat_index = Temperature.new(metric)
+      current.heat_index << [data['heat_index_c'], data['heat_index_f']]
+      
+      current.wind_chill = Temperature.new(metric)
+      current.wind_chill << [data['windchill_c'], data['windchill_f']]
+      
+      current.visibility = Distance.new(metric)
+      current.visibility << [data['visibility_km'], data['visibility_mi']]
       
       current
     end
     
-    def self.build_forecast(forecast_result, metric=true)
-      raise ArgumentError unless forecast_result.is_a?(Hash)
-      
+    def self.build_forecast(data, metric=true)
+      raise ArgumentError unless data.is_a?(Hash)
       forecasts = []
-
-      # TODO sun/moon
-      # - we are only given todays data for this, so create it here and
-      # use the same values for the remaing forcasted days
-
       # go through each forecast and create an instance
-      if forecast_result && forecast_result['simpleforecast'] &&
-        forecast_result['simpleforecast']['forecastday']
-        
-        forecast_result['simpleforecast']['forecastday'].each do |forecast|
+      if data && data['simpleforecast'] &&
+         data['simpleforecast']['forecastday']
+         
+        data['simpleforecast']['forecastday'].each do |forecast|
           forecast_measurement = ForecastMeasurement.new
-
           forecast_measurement.icon = forecast['icon']
-          #forecast_measurement.icon2 = forecast['skyicon']
-
           forecast_measurement.date = Date.parse(forecast['date']['pretty'])
-
-          high = Temperature.new(metric)
-          if metric
-            high.c = forecast['high']['celsius'].to_f
-          else
-            high.f = forecast['high']['fahrenheit'].to_f
-          end
-          forecast_measurement.high = high
-
-          low = Temperature.new(metric)
-          if metric
-            low.c = forecast['low']['celsius'].to_f
-          else
-            low.f = forecast['low']['fahrenheit'].to_f
-          end
-          forecast_measurement.low = low
-
+          
+          forecast_measurement.high = Temperature.new(metric)
+          forecast_measurement.high << [forecast['high']['celsius'],forecast['high']['fahrenheit']]
+          
+          forecast_measurement.low = Temperature.new(metric)
+          forecast_measurement.low << [forecast['low']['celsius'],forecast['low']['fahrenheit']]
+          
           forecasts << forecast_measurement
         end
       end
-      
       forecasts
     end
 
-    def self.build_location(location_result)
-      raise ArgumentError unless location_result.is_a?(Hash)
-      
+    def self.build_location(data)
+      raise ArgumentError unless data.is_a?(Hash)
       location = Location.new
-      if location_result['display_location']
-        location.name = location_result['display_location']['full']
-        location.city = location_result['display_location']['city']
-        location.state_name = location_result['display_location']['state_name']
-        location.state_code = location_result['display_location']['state']
-        location.country_code = location_result['display_location']['country']
-        location.zip_code = location_result['display_location']['zip']
-        location.latitude = location_result['display_location']['latitude']
-        location.longitude = location_result['display_location']['longitude']
+      if data['display_location']
+        location.name = data['display_location']['full']
+        location.city = data['display_location']['city']
+        location.state_name = data['display_location']['state_name']
+        location.state_code = data['display_location']['state']
+        location.country_code = data['display_location']['country']
+        location.zip_code = data['display_location']['zip']
+        location.latitude = data['display_location']['latitude']
+        location.longitude = data['display_location']['longitude']
       end
-      
       location
     end
     
-    def self.build_station(station_result)
-      raise ArgumentError unless station_result.is_a?(Hash)
-      
+    def self.build_station(data)
+      raise ArgumentError unless data.is_a?(Hash)
       station = Location.new
-      station.id = station_result['station_id']
-      if station_result['observation_location']
-        station.name = station_result['observation_location']['full']
-        station.city = station_result['observation_location']['city']
-        station.state_name = station_result['observation_location']['state_name']
-        station.state_code = station_result['observation_location']['state']
-        station.country_code = station_result['observation_location']['country']
-        station.zip_code = station_result['observation_location']['zip']
-        station.latitude = station_result['observation_location']['latitude']
-        station.longitude = station_result['observation_location']['longitude']
+      station.id = data['station_id']
+      if data['observation_location']
+        station.name = data['observation_location']['full']
+        station.city = data['observation_location']['city']
+        station.state_name = data['observation_location']['state_name']
+        station.state_code = data['observation_location']['state']
+        station.country_code = data['observation_location']['country']
+        station.zip_code = data['observation_location']['zip']
+        station.latitude = data['observation_location']['latitude']
+        station.longitude = data['observation_location']['longitude']
       end
-      
       station
     end
     
@@ -248,17 +190,64 @@ module Barometer
     #         <tz_long>America/Chicago</tz_long>
     #       </date>
     #     </forecastday>
-    def self.build_timezone(timezone_result)
-      raise ArgumentError unless timezone_result.is_a?(Hash)
-      
+    def self.build_timezone(data)
+      raise ArgumentError unless data.is_a?(Hash)
       timezone = nil
-      if timezone_result && timezone_result['simpleforecast'] &&
-         timezone_result['simpleforecast']['forecastday'] &&
-         timezone_result['simpleforecast']['forecastday'].first &&
-         timezone_result['simpleforecast']['forecastday'].first['date']
-        timezone = Barometer::Zone.new(Time.now.utc,timezone_result['simpleforecast']['forecastday'].first['date']['tz_long'])
+      if data && data['simpleforecast'] &&
+         data['simpleforecast']['forecastday'] &&
+         data['simpleforecast']['forecastday'].first &&
+         data['simpleforecast']['forecastday'].first['date']
+        timezone = Barometer::Zone.new(
+          data['simpleforecast']['forecastday'].first['date']['tz_long']
+        )
       end
       timezone
+    end
+    
+    def self.build_sun(data, timezone)
+      raise ArgumentError unless data.is_a?(Hash)
+      raise ArgumentError unless timezone.is_a?(Barometer::Zone)
+      
+      sun = nil
+      if data
+        time = nil
+        if data['simpleforecast'] &&
+           data['simpleforecast']['forecastday'] &&
+           data['simpleforecast']['forecastday'].first &&
+           data['simpleforecast']['forecastday'].first['date']
+          
+          # construct current date
+          date_data = data['simpleforecast']['forecastday'].first['date']
+          time = Time.local(
+            date_data['year'], date_data['month'], date_data['day'],
+            date_data['hour'], date_data['min'], date_data['sec']
+          )
+        end
+        if time && data['moon_phase']
+          # get the sun rise and set times (ie "6:32 am")
+          if data['moon_phase']['sunrise']
+            rise = Time.local(
+              time.year, time.month, time.day,
+              data['moon_phase']['sunrise']['hour'],
+              data['moon_phase']['sunrise']['minute']
+            )
+          end
+          if data['moon_phase']['sunset']
+            set = Time.local(
+              time.year, time.month, time.day,
+              data['moon_phase']['sunset']['hour'],
+              data['moon_phase']['sunset']['minute']
+            )
+          end
+        
+          sun = Sun.new(
+            timezone.tz.local_to_utc(rise),
+            timezone.tz.local_to_utc(set)
+          )
+        end
+      end
+      
+      sun
     end
     
     # use HTTParty to get the current weather

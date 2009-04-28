@@ -1,32 +1,34 @@
 module Barometer
   #
+  # = Google Weather
+  # www.google.com
   # NOTE: Google does not have an official API
   #
-  # Google Weather
-  # www.google.com
+  # - key required: NO
+  # - registration required: NO
+  # - supported countries: ALL
   #
-  # key required: NO
-  # registration required: NO
-  # supported countries: ALL
+  # === performs geo coding
+  # - city: YES (except postalcode query)
+  # - coordinates: NO
   #
-  # performs geo coding
-  # city: YES (except postalcode)
-  # coordinates: NO
+  # === time info
+  # - sun rise/set: NO
+  # - provides timezone: NO
+  # - requires TZInfo: NO
   #
-  # timezone info
-  # provides zone: NO
+  # == resources
+  # - API: http://unknown
   #
-  # API: http://unknown
-  #
-  # Possible queries:
+  # === Possible queries:
+  # - 
   #
   # where query can be:
-  #
-  #    * zipcode (US or Canadian)
-  #    * city state; city, state
-  #    * city
-  #    * state
-  #    * country
+  # - zipcode (US or Canadian)
+  # - city state; city, state
+  # - city
+  # - state
+  # - country
   #
   class Google < Service
     
@@ -43,124 +45,81 @@ module Barometer
       raise ArgumentError unless query.is_a?(Barometer::Query)
       measurement.source = self.source_name
       
-      # get measurement
       begin
         result = self.get_all(query.preferred, metric)
       rescue Timeout::Error => e
         return measurement
       end
       
-      # build current
-      current_measurement = self.build_current(result, metric)
-      # TODO: this next line has no test
-      measurement.success! if
-        (current_measurement.temperature && !current_measurement.temperature.c.nil?)
-      measurement.current = current_measurement
-      
-      # build forecast
-      forecast_measurements = self.build_forecast(result, metric)
-      measurement.forecast = forecast_measurements
-      
-      # build extra data
+      measurement.current = self.build_current(result, metric)
+      measurement.forecast = self.build_forecast(result, metric)
       measurement.location = self.build_location(query.geo)
-      #measurement.timezone = self.build_timezone(forecast_result)
-
       measurement
     end
 
-    def self.build_current(current_result, metric=true)
-      raise ArgumentError unless current_result.is_a?(Hash)
-      
+    def self.build_current(data, metric=true)
+      raise ArgumentError unless data.is_a?(Hash)
       current = CurrentMeasurement.new
-      
-      if current_result && current_result['forecast_information'] &&
-         current_result['forecast_information']['current_date_time']
-        current.time = current_result['forecast_information']['current_date_time']['data']
-      end
-      
-      current_result = current_result['current_conditions'] if current_result['current_conditions']
 
-      begin
-        current.humidity = current_result['humidity']['data'].match(/[\d]+/)[0].to_i
-      rescue
+      if data && data['forecast_information'] &&
+         data['forecast_information']['current_date_time']
+        current.time = data['forecast_information']['current_date_time']['data']
       end
       
-      if current_result['icon']
-        current.icon = current_result['icon']['data']
-      end
-      #current.condition = current_result['condition']['data']
+      if data['current_conditions']
+        data = data['current_conditions']
+        current.icon = data['icon']['data'] if data['icon']
+        current.condition = data['condition']['data'] if data['condition']
+
+        humidity_match = data['humidity']['data'].match(/[\d]+/)
+        current.humidity = humidity_match[0].to_i if humidity_match
       
-      temp = Temperature.new(metric)
-      if metric
-        temp.c = current_result['temp_c']['data'].to_f if current_result['temp_c']
-      else
-        temp.f = current_result['temp_f']['data'].to_f if current_result['temp_f']
-      end
-      current.temperature = temp
-    
-      begin
-        wind = Speed.new(metric)
-        if metric
-          wind.kph = current_result['wind_condition']['data'].match(/[\d]+/)[0].to_i
-        else
-          wind.mph = current_result['wind_condition']['data'].match(/[\d]+/)[0].to_i
+        current.temperature = Temperature.new(metric)
+        current.temperature << [data['temp_c']['data'], data['temp_f']['data']]
+      
+        current.wind = Speed.new(metric)
+        begin
+          current.wind << data['wind_condition']['data'].match(/[\d]+/)[0]
+          current.wind.direction = data['wind_condition']['data'].match(/Wind:.*?([\w]+).*?at/)[1]
+        rescue
         end
-        wind.direction = current_result['wind_condition']['data'].match(/Wind:.*?([\w]+).*?at/)[1]
-        current.wind = wind
-      rescue
       end
-
       current
     end
     
-    def self.build_forecast(forecast_result, metric=true)
-      raise ArgumentError unless forecast_result.is_a?(Hash)
+    def self.build_forecast(data, metric=true)
+      raise ArgumentError unless data.is_a?(Hash)
 
       forecasts = []
-      return forecasts unless forecast_result && forecast_result['forecast_information'] &&
-                              forecast_result['forecast_information']['forecast_date']
-      start_date = Date.parse(forecast_result['forecast_information']['forecast_date']['data'])
-      forecast_result = forecast_result['forecast_conditions'] if forecast_result['forecast_conditions']
+      return forecasts unless data && data['forecast_information'] &&
+                              data['forecast_information']['forecast_date']
+      start_date = Date.parse(data['forecast_information']['forecast_date']['data'])
+      data = data['forecast_conditions'] if data['forecast_conditions']
 
       # go through each forecast and create an instance
       d = 0
-      forecast_result.each do |forecast|
+      data.each do |forecast|
         forecast_measurement = ForecastMeasurement.new
-
-        forecast_measurement.icon = forecast['icon']['data']
+        forecast_measurement.icon = forecast['icon']['data'] if forecast['icon']
+        forecast_measurement.condition = forecast['condition']['data'] if forecast['condition']
 
         if (start_date + d).strftime("%a").downcase == forecast['day_of_week']['data'].downcase
           forecast_measurement.date = start_date + d
         end
 
-        high = Temperature.new(metric)
-        if metric
-          high.c = forecast['high']['data'].to_f
-        else
-          high.f = forecast['high']['data'].to_f
-        end
-        forecast_measurement.high = high
-
-        low = Temperature.new(metric)
-        if metric
-          low.c = forecast['low']['data'].to_f
-        else
-          low.f = forecast['low']['data'].to_f
-        end
-        forecast_measurement.low = low
+        forecast_measurement.high = Temperature.new(metric)
+        forecast_measurement.high << forecast['high']['data']
+        forecast_measurement.low = Temperature.new(metric)
+        forecast_measurement.low << forecast['low']['data']
         
-        #forecast_measurement.condition = forecast['condition']['data']
-
         forecasts << forecast_measurement
         d += 1
       end
-
       forecasts
     end
     
     def self.build_location(geo=nil)
       raise ArgumentError unless (geo.nil? || geo.is_a?(Barometer::Geo))
-      
       location = Location.new
       if geo
         location.city = geo.locality
@@ -170,22 +129,8 @@ module Barometer
         location.latitude = geo.latitude
         location.longitude = geo.longitude
       end
-      
       location
     end
-    
-    # def self.build_timezone(timezone_result)
-    #   raise ArgumentError unless timezone_result.is_a?(Hash)
-    #   
-    #   timezone = nil
-    #   if timezone_result && timezone_result['simpleforecast'] &&
-    #      timezone_result['simpleforecast']['forecastday'] &&
-    #      timezone_result['simpleforecast']['forecastday'].first &&
-    #      timezone_result['simpleforecast']['forecastday'].first['date']
-    #     timezone = Barometer::Zone.new(Time.now.utc,timezone_result['simpleforecast']['forecastday'].first['date']['tz_long'])
-    #   end
-    #   timezone
-    # end
     
     # use HTTParty to get the current weather
     def self.get_all(query, metric=true)

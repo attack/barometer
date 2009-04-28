@@ -1,10 +1,11 @@
+== now
+
+- a few methods in Barometer::Query have been added through refactoring, adjust tests!
+
+== future
+
 - rdoc compatible documentation
 - Weather Service API key setting
 - support IACO as a query format
-- a few methods in Barometer::Query have been added through refactoring, adjust tests!
-
-- data collecting: save sunrise and sunset info
-- ability to get time zone info from timezone_code (non-standard)
-
 - create bin
 - store links from weather reponse

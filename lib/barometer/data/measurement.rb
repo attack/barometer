@@ -18,7 +18,7 @@ module Barometer
     attr_reader :source
     # current and forecasted data
     attr_reader :current, :forecast
-    attr_reader :timezone, :station, :location
+    attr_reader :timezone, :station, :location, :sun
     attr_reader :success
     
     def initialize(source=nil)
@@ -27,7 +27,9 @@ module Barometer
     end
     
     def success!
-      @success = true
+      if current && current.temperature && !current.temperature.c.nil?
+        @success = true
+      end
     end
     
     def success?
@@ -71,6 +73,8 @@ module Barometer
     def current=(current)
       raise ArgumentError unless current.is_a?(Barometer::CurrentMeasurement)
       @current = current
+      # self-determine success
+      self.success!
     end
     
     def forecast=(forecast)
@@ -92,6 +96,11 @@ module Barometer
     def location=(location)
       raise ArgumentError unless location.is_a?(Barometer::Location)
       @location = location
+    end
+    
+    def sun=(sun)
+      raise ArgumentError unless sun.is_a?(Barometer::Sun)
+      @sun = sun
     end
     
   end

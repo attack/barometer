@@ -1,36 +1,39 @@
 module Barometer
   #
-  # Yahoo Weather
+  # = Yahoo Weather
   # www.yahoo.com
   #
-  # key required: NO
-  # registration required: NO
-  # supported countries: US (by zipcode), International (by Yahoo Location ID)
+  # - key required: NO
+  # - registration required: NO
+  # - supported countries: US (by zipcode), International (by Yahoo Location ID)
   #
-  # performs geo coding
-  # city: YES
-  # coordinates: YES
+  # === performs geo coding
+  # - city: YES
+  # - coordinates: YES
   #
-  # timezone info
-  # provides zone: NO (just short version)
-  # NOTE: since this only supports US, the short version can be used to get
-  #       full timezone (until yahoo location id support is added)
+  # === time info
+  # - sun rise/set: YES (today only)
+  # - provides timezone: PARTIAL (just short code)
+  # - requires TZInfo: NO
+  # NOTE: since this only supports US, the short code can be used
+  #       to convert times (until yahoo location id support is added)
   #
-  # API: http://developer.yahoo.com/weather/
+  # == resources
+  # - API: http://developer.yahoo.com/weather/
   #
-  # Possible queries:
-  # http://weather.yahooapis.com/forecastrss?p=94089
-  # http://weather.yahooapis.com/forecastrss?p=USCA1116
-  # http://weather.yahooapis.com/forecastrss?p=FRXX0076&u=c
+  # === Possible queries:
+  # - http://weather.yahooapis.com/forecastrss?p=94089
+  # - http://weather.yahooapis.com/forecastrss?p=USCA1116
+  # - http://weather.yahooapis.com/forecastrss?p=FRXX0076&u=c
   #
   # where query can be:
+  # - zipcode (US)
+  # - Yahoo Location ID (International) - not currently supported
   #
-  #    * zipcode (US)
-  #    * Yahoo Location ID (International) - not currently supported
-  #
-  # NOTE: the Yahoo Location ID is a propreitary number (possibly shared with weather.com)
-  #       so this driver currently does not provide a way to get/use this number,
-  #       therefore International support is currently missing
+  # == notes
+  # - the Yahoo Location ID is a propreitary number (possibly shared with weather.com)
+  #   so this driver currently does not provide a way to get/use this number,
+  #   therefore International support is currently missing
   #
   class Yahoo < Service
     
@@ -51,141 +54,81 @@ module Barometer
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
       raise ArgumentError unless query.is_a?(Barometer::Query)
       measurement.source = self.source_name
-    
-      # get measurement
+      
       begin
         result = self.get_all(query.preferred, metric)
       rescue Timeout::Error => e
         return measurement
       end
       
-      # build current
-      current_measurement = self.build_current(result, metric)
-      measurement.success! if
-        (current_measurement.temperature && !current_measurement.temperature.c.nil?)
-      measurement.current = current_measurement
-      
-      # build forecast
-      forecast_measurements = self.build_forecast(result, metric)
-      measurement.forecast = forecast_measurements
-      
-      # build extra data
+      measurement.current = self.build_current(result, metric)
+      measurement.forecast = self.build_forecast(result, metric)
       measurement.location = self.build_location(result, query.geo)
+      measurement.sun = self.build_sun(result)
       #measurement.timezone = self.build_timezone(forecast_result)
-    
+      
       measurement
     end
     
-    def self.build_current(current_result, metric=true)
-      raise ArgumentError unless current_result.is_a?(Hash)
-      
+    def self.build_current(data, metric=true)
+      raise ArgumentError unless data.is_a?(Hash)
       current = CurrentMeasurement.new
-      
-      # create shortcuts
-      if current_result
-        if current_result['item'] && current_result['item']['yweather:condition']
-          condition_result = current_result['item']['yweather:condition']
+      if data
+        if data['item'] && data['item']['yweather:condition']
+          condition_result = data['item']['yweather:condition']
+          current.local_time = condition_result['date']
+          current.icon = condition_result['code']
+          current.condition = condition_result['text']
+          current.temperature = Temperature.new(metric)
+          current.temperature << condition_result['temp']
         end
-        atmosphere_result = current_result['yweather:atmosphere'] if current_result['yweather:atmosphere']
-        wind_result = current_result['yweather:wind'] if current_result['yweather:wind']
+        if data['yweather:atmosphere']
+          atmosphere_result = data['yweather:atmosphere']
+          current.humidity = atmosphere_result['humidity'].to_i
+          current.pressure = Pressure.new(metric)
+          current.pressure << atmosphere_result['pressure']
+          current.visibility = Distance.new(metric)
+          current.visibility << atmosphere_result['visibility']
+        end
+        if data['yweather:wind']
+          wind_result = data['yweather:wind']
+          current.wind = Speed.new(metric)
+          current.wind << wind_result['speed']
+          current.wind.degrees = wind_result['degrees'].to_f
+          current.wind_chill = Temperature.new(metric)
+          current.wind_chill << wind_result['chill']
+        end
       end
-      
-      current.local_time = condition_result['date'] if condition_result
-      current.humidity = atmosphere_result['humidity'].to_i if atmosphere_result
-      current.icon = condition_result['code'] if condition_result
-      #current.condition = condition_result['text'] if condition_result
-
-      temp = Temperature.new(metric)
-      if metric
-        temp.c = condition_result['temp'].to_f if condition_result
-      else
-        temp.f = condition_result['temp'].to_f if condition_result
-      end
-      current.temperature = temp
-
-      wind = Speed.new(metric)
-      if metric
-        wind.kph = wind_result['speed'].to_f if wind_result
-      else
-        wind.mph = wind_result['speed'].to_f if wind_result
-      end
-      wind.degrees = wind_result['degrees'].to_f if wind_result
-      current.wind = wind
-
-      pressure = Pressure.new(metric)
-      if metric
-        pressure.mb = atmosphere_result['pressure'].to_f if atmosphere_result
-      else
-        pressure.in = atmosphere_result['pressure'].to_f if atmosphere_result
-      end
-      current.pressure = pressure
-
-      wind_chill = Temperature.new(metric)
-      if metric
-        wind_chill.c = wind_result['chill'].to_f if wind_result
-      else
-        wind_chill.f = wind_result['chill'].to_f if wind_result
-      end
-      current.wind_chill = wind_chill
-
-      visibility = Distance.new(metric)
-      if metric
-        visibility.km = atmosphere_result['visibility'].to_f if atmosphere_result
-      else
-        visibility.m = atmosphere_result['visibility'].to_f if atmosphere_result
-      end
-      current.visibility = visibility
-
       current
     end
     
-    def self.build_forecast(forecast_result, metric=true)
-      raise ArgumentError unless forecast_result.is_a?(Hash)
-      
+    def self.build_forecast(data, metric=true)
+      raise ArgumentError unless data.is_a?(Hash)
       forecasts = []
-      if forecast_result && forecast_result['item'] &&
-        forecast_result['item']['yweather:forecast']
-        
-        forecast_result = forecast_result['item']['yweather:forecast']
-        
-        # go through each forecast and create an instance
+      
+      if data && data['item'] && data['item']['yweather:forecast']
+         forecast_result = data['item']['yweather:forecast']
+         
         forecast_result.each do |forecast|
           forecast_measurement = ForecastMeasurement.new
-            
           forecast_measurement.icon = forecast['code']
           forecast_measurement.date = Date.parse(forecast['date'])
-            
-          high = Temperature.new(metric)
-          if metric
-            high.c = forecast['high'].to_f
-          else
-            high.f = forecast['high'].to_f
-          end
-          forecast_measurement.high = high
-            
-          low = Temperature.new(metric)
-          if metric
-            low.c = forecast['low'].to_f
-          else
-            low.f = forecast['low'].to_f
-          end
-          forecast_measurement.low = low
-        
-          #forecast_measurement.condition = forecast['text']
-            
+          forecast_measurement.condition = forecast['text']
+          forecast_measurement.high = Temperature.new(metric)
+          forecast_measurement.high << forecast['high'].to_f
+          forecast_measurement.low = Temperature.new(metric)
+          forecast_measurement.low << forecast['low'].to_f
           forecasts << forecast_measurement
         end
-        
       end
-    
       forecasts
     end
     
-    def self.build_location(location_result, geo=nil)
-      raise ArgumentError unless location_result.is_a?(Hash)
+    def self.build_location(data, geo=nil)
+      raise ArgumentError unless data.is_a?(Hash)
       raise ArgumentError unless (geo.nil? || geo.is_a?(Barometer::Geo))
-      
       location = Location.new
+      # use the geocoded data if available, otherwise get data from result
       if geo
         location.city = geo.locality
         location.state_code = geo.region
@@ -194,29 +137,51 @@ module Barometer
         location.latitude = geo.latitude
         location.longitude = geo.longitude
       else
-        if location_result && location_result['yweather:location']
-          location.city = location_result['yweather:location']['city']
-          location.state_code = location_result['yweather:location']['region']
-          location.country_code = location_result['yweather:location']['country']
-          if location_result['item']
-            location.latitude = location_result['item']['geo:lat']
-            location.longitude = location_result['item']['geo:long']
+        if data && data['yweather:location']
+          location.city = data['yweather:location']['city']
+          location.state_code = data['yweather:location']['region']
+          location.country_code = data['yweather:location']['country']
+          if data['item']
+            location.latitude = data['item']['geo:lat']
+            location.longitude = data['item']['geo:long']
           end
         end
       end
-      
       location
     end
+    
+    def self.build_sun(data)
+      raise ArgumentError unless data.is_a?(Hash)
+      sun = nil
+      if data && data['yweather:astronomy'] && data['item']
+        # get the TIME ZONE CODE
+        zone_match = data['item']['pubDate'].match(/ ([A-Z]*)$/)
+        zone = zone_match[1] if zone_match
+        # get the sun rise and set
+        rise = Barometer::Zone.merge(
+          data['yweather:astronomy']['sunrise'],
+          data['item']['pubDate'],
+          zone
+        )
+        set = Barometer::Zone.merge(
+          data['yweather:astronomy']['sunset'],
+          data['item']['pubDate'],
+          zone
+        )
+        sun = Sun.new(rise, set)
+      end
+      sun
+    end
 
-    # def self.build_timezone(timezone_result)
-    #   raise ArgumentError unless timezone_result.is_a?(Hash)
+    # def self.build_timezone(data)
+    #   raise ArgumentError unless data.is_a?(Hash)
     #   
     #   timezone = nil
-    #   if timezone_result && timezone_result['simpleforecast'] &&
-    #      timezone_result['simpleforecast']['forecastday'] &&
-    #      timezone_result['simpleforecast']['forecastday'].first &&
-    #      timezone_result['simpleforecast']['forecastday'].first['date']
-    #     timezone = Barometer::Zone.new(Time.now.utc,timezone_result['simpleforecast']['forecastday'].first['date']['tz_long'])
+    #   if data && data['simpleforecast'] &&
+    #      data['simpleforecast']['forecastday'] &&
+    #      data['simpleforecast']['forecastday'].first &&
+    #      data['simpleforecast']['forecastday'].first['date']
+    #     timezone = Barometer::Zone.new(Time.now.utc,data['simpleforecast']['forecastday'].first['date']['tz_long'])
     #   end
     #   timezone
     # end

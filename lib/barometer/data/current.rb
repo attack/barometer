@@ -9,7 +9,7 @@ module Barometer
   class CurrentMeasurement
     
     attr_accessor :time, :local_time
-    attr_reader :humidity, :icon
+    attr_reader :humidity, :icon, :condition
     attr_reader :temperature, :dew_point, :heat_index, :wind_chill
     attr_reader :wind, :pressure, :visibility
     
@@ -27,6 +27,11 @@ module Barometer
     def icon=(icon)
       raise ArgumentError unless icon.is_a?(String)
       @icon = icon
+    end
+    
+    def condition=(condition)
+      raise ArgumentError unless condition.is_a?(String)
+      @condition = condition
     end
     
     def temperature=(temperature)

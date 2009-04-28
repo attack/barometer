@@ -20,6 +20,10 @@ describe "Current Measurement" do
       @current.icon.should be_nil
     end
     
+    it "responds to condition" do
+      @current.condition.should be_nil
+    end
+    
     it "responds to temperature" do
       @current.temperature.should be_nil
     end
@@ -89,6 +93,16 @@ describe "Current Measurement" do
       valid_data = "valid"
       valid_data.class.should == String
       lambda { @current.icon = valid_data }.should_not raise_error(ArgumentError)
+    end
+    
+    it "only accepts String for condition" do
+      invalid_data = 1
+      invalid_data.class.should_not == String
+      lambda { @current.condition = invalid_data }.should raise_error(ArgumentError)
+      
+      valid_data = "valid"
+      valid_data.class.should == String
+      lambda { @current.condition = valid_data }.should_not raise_error(ArgumentError)
     end
     
     it "only accepts Barometer::Temperature for temperature" do

@@ -16,6 +16,10 @@ describe "Forecast Measurement" do
       @forecast.icon.should be_nil
     end
     
+    it "responds to condition" do
+      @forecast.condition.should be_nil
+    end
+    
     it "responds to low" do
       @forecast.low.should be_nil
     end
@@ -50,6 +54,16 @@ describe "Forecast Measurement" do
       valid_data = "valid"
       valid_data.class.should == String
       lambda { @forecast.icon = valid_data }.should_not raise_error(ArgumentError)
+    end
+    
+    it "only accepts String for condition" do
+      invalid_data = 1
+      invalid_data.class.should_not == String
+      lambda { @forecast.condition = invalid_data }.should raise_error(ArgumentError)
+      
+      valid_data = "valid"
+      valid_data.class.should == String
+      lambda { @forecast.condition = valid_data }.should_not raise_error(ArgumentError)
     end
     
     it "only accepts Barometer::Temperature for high" do

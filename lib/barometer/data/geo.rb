@@ -90,7 +90,6 @@ module Barometer
       end
     end
     
-    # TODO: not tested
     def coordinates
       [@latitude, @longitude].join(',')
     end

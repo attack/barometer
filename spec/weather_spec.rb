@@ -38,11 +38,16 @@ describe "Weather" do
   describe "with measurements" do
     
     before(:each) do
+      module Barometer
+        class Measurement
+          attr_accessor :success
+        end
+      end
       @weather = Barometer::Weather.new
       @wunderground = Barometer::Measurement.new(:wunderground)
-      @wunderground.success!
+      @wunderground.success = true
       @yahoo = Barometer::Measurement.new(:yahoo)
-      @yahoo.success!
+      @yahoo.success = true
       @google = Barometer::Measurement.new(:google)
       @weather.measurements << @wunderground
       @weather.measurements << @yahoo

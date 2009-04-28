@@ -23,6 +23,9 @@ module Barometer
       super(metric)
     end
     
+    def metric_default=(value); self.c = value; end
+    def imperial_default=(value); self.f = value; end
+
     #
     # CONVERTERS
     #

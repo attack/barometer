@@ -18,7 +18,6 @@ Features to be added before first release:
 
 Features to be added in future releases:
 - even more weather service drivers (noaa, weather.com, weatherbug)
-- collect sunrise/sunset data
 - ability to query multiple services and combine/average the results
 - support iaco as a query format
 
@@ -32,16 +31,12 @@ faster development of this project.
 
 HTTParty is also extended to include configurable Timoout support.
 
-=== tzinfo (soft dependency)
+=== tzinfo
 
-Why? Barometer will return both current and forecast weather information for
-a given query.  You can then query the dataset for information for a specific
-time in the future.  Obviously this feature relies on translating the time in
-the future to the correct time zone of the location.
+Why? Barometer deals with time information for locations all over the world.
+This information doesn't mean that much if it can't be converted to times 
+that don't correspond to the applicable timezone.
 Tzinfo handles this time zone manipulation.
-
-Tzinfo is not required, just don't expect the searching by date or time to
-work perfectly.
 
 === graticule (very soft dependency)
 

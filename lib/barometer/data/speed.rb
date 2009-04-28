@@ -30,6 +30,9 @@ module Barometer
       super(metric)
     end
     
+    def metric_default=(value); self.kph = value; end
+    def imperial_default=(value); self.mph = value; end
+    
     #
     # CONVERTERS
     #

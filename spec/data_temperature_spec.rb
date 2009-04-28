@@ -30,6 +30,14 @@ describe "Temperature" do
       @temp.kelvin.should be_nil
     end
     
+    it "responds to metric_default" do
+      lambda { @temp.metric_default = 5 }.should_not raise_error(NotImplementedError)
+    end
+    
+    it "responds to imperial_default" do
+      lambda { @temp.imperial_default = 5 }.should_not raise_error(NotImplementedError)
+    end
+    
   end
   
   describe "conversion" do

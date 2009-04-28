@@ -39,6 +39,10 @@ describe "Measurement" do
       @measurement.location.should be_nil
     end
     
+    it "responds to sun" do
+      @measurement.sun.should be_nil
+    end
+    
     it "responds to success" do
       @measurement.success.should be_false
     end
@@ -86,7 +90,7 @@ describe "Measurement" do
       invalid_data.class.should_not == Barometer::Zone
       lambda { @measurement.timezone = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Barometer::Zone.new
+      valid_data = Barometer::Zone.new("Europe/Paris")
       valid_data.class.should == Barometer::Zone
       lambda { @measurement.timezone = valid_data }.should_not raise_error(ArgumentError)
     end
@@ -111,6 +115,16 @@ describe "Measurement" do
       lambda { @measurement.location = valid_data }.should_not raise_error(ArgumentError)
     end
     
+    it "only accepts Barometer::Sun for sun" do
+      invalid_data = 1
+      invalid_data.class.should_not == Barometer::Sun
+      lambda { @measurement.sun = invalid_data }.should raise_error(ArgumentError)
+      
+      valid_data = Barometer::Sun.new
+      valid_data.class.should == Barometer::Sun
+      lambda { @measurement.sun = valid_data }.should_not raise_error(ArgumentError)
+    end
+    
   end
   
   describe "and the helpers" do
@@ -119,13 +133,23 @@ describe "Measurement" do
       @measurement = Barometer::Measurement.new
     end
     
-    it "changes state to successful" do
+    it "changes state to successful (if successful)" do
       @measurement.success.should be_false
+      @measurement.success!
+      @measurement.current.should be_nil
+      @measurement.success.should be_false
+      
+      @measurement.current = Barometer::CurrentMeasurement.new
+      @measurement.current.temperature = Barometer::Temperature.new
+      @measurement.current.temperature.c = 10
       @measurement.success!
       @measurement.success.should be_true
     end
     
     it "returns successful state" do
+      @measurement.current = Barometer::CurrentMeasurement.new
+      @measurement.current.temperature = Barometer::Temperature.new
+      @measurement.current.temperature.c = 10
       @measurement.success!
       @measurement.success.should be_true
       @measurement.success?.should be_true

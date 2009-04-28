@@ -9,7 +9,7 @@ module Barometer
   #
   class ForecastMeasurement
     
-    attr_reader :date, :icon
+    attr_reader :date, :icon, :condition
     attr_reader :low, :high
     
     def date=(date)
@@ -21,6 +21,12 @@ module Barometer
       raise ArgumentError unless icon.is_a?(String)
       @icon = icon
     end
+    
+    def condition=(condition)
+      raise ArgumentError unless condition.is_a?(String)
+      @condition = condition
+    end
+    
     def high=(high)
       raise ArgumentError unless high.is_a?(Barometer::Temperature)
       @high = high

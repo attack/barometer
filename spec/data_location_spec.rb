@@ -48,6 +48,12 @@ describe "Location" do
       @location.longitude.should be_nil
     end
     
+    it "responds to coordinates" do
+      @location.longitude = "99.99"
+      @location.latitude = "88.88"
+      @location.coordinates.should == [@location.latitude, @location.longitude].join(',')
+    end
+    
   end
   
 end

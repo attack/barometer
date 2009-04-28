@@ -4,13 +4,6 @@ describe "Zone" do
   
   describe "and class methods" do
     
-    it "responds to load_tzinfo, it loads TZInfo" do
-      Barometer::Zone.respond_to?("load_tzinfo").should be_true
-      Barometer::Zone.load_tzinfo.should be_true
-      lambda { TZInfo }.should_not raise_error
-      Barometer::Zone.tzinfo?.should be_true
-    end
-  
     it "responds to now and returns Time object" do
       Barometer::Zone.respond_to?("now").should be_true
       Barometer::Zone.now.is_a?(Time).should be_true
@@ -26,63 +19,40 @@ describe "Zone" do
   describe "when initialized" do
     
     before(:each) do
-      @zone = Barometer::Zone.new
       @utc = Time.now.utc
       @timezone = "Europe/Paris"
-    end
-    
-    it "responds to time_as_utc" do
-      @zone.time_as_utc.should be_nil
+      @zone = Barometer::Zone.new(@timezone)
     end
     
     it "responds to timezone" do
-      @zone.timezone.should be_nil
-      
-      zone = Barometer::Zone.new(@utc, @timezone)
-      zone.timezone.should == @timezone
+      @zone.timezone.should_not be_nil
+      @zone.timezone.should == @timezone
     end
     
     it "responds to tz" do
-      @zone.tz.should be_nil
-      zone = Barometer::Zone.new(@utc)
-      zone.tz.should be_nil
+      lambda { Barometer::Zone.new("invalid timezone") }.should raise_error(TZInfo::InvalidTimezoneIdentifier)
       
-      zone = Barometer::Zone.new(@utc, @timezone)
+      zone = Barometer::Zone.new(@timezone)
       zone.tz.should_not be_nil
     end
     
     it "responds to code" do
       @zone.respond_to?("code").should be_true
-      zone = Barometer::Zone.new(@utc)
+      zone = Barometer::Zone.new(@timezone)
+      zone.tz = nil
       zone.tz.should be_nil
       zone.code.should == ""
       
-      zone = Barometer::Zone.new(@utc, @timezone)
+      zone = Barometer::Zone.new(@timezone)
       zone.code.should == "CEST"
     end
     
     it "responds to dst?" do
       @zone.respond_to?("dst?").should be_true
-      zone = Barometer::Zone.new(@utc)
+      zone = Barometer::Zone.new(@timezone)
+      zone.tz = nil
       zone.tz.should be_nil
       zone.dst?.should be_nil
-    end
-    
-    it "responds to utc" do
-      @zone.respond_to?("utc").should be_true
-      zone = Barometer::Zone.new(@utc)
-      zone.tz.should be_nil
-      zone.utc.should == @utc
-      
-      zone = Barometer::Zone.new(@utc, @timezone)
-      zone.utc.should == @utc
-    end
-    
-    it "responds to local" do
-      @zone.respond_to?("local").should be_true
-      zone = Barometer::Zone.new(@utc)
-      zone.tz.should be_nil
-      zone.local.should == @utc
     end
     
     it "responds to now" do
@@ -95,12 +65,67 @@ describe "Zone" do
       @zone.today.is_a?(Date).should be_true
     end
     
+    it "responds to now" do
+      Barometer::Zone.respond_to?("now").should be_true
+    end
+    
     it "responds to today" do
       Barometer::Zone.respond_to?("today").should be_true
     end
     
-    it "responds to tzinfo?" do
-      Barometer::Zone.respond_to?("tzinfo?").should be_true
+    it "converts local_time to utc" do
+      local_time = Time.now.utc
+      utc_time = @zone.local_to_utc(local_time)
+      
+      offset =  @zone.tz.period_for_utc(local_time).utc_total_offset
+      utc_time.should == (local_time - offset)
+    end
+    
+    it "converts utc to local_time" do
+      utc_time = Time.now.utc
+      local_time = @zone.utc_to_local(utc_time)
+      
+      offset =  @zone.tz.period_for_utc(local_time).utc_total_offset
+      utc_time.should == (local_time - offset)
+    end
+    
+  end
+  
+  describe "when manipulating times" do
+    
+    it "converts a time to utc based on TimeZone Short Code" do
+      target_zone = "PDT"
+      target_offset = Time.zone_offset("PDT")
+      target_time = Time.now
+      local_time = target_time
+      local_offset = Time.zone_offset(local_time.zone)
+      
+      # converting two times (ie 6am PDT and 6am MDT) to UTC should result
+      # in two UTC times that are off by the same offset
+      original_difference = local_offset - target_offset
+      
+      target_utc_time = Barometer::Zone.code_to_utc(target_time, target_zone)
+      local_utc_time = local_time.utc
+      
+      (target_utc_time - local_time.utc).to_i.should == original_difference.to_i
+    end
+      
+    it "merges a date and a time to one utc time (biased by TimeZone Short Code)" do
+      merge_date = "1 March 1990"
+      merge_time = "5:35 am"
+      merge_zonecode = "UTC"
+      
+      date = Date.parse(merge_date)
+      time = Time.parse(merge_time)
+      
+      utc_time = Barometer::Zone.merge(merge_time, merge_date, merge_zonecode)
+      
+      utc_time.year.should == date.year
+      utc_time.month.should == date.month
+      utc_time.day.should == date.day
+      utc_time.hour.should == time.hour
+      utc_time.min.should == time.min
+      utc_time.sec.should == time.sec
     end
     
   end
