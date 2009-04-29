@@ -27,11 +27,17 @@ describe "Pressure" do
     end
     
     it "responds to metric_default" do
-      lambda { @temp.metric_default = 5 }.should_not raise_error(NotImplementedError)
+      lambda { @pressure.metric_default = 5 }.should_not raise_error(NotImplementedError)
     end
     
     it "responds to imperial_default" do
-      lambda { @temp.imperial_default = 5 }.should_not raise_error(NotImplementedError)
+      lambda { @pressure.imperial_default = 5 }.should_not raise_error(NotImplementedError)
+    end
+    
+    it "responds to nil?" do
+      @pressure.nil?.should be_true
+      @pressure.mb = 5
+      @pressure.nil?.should be_false
     end
     
   end

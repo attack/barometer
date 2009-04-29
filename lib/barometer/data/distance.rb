@@ -123,5 +123,9 @@ module Barometer
       @miles = nil unless difference.abs <= 1.0
     end
     
+    def nil?
+      (@kilometers || @miles) ? false : true
+    end
+    
   end
 end

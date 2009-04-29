@@ -38,6 +38,12 @@ describe "Temperature" do
       lambda { @temp.imperial_default = 5 }.should_not raise_error(NotImplementedError)
     end
     
+    it "responds to nil?" do
+      @temp.nil?.should be_true
+      @temp.c = 5
+      @temp.nil?.should be_false
+    end
+    
   end
   
   describe "conversion" do

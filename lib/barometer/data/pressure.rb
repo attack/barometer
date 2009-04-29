@@ -125,5 +125,9 @@ module Barometer
       @inches = nil unless difference.abs <= 1.0
     end
     
+    def nil?
+      (@millibars || @inches) ? false : true
+    end
+    
   end
 end

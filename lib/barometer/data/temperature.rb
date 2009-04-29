@@ -156,5 +156,9 @@ module Barometer
       @fahrenheit = nil unless difference.abs <= 1.0
     end
     
+    def nil?
+      (@celsius || @fahrenheit || @kelvin) ? false : true
+    end
+    
   end
 end
