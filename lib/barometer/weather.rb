@@ -118,9 +118,9 @@ module Barometer
     
     #
     # simple questions
+    # pass the question on to each successful measurement until we get an answer
     #
     
-    # pass the question on to each successful measurement until we get an answer
     def windy?(threshold=10, utc_time=Time.now.utc)
       raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
       raise ArgumentError unless utc_time.is_a?(Time)
@@ -135,9 +135,20 @@ module Barometer
       is_windy
     end
 
-    # def wet?(threshold=50)
-    # end
-    # 
+    def wet?(threshold=50, utc_time=Time.now.utc)
+      raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
+      raise ArgumentError unless utc_time.is_a?(Time)
+      
+      is_wet = nil
+      @measurements.each do |measurement|
+        if measurement.success?
+          is_wet = measurement.wet?(threshold, utc_time)
+          return is_wet if !is_wet.nil?
+        end
+      end
+      is_wet
+    end
+
     # def sunny?
     # end
     # 

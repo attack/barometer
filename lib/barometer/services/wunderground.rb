@@ -46,6 +46,11 @@ module Barometer
       :wunderground
     end
     
+    # these are the icon codes that indicate "wet", used by wet? function
+    def self.wet_icon_codes
+      %w(flurries rain sleet snow tstorms nt_flurries nt_rain nt_sleet nt_snow nt_tstorms)
+    end
+    
     def self._measure(measurement, query, metric=true)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
       raise ArgumentError unless query.is_a?(Barometer::Query)
@@ -172,21 +177,9 @@ module Barometer
     
     # <forecastday>
     #       <date>
-    #         <epoch>1200452404</epoch>
     #         <pretty_short>9:00 PM CST</pretty_short>
     #         <pretty>9:00 PM CST on January 15, 2008</pretty>
-    #         <day>15</day>
-    #         <month>1</month>
-    #         <year>2008</year>
-    #         <yday>14</yday>
-    #         <hour>21</hour>
-    #         <min>00</min>
-    #         <sec>4</sec>
     #         <isdst>0</isdst>
-    #         <monthname>January</monthname>
-    #         <weekday_short/>
-    #         <weekday>Tuesday</weekday>
-    #         <ampm>PM</ampm>
     #         <tz_short>CST</tz_short>
     #         <tz_long>America/Chicago</tz_long>
     #       </date>

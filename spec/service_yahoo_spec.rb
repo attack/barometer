@@ -145,4 +145,54 @@ describe "Yahoo" do
   
   end
   
+  describe "when answering the simple questions," do
+    
+    before(:each) do
+      @measurement = Barometer::Measurement.new
+    end
+    
+    describe "currently_wet_by_icon?" do
+      
+      before(:each) do
+        @measurement.current = Barometer::CurrentMeasurement.new
+      end
+
+      it "returns true if matching icon code" do
+        @measurement.current.icon = "4"
+        @measurement.current.icon?.should be_true
+        Barometer::Yahoo.currently_wet_by_icon?(@measurement.current).should be_true
+      end
+      
+      it "returns false if NO matching icon code" do
+        @measurement.current.icon = "32"
+        @measurement.current.icon?.should be_true
+        Barometer::Yahoo.currently_wet_by_icon?(@measurement.current).should be_false
+      end
+      
+    end
+    
+    describe "forecasted_wet_by_icon?" do
+      
+      before(:each) do
+        @measurement.forecast = [Barometer::ForecastMeasurement.new]
+        @measurement.forecast.first.date = Date.today
+        @measurement.forecast.size.should == 1
+      end
+
+      it "returns true if matching icon code" do
+        @measurement.forecast.first.icon = "4"
+        @measurement.forecast.first.icon?.should be_true
+        Barometer::Yahoo.forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
+      end
+      
+      it "returns false if NO matching icon code" do
+        @measurement.forecast.first.icon = "32"
+        @measurement.forecast.first.icon?.should be_true
+        Barometer::Yahoo.forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
+      end
+      
+    end
+    
+  end
+  
 end

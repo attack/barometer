@@ -290,6 +290,357 @@ describe "Services" do
 
     end
     
+    describe "wet?" do
+      
+      it "requires a measurement object" do
+        lambda { Barometer::Service.wet? }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.wet?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.wet?(@measurement) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "requires threshold as a number" do
+        lambda { Barometer::Service.wet?(@measurement,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.wet?(@measurement,1) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::Service.wet?(@measurement,1.1) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "requires time as a Time object" do
+        lambda { Barometer::Service.wet?(@measurement,1,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.wet?(@measurement,1,Time.now.utc) }.should_not raise_error(ArgumentError)
+      end
+
+      describe "and is current" do
+        
+        before(:each) do
+          module Barometer; class Measurement
+            def current?(a=nil); true; end
+          end; end
+        end
+      
+        it "returns nil" do
+          Barometer::Service.wet?(@measurement).should be_nil
+        end
+        
+        it "returns true if currently_wet?" do
+          module Barometer; class Service
+            def self.currently_wet?(a=nil,b=nil); true; end
+          end; end
+          Barometer::Service.wet?(@measurement).should be_true
+        end
+
+        it "returns false if !currently_wet?" do
+          module Barometer; class Service
+            def self.currently_wet?(a=nil,b=nil); false; end
+          end; end
+          Barometer::Service.wet?(@measurement).should be_false
+        end
+        
+      end
+      
+      describe "and is NOT current" do
+        
+        before(:each) do
+          module Barometer; class Measurement
+            def current?(a=nil); false; end
+          end; end
+        end
+      
+        it "returns nil" do
+          Barometer::Service.wet?(@measurement).should be_nil
+        end
+        
+        it "returns true if forecasted_wet?" do
+          module Barometer; class Service
+            def self.forecasted_wet?(a=nil,b=nil,c=nil); true; end
+          end; end
+          Barometer::Service.wet?(@measurement).should be_true
+        end
+
+        it "returns false if !forecasted_wet?" do
+          module Barometer; class Service
+            def self.forecasted_wet?(a=nil,b=nil,c=nil); false; end
+          end; end
+          Barometer::Service.wet?(@measurement).should be_false
+        end
+        
+      end
+      
+    end
+    
+    describe "currently_wet?" do
+    
+      before(:each) do
+        # the function being tested was monkey patched in an earlier test
+        # so the original file must be reloaded
+        load 'lib/barometer/services/service.rb'
+        
+        @measurement = Barometer::Measurement.new
+        @threshold = 10
+        @temperature = 15
+      end
+    
+      it "requires a measurement object" do
+        lambda { Barometer::Service.currently_wet? }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.currently_wet?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.currently_wet?(@measurement) }.should_not raise_error(ArgumentError)
+      end
+    
+      it "requires threshold as a number" do
+        lambda { Barometer::Service.currently_wet?(@measurement,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.currently_wet?(@measurement,1) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::Service.currently_wet?(@measurement,1.1) }.should_not raise_error(ArgumentError)
+      end
+    
+      it "returns nil when value unavailable" do
+        measurement = Barometer::Measurement.new
+        Barometer::Service.currently_wet?(measurement,@threshold).should be_nil
+        measurement.current = Barometer::CurrentMeasurement.new
+        Barometer::Service.currently_wet?(measurement,@threshold).should be_nil
+        measurement.current.wind = Barometer::Speed.new
+        Barometer::Service.currently_wet?(measurement,@threshold).should be_nil
+      end
+      
+      describe "currently_wet_by_icon?" do
+
+        before(:each) do
+          @measurement.current = Barometer::CurrentMeasurement.new
+        end
+
+        it "requires a Barometer::Measurement object" do
+          lambda { Barometer::Service.currently_wet_by_icon?(nil) }.should raise_error(ArgumentError)
+          lambda { Barometer::Service.currently_wet_by_icon?("invlaid") }.should raise_error(ArgumentError)
+
+          lambda { Barometer::Service.currently_wet_by_icon?(@measurement.current) }.should_not raise_error(ArgumentError)
+        end
+
+        it "returns nil if no icon" do
+          @measurement.current.icon?.should be_false
+          Barometer::Service.currently_wet_by_icon?(@measurement.current).should be_nil
+        end
+
+        it "returns true if matching icon code" do
+          module Barometer; class Service; def self.wet_icon_codes
+            ["rain"]
+          end; end; end
+          @measurement.current.icon = "rain"
+          @measurement.current.icon?.should be_true
+          Barometer::Service.currently_wet_by_icon?(@measurement.current).should be_true
+        end
+
+        it "returns false if NO matching icon code" do
+          module Barometer; class Service; def self.wet_icon_codes
+            ["rain"]
+          end; end; end
+          @measurement.current.icon = "sunny"
+          @measurement.current.icon?.should be_true
+          Barometer::Service.currently_wet_by_icon?(@measurement.current).should be_false
+        end
+
+      end
+      
+      describe "and currently_wet_by_dewpoint?" do
+        
+        describe "when metric" do
+ 
+          before(:each) do
+            @measurement = Barometer::Measurement.new
+            @measurement.current = Barometer::CurrentMeasurement.new
+            @measurement.current.temperature = Barometer::Temperature.new
+            @measurement.current.dew_point = Barometer::Temperature.new
+            @measurement.metric!
+            @measurement.metric?.should be_true
+          end
+          
+          it "returns true when temperature < dew_point" do
+            @measurement.current.temperature.c = @temperature
+            @measurement.current.dew_point.c = @temperature + 1
+            Barometer::Service.currently_wet_by_dewpoint?(@measurement).should be_true
+          end
+        
+          it "returns false when temperature > dew_point" do
+            @measurement.current.temperature.c = @temperature
+            @measurement.current.dew_point.c = @temperature - 1
+            Barometer::Service.currently_wet_by_dewpoint?(@measurement).should be_false
+          end
+          
+        end
+        
+        describe "when imperial" do
+          
+          before(:each) do
+            @measurement = Barometer::Measurement.new
+            @measurement.current = Barometer::CurrentMeasurement.new
+            @measurement.current.temperature = Barometer::Temperature.new
+            @measurement.current.dew_point = Barometer::Temperature.new
+            @measurement.imperial!
+            @measurement.metric?.should be_false
+          end
+
+          it "returns true when temperature < dew_point" do
+            @measurement.current.temperature.f = @temperature
+            @measurement.current.dew_point.f = @temperature + 1
+            Barometer::Service.currently_wet_by_dewpoint?(@measurement).should be_true
+          end
+
+          it "returns false when temperature > dew_point" do
+            @measurement.current.temperature.f = @temperature
+            @measurement.current.dew_point.f = @temperature - 1
+            Barometer::Service.currently_wet_by_dewpoint?(@measurement).should be_false
+          end
+
+        end
+      
+      end
+      
+      describe "and currently_wet_by_humidity?" do
+        
+        before(:each) do
+          @measurement = Barometer::Measurement.new
+          @measurement.current = Barometer::CurrentMeasurement.new
+        end
+        
+        it "returns true when humidity >= 99%" do
+          @measurement.current.humidity = 99
+          Barometer::Service.currently_wet_by_humidity?(@measurement.current).should be_true
+          @measurement.current.humidity = 100
+          Barometer::Service.currently_wet_by_humidity?(@measurement.current).should be_true
+        end
+      
+        it "returns false when humidity < 99%" do
+          @measurement.current.humidity = 98
+          Barometer::Service.currently_wet_by_humidity?(@measurement.current).should be_false
+        end
+        
+      end
+      
+      describe "and currently_wet_by_pop?" do
+        
+        before(:each) do
+          @measurement = Barometer::Measurement.new
+          @measurement.forecast = [Barometer::ForecastMeasurement.new]
+          @measurement.forecast.first.date = Date.today
+          @measurement.forecast.size.should == 1
+        end
+        
+        it "returns true when pop (%) above threshold" do
+          @measurement.forecast.first.pop = @threshold + 1
+          Barometer::Service.currently_wet_by_pop?(@measurement, @threshold).should be_true
+        end
+
+        it "returns false when pop (%) below threshold" do
+          @measurement.forecast.first.pop = @threshold - 1
+          Barometer::Service.currently_wet_by_pop?(@measurement, @threshold).should be_false
+        end
+        
+      end
+    
+    end
+    
+    describe "forecasted_wet?" do
+    
+      before(:each) do
+        # the function being tested was monkey patched in an earlier test
+        # so the original file must be reloaded
+        load 'lib/barometer/services/service.rb'
+        
+        @measurement = Barometer::Measurement.new
+        @threshold = 10
+        @temperature = 15
+      end
+    
+      it "requires a measurement object" do
+        lambda { Barometer::Service.forecasted_wet? }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.forecasted_wet?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.forecasted_wet?(@measurement) }.should_not raise_error(ArgumentError)
+      end
+
+      it "requires threshold as a number" do
+        lambda { Barometer::Service.forecasted_wet?(@measurement,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.forecasted_wet?(@measurement,1) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::Service.forecasted_wet?(@measurement,1.1) }.should_not raise_error(ArgumentError)
+      end
+
+      it "requires utc_time as a Time object" do
+        lambda { Barometer::Service.forecasted_wet?(@measurement,1,"string") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.forecasted_wet?(@measurement,1,Time.now.utc) }.should_not raise_error(ArgumentError)
+      end
+
+      it "returns nil when value unavailable" do
+        measurement = Barometer::Measurement.new
+        Barometer::Service.forecasted_wet?(measurement,@threshold).should be_nil
+        measurement.forecast = [Barometer::ForecastMeasurement.new]
+        Barometer::Service.forecasted_wet?(measurement,@threshold).should be_nil
+      end
+      
+      describe "forecasted_wet_by_icon?" do
+
+        before(:each) do
+          @measurement.forecast = [Barometer::ForecastMeasurement.new]
+          @measurement.forecast.first.date = Date.today
+          @measurement.forecast.size.should == 1
+        end
+
+        it "requires a Barometer::Measurement object" do
+          lambda { Barometer::Service.forecasted_wet_by_icon?(nil) }.should raise_error(ArgumentError)
+          lambda { Barometer::Service.forecasted_wet_by_icon?("invlaid") }.should raise_error(ArgumentError)
+
+          lambda { Barometer::Service.forecasted_wet_by_icon?(@measurement.forecast.first) }.should_not raise_error(ArgumentError)
+        end
+
+        it "returns nil if no icon" do
+          @measurement.forecast.first.icon?.should be_false
+          Barometer::Service.forecasted_wet_by_icon?(@measurement.forecast.first).should be_nil
+        end
+
+        it "returns true if matching icon code" do
+          module Barometer; class Service; def self.wet_icon_codes
+            ["rain"]
+          end; end; end
+          @measurement.forecast.first.icon = "rain"
+          @measurement.forecast.first.icon?.should be_true
+          Barometer::Service.forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
+        end
+
+        it "returns false if NO matching icon code" do
+          module Barometer; class Service; def self.wet_icon_codes
+            ["rain"]
+          end; end; end
+          @measurement.forecast.first.icon = "sunny"
+          @measurement.forecast.first.icon?.should be_true
+          Barometer::Service.forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
+        end
+
+        after(:each) do
+          # the function being tested was monkey patched in an earlier test
+          # so the original file must be reloaded
+          load 'lib/barometer/services/service.rb'
+        end
+
+      end
+
+      describe "and forecasted_wet_by_pop?" do
+        
+        before(:each) do
+          @measurement = Barometer::Measurement.new
+          @measurement.forecast = [Barometer::ForecastMeasurement.new]
+          @measurement.forecast.first.date = Date.today
+          @measurement.forecast.size.should == 1
+        end
+        
+        it "returns true when pop (%) above threshold" do
+          @measurement.forecast.first.pop = @threshold + 1
+          Barometer::Service.forecasted_wet_by_pop?(@measurement.forecast.first, @threshold).should be_true
+        end
+
+        it "returns false when pop (%) below threshold" do
+          @measurement.forecast.first.pop = @threshold - 1
+          Barometer::Service.forecasted_wet_by_pop?(@measurement.forecast.first, @threshold).should be_false
+        end
+        
+      end
+
+    end
+    
   end
   
 end

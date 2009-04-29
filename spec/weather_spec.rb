@@ -125,6 +125,46 @@ describe "Weather" do
       
     end
     
+    describe "wet?" do
+      
+      it "requires threshold as a number" do
+        lambda { @weather.wet?("a") }.should raise_error(ArgumentError)
+        lambda { @weather.wet?(1) }.should_not raise_error(ArgumentError)
+        lambda { @weather.wet?(1.1) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "requires time as a Time object" do
+        lambda { @weather.wet?(1,"a") }.should raise_error(ArgumentError)
+        lambda { @weather.wet?(1,Time.now.utc) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "returns nil when no measurements" do
+        @weather.measurements.should be_empty
+        @weather.wet?.should be_nil
+      end
+      
+      it "returns true if a measurement returns true" do
+        wunderground = Barometer::Measurement.new(:wunderground)
+        wunderground.success = true
+        @weather.measurements << wunderground
+        module Barometer; class Measurement
+            def wet?(a=nil,b=nil); true; end
+        end; end
+        @weather.wet?.should be_true
+      end
+
+      it "returns false if a measurement returns false" do
+        wunderground = Barometer::Measurement.new(:wunderground)
+        wunderground.success = true
+        @weather.measurements << wunderground
+        module Barometer; class Measurement
+            def wet?(a=nil,b=nil); false; end
+        end; end
+        @weather.wet?.should be_false
+      end
+      
+    end
+    
   end
   
 end

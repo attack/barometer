@@ -86,27 +86,30 @@ module Barometer
       false
     end
     
-    
     #
     # answer simple questions
     #
     
+    #
+    # WINDY?
+    #
     def self.windy?(measurement, threshold=10, utc_time=nil)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
       raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
       raise ArgumentError unless (utc_time.is_a?(Time) || utc_time.nil?)
 
-      return measurement.current?(utc_time) ?
+      measurement.current?(utc_time) ?
         self.currently_windy?(measurement, threshold) :
         self.forecasted_windy?(measurement, threshold, utc_time)
     end
     
+    # cookie cutter answer, a driver can override this if they answer it differently
     # if a service doesn't support obtaining the wind value, it will be ignored
     def self.currently_windy?(measurement, threshold=10)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
       raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
-      return nil if (!measurement.current || !measurement.current.wind || !measurement.current.wind.kph)
-      return measurement.metric? ?
+      return nil if (!measurement.current || !measurement.current.wind?)
+      measurement.metric? ?
         measurement.current.wind.kph.to_f >= threshold.to_f :
         measurement.current.wind.mph.to_f >= threshold.to_f
     end
@@ -114,6 +117,98 @@ module Barometer
     # no driver can currently answer this question, so it doesn't have any code
     def self.forecasted_windy?(measurement, threshold, utc_time); nil; end
     
+    #
+    # WET?
+    #
+    def self.wet?(measurement, threshold=50, utc_time=nil)
+      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
+      raise ArgumentError unless (utc_time.is_a?(Time) || utc_time.nil?)
+      measurement.current?(utc_time) ?
+        self.currently_wet?(measurement, threshold) :
+        self.forecasted_wet?(measurement, threshold, utc_time)
+    end
+    
+    # cookie cutter answer
+    def self.currently_wet?(measurement, threshold=50)
+      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
+      return nil unless measurement.current
+      self.currently_wet_by_icon?(measurement.current) ||
+        self.currently_wet_by_dewpoint?(measurement) ||
+        self.currently_wet_by_humidity?(measurement.current) ||
+        self.currently_wet_by_pop?(measurement, threshold)
+    end
+    
+    # cookie cutter answer
+    def self.currently_wet_by_dewpoint?(measurement)
+      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      return nil if (!measurement.current || !measurement.current.temperature? ||
+                     !measurement.current.dew_point?)
+      measurement.metric? ?
+        measurement.current.temperature.c.to_f <= measurement.current.dew_point.c.to_f :
+        measurement.current.temperature.f.to_f <= measurement.current.dew_point.f.to_f
+    end
+    
+    # cookie cutter answer
+    def self.currently_wet_by_humidity?(current_measurement)
+      raise ArgumentError unless current_measurement.is_a?(Barometer::CurrentMeasurement)
+      return nil unless current_measurement.humidity?
+      current_measurement.humidity.to_i >= 99
+    end
+    
+    # cookie cutter answer
+    def self.currently_wet_by_pop?(measurement, threshold=50)
+      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
+      return nil unless measurement.forecast
+      # get todays forecast
+      forecast_measurement = measurement.for
+      return nil unless forecast_measurement
+      forecast_measurement.pop.to_f >= threshold.to_f
+    end
+    
+    # cookie cutter answer
+    def self.forecasted_wet?(measurement, threshold=50, utc_time=nil)
+      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
+      raise ArgumentError unless (utc_time.is_a?(Time) || utc_time.nil?)
+      return nil unless measurement.forecast
+      forecast_measurement = measurement.for(utc_time)
+      return nil unless forecast_measurement
+      self.forecasted_wet_by_icon?(forecast_measurement) ||
+        self.forecasted_wet_by_pop?(forecast_measurement, threshold)
+    end
+
+    # cookie cutter answer
+    def self.forecasted_wet_by_pop?(forecast_measurement, threshold=50)
+      raise ArgumentError unless forecast_measurement.is_a?(Barometer::ForecastMeasurement)
+      raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
+      return nil unless forecast_measurement.pop?
+      forecast_measurement.pop.to_f >= threshold.to_f
+    end
+
+    def self.currently_wet_by_icon?(current_measurement)
+      raise ArgumentError unless current_measurement.is_a?(Barometer::CurrentMeasurement)
+      return nil unless self.wet_icon_codes
+      return nil unless current_measurement.icon?
+      current_measurement.icon.is_a?(String) ?
+        self.wet_icon_codes.include?(current_measurement.icon.to_s.downcase) :
+        self.wet_icon_codes.include?(current_measurement.icon)
+    end
+    
+    def self.forecasted_wet_by_icon?(forecast_measurement)
+      raise ArgumentError unless forecast_measurement.is_a?(Barometer::ForecastMeasurement)
+      return nil unless self.wet_icon_codes
+      return nil unless forecast_measurement.icon?
+      forecast_measurement.icon.is_a?(String) ?
+        self.wet_icon_codes.include?(forecast_measurement.icon.to_s.downcase) :
+        self.wet_icon_codes.include?(forecast_measurement.icon)
+    end
+
+    # this returns an array of codes that indicate "wet"
+    def self.wet_icon_codes; nil; end
+
   end
   
 end  

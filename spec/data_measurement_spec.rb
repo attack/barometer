@@ -325,6 +325,35 @@ describe "Measurement" do
       
     end
     
+    describe "wet?" do
+      
+      it "requires threshold as a number" do
+        lambda { @measurement.wet?("a") }.should raise_error(ArgumentError)
+        lambda { @measurement.wet?(1) }.should_not raise_error(ArgumentError)
+        lambda { @measurement.wet?(1.1) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "requires time as a Time object" do
+        lambda { @measurement.wet?(1,"a") }.should raise_error(ArgumentError)
+        lambda { @measurement.wet?(1,Time.now.utc) }.should_not raise_error(ArgumentError)
+      end
+
+      it "returns true if a source returns true" do
+        module Barometer; class Service
+          def self.wet?(a=nil,b=nil,c=nil); true; end
+        end; end
+        @measurement.wet?.should be_true
+      end
+
+      it "returns false if a measurement returns false" do
+        module Barometer; class Service
+          def self.wet?(a=nil,b=nil,c=nil); false; end
+        end; end
+        @measurement.wet?.should be_false
+      end
+      
+    end
+    
   end
   
 end

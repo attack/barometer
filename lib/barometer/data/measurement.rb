@@ -68,6 +68,7 @@ module Barometer
     #
     def for(date=nil)
       date = @timezone.today unless date || !@timezone
+      date ||= Date.today
       return nil unless (@forecast && @forecast.size > 0)
       
       # Format date into a Date class
@@ -135,13 +136,19 @@ module Barometer
     
     #
     # simple questions
+    # pass questions to the source
     #
     
-    # pass this question on to the source
     def windy?(threshold=10, utc_time=Time.now.utc)
       raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
       raise ArgumentError unless utc_time.is_a?(Time)
       Barometer::Service.source(@source).windy?(self, threshold, utc_time)
+    end
+    
+    def wet?(threshold=50, utc_time=Time.now.utc)
+      raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
+      raise ArgumentError unless utc_time.is_a?(Time)
+      Barometer::Service.source(@source).wet?(self, threshold, utc_time)
     end
     
   end

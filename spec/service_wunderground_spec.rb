@@ -164,4 +164,54 @@ describe "Wunderground" do
 
   end
   
+  describe "when answering the simple questions," do
+    
+    before(:each) do
+      @measurement = Barometer::Measurement.new
+    end
+    
+    describe "currently_wet_by_icon?" do
+      
+      before(:each) do
+        @measurement.current = Barometer::CurrentMeasurement.new
+      end
+
+      it "returns true if matching icon code" do
+        @measurement.current.icon = "rain"
+        @measurement.current.icon?.should be_true
+        Barometer::Wunderground.currently_wet_by_icon?(@measurement.current).should be_true
+      end
+      
+      it "returns false if NO matching icon code" do
+        @measurement.current.icon = "sunny"
+        @measurement.current.icon?.should be_true
+        Barometer::Wunderground.currently_wet_by_icon?(@measurement.current).should be_false
+      end
+      
+    end
+    
+    describe "forecasted_wet_by_icon?" do
+      
+      before(:each) do
+        @measurement.forecast = [Barometer::ForecastMeasurement.new]
+        @measurement.forecast.first.date = Date.today
+        @measurement.forecast.size.should == 1
+      end
+
+      it "returns true if matching icon code" do
+        @measurement.forecast.first.icon = "rain"
+        @measurement.forecast.first.icon?.should be_true
+        Barometer::Wunderground.forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
+      end
+      
+      it "returns false if NO matching icon code" do
+        @measurement.forecast.first.icon = "sunny"
+        @measurement.forecast.first.icon?.should be_true
+        Barometer::Wunderground.forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
+      end
+      
+    end
+    
+  end
+  
 end
