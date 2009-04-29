@@ -28,6 +28,10 @@ describe "Forecast Measurement" do
       @forecast.high.should be_nil
     end
     
+    it "responds to pop" do
+      @forecast.pop.should be_nil
+    end
+    
   end
   
   describe "when writing data" do
@@ -84,6 +88,16 @@ describe "Forecast Measurement" do
       valid_data = Barometer::Temperature.new
       valid_data.class.should == Barometer::Temperature
       lambda { @forecast.low = valid_data }.should_not raise_error(ArgumentError)
+    end
+    
+    it "only accepts Fixnum for pop" do
+      invalid_data = "test"
+      invalid_data.class.should_not == Fixnum
+      lambda { @forecast.pop = invalid_data }.should raise_error(ArgumentError)
+      
+      valid_data = 50
+      valid_data.class.should == Fixnum
+      lambda { @forecast.pop = valid_data }.should_not raise_error(ArgumentError)
     end
     
   end

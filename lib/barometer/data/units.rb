@@ -12,17 +12,9 @@ module Barometer
     # HELPERS
     #
     
-    def metric?
-      @metric
-    end
-    
-    def metric!
-      @metric=true
-    end
-    
-    def imperial!
-      @metric=false
-    end
+    def metric?; @metric; end
+    def metric!; @metric=true; end
+    def imperial!; @metric=false; end
 
     # assigns a value to the right attribute based on metric setting    
     def <<(value)

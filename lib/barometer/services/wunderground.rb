@@ -123,6 +123,7 @@ module Barometer
           forecast_measurement = ForecastMeasurement.new
           forecast_measurement.icon = forecast['icon']
           forecast_measurement.date = Date.parse(forecast['date']['pretty'])
+          forecast_measurement.pop = forecast['pop'].to_i
           
           forecast_measurement.high = Temperature.new(metric)
           forecast_measurement.high << [forecast['high']['celsius'],forecast['high']['fahrenheit']]
@@ -269,6 +270,18 @@ module Barometer
         :timeout => Barometer.timeout
       )['forecast']
     end
+    
+    #
+    # answer simple questions (if answerable)
+    #
+    
+def self.currently_windy?(measurement, threshold=10)
+  raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+  raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
+  return measurement.metric? ?
+    measurement.current.wind.kph.to_f >= threshold.to_f :
+    measurement.current.wind.mph.to_f >= threshold.to_f
+end
     
   end
 end

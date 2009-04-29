@@ -19,6 +19,10 @@ describe "Measurement" do
       measurement.source.should == source
     end
     
+    it "responds to time" do
+      @measurement.time.should be_nil
+    end
+    
     it "responds to current" do
       @measurement.current.should be_nil
     end
@@ -47,6 +51,14 @@ describe "Measurement" do
       @measurement.success.should be_false
     end
     
+    it "responds to current?" do
+      @measurement.current?.should be_false
+    end
+    
+    it "responds to metric" do
+      @measurement.metric.should be_true
+    end
+    
   end
   
   describe "when writing data" do
@@ -63,6 +75,16 @@ describe "Measurement" do
       valid_data = :valid
       valid_data.class.should == Symbol
       lambda { @measurement.source = valid_data }.should_not raise_error(ArgumentError)
+    end
+    
+    it "only accepts Time for time" do
+      invalid_data = 1
+      invalid_data.class.should_not == Time
+      lambda { @measurement.time = invalid_data }.should raise_error(ArgumentError)
+      
+      valid_data = Time.now.utc
+      valid_data.class.should == Time
+      lambda { @measurement.time = valid_data }.should_not raise_error(ArgumentError)
     end
     
     it "only accepts Barometer::CurrentMeasurement for current" do
@@ -136,12 +158,14 @@ describe "Measurement" do
     it "changes state to successful (if successful)" do
       @measurement.success.should be_false
       @measurement.success!
+      @measurement.time.should be_nil
       @measurement.current.should be_nil
       @measurement.success.should be_false
       
       @measurement.current = Barometer::CurrentMeasurement.new
       @measurement.current.temperature = Barometer::Temperature.new
       @measurement.current.temperature.c = 10
+      @measurement.time.should_not be_nil
       @measurement.success!
       @measurement.success.should be_true
     end
@@ -160,6 +184,55 @@ describe "Measurement" do
       @measurement.success?.should be_false
     end
     
+    it "stamps the time" do
+      @measurement.time.should be_nil
+      @measurement.stamp!
+      @measurement.time.should_not be_nil
+    end
+    
+    it "indicates if current" do
+      @measurement.time.should be_nil
+      @measurement.current?.should be_false
+      @measurement.stamp!
+      @measurement.time.should_not be_nil
+      @measurement.current?.should be_true
+      
+      @measurement.time -= (60*60*3)
+      @measurement.current?.should be_true
+      
+      @measurement.time -= (60*60*5)
+      @measurement.current?.should be_false
+    end
+    
+    describe "changing units" do
+
+      before(:each) do
+        @measurement = Barometer::Measurement.new
+      end
+
+      it "indicates if metric?" do
+        @measurement.metric.should be_true
+        @measurement.metric?.should be_true
+        @measurement.metric = false
+        @measurement.metric.should be_false
+        @measurement.metric?.should be_false
+      end
+
+      it "changes to imperial" do
+        @measurement.metric?.should be_true
+        @measurement.imperial!
+        @measurement.metric?.should be_false
+      end
+
+      it "changes to metric" do
+        @measurement.metric = false
+        @measurement.metric?.should be_false
+        @measurement.metric!
+        @measurement.metric?.should be_true
+      end
+
+    end
+
   end
   
   describe "when searching forecasts using 'for'" do

@@ -4,8 +4,8 @@
 
 == future
 
-- rdoc compatible documentation
+- Rdoc compatible documentation
 - Weather Service API key setting
 - support IACO as a query format
 - create bin
-- store links from weather reponse
+- store links from weather response

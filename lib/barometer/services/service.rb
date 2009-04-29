@@ -35,8 +35,7 @@ module Barometer
     def self.measure(query, metric=true)
       raise ArgumentError unless query.is_a?(Barometer::Query)
       
-      measurement = Barometer::Measurement.new
-      measurement.source = self.source_name
+      measurement = Barometer::Measurement.new(self.source_name, metric)
       if self.meets_requirements?(query)
         query.convert!(self.accepted_formats)
         measurement = self._measure(measurement, query, metric) if query.preferred
@@ -86,6 +85,25 @@ module Barometer
     def self.requires_keys?
       false
     end
+    
+    
+    #
+    # answer simple questions
+    #
+    
+def self.windy?(measurement, threshold=10, utc_time=nil)
+  raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+  raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
+  raise ArgumentError unless (utc_time.is_a?(Time) || utc_time.nil?)
+  
+  return measurement.current?(utc_time) ?
+    self.currently_windy?(measurement, threshold) :
+    self.forecasted_windy?(measurement, threshold, utc_time)
+end
+
+# override these in the service driver to provide answers
+def self.currently_windy?(measurement, threshold); nil; end
+def self.forecasted_windy?(measurement, threshold, utc_time); nil; end
     
   end
   

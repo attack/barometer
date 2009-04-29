@@ -61,45 +61,92 @@ module Barometer
       default && default.forecast ? default.for(query) : nil
     end
     
-    # TODO
-    # these could be used for quick access to the default values, or averaging
-    # of all values ... need a way to weight values
+    #
+    # helper methods
+    #
+    # these are handy methods that can average values for successful weather
+    # sources, or answer a simple question (ie: weather.windy?)
+    #
     
-    # def time
-    #   self.current.time
-    # end
+    #
+    # averages
+    #
+    
+    # average of all humidity values
     # def humidity
-    #   self.current.humidity
     # end
+    # 
+    # # average of all temperature values
+    # def temperature
+    # end
+    # 
+    # # average of all wind speed values
+    # def wind
+    # end
+    # 
+    # # average of all pressure values
+    # def pressure
+    # end
+    # 
+    # # average of all dew_point values
+    # def dew_point
+    # end
+    # 
+    # # average of all heat_index values
+    # def heat_index
+    # end
+    # 
+    # # average of all wind_chill values
+    # def wind_chill
+    # end
+    # 
+    # # average of all visibility values
+    # def visibility
+    # end
+    
+    #
+    # quick access methods
+    #
+    
+    # what is the current local time and date?
+    # def time
+    # end
+    
     # def icon
     #   self.current.icon
     # end
-    # # NOTE: could average all current temperatures (if more then one)
-    # def temperature
-    #   self.current.temperature
+    
+    #
+    # simple questions
+    #
+    
+# pass the question on to each successful measurement until we get an answer
+def windy?(threshold=10, utc_time=Time.now.utc)
+  raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
+  raise ArgumentError unless utc_time.is_a?(Time)
+  
+  return @is_windy if !@is_windy.nil?
+  
+  @measurements.each do |measurement|
+    if measurement.success?
+      @is_windy = measurement.windy?(threshold, utc_time)
+      return @is_windy if !@is_windy.nil?
+    end
+  end
+  @is_windy
+end
+
+    # def wet?(threshold=50)
     # end
-    # # NOTE: could average all current temperatures (if more then one)
-    # def wind
-    #   self.current.wind
+    # 
+    # def sunny?
     # end
-    # # NOTE: could average all current temperatures (if more then one)
-    # def pressure
-    #   self.current.pressure
+    # 
+    # def day?
     # end
-    # # NOTE: could average all current dew_point (if more then one)
-    # def dew_point
-    #   self.current.dew_point
-    # end
-    # # NOTE: could average all current heat_index (if more then one)
-    # def heat_index
-    #   self.current.heat_index
-    # end
-    # # NOTE: could average all current wind_chill (if more then one)
-    # def wind_chill
-    #   self.current.wind_chill
-    # end
-    # def visibility
-    #   self.current.visibility
+    # 
+    # def night?
+    #   !self.day?
     # end
     
   end

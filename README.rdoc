@@ -148,7 +148,7 @@ the data as shown in the above examples.
   weather.now             # returns current_measurement for default
   weather.forecast        # returns all forecast_measurements for default
   weather.today           # returns forecast_measurement for default today
-  weather.tomorrow       # returns forecast_measurement for default tomorrow
+  weather.tomorrow        # returns forecast_measurement for default tomorrow
   
   puts weather.now.temperature.c
   puts weather.tomorrow.high.c

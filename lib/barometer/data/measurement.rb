@@ -19,10 +19,12 @@ module Barometer
     # current and forecasted data
     attr_reader :current, :forecast
     attr_reader :timezone, :station, :location, :sun
-    attr_reader :success
+    attr_reader :success, :time
+    attr_accessor :metric
     
-    def initialize(source=nil)
+    def initialize(source=nil, metric=true)
       @source = source
+      @metric = metric
       @success = false
     end
     
@@ -32,8 +34,30 @@ module Barometer
       end
     end
     
-    def success?
-      @success
+    def stamp!; @time = Time.now.utc; end
+    def success?; @success; end
+    def metric?; @metric; end
+    def metric!; @metric=true; end
+    def imperial!; @metric=false; end
+    
+    # this will tell us if the measurement is still current ... if it is still
+    # current this means that the CurrentMeasurement can still used as now
+    #
+    # what it also means is that if you took a measurement right now (time = now)
+    # and then asked if current?(time_in_future) that current? would be true for
+    # any time_in_future within 4 hours of now
+    #
+    # where is this useful?  lets say you take the measurement now (time = now),
+    # and then you want to know if self.windy?(5_hours_in_future) ... we could
+    # not use the current data for this answser as the time 5_hours_in_future
+    # is not current
+    def current?(utc_time=Time.now.utc)
+      return false unless @time
+      raise ArgumentError unless utc_time.is_a?(Time)
+      hours_still_current = 4
+      difference = (@time - utc_time).to_i
+      difference = (difference*(-1)).to_i if difference < 0
+      difference <= (60*60*hours_still_current).to_i
     end
     
     #
@@ -70,9 +94,15 @@ module Barometer
       @source = source
     end
     
+    def time=(time=Time.now.utc)
+      raise ArgumentError unless time.is_a?(Time)
+      @time = time
+    end
+    
     def current=(current)
       raise ArgumentError unless current.is_a?(Barometer::CurrentMeasurement)
       @current = current
+      self.stamp!
       # self-determine success
       self.success!
     end
@@ -102,6 +132,14 @@ module Barometer
       raise ArgumentError unless sun.is_a?(Barometer::Sun)
       @sun = sun
     end
+    
+# this question is specific to a source, so pass the question to
+# the source
+def windy?(threshold=10, utc_time=Time.now.utc)
+  raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
+  raise ArgumentError unless utc_time.is_a?(Time)
+  Barometer::Service.source(@source).windy?(self, threshold, utc_time)
+end
     
   end
 end
