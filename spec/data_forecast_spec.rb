@@ -102,4 +102,35 @@ describe "Forecast Measurement" do
     
   end
   
+  describe "method missing" do
+    
+    before(:each) do
+      @forecast = Barometer::ForecastMeasurement.new
+    end
+    
+    it "responds to method + ?" do
+      valid_method = "pop"
+      @forecast.respond_to?(valid_method).should be_true
+      lambda { @forecast.send(valid_method + "?") }.should_not raise_error(NoMethodError)
+    end
+    
+    it "ignores non_method + ?" do
+      invalid_method = "humid"
+      @forecast.respond_to?(invalid_method).should be_false
+      lambda { @forecast.send(invalid_method + "?") }.should raise_error(NoMethodError)
+    end
+    
+    it "returns true if set" do
+      @forecast.pop = 10
+      @forecast.pop.should_not be_nil
+      @forecast.pop?.should be_true
+    end
+    
+    it "returns false if not set" do
+      @forecast.pop.should be_nil
+      @forecast.pop?.should be_false
+    end
+    
+  end
+  
 end

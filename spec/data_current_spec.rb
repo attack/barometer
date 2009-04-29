@@ -177,4 +177,35 @@ describe "Current Measurement" do
     
   end
   
+  describe "method missing" do
+    
+    before(:each) do
+      @current = Barometer::CurrentMeasurement.new
+    end
+    
+    it "responds to method + ?" do
+      valid_method = "humidity"
+      @current.respond_to?(valid_method).should be_true
+      lambda { @current.send(valid_method + "?") }.should_not raise_error(NoMethodError)
+    end
+    
+    it "ignores non_method + ?" do
+      invalid_method = "humid"
+      @current.respond_to?(invalid_method).should be_false
+      lambda { @current.send(invalid_method + "?") }.should raise_error(NoMethodError)
+    end
+    
+    it "returns true if set" do
+      @current.humidity = 10
+      @current.humidity.should_not be_nil
+      @current.humidity?.should be_true
+    end
+    
+    it "returns false if not set" do
+      @current.humidity.should be_nil
+      @current.humidity?.should be_false
+    end
+    
+  end
+  
 end

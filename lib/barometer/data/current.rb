@@ -69,5 +69,20 @@ module Barometer
       @visibility = visibility
     end
     
+    #
+    # helpers
+    #
+    
+    # creates "?" helpers for all attributes (which maps to nil?)
+    def method_missing(method,*args)
+      # if the method ends in ?, then strip it off and see if we
+      # respond to the method without the ?
+      if (call_method = method.to_s.chomp!("?")) && respond_to?(call_method)
+        return send(call_method).nil? ? false : true
+      else
+        super(method,*args)
+      end
+    end
+    
   end
 end
