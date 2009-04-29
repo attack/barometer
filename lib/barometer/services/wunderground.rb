@@ -271,17 +271,5 @@ module Barometer
       )['forecast']
     end
     
-    #
-    # answer simple questions (if answerable)
-    #
-    
-def self.currently_windy?(measurement, threshold=10)
-  raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
-  raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
-  return measurement.metric? ?
-    measurement.current.wind.kph.to_f >= threshold.to_f :
-    measurement.current.wind.mph.to_f >= threshold.to_f
-end
-    
   end
 end

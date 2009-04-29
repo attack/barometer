@@ -290,4 +290,41 @@ describe "Measurement" do
     
   end
   
+  describe "when answering the simple questions," do
+    
+    before(:each) do
+      @measurement = Barometer::Measurement.new(:wunderground)
+    end
+    
+    describe "windy?" do
+      
+      it "requires threshold as a number" do
+        lambda { @measurement.windy?("a") }.should raise_error(ArgumentError)
+        lambda { @measurement.windy?(1) }.should_not raise_error(ArgumentError)
+        lambda { @measurement.windy?(1.1) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "requires time as a Time object" do
+        lambda { @measurement.windy?(1,"a") }.should raise_error(ArgumentError)
+        lambda { @measurement.windy?(1,Time.now.utc) }.should_not raise_error(ArgumentError)
+      end
+
+      it "returns true if a source returns true" do
+        module Barometer; class Service
+          def self.windy?(a=nil,b=nil,c=nil); true; end
+        end; end
+        @measurement.windy?.should be_true
+      end
+
+      it "returns false if a measurement returns false" do
+        module Barometer; class Service
+          def self.windy?(a=nil,b=nil,c=nil); false; end
+        end; end
+        @measurement.windy?.should be_false
+      end
+      
+    end
+    
+  end
+  
 end

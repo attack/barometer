@@ -91,78 +91,33 @@ module Barometer
     # answer simple questions
     #
     
-def self.windy?(measurement, threshold=10, utc_time=nil)
-  raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
-  raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
-  raise ArgumentError unless (utc_time.is_a?(Time) || utc_time.nil?)
-  
-  return measurement.current?(utc_time) ?
-    self.currently_windy?(measurement, threshold) :
-    self.forecasted_windy?(measurement, threshold, utc_time)
-end
+    def self.windy?(measurement, threshold=10, utc_time=nil)
+      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
+      raise ArgumentError unless (utc_time.is_a?(Time) || utc_time.nil?)
 
-# override these in the service driver to provide answers
-def self.currently_windy?(measurement, threshold); nil; end
-def self.forecasted_windy?(measurement, threshold, utc_time); nil; end
+      return measurement.current?(utc_time) ?
+        self.currently_windy?(measurement, threshold) :
+        self.forecasted_windy?(measurement, threshold, utc_time)
+    end
+    
+    # if a service doesn't support obtaining the wind value, it will be ignored
+    def self.currently_windy?(measurement, threshold=10)
+      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
+      return nil if (!measurement.current || !measurement.current.wind || !measurement.current.wind.kph)
+      return measurement.metric? ?
+        measurement.current.wind.kph.to_f >= threshold.to_f :
+        measurement.current.wind.mph.to_f >= threshold.to_f
+    end
+
+    # no driver can currently answer this question, so it doesn't have any code
+    def self.forecasted_windy?(measurement, threshold, utc_time); nil; end
     
   end
   
 end  
   
- # def self.
-  
-  # def supported_countries
-  #   # all, or
-  #   
-  #   # list
-  #   # - US
-  #   # - CA
-  # end
-  # 
-  # def supoorted_inputs
-  #   
-  #   # this list is also an order of preference
-  #   
-  #   # zip_code
-  #   # postal_code
-  #   # coordinates
-  #   # location_name
-  #   # IACO
-  # end
-  # 
-  # def requires_key
-  #   return false
-  # end
-  # 
   # def key_name
   #   # what variables holds the api key?
-  # end
-  # 
-  # def retrieve
-  #   # may require multiple queries
-  #   self.retrieve_current
-  #   self.retrieve_forecast
-  #   self.retrieve_all
-  # end
-  # 
-  # def retrieve_current
-  # end
-  # 
-  # def retrieve_forecast
-  # end
-  # 
-  # def retrieve_all
-  # end
-  # 
-  # def temperature
-  # end
-  # def location
-  # end
-  # def station
-  # end
-  # def current
-  # end
-  # def forecast
-  # end
-  # def zone
   # end

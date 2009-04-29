@@ -179,6 +179,49 @@ the data as shown in the above examples.
   weather.source(:wunderground).for(time)   # same as above but specific source
   
   puts weather.source(:wunderground).for(time).low.f
+  
+== simple answers
+
+After you have measured the data, Barometer provides several "simple answer"
+methods to help you get answers to some basic questions. All examples assume
+you already have measured the data as shown in the above examples.
+
+All of these questions are ultimately specific to the weather source(s) you
+are configured to use.  All sources that have successfully measured data
+will be asked, but if there is no data that can answer the question then
+there will be no answer.
+
+=== is it windy?
+
+  # 1st parameter is the threshold wind speed for being windy
+  # 2nd parameter is the utc_time for which you want to know the answer,
+  #   this defaults to the current time
+  # NOTE: in my example the values are metric, so the threshold is 10 kph
+
+  weather.windy?(10)
+  
+=== is it wet?
+
+  pending
+
+=== is it sunny?
+
+  pending
+
+=== is it day?
+
+  pending
+
+=== is it night?
+
+  pending
+  
+=== more
+
+the following are being considered
+- hot?, cold?
+- snow?, rain? (so far wet? could mean snow or rain)
+- winter?, summer?, spring?, fall?
 
 = design
 

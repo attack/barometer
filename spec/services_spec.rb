@@ -120,4 +120,176 @@ describe "Services" do
     
   end
   
+  describe "when answering the simple questions," do
+    
+    before(:each) do
+      # the function being tested was monkey patched in an earlier test
+      # so the original file must be reloaded
+      load 'lib/barometer/services/service.rb'
+      
+      @measurement = Barometer::Measurement.new
+    end
+    
+    describe "windy?" do
+      
+      it "requires a measurement object" do
+        lambda { Barometer::Service.windy? }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.windy?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.windy?(@measurement) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "requires threshold as a number" do
+        lambda { Barometer::Service.windy?(@measurement,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.windy?(@measurement,1) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::Service.windy?(@measurement,1.1) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "requires time as a Time object" do
+        lambda { Barometer::Service.windy?(@measurement,1,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.windy?(@measurement,1,Time.now.utc) }.should_not raise_error(ArgumentError)
+      end
+
+      it "stubs forecasted_windy?" do
+        Barometer::Service.forecasted_windy?(@measurement,nil,nil).should be_nil
+      end
+      
+      describe "and is current" do
+        
+        before(:each) do
+          module Barometer; class Measurement
+            def current?(a=nil); true; end
+          end; end
+        end
+      
+        it "returns nil" do
+          Barometer::Service.windy?(@measurement).should be_nil
+        end
+        
+        it "returns true if currently_windy?" do
+          module Barometer; class Service
+            def self.currently_windy?(a=nil,b=nil); true; end
+          end; end
+          Barometer::Service.windy?(@measurement).should be_true
+        end
+
+        it "returns false if !currently_windy?" do
+          module Barometer; class Service
+            def self.currently_windy?(a=nil,b=nil); false; end
+          end; end
+          Barometer::Service.windy?(@measurement).should be_false
+        end
+        
+      end
+      
+      describe "and is NOT current" do
+        
+        before(:each) do
+          module Barometer; class Measurement
+            def current?(a=nil); false; end
+          end; end
+        end
+      
+        it "returns nil" do
+          Barometer::Service.windy?(@measurement).should be_nil
+        end
+        
+        it "returns true if forecasted_windy?" do
+          module Barometer; class Service
+            def self.forecasted_windy?(a=nil,b=nil,c=nil); true; end
+          end; end
+          Barometer::Service.windy?(@measurement).should be_true
+        end
+
+        it "returns false if !forecasted_windy?" do
+          module Barometer; class Service
+            def self.forecasted_windy?(a=nil,b=nil,c=nil); false; end
+          end; end
+          Barometer::Service.windy?(@measurement).should be_false
+        end
+        
+      end
+      
+    end
+    
+    describe "currently_windy?" do
+
+      before(:each) do
+        # the function being tested was monkey patched in an earlier test
+        # so the original file must be reloaded
+        load 'lib/barometer/services/service.rb'
+        
+        @measurement = Barometer::Measurement.new
+        @threshold = 10
+      end
+
+      it "requires a measurement object" do
+        lambda { Barometer::Service.currently_windy? }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.currently_windy?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.currently_windy?(@measurement) }.should_not raise_error(ArgumentError)
+      end
+
+      it "requires threshold as a number" do
+        lambda { Barometer::Service.currently_windy?(@measurement,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.currently_windy?(@measurement,1) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::Service.currently_windy?(@measurement,1.1) }.should_not raise_error(ArgumentError)
+      end
+
+      it "returns nil when value unavailable" do
+        measurement = Barometer::Measurement.new
+        Barometer::Service.currently_windy?(measurement,@threshold).should be_nil
+        measurement.current = Barometer::CurrentMeasurement.new
+        Barometer::Service.currently_windy?(measurement,@threshold).should be_nil
+        measurement.current.wind = Barometer::Speed.new
+        Barometer::Service.currently_windy?(measurement,@threshold).should be_nil
+      end
+
+      describe "when metric" do
+
+        before(:each) do
+          @measurement = Barometer::Measurement.new
+          @measurement.current = Barometer::CurrentMeasurement.new
+          @measurement.current.wind = Barometer::Speed.new
+          @measurement.metric!
+          @measurement.metric?.should be_true
+        end
+
+        # measurement.current.wind.kph.to_f
+        it "returns true when wind speed (kph) above threshold" do
+          @measurement.current.wind.kph = @threshold + 1
+          Barometer::Service.currently_windy?(@measurement,@threshold).should be_true
+        end
+
+        it "returns false when wind speed (kph) below threshold" do
+          @measurement.current.wind.kph = @threshold - 1
+          Barometer::Service.currently_windy?(@measurement,@threshold).should be_false
+        end
+
+      end
+
+      describe "when imperial" do
+
+        before(:each) do
+          @measurement = Barometer::Measurement.new
+          @measurement.current = Barometer::CurrentMeasurement.new
+          @measurement.current.wind = Barometer::Speed.new
+          @measurement.imperial!
+          @measurement.metric?.should be_false
+        end
+
+        it "returns true when wind speed (mph) above threshold" do
+          @measurement.current.wind.mph = @threshold - 1
+          Barometer::Service.currently_windy?(@measurement,@threshold).should be_false
+        end
+
+        it "returns false when wind speed (mph) below threshold" do
+          @measurement.current.wind.mph = @threshold - 1
+          Barometer::Service.currently_windy?(@measurement,@threshold).should be_false
+        end
+
+      end
+
+    end
+    
+  end
+  
 end

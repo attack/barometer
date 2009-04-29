@@ -133,13 +133,16 @@ module Barometer
       @sun = sun
     end
     
-# this question is specific to a source, so pass the question to
-# the source
-def windy?(threshold=10, utc_time=Time.now.utc)
-  raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
-  raise ArgumentError unless utc_time.is_a?(Time)
-  Barometer::Service.source(@source).windy?(self, threshold, utc_time)
-end
+    #
+    # simple questions
+    #
+    
+    # pass this question on to the source
+    def windy?(threshold=10, utc_time=Time.now.utc)
+      raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
+      raise ArgumentError unless utc_time.is_a?(Time)
+      Barometer::Service.source(@source).windy?(self, threshold, utc_time)
+    end
     
   end
 end
