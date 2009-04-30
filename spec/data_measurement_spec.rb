@@ -340,6 +340,29 @@ describe "Measurement" do
       
     end
     
+    describe "day?" do
+      
+      it "requires time as a Time object" do
+        lambda { @measurement.day?("a") }.should raise_error(ArgumentError)
+        lambda { @measurement.day?(Time.now.utc) }.should_not raise_error(ArgumentError)
+      end
+
+      it "returns true if a source returns true" do
+        module Barometer; class Service
+          def self.day?(a=nil,b=nil); true; end
+        end; end
+        @measurement.day?.should be_true
+      end
+
+      it "returns false if a measurement returns false" do
+        module Barometer; class Service
+          def self.day?(a=nil,b=nil); false; end
+        end; end
+        @measurement.day?.should be_false
+      end
+      
+    end
+    
   end
   
 end

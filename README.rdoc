@@ -202,7 +202,12 @@ there will be no answer.
   
 === is it wet?
 
-  pending
+  # 1st parameter is the threshold pop (%) for being wet
+  # 2nd parameter is the utc_time for which you want to know the answer,
+  #   this defaults to the current time
+  # NOTE: in my example the threshold is 50 %
+
+  weather.wet?(50)
 
 === is it sunny?
 
@@ -210,11 +215,17 @@ there will be no answer.
 
 === is it day?
 
-  pending
+  # 1st parameter is the utc_time for which you want to know the answer,
+  #   this defaults to the current time
+
+  weather.day?
 
 === is it night?
 
-  pending
+  # 1st parameter is the utc_time for which you want to know the answer,
+  #   this defaults to the current time
+
+  weather.night?
   
 === more
 

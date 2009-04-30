@@ -146,5 +146,10 @@ module Barometer
       Barometer::Service.source(@source).wet?(self, threshold, utc_time)
     end
     
+    def day?(utc_time=Time.now.utc)
+      raise ArgumentError unless utc_time.is_a?(Time)
+      Barometer::Service.source(@source).day?(self, utc_time)
+    end
+    
   end
 end
