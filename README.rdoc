@@ -89,6 +89,14 @@ with geo-coding.
 
   puts weather.current.temperture
   
+== command line
+
+You can use barometer from the command line. 
+  
+  # barometer berlin
+  
+This will output the weather information for the given query.
+  
 === fail
 
 What would cause a weather service to fail?  The most obvious is that the

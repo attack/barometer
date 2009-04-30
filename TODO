@@ -1,11 +1,11 @@
 == now
 
 - a few methods in Barometer::Query have been added through refactoring, adjust tests!
+- improve bin
 
 == future
 
 - Rdoc compatible documentation
 - Weather Service API key setting
 - support IACO as a query format
-- create bin
 - store links from weather response

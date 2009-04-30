@@ -1,0 +1,63 @@
+#!/usr/bin/env ruby
+ 
+require File.dirname(__FILE__) + '/../lib/barometer'
+#require 'rubygems'
+#require 'attack-barometer'
+
+# TODO
+
+# set default Google Key ... maybe need a config file?
+Barometer.google_geocode_key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
+
+# take command line paramters
+# service: --yahoo, --wunderground, --google
+# units: -m --metric, -i --imperial
+# geocode: -g --geocode (force geocode)
+# timeout: -t 15 --timeout 15
+# skip: --skip (skip graticule)
+# help: -h --help
+# wet threshold: -w --wet
+# windy threshold: -v --wind
+# pop threshold: -p --pop
+# time: -a --at
+
+# prettier output
+# show simple answers
+# more help
+# error display (out of sources, etc.)
+ 
+if ARGV.size == 0
+  puts 'Barometer [Powered by wunderground]'
+  puts 'USAGE: barometer [query]'
+  puts 'EXAMPLES:'
+  puts ' barometer paris'
+  exit
+end
+ 
+barometer = Barometer.new(ARGV[0])
+weather = barometer.measure(true)
+
+def y(value)
+  value ? "yes" : "no"
+end
+
+if weather
+  puts "###################################################"
+  puts "#  #{weather.default.location.name}"
+  puts "#"
+  puts "#  (lat: #{weather.default.location.latitude}, long: #{weather.default.location.longitude})"
+  puts "###################################################"
+  puts " -- CURRENT --"
+  puts " temperature: #{weather.now.temperature}"
+  puts
+  puts " -- QUESTIONS --"
+  puts " day?  : #{y(weather.day?)}"
+  puts " sunny?: #{y(weather.sunny?)}"
+  puts " windy?: #{y(weather.windy?)}"
+  puts " wet?  : #{y(weather.wet?)}"
+  puts
+  puts
+  puts " -- INFO --"
+  puts " http://github.com/attack/barometer"
+  puts "---------------------------------------------------"
+end
