@@ -211,7 +211,10 @@ there will be no answer.
 
 === is it sunny?
 
-  pending
+  # 1st parameter is the utc_time for which you want to know the answer,
+  #   this defaults to the current time
+
+  weather.sunny?
 
 === is it day?
 
@@ -226,13 +229,6 @@ there will be no answer.
   #   this defaults to the current time
 
   weather.night?
-  
-=== more
-
-the following are being considered
-- hot?, cold?
-- snow?, rain? (so far wet? could mean snow or rain)
-- winter?, summer?, spring?, fall?
 
 = design
 

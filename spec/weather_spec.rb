@@ -206,6 +206,60 @@ describe "Weather" do
       
     end
     
+    describe "sunny?" do
+      
+      it "requires time as a Time object" do
+        lambda { @weather.sunny?("a") }.should raise_error(ArgumentError)
+        lambda { @weather.sunny?(Time.now.utc) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "returns nil when no measurements" do
+        @weather.measurements.should be_empty
+        @weather.sunny?.should be_nil
+      end
+      
+      it "returns true if a measurement returns true" do
+        wunderground = Barometer::Measurement.new(:wunderground)
+        wunderground.success = true
+        @weather.measurements << wunderground
+        module Barometer; class Measurement
+            def day?(a=nil); true; end
+        end; end
+        module Barometer; class Measurement
+            def sunny?(a=nil,b=nil); true; end
+        end; end
+        @weather.sunny?.should be_true
+      end
+
+      it "returns false if a measurement returns false" do
+        wunderground = Barometer::Measurement.new(:wunderground)
+        wunderground.success = true
+        @weather.measurements << wunderground
+        module Barometer; class Measurement
+            def day?(a=nil); true; end
+        end; end
+        module Barometer; class Measurement
+            def sunny?(a=nil,b=nil); false; end
+        end; end
+        @weather.sunny?.should be_false
+      end
+      
+      it "returns false if night time" do
+        wunderground = Barometer::Measurement.new(:wunderground)
+        wunderground.success = true
+        @weather.measurements << wunderground
+        module Barometer; class Measurement
+            def sunny?(a=nil,b=nil); true; end
+        end; end
+        @weather.sunny?.should be_true
+        module Barometer; class Measurement
+            def day?(a=nil); false; end
+        end; end
+        @weather.sunny?.should be_false
+      end
+
+    end
+    
   end
   
 end

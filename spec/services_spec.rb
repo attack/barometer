@@ -653,10 +653,6 @@ describe "Services" do
         lambda { Barometer::Service.day?(@measurement,"a") }.should raise_error(ArgumentError)
         lambda { Barometer::Service.day?(@measurement,Time.now.utc) }.should_not raise_error(ArgumentError)
       end
-
-#      it "stubs forecasted_windy?" do
-#        Barometer::Service.forecasted_day?(@measurement,nil,nil).should be_nil
-#      end
       
       describe "and is current" do
         
@@ -845,6 +841,264 @@ describe "Services" do
         
       end
       
+    end
+    
+    describe "sunny?" do
+      
+      it "requires a measurement object" do
+        lambda { Barometer::Service.sunny? }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.sunny?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.sunny?(@measurement) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "requires time as a Time object" do
+        lambda { Barometer::Service.sunny?(@measurement,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.sunny?(@measurement,Time.now.utc) }.should_not raise_error(ArgumentError)
+      end
+
+      it "returns false if night time"
+      # do
+      #   @measurement.forecast = [Barometer::ForecastMeasurement.new]
+      #   @measurement.forecast.size.should == 1
+      #   @measurement.forecast[0].date = Date.today
+      #   module Barometer; class Service; def self.day?(a=nil, b=nil)
+      #     true
+      #   end; end; end
+      #   Barometer::Service.forecasted_sunny?(@measurement).should be_true
+      #   module Barometer; class Service; def self.day?(a=nil, b=nil)
+      #     false
+      #   end; end; end
+      #   Barometer::Service.forecasted_sunny?(@measurement).should be_false
+      # end
+
+      describe "and is current" do
+        
+        before(:each) do
+          module Barometer; class Measurement
+            def current?(a=nil); true; end
+          end; end
+        end
+      
+        it "returns nil" do
+          Barometer::Service.sunny?(@measurement).should be_nil
+        end
+        
+        it "returns true if currently_sunny?" do
+          module Barometer; class Service
+            def self.currently_sunny?(a=nil); true; end
+          end; end
+          Barometer::Service.sunny?(@measurement).should be_true
+        end
+
+        it "returns false if !currently_sunny?" do
+          module Barometer; class Service
+            def self.currently_sunny?(a=nil); false; end
+          end; end
+          Barometer::Service.sunny?(@measurement).should be_false
+        end
+        
+      end
+      
+      describe "and is NOT current" do
+        
+        before(:each) do
+          module Barometer; class Measurement
+            def current?(a=nil); false; end
+          end; end
+        end
+      
+        it "returns nil" do
+          Barometer::Service.sunny?(@measurement).should be_nil
+        end
+        
+        it "returns true if forecasted_sunny?" do
+          module Barometer; class Service
+            def self.forecasted_sunny?(a=nil,b=nil); true; end
+          end; end
+          Barometer::Service.sunny?(@measurement).should be_true
+        end
+
+        it "returns false if !forecasted_wet?" do
+          module Barometer; class Service
+            def self.forecasted_sunny?(a=nil,b=nil); false; end
+          end; end
+          Barometer::Service.sunny?(@measurement).should be_false
+        end
+        
+      end
+      
+    end
+    
+    describe "currently_sunny?" do
+    
+      before(:each) do
+        # the function being tested was monkey patched in an earlier test
+        # so the original file must be reloaded
+        load 'lib/barometer/services/service.rb'
+        
+        @measurement = Barometer::Measurement.new
+      end
+    
+      it "requires a measurement object" do
+        lambda { Barometer::Service.currently_sunny? }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.currently_sunny?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.currently_sunny?(@measurement) }.should_not raise_error(ArgumentError)
+      end
+    
+      it "returns nil when value unavailable" do
+        measurement = Barometer::Measurement.new
+        Barometer::Service.currently_sunny?(measurement).should be_nil
+        measurement.current = Barometer::CurrentMeasurement.new
+        Barometer::Service.currently_sunny?(measurement).should be_nil
+      end
+      
+      it "returns false if night time" do
+        @measurement.current = Barometer::CurrentMeasurement.new
+        module Barometer; class Service; def self.currently_day?(a=nil)
+          true
+        end; end; end
+        module Barometer; class Service; def self.currently_sunny_by_icon?(a=nil)
+          true
+        end; end; end
+        Barometer::Service.currently_sunny?(@measurement).should be_true
+        module Barometer; class Service; def self.currently_day?(a=nil)
+          false
+        end; end; end
+        Barometer::Service.currently_sunny?(@measurement).should be_false
+      end
+
+      describe "currently_sunny_by_icon?" do
+
+        before(:each) do
+          @measurement.current = Barometer::CurrentMeasurement.new
+        end
+
+        it "requires a Barometer::Measurement object" do
+          lambda { Barometer::Service.currently_sunny_by_icon?(nil) }.should raise_error(ArgumentError)
+          lambda { Barometer::Service.currently_sunny_by_icon?("invlaid") }.should raise_error(ArgumentError)
+
+          lambda { Barometer::Service.currently_sunny_by_icon?(@measurement.current) }.should_not raise_error(ArgumentError)
+        end
+
+        it "returns nil if no icon" do
+          @measurement.current.icon?.should be_false
+          Barometer::Service.currently_sunny_by_icon?(@measurement.current).should be_nil
+        end
+
+        it "returns true if matching icon code" do
+          module Barometer; class Service; def self.sunny_icon_codes
+            ["sunny"]
+          end; end; end
+          @measurement.current.icon = "sunny"
+          @measurement.current.icon?.should be_true
+          Barometer::Service.currently_sunny_by_icon?(@measurement.current).should be_true
+        end
+
+        it "returns false if NO matching icon code" do
+          module Barometer; class Service; def self.sunny_icon_codes
+            ["sunny"]
+          end; end; end
+          @measurement.current.icon = "rain"
+          @measurement.current.icon?.should be_true
+          Barometer::Service.currently_sunny_by_icon?(@measurement.current).should be_false
+        end
+
+      end
+      
+    end
+    
+    describe "forecasted_sunny?" do
+    
+      before(:each) do
+        # the function being tested was monkey patched in an earlier test
+        # so the original file must be reloaded
+        load 'lib/barometer/services/service.rb'
+        
+        @measurement = Barometer::Measurement.new
+      end
+    
+      it "requires a measurement object" do
+        lambda { Barometer::Service.forecasted_sunny? }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.forecasted_sunny?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.forecasted_sunny?(@measurement) }.should_not raise_error(ArgumentError)
+      end
+
+      it "requires utc_time as a Time object" do
+        lambda { Barometer::Service.forecasted_sunny?(@measurement,"string") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.forecasted_sunny?(@measurement,Time.now.utc) }.should_not raise_error(ArgumentError)
+      end
+
+      it "returns nil when value unavailable" do
+        measurement = Barometer::Measurement.new
+        Barometer::Service.forecasted_sunny?(measurement).should be_nil
+        measurement.forecast = [Barometer::ForecastMeasurement.new]
+        measurement.forecast.size.should == 1
+        Barometer::Service.forecasted_sunny?(measurement).should be_nil
+      end
+
+      it "returns false if night time" do
+        @measurement.forecast = [Barometer::ForecastMeasurement.new]
+        @measurement.forecast.size.should == 1
+        @measurement.forecast[0].date = Date.today
+        module Barometer; class Service; def self.forecasted_day?(a=nil, b=nil)
+          true
+        end; end; end
+        module Barometer; class Service; def self.forecasted_sunny_by_icon?(a=nil, b=nil)
+          true
+        end; end; end
+        Barometer::Service.forecasted_sunny?(@measurement).should be_true
+        module Barometer; class Service; def self.forecasted_day?(a=nil, b=nil)
+          false
+        end; end; end
+        Barometer::Service.forecasted_sunny?(@measurement).should be_false
+      end
+      
+      describe "forecasted_sunny_by_icon?" do
+
+        before(:each) do
+          @measurement.forecast = [Barometer::ForecastMeasurement.new]
+          @measurement.forecast.first.date = Date.today
+          @measurement.forecast.size.should == 1
+        end
+
+        it "requires a Barometer::Measurement object" do
+          lambda { Barometer::Service.forecasted_sunny_by_icon?(nil) }.should raise_error(ArgumentError)
+          lambda { Barometer::Service.forecasted_sunny_by_icon?("invlaid") }.should raise_error(ArgumentError)
+
+          lambda { Barometer::Service.forecasted_sunny_by_icon?(@measurement.forecast.first) }.should_not raise_error(ArgumentError)
+        end
+
+        it "returns nil if no icon" do
+          @measurement.forecast.first.icon?.should be_false
+          Barometer::Service.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_nil
+        end
+
+        it "returns true if matching icon code" do
+          module Barometer; class Service; def self.sunny_icon_codes
+            ["sunny"]
+          end; end; end
+          @measurement.forecast.first.icon = "sunny"
+          @measurement.forecast.first.icon?.should be_true
+          Barometer::Service.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
+        end
+
+        it "returns false if NO matching icon code" do
+          module Barometer; class Service; def self.sunny_icon_codes
+            ["sunny"]
+          end; end; end
+          @measurement.forecast.first.icon = "rain"
+          @measurement.forecast.first.icon?.should be_true
+          Barometer::Service.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
+        end
+
+        after(:each) do
+          # the function being tested was monkey patched in an earlier test
+          # so the original file must be reloaded
+          load 'lib/barometer/services/service.rb'
+        end
+
+      end
+
     end
     
   end

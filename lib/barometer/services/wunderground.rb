@@ -50,7 +50,10 @@ module Barometer
     def self.wet_icon_codes
       %w(flurries rain sleet snow tstorms nt_flurries nt_rain nt_sleet nt_snow nt_tstorms)
     end
-    
+    def self.sunny_icon_codes
+      %w(clear mostlysunny partlysunny sunny partlycloudy)
+    end
+
     def self._measure(measurement, query, metric=true)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
       raise ArgumentError unless query.is_a?(Barometer::Query)

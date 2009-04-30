@@ -151,5 +151,11 @@ module Barometer
       Barometer::Service.source(@source).day?(self, utc_time)
     end
     
+    def sunny?(utc_time=Time.now.utc)
+      raise ArgumentError unless utc_time.is_a?(Time)
+      return false if self.day?(utc_time) == false
+      Barometer::Service.source(@source).sunny?(self, utc_time)
+    end
+    
   end
 end

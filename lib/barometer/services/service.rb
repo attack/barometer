@@ -224,7 +224,8 @@ module Barometer
     def self.currently_day?(measurement)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
       return nil unless measurement.current && measurement.current.sun
-      self.after_sunrise?(measurement.current) && self.before_sunset?(measurement.current)
+      self.currently_after_sunrise?(measurement.current) &&
+        self.currently_before_sunset?(measurement.current)
     end
     
     def self.currently_after_sunrise?(current_measurement)
@@ -244,8 +245,9 @@ module Barometer
       raise ArgumentError unless (utc_time.is_a?(Time) || utc_time.nil?)
       return nil unless measurement.forecast
       forecast_measurement = measurement.for(utc_time)
+      return nil unless forecast_measurement
       self.forecasted_after_sunrise?(forecast_measurement, utc_time) &&
-        self.forecasted_before_sunset?(measurement, utc_time)
+        self.forecasted_before_sunset?(forecast_measurement, utc_time)
     end
     
     def self.forecasted_after_sunrise?(forecast_measurement, utc_time)
@@ -261,6 +263,57 @@ module Barometer
       return nil unless forecast_measurement.sun && forecast_measurement.sun.set
       utc_time <= forecast_measurement.sun.set
     end
+    
+    #
+    # SUNNY?
+    #
+    def self.sunny?(measurement, utc_time=nil)
+      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      raise ArgumentError unless (utc_time.is_a?(Time) || utc_time.nil?)
+      measurement.current?(utc_time) ?
+        self.currently_sunny?(measurement) :
+        self.forecasted_sunny?(measurement, utc_time)
+    end
+    
+    # cookie cutter answer
+    def self.currently_sunny?(measurement)
+      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      return nil unless measurement.current
+      return false if self.currently_day?(measurement) == false
+      self.currently_sunny_by_icon?(measurement.current)
+    end
+    
+    # cookie cutter answer
+    def self.forecasted_sunny?(measurement, utc_time=nil)
+      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      raise ArgumentError unless (utc_time.is_a?(Time) || utc_time.nil?)
+      return nil unless measurement.forecast
+      return false if self.forecasted_day?(measurement, utc_time) == false
+      forecast_measurement = measurement.for(utc_time)
+      return nil unless forecast_measurement
+      self.forecasted_sunny_by_icon?(forecast_measurement)
+    end
+
+    def self.currently_sunny_by_icon?(current_measurement)
+      raise ArgumentError unless current_measurement.is_a?(Barometer::CurrentMeasurement)
+      return nil unless self.sunny_icon_codes
+      return nil unless current_measurement.icon?
+      current_measurement.icon.is_a?(String) ?
+        self.sunny_icon_codes.include?(current_measurement.icon.to_s.downcase) :
+        self.sunny_icon_codes.include?(current_measurement.icon)
+    end
+    
+    def self.forecasted_sunny_by_icon?(forecast_measurement)
+      raise ArgumentError unless forecast_measurement.is_a?(Barometer::ForecastMeasurement)
+      return nil unless self.sunny_icon_codes
+      return nil unless forecast_measurement.icon?
+      forecast_measurement.icon.is_a?(String) ?
+        self.sunny_icon_codes.include?(forecast_measurement.icon.to_s.downcase) :
+        self.sunny_icon_codes.include?(forecast_measurement.icon)
+    end
+
+    # this returns an array of codes that indicate "sunny"
+    def self.sunny_icon_codes; nil; end
     
   end
   

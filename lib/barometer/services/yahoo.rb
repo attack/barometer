@@ -50,6 +50,10 @@ module Barometer
       codes = [1] + (3..18).to_a + [35] + (37..43).to_a + (45..47).to_a
       codes.collect {|c| c.to_s}
     end
+    def self.sunny_icon_codes
+      codes = (29..34).to_a + [36]
+      codes.collect {|c| c.to_s}
+    end
     
     # override, only currently supports US
     def self.supports_country?(query=nil)
