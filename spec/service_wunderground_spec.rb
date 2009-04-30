@@ -108,6 +108,34 @@ describe "Wunderground" do
     
   end
   
+  describe "building the sun data" do
+       
+    before(:each) do
+      @zone = Barometer::Zone.new("Europe/Paris")
+    end
+
+    it "defines the build method" do
+      Barometer::Wunderground.respond_to?("build_sun").should be_true
+    end
+    
+    it "requires Hash input" do
+      lambda { Barometer::Wunderground.build_sun }.should raise_error(ArgumentError)
+      lambda { Barometer::Wunderground.build_sun({},@zone) }.should_not raise_error(ArgumentError)
+    end
+    
+    it "requires Barometer::Zone input" do
+      lambda { Barometer::Wunderground.build_sun({}) }.should raise_error(ArgumentError)
+      lambda { Barometer::Wunderground.build_sun({}, "invalid") }.should raise_error(ArgumentError)
+      lambda { Barometer::Wunderground.build_sun({},@zone) }.should_not raise_error(ArgumentError)
+    end
+    
+    it "returns Barometer::Sun object" do
+      sun = Barometer::Wunderground.build_sun({},@zone)
+      sun.is_a?(Barometer::Sun).should be_true
+    end
+    
+  end
+  
   describe "when measuring" do
 
     before(:each) do
@@ -210,6 +238,49 @@ describe "Wunderground" do
         Barometer::Wunderground.forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
       end
       
+    end
+    
+  end
+  
+  describe "overall data correctness" do
+    
+    before(:each) do
+      @query = Barometer::Query.new("Calgary,AB")
+      @query.preferred = "Calgary,AB"
+      @measurement = Barometer::Measurement.new
+      
+      FakeWeb.register_uri(:get, 
+        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query.preferred)}",
+        :string => File.read(File.join(File.dirname(__FILE__), 
+          'fixtures', 
+          'current_calgary_ab.xml')
+        )
+      )  
+      FakeWeb.register_uri(:get, 
+        "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query.preferred)}",
+        :string => File.read(File.join(File.dirname(__FILE__), 
+          'fixtures', 
+          'forecast_calgary_ab.xml')
+        )
+      )
+    end
+
+   # TODO: complete this
+   it "should correctly build the data" do
+      result = Barometer::Wunderground._measure(@measurement, @query)
+      
+      # build timezone
+      @measurement.timezone.timezone.should == "America/Edmonton"
+      
+      time = Time.local(2009, 4, 23, 18, 00, 0)
+      rise = Time.local(time.year, time.month, time.day, 6, 23)
+      set = Time.local(time.year, time.month, time.day, 20, 45)
+      sun_rise = @measurement.timezone.tz.local_to_utc(rise)
+      sun_set = @measurement.timezone.tz.local_to_utc(set)
+      
+      # build current
+      @measurement.current.sun.rise.should == sun_rise
+      @measurement.current.sun.set.should == sun_set
     end
     
   end

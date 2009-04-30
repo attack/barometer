@@ -43,10 +43,6 @@ describe "Measurement" do
       @measurement.location.should be_nil
     end
     
-    it "responds to sun" do
-      @measurement.sun.should be_nil
-    end
-    
     it "responds to success" do
       @measurement.success.should be_false
     end
@@ -135,16 +131,6 @@ describe "Measurement" do
       valid_data = Barometer::Location.new
       valid_data.class.should == Barometer::Location
       lambda { @measurement.location = valid_data }.should_not raise_error(ArgumentError)
-    end
-    
-    it "only accepts Barometer::Sun for sun" do
-      invalid_data = 1
-      invalid_data.class.should_not == Barometer::Sun
-      lambda { @measurement.sun = invalid_data }.should raise_error(ArgumentError)
-      
-      valid_data = Barometer::Sun.new
-      valid_data.class.should == Barometer::Sun
-      lambda { @measurement.sun = valid_data }.should_not raise_error(ArgumentError)
     end
     
   end

@@ -97,7 +97,7 @@ module Barometer
     # offset to the final time
     def self.merge(time, date, timezone_code=nil)
       raise ArgumentError unless (time.is_a?(Time) || time.is_a?(String))
-      raise ArgumentError unless (date.is_a?(Date) || date.is_a?(String))
+      raise ArgumentError unless (date.is_a?(Time) || date.is_a?(Date) || date.is_a?(String))
       
       if time.is_a?(String)
         reference_time = Time.parse(time)
@@ -108,6 +108,8 @@ module Barometer
       if date.is_a?(String)
         reference_date = Date.parse(date)
       elsif date.is_a?(Time)
+        reference_date = Date.new(date.year, date.month, date.day)
+      elsif date.is_a?(Date)
         reference_date = date
       end
       

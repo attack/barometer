@@ -75,7 +75,21 @@ module Barometer
       measurement.location = self.build_location(current_result)
       measurement.station = self.build_station(current_result)
       measurement.timezone = self.build_timezone(forecast_result)
-      measurement.sun = self.build_sun(forecast_result, measurement.timezone)
+      
+      # add sun data to current
+      sun = nil
+      if measurement.current
+         sun = self.build_sun(forecast_result, measurement.timezone)
+         measurement.current.sun = sun
+      end
+      # use todays sun data for all future days
+      if measurement.forecast && sun
+        start_date = Date.parse(measurement.current.time)
+        measurement.forecast.each do |forecast|
+          days_in_future = forecast.date - start_date
+          forecast.sun = Barometer::Sun.add_days!(sun,days_in_future.to_i)
+        end
+      end
       
       measurement
     end
@@ -241,7 +255,7 @@ module Barometer
         end
       end
       
-      sun
+      sun || Sun.new
     end
     
     # use HTTParty to get the current weather

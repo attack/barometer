@@ -208,7 +208,60 @@ module Barometer
 
     # this returns an array of codes that indicate "wet"
     def self.wet_icon_codes; nil; end
+    
+    #
+    # DAY?
+    #
+    def self.day?(measurement, utc_time=nil)
+      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      raise ArgumentError unless (utc_time.is_a?(Time) || utc_time.nil?)
 
+      measurement.current?(utc_time) ?
+        self.currently_day?(measurement) :
+        self.forecasted_day?(measurement, utc_time)
+    end
+    
+    def self.currently_day?(measurement)
+      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      return nil unless measurement.current && measurement.current.sun
+      self.after_sunrise?(measurement.current) && self.before_sunset?(measurement.current)
+    end
+    
+    def self.currently_after_sunrise?(current_measurement)
+      raise ArgumentError unless current_measurement.is_a?(Barometer::CurrentMeasurement)
+      return nil unless current_measurement.sun && current_measurement.sun.rise
+      Time.now.utc >= current_measurement.sun.rise
+    end    
+
+    def self.currently_before_sunset?(current_measurement)
+      raise ArgumentError unless current_measurement.is_a?(Barometer::CurrentMeasurement)
+      return nil unless current_measurement.sun && current_measurement.sun.set
+      Time.now.utc <= current_measurement.sun.set
+    end
+
+    def self.forecasted_day?(measurement, utc_time=nil)
+      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      raise ArgumentError unless (utc_time.is_a?(Time) || utc_time.nil?)
+      return nil unless measurement.forecast
+      forecast_measurement = measurement.for(utc_time)
+      self.forecasted_after_sunrise?(forecast_measurement, utc_time) &&
+        self.forecasted_before_sunset?(measurement, utc_time)
+    end
+    
+    def self.forecasted_after_sunrise?(forecast_measurement, utc_time)
+      raise ArgumentError unless forecast_measurement.is_a?(Barometer::ForecastMeasurement)
+      raise ArgumentError unless utc_time.is_a?(Time)
+      return nil unless forecast_measurement.sun && forecast_measurement.sun.rise
+      utc_time >= forecast_measurement.sun.rise
+    end 
+    
+    def self.forecasted_before_sunset?(forecast_measurement, utc_time)
+      raise ArgumentError unless forecast_measurement.is_a?(Barometer::ForecastMeasurement)
+      raise ArgumentError unless utc_time.is_a?(Time)
+      return nil unless forecast_measurement.sun && forecast_measurement.sun.set
+      utc_time <= forecast_measurement.sun.set
+    end
+    
   end
   
 end  

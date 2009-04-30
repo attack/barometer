@@ -641,6 +641,212 @@ describe "Services" do
 
     end
     
+    describe "day?" do
+      
+      it "requires a measurement object" do
+        lambda { Barometer::Service.day? }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.day?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.day?(@measurement) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "requires time as a Time object" do
+        lambda { Barometer::Service.day?(@measurement,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.day?(@measurement,Time.now.utc) }.should_not raise_error(ArgumentError)
+      end
+
+#      it "stubs forecasted_windy?" do
+#        Barometer::Service.forecasted_day?(@measurement,nil,nil).should be_nil
+#      end
+      
+      describe "and is current" do
+        
+        before(:each) do
+          module Barometer; class Measurement
+            def current?(a=nil); true; end
+          end; end
+        end
+      
+        it "returns nil" do
+          Barometer::Service.day?(@measurement).should be_nil
+        end
+        
+        it "returns true if currently_day?" do
+          module Barometer; class Service
+            def self.currently_day?(a=nil); true; end
+          end; end
+          Barometer::Service.day?(@measurement).should be_true
+        end
+
+        it "returns false if !currently_day?" do
+          module Barometer; class Service
+            def self.currently_day?(a=nil); false; end
+          end; end
+          Barometer::Service.day?(@measurement).should be_false
+        end
+        
+      end
+      
+      describe "and is NOT current" do
+        
+        before(:each) do
+          module Barometer; class Measurement
+            def current?(a=nil); false; end
+          end; end
+        end
+      
+        it "returns nil" do
+          Barometer::Service.day?(@measurement).should be_nil
+        end
+        
+        it "returns true if forecasted_day?" do
+          module Barometer; class Service
+            def self.forecasted_day?(a=nil,b=nil); true; end
+          end; end
+          Barometer::Service.day?(@measurement).should be_true
+        end
+
+        it "returns false if !forecasted_day?" do
+          module Barometer; class Service
+            def self.forecasted_day?(a=nil,b=nil); false; end
+          end; end
+          Barometer::Service.day?(@measurement).should be_false
+        end
+        
+      end
+      
+    end
+    
+    describe "currently_day?" do
+
+      before(:each) do
+        # the function being tested was monkey patched in an earlier test
+        # so the original file must be reloaded
+        load 'lib/barometer/services/service.rb'
+        
+        @measurement = Barometer::Measurement.new
+      end
+
+      it "requires a measurement object" do
+        lambda { Barometer::Service.currently_day? }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.currently_day?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.currently_day?(@measurement) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "returns nil when value unavailable" do
+        measurement = Barometer::Measurement.new
+        Barometer::Service.currently_day?(measurement).should be_nil
+      end
+      
+      describe "and currently_after_sunrise?" do
+        
+        before(:each) do
+          @measurement = Barometer::CurrentMeasurement.new
+        end
+        
+        it "returns true when now is past sun_rise" do
+          @measurement.sun = Barometer::Sun.new(Time.now.utc - (60*60))
+          Barometer::Service.currently_after_sunrise?(@measurement).should be_true
+        end
+
+        it "returns false when now if before sun_rise" do
+          @measurement.sun = Barometer::Sun.new(Time.now.utc + (60*60))
+          Barometer::Service.currently_after_sunrise?(@measurement).should be_false
+        end
+        
+      end
+      
+      describe "and currently_before_sunset?" do
+        
+        before(:each) do
+          @measurement = Barometer::CurrentMeasurement.new
+        end
+        
+        it "returns true when now is before sun_set" do
+          @measurement.sun = Barometer::Sun.new(nil,Time.now.utc + (60*60))
+          Barometer::Service.currently_before_sunset?(@measurement).should be_true
+        end
+
+        it "returns false when now if after sun_set" do
+          @measurement.sun = Barometer::Sun.new(nil,Time.now.utc - (60*60))
+          Barometer::Service.currently_before_sunset?(@measurement).should be_false
+        end
+        
+      end
+      
+    end
+    
+    describe "forecasted_day?" do
+
+      before(:each) do
+        # the function being tested was monkey patched in an earlier test
+        # so the original file must be reloaded
+        load 'lib/barometer/services/service.rb'
+        
+        @measurement = Barometer::Measurement.new
+      end
+
+      it "requires a measurement object" do
+        lambda { Barometer::Service.forecasted_day? }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.forecasted_day?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.forecasted_day?(@measurement) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "requires time as a Time object" do
+        lambda { Barometer::Service.forecasted_day?(@measurement,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.forecasted_day?(@measurement,Time.now.utc) }.should_not raise_error(ArgumentError)
+      end
+
+      it "returns nil when value unavailable" do
+        measurement = Barometer::Measurement.new
+        Barometer::Service.forecasted_day?(measurement).should be_nil
+      end
+      
+      describe "and forecasted_after_sunrise?" do
+        
+        before(:each) do
+          @measurement = Barometer::ForecastMeasurement.new
+        end
+        
+        it "returns true when now is past sun_rise" do
+          one_day_from_now = Time.now.utc + (60*60*24)
+          @measurement.date = Date.parse(one_day_from_now.strftime("%d %B %Y"))
+          @measurement.sun = Barometer::Sun.new(one_day_from_now - (60*60))
+          Barometer::Service.forecasted_after_sunrise?(@measurement, one_day_from_now).should be_true
+        end
+      
+        it "returns false when now if before sun_rise" do
+          one_day_from_now = Time.now.utc + (60*60*24)
+          @measurement.date = Date.parse(one_day_from_now.strftime("%d %B %Y"))
+          @measurement.sun = Barometer::Sun.new(one_day_from_now + (60*60))
+          Barometer::Service.forecasted_after_sunrise?(@measurement, one_day_from_now).should be_false
+        end
+        
+      end
+      
+      describe "and forecasted_before_sunset?" do
+        
+        before(:each) do
+          @measurement = Barometer::ForecastMeasurement.new
+        end
+        
+        it "returns true when now is before sun_set" do
+          one_day_from_now = Time.now.utc + (60*60*24)
+          @measurement.date = Date.parse(one_day_from_now.strftime("%d %B %Y"))
+          @measurement.sun = Barometer::Sun.new(nil,one_day_from_now + (60*60))
+          Barometer::Service.forecasted_before_sunset?(@measurement,one_day_from_now).should be_true
+        end
+      
+        it "returns false when now if after sun_set" do
+          one_day_from_now = Time.now.utc + (60*60*24)
+          @measurement.date = Date.parse(one_day_from_now.strftime("%d %B %Y"))
+          @measurement.sun = Barometer::Sun.new(nil,one_day_from_now - (60*60))
+          Barometer::Service.forecasted_before_sunset?(@measurement,one_day_from_now).should be_false
+        end
+        
+      end
+      
+    end
+    
   end
   
 end

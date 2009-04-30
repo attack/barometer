@@ -10,7 +10,7 @@ module Barometer
   class ForecastMeasurement
     
     attr_reader :date, :icon, :condition
-    attr_reader :low, :high, :pop
+    attr_reader :low, :high, :pop, :sun
     
     def date=(date)
       raise ArgumentError unless date.is_a?(Date)
@@ -40,6 +40,11 @@ module Barometer
     def pop=(pop)
       raise ArgumentError unless pop.is_a?(Fixnum)
       @pop = pop
+    end
+    
+    def sun=(sun)
+      raise ArgumentError unless sun.is_a?(Barometer::Sun)
+      @sun = sun
     end
     
     #

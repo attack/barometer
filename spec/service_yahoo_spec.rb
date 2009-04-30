@@ -195,4 +195,63 @@ describe "Yahoo" do
     
   end
   
+  describe "overall data correctness" do
+    
+    before(:each) do
+      @query = Barometer::Query.new("90210")
+      @query.preferred = "90210"
+      @measurement = Barometer::Measurement.new
+
+      FakeWeb.register_uri(:get, 
+        "http://weather.yahooapis.com:80/forecastrss?u=c&p=#{CGI.escape(@query.preferred)}",
+        :string => File.read(File.join(File.dirname(__FILE__), 
+          'fixtures', 
+          'yahoo_90210.xml')
+        )
+      )  
+    end
+
+    # TODO: complete this
+    it "should correctly build the data" do
+      result = Barometer::Yahoo._measure(@measurement, @query)
+      
+      sun_rise = Barometer::Zone.merge("6:09 am", "Sun, 26 Apr 2009 10:51 am PDT", "PDT")
+      sun_set = Barometer::Zone.merge("7:34 pm", "Sun, 26 Apr 2009 10:51 am PDT", "PDT")
+      
+      # build current
+      @measurement.current.sun.rise.should == sun_rise
+      @measurement.current.sun.set.should == sun_set
+      
+      # builds location
+      @measurement.location.city.should == "Beverly Hills"
+      
+      # builds forecasts
+      @measurement.forecast.size.should == 2
+      
+      @measurement.forecast[0].condition.should == "Mostly Sunny"
+      @measurement.forecast[0].icon.should == "34"
+      @measurement.forecast[0].sun.rise.should == sun_rise + (60*60*24*0)
+      @measurement.forecast[0].sun.set.should == sun_set + (60*60*24*0)
+      
+      @measurement.forecast[1].condition.should == "Cloudy"
+      @measurement.forecast[1].icon.should == "26"
+      @measurement.forecast[1].sun.rise.should == sun_rise + (60*60*24*1)
+      @measurement.forecast[1].sun.set.should == sun_set + (60*60*24*1)
+      
+    end
+    # <yweather:location city="Beverly Hills" region="CA" country="US"/>
+    # <yweather:units temperature="C" distance="km" pressure="mb" speed="kph"/>
+    # <yweather:wind chill="17" direction="0" speed="4.83" />
+    # <yweather:atmosphere humidity="50" visibility="16.09" pressure="1017" rising="0" />
+    # <item>
+    #   <geo:lat>34.08</geo:lat>
+    #   <geo:long>-118.4</geo:long>
+    #   <pubDate>Sun, 26 Apr 2009 10:51 am PDT</pubDate>
+    #   <yweather:condition text="Partly Cloudy" code="30" temp="17" date="Sun, 26 Apr 2009 10:51 am PDT" />
+    #   <yweather:forecast day="Sun" date="26 Apr 2009" low="11" high="19" 
+    #   <yweather:forecast day="Mon" date="27 Apr 2009" low="11" high="18"
+    # </item>
+    
+  end
+  
 end

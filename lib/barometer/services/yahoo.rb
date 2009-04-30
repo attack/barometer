@@ -70,8 +70,21 @@ module Barometer
       measurement.current = self.build_current(result, metric)
       measurement.forecast = self.build_forecast(result, metric)
       measurement.location = self.build_location(result, query.geo)
-      measurement.sun = self.build_sun(result)
-      #measurement.timezone = self.build_timezone(forecast_result)
+      
+      # add to current
+      sun = nil
+      if measurement.current
+        sun = self.build_sun(result)
+        measurement.current.sun = sun
+      end
+      # use todays sun data for all future days
+      if measurement.forecast && sun
+        start_date = Date.parse(measurement.current.local_time)
+        measurement.forecast.each do |forecast|
+          days_in_future = forecast.date - start_date
+          forecast.sun = Barometer::Sun.add_days!(sun,days_in_future.to_i)
+        end
+      end
       
       measurement
     end
@@ -176,7 +189,7 @@ module Barometer
         )
         sun = Sun.new(rise, set)
       end
-      sun
+      sun || Sun.new
     end
 
     # def self.build_timezone(data)

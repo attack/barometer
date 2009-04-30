@@ -52,6 +52,10 @@ describe "Current Measurement" do
       @current.pressure.should be_nil
     end
     
+    it "responds to sun" do
+      @current.sun.should be_nil
+    end
+    
   end
   
   describe "when writing data" do
@@ -173,6 +177,16 @@ describe "Current Measurement" do
       valid_data = Barometer::Distance.new
       valid_data.class.should == Barometer::Distance
       lambda { @current.visibility = valid_data }.should_not raise_error(ArgumentError)
+    end
+    
+    it "only accepts Barometer::Sun for sun" do
+      invalid_data = 1
+      invalid_data.class.should_not == Barometer::Sun
+      lambda { @current.sun = invalid_data }.should raise_error(ArgumentError)
+      
+      valid_data = Barometer::Sun.new
+      valid_data.class.should == Barometer::Sun
+      lambda { @current.sun = valid_data }.should_not raise_error(ArgumentError)
     end
     
   end

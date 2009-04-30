@@ -32,6 +32,10 @@ describe "Forecast Measurement" do
       @forecast.pop.should be_nil
     end
     
+    it "responds to sun" do
+      @forecast.sun.should be_nil
+    end
+    
   end
   
   describe "when writing data" do
@@ -98,6 +102,16 @@ describe "Forecast Measurement" do
       valid_data = 50
       valid_data.class.should == Fixnum
       lambda { @forecast.pop = valid_data }.should_not raise_error(ArgumentError)
+    end
+    
+    it "only accepts Barometer::Sun for sun" do
+      invalid_data = 1
+      invalid_data.class.should_not == Barometer::Sun
+      lambda { @forecast.sun = invalid_data }.should raise_error(ArgumentError)
+      
+      valid_data = Barometer::Sun.new
+      valid_data.class.should == Barometer::Sun
+      lambda { @forecast.sun = valid_data }.should_not raise_error(ArgumentError)
     end
     
   end

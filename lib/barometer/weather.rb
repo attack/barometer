@@ -149,14 +149,26 @@ module Barometer
       is_wet
     end
 
+    def day?(utc_time=Time.now.utc)
+      raise ArgumentError unless utc_time.is_a?(Time)
+      
+      is_day = nil
+      @measurements.each do |measurement|
+        if measurement.success?
+          is_day = measurement.day?(utc_time)
+          return is_day if !is_day.nil?
+        end
+      end
+      is_day
+    end
+
+    def night?(utc_time=Time.now.utc)
+      raise ArgumentError unless utc_time.is_a?(Time)
+      is_day = self.day?(utc_time)
+      is_day.nil? ? nil : !is_day
+    end
+
     # def sunny?
-    # end
-    # 
-    # def day?
-    # end
-    # 
-    # def night?
-    #   !self.day?
     # end
     
   end

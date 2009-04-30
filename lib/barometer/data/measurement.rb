@@ -18,7 +18,7 @@ module Barometer
     attr_reader :source
     # current and forecasted data
     attr_reader :current, :forecast
-    attr_reader :timezone, :station, :location, :sun
+    attr_reader :timezone, :station, :location
     attr_reader :success, :time
     attr_accessor :metric
     
@@ -127,11 +127,6 @@ module Barometer
     def location=(location)
       raise ArgumentError unless location.is_a?(Barometer::Location)
       @location = location
-    end
-    
-    def sun=(sun)
-      raise ArgumentError unless sun.is_a?(Barometer::Sun)
-      @sun = sun
     end
     
     #

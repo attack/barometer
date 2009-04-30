@@ -11,7 +11,7 @@ module Barometer
     attr_accessor :time, :local_time
     attr_reader :humidity, :icon, :condition
     attr_reader :temperature, :dew_point, :heat_index, :wind_chill
-    attr_reader :wind, :pressure, :visibility
+    attr_reader :wind, :pressure, :visibility, :sun
     
     def time=(time)
       #raise ArgumentError unless time.is_a?(Time)
@@ -67,6 +67,11 @@ module Barometer
     def visibility=(visibility)
       raise ArgumentError unless visibility.is_a?(Barometer::Distance)
       @visibility = visibility
+    end
+    
+    def sun=(sun)
+      raise ArgumentError unless sun.is_a?(Barometer::Sun)
+      @sun = sun
     end
     
     #
