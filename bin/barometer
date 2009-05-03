@@ -1,63 +1,415 @@
 #!/usr/bin/env ruby
- 
-require File.dirname(__FILE__) + '/../lib/barometer'
-#require 'rubygems'
-#require 'attack-barometer'
 
-# TODO
+# == Barometer 
+#   This is the command line interface to the barometer gem.
+#
+# == Examples
+#   This command will measure the weather for the given query.
+#     barometer berlin
+#
+#   Other examples:
+#     barometer --yahoo 90210
+#     barometer --verbose 'new york'
+#
+# == Local Web Demo
+#   You can easily interact directly with barometer with the command:
+#     barometer -w
+#
+#   This demo has 2 gem requirements:
+#     - sinatra (tested with 0.9.1.1)
+#     - vegas (tested with 0.0.1)
+#
+# == Usage 
+#   barometer [options] query
+#
+#   For help use: barometer -h
+#
+#   Options:
+#   -v, --version       Display the version, then exit
+#   -V, --verbose       Verbose output
+#   -t, --timeout       seconds until service queries will timeout
+#   -g, --geocode       Force Geocoding of query
+#   -m, --metric        measure in metric
+#   -i, --imperial      measure in imperial
+#   --no-wunderground   DONT use default wunderground as source
+#   --yahoo             use yahoo as source
+#   --google            use google as source
+#   -p, --pop           pop threshold used to determine wet?
+#   -s, --wind          wind speed threshold used to determine windy?
+#   -a, --at            time/date used to determine when to calculate summary
+#
+#   Web Demo:
+#   -w, --web           run web-app with barometer demo
+#   -k, --kill          stop the web demo background process
+#   -S, --status        show the web demo status
+#
+# == Author
+#   Mark G
+#   http://github.com/attack/barometer
+#
+# == Copyright
+#   Copyright (c) 2009 Mark G. Licensed under the MIT License:
+#   http://www.opensource.org/licenses/mit-license.php
 
-# set default Google Key ... maybe need a config file?
-Barometer.google_geocode_key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
+require 'rubygems'
+#require 'barometer'
+require 'lib/barometer'
 
-# take command line paramters
-# service: --yahoo, --wunderground, --google
-# units: -m --metric, -i --imperial
-# geocode: -g --geocode (force geocode)
-# timeout: -t 15 --timeout 15
-# skip: --skip (skip graticule)
-# help: -h --help
-# wet threshold: -w --wet
-# windy threshold: -v --wind
-# pop threshold: -p --pop
-# time: -a --at
+require 'optparse' 
+require 'rdoc/usage'
+require 'ostruct'
+require 'time'
+require 'date'
+require 'yaml'
 
-# prettier output
-# show simple answers
-# more help
-# error display (out of sources, etc.)
- 
-if ARGV.size == 0
-  puts 'Barometer [Powered by wunderground]'
-  puts 'USAGE: barometer [query]'
-  puts 'EXAMPLES:'
-  puts ' barometer paris'
-  exit
+# file where API keys are stored
+KEY_FILE = File.expand_path(File.join('~', '.barometer'))
+
+class App
+  VERSION = '0.0.1'
+  
+  attr_reader :options
+
+  def initialize(arguments, stdin)
+    @arguments = arguments.dup
+    
+    # Set defaults
+    @options = OpenStruct.new
+    @options.timeout = 15
+    @options.geocode = false
+    @options.skip_graticule = false
+    @options.metric = true
+    @options.sources = [:wunderground]
+    @options.verbode = false
+    @options.web = false
+    @options.at = Time.now.utc
+    
+    # thresholds
+    @options.windy_m = 10
+    @options.windy_i = 7
+    @options.pop = 50
+  end
+
+  # Parse options, check arguments, then process the command
+  def run
+    if parsed_options? && arguments_valid? 
+      puts "Start at #{DateTime.now}\n\n" if @options.verbose
+      output_options if @options.verbose # [Optional]
+            
+      process_arguments            
+      process_command
+      
+      puts "\nFinished at #{DateTime.now}" if @options.verbose
+    else
+      output_usage
+    end
+  end
+  
+  protected
+  
+    # future options
+    #
+    # time: -a --at
+    #
+    def parsed_options?
+      # Specify options
+      opt = OptionParser.new 
+      opt.on('-v', '--version')    { output_version ; exit 0 }
+      opt.on('-h', '--help')       { output_help }
+      opt.on('-V', '--verbose')    { @options.verbose = true }
+      opt.on('-a n', '--at n')     {|n| @options.at = Time.parse(n.to_s) }
+      opt.on('-t n', '--timeout n') {|n| @options.timeout = n }
+      opt.on('-w', '--web')        { @options.web = true; ARGV.shift }
+      opt.on('-g', '--geocode')    { @options.geocode = true }
+      opt.on('--skip')             { @options.skip_graticule = true }
+      opt.on('-m', '--metric')     { @options.metric = true }
+      opt.on('-i', '--imperial')   { @options.metric = false }
+      opt.on('--no-wunderground')  { @options.sources = @options.sources.delete_if{|s| s == :wunderground} }
+      opt.on('--yahoo')            { @options.sources << :yahoo }
+      opt.on('--google')           { @options.sources << :google }
+      opt.on('-p n', '--pop n')    {|n| @options.pop = n.to_i || 50 }
+      opt.on('-s n', '--wind n')   {|n| @options.metric ? @options.windy_m = n.to_f || 10 : @options.windy_i = n.to_f || 7 }
+      
+      # pass these onto vegas
+      opt.on('-k', '--kill')       { @options.web = true }
+      opt.on('-S', '--status')     { @options.web = true }
+            
+      opt.parse!(@arguments) rescue return false
+      
+      process_options
+      true      
+    end
+
+    # Performs post-parse processing on options
+    def process_options
+      Barometer.force_geocode =  @options.geocode
+      Barometer.selection = { 1 => @options.sources.uniq }
+      Barometer.skip_graticule = @options.skip_graticule
+      Barometer.timeout = @options.timeout
+    end
+    
+    def output_options
+      puts "Options:\n"
+      
+      @options.marshal_dump.each do |name, val|        
+        puts "  #{name} = #{val}"
+      end
+      puts
+    end
+
+    # True if required arguments were provided
+    def arguments_valid?
+      true if (@arguments.length >= 1 || @options.web)
+    end
+    
+    # Setup the arguments
+    def process_arguments
+      #puts @arguments.inspect
+    end
+    
+    def output_help
+      output_version
+      RDoc::usage() #exits app
+    end
+    
+    def output_usage
+      RDoc::usage('usage') # gets usage from comments above
+    end
+    
+    def output_version
+      puts "#{File.basename(__FILE__)} version #{VERSION}"
+    end
+    
+    def process_command
+      if @options.web
+        run_web_mode(@arguments.join(" "))
+      else
+        barometer = Barometer.new(@arguments.join(" "))
+        begin
+          barometer.measure(@options.metric) if barometer
+          pretty_output(barometer) if barometer.weather
+        rescue Barometer::OutOfSources
+          puts
+          puts "   SORRY: your query did not provide any results"
+          puts
+        end
+      end
+    end
 end
- 
-barometer = Barometer.new(ARGV[0])
-weather = barometer.measure(true)
+
+#
+# HELPERS
+#
+
+@level = 1
 
 def y(value)
   value ? "yes" : "no"
 end
 
-if weather
-  puts "###################################################"
-  puts "#  #{weather.default.location.name}"
-  puts "#"
-  puts "#  (lat: #{weather.default.location.latitude}, long: #{weather.default.location.longitude})"
-  puts "###################################################"
-  puts " -- CURRENT --"
-  puts " temperature: #{weather.now.temperature}"
-  puts
-  puts " -- QUESTIONS --"
-  puts " day?  : #{y(weather.day?)}"
-  puts " sunny?: #{y(weather.sunny?)}"
-  puts " windy?: #{y(weather.windy?)}"
-  puts " wet?  : #{y(weather.wet?)}"
-  puts
-  puts
-  puts " -- INFO --"
-  puts " http://github.com/attack/barometer"
-  puts "---------------------------------------------------"
+def div(char="#")
+  puts char*50
 end
+
+def title(title, level=1)
+  @level = level
+  puts "#{"  " * @level}-- #{title} --"
+end
+
+def value(title, value)
+  puts "#{"  " * @level}#{title}: #{value}" unless value.nil?
+end
+
+def blank
+  puts
+end
+
+def section(title, level=1, show_blank=true)
+  @level = level
+  title(title, level); yield; blank if show_blank
+end
+
+def pretty_hash(hash)
+  return unless hash.is_a?(Hash)
+  hash.each { |k,v| value(k,v) }
+end
+
+def pretty_summary(s)
+  return unless s
+  section("AVERAGES") do
+    pretty_hash({
+      "humidity" => s.humidity.to_i, "temperature" => s.temperature })
+  end
+  section("SUMMARY#{ " (@ #{@options.at})" if @options.at }") do
+    pretty_hash({
+      "day?" => s.day?(@options.at), "sunny?" => s.sunny?(@options.at),
+      "windy?" => s.windy?(@options.metric ? @options.windy_m : @options.windy_i, @options.at),
+      "wet?" => s.wet?(@options.pop,@options.at) })
+  end
+end
+
+def pretty_query(q)
+  return unless q
+  section("QUERY", 2) do
+    pretty_hash({"Format" => q.format})
+    pretty_hash({
+      "Address" => q.geo.address,
+      "Locality" => q.geo.locality, "Region" => q.geo.region,
+      "Country" => q.geo.country, "Country Code" => q.geo.country_code,
+      "Latitude" => q.geo.latitude, "Longitude" => q.geo.longitude }) if q.geo
+  end
+end
+
+def pretty_location(l)
+  return unless l
+  section("LOCATION", 2) do
+    pretty_hash({
+      "ID" => l.id, "Name" => l.name,
+      "City" => l.city, "State Name" => l.state_name,
+      "State Code" => l.state_code, "Country" => l.country,
+      "Country Code" => l.country_code, "Zip Code" => l.zip_code,
+      "Latitude" => l.latitude, "Longitude" => l.longitude })
+  end
+end
+
+def pretty_station(s)
+  return unless s
+  section("STATION", 2) do
+    pretty_hash({
+      "ID" => s.id, "Name" => s.name,
+      "City" => s.city, "State Name" => s.state_name,
+      "State Code" => s.state_code, "Country" => s.country,
+      "Country Code" => s.country_code, "Zip Code" => s.zip_code,
+      "Latitude" => s.latitude, "Longitude" => s.longitude })
+  end
+end
+
+def pretty_timezone(t)
+  return unless t
+  section("TIMEZONE", 2) do
+    pretty_hash({ "Long" => t.timezone, "Code" => t.code,"DST?" => t.dst? })
+  end
+end
+
+def pretty_current(c)
+  return unless c
+  section("CURRENT", 2) do
+    pretty_hash({
+      "Time" => c.time, "Local Time" => c.local_time,
+      "Humidity" => c.humidity, "Icon" => c.icon,
+      "Condition" => c.condition, "Temperature" => c.temperature,
+      "Dew Point" => c.dew_point, "Heat Index" => c.heat_index,
+      "Pressure" => c.pressure, "Visibility" => c.visibility })
+    pretty_hash({ "Wind Chill" => c.wind_chill, "Wind" => c.wind,
+      "Wind Direction" => c.wind.direction, "Degrees" => c.wind.degrees }) if c.wind
+    pretty_hash({ "Sun Rise" => c.sun.rise, "Sun Set" => c.sun.set }) if c.sun
+  end
+end
+
+def pretty_forecast(f)
+  return unless f
+  section("FOR: #{f.date}", 3) do
+    pretty_hash({
+      "Date" => f.date, "Icon" => f.icon,
+      "Condition" => f.condition, "High" => f.high,
+      "Low" => f.low, "POP" => f.pop })
+    pretty_hash({ "Sun Rise" => f.sun.rise, "Sun Set" => f.sun.set }) if f.sun
+  end
+end
+
+def pretty_forecasts(forecasts)
+  return unless forecasts
+  section("FORECAST", 3, false) do
+    blank
+    forecasts.each do |forecast|
+      pretty_forecast(forecast)
+    end
+  end
+end
+
+def pretty_measurement(m)
+  return unless m
+  section(m.source.to_s, 1) do
+    pretty_hash({
+      "Source" => m.source, "Time" => m.time,
+      "Metric" => m.metric?, "Success" => m.success? })
+  end
+  pretty_location(m.location)
+  pretty_station(m.station)
+  pretty_timezone(m.timezone)
+  pretty_current(m.current)
+  pretty_forecasts(m.forecast)
+end
+
+def pretty_measurements(w)
+  return unless w
+  section("MEASUREMENTS", 1) do
+    blank
+    w.measurements.each do |m|
+      pretty_measurement(m)
+    end
+  end
+end
+
+def pretty_info
+  title("INFO", 1)
+  value("GitHub", "http://github.com/attack/barometer")
+end
+
+def pretty_output(barometer)
+  weather = barometer.weather
+  if weather
+    div
+    puts "#"
+    puts "#  #{weather.default.location.name || barometer.query.q}"
+    puts "#"
+    div
+    blank
+    pretty_summary(weather)
+    pretty_query(barometer.query)
+    pretty_measurements(weather)
+    pretty_info
+    div("-")
+  end
+end
+
+def run_web_mode(query=nil)
+  
+  raise "This is currently disabled"
+  
+  #require File.expand_path(File.dirname(__FILE__) + '/../lib/webometer/webometer.rb')
+  #require 'vegas'
+  
+  #Vegas::Runner.new(Webometer, 'webometer') do |opts, app|
+    # opts is an option parser object
+    # app is your app class
+  #end
+end
+
+def geocode_google_key_message
+  puts
+  puts "Please update the key_file '#{KEY_FILE}' with your google api key"
+  puts "Get it here: http://code.google.com/apis/maps/signup.html"
+  puts "The, add this line to the file:"
+  puts "geocode_google: YOUR_KEY_KERE"
+  puts
+end
+
+# set API keys
+if File.exists?(KEY_FILE)
+	keys = YAML.load_file(KEY_FILE)
+	if keys["geocode_google"]
+	  Barometer.google_geocode_key = keys["geocode_google"]
+  else
+    geocode_google_key_message
+    exit
+  end
+else
+  File.open(KEY_FILE, 'w') {|f| f << "geocode_google: YOUR_KEY_KERE" }
+  geocode_google_key_message
+  exit
+end
+
+# Create and run the application
+app = App.new(ARGV, STDIN)
+app.run

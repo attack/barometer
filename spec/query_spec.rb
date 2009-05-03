@@ -7,6 +7,7 @@ describe "Query" do
     @postal_code = "T5B 4M9"
     @coordinates = "40.756054,-73.986951"
     @geocode = "New York, NY"
+    @icao = "KSFO"
     
     # actual conversions
     @zipcode_to_coordinates = "34.1030032,-118.4104684"
@@ -26,18 +27,28 @@ describe "Query" do
       Barometer::Query.is_us_zipcode?(@zipcode).should be_true
       Barometer::Query.is_us_zipcode?(@postal_code).should be_false
       Barometer::Query.is_us_zipcode?(@coordinates).should be_false
+      Barometer::Query.is_coordinates?(@icao).should be_false
     end
     
     it "detects a postalcode" do
       Barometer::Query.is_canadian_postcode?(@postal_code).should be_true
       Barometer::Query.is_canadian_postcode?(@zipcode).should be_false
       Barometer::Query.is_canadian_postcode?(@coordinates).should be_false
+      Barometer::Query.is_coordinates?(@icao).should be_false
     end
     
     it "detects a coordinates" do
       Barometer::Query.is_coordinates?(@coordinates).should be_true
       Barometer::Query.is_coordinates?(@zipcode).should be_false
       Barometer::Query.is_coordinates?(@postal_code).should be_false
+      Barometer::Query.is_coordinates?(@icao).should be_false
+    end
+    
+    it "detects an ICAO" do
+      Barometer::Query.is_icao?(@coordinates).should be_false
+      Barometer::Query.is_icao?(@zipcode).should be_false
+      Barometer::Query.is_icao?(@postal_code).should be_false
+      Barometer::Query.is_icao?(@icao).should be_true
     end
     
   end
@@ -58,6 +69,7 @@ describe "Query" do
       @query.country_code.should == "US"
       @query.zipcode?.should be_true
       @query.postalcode?.should be_false
+      @query.icao?.should be_false
       @query.coordinates?.should be_false
       @query.geocode?.should be_false
     end
@@ -71,6 +83,21 @@ describe "Query" do
       @query.country_code.should == "CA"
       @query.zipcode?.should be_false
       @query.postalcode?.should be_true
+      @query.icao?.should be_false
+      @query.coordinates?.should be_false
+      @query.geocode?.should be_false
+    end
+    
+    it "recognizes icao" do
+      @query.q = @icao
+      @query.format.should be_nil
+      @query.analyze!
+      @query.format.to_sym.should == :icao
+      
+      @query.country_code.should be_nil
+      @query.zipcode?.should be_false
+      @query.postalcode?.should be_false
+      @query.icao?.should be_true
       @query.coordinates?.should be_false
       @query.geocode?.should be_false
     end
@@ -84,6 +111,7 @@ describe "Query" do
       @query.country_code.should be_nil
       @query.zipcode?.should be_false
       @query.postalcode?.should be_false
+      @query.icao?.should be_false
       @query.coordinates?.should be_true
       @query.geocode?.should be_false
     end
@@ -97,6 +125,7 @@ describe "Query" do
       @query.country_code.should be_nil
       @query.zipcode?.should be_false
       @query.postalcode?.should be_false
+      @query.icao?.should be_false
       @query.coordinates?.should be_false
       @query.geocode?.should be_true
     end
@@ -168,7 +197,7 @@ describe "Query" do
   describe "when converting queries" do
     
     before(:each) do
-      @key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
+      @key = KEY
       url_start = "http://maps.google.com/maps/geo?"
       #
       # for Graticule and/or HTTParty geocoding
@@ -221,6 +250,13 @@ describe "Query" do
           'geocode_40_73.xml')
         )
       )
+      FakeWeb.register_uri(:get, 
+        "#{url_start}output=xml&q=KSFO&gl=&key=#{@key}",
+        :string => File.read(File.join(File.dirname(__FILE__), 
+          'fixtures', 
+          'geocode_ksfo.xml')
+        )
+      )
     end
 
     describe "to coordinates," do
@@ -253,6 +289,10 @@ describe "Query" do
         Barometer::Query.to_coordinates(@postal_code, :postalcode).first.should == "53.570447,-113.456083"
       end
       
+      it "converts from icao" do
+        Barometer::Query.to_coordinates(@icao, :icao).first.should == "37.615223,-122.389979"
+      end
+      
     end
     
     describe "to geocode" do
@@ -275,6 +315,10 @@ describe "Query" do
           Barometer::Query.to_geocode(@postal_code, :postalcode).first.should == @postal_code
         end
         
+        it "converts from icao" do
+          Barometer::Query.to_geocode(@icao, :icao).first.should == "San Francisco Airport, USA"
+        end
+
       end
       
       describe "when Graticule disabled," do
@@ -357,7 +401,7 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@zipcode)
-          Barometer::Query.google_geocode_key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
+          Barometer::Query.google_geocode_key = KEY
         end
         
         it "converts to coordinates" do
@@ -384,7 +428,7 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@postal_code)
-          Barometer::Query.google_geocode_key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
+          Barometer::Query.google_geocode_key = KEY
         end
         
         it "converts to coordinates" do
@@ -411,7 +455,7 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@geocode)
-          Barometer::Query.google_geocode_key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
+          Barometer::Query.google_geocode_key = KEY
         end
         
         it "converts to coordinates" do
@@ -438,7 +482,7 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@coordinates)
-          Barometer::Query.google_geocode_key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
+          Barometer::Query.google_geocode_key = KEY
         end
         
         it "converts to geocode" do

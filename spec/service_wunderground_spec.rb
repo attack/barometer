@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Wunderground" do
   
   before(:each) do
-    @accepted_formats = [:zipcode, :postalcode, :coordinates, :geocode]
+    @accepted_formats = [:zipcode, :postalcode, :icao, :coordinates, :geocode]
     @base_uri = "http://api.wunderground.com/auto/wui/geo"
   end
   

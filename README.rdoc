@@ -8,20 +8,35 @@ information, or they can be used in a hierarchical configuration where lower
 preferred weather services are only used if previous services are
 unavailable.
 
+== version
+
+Version 0.1.0 is the current release of this gem.
+The gem is available from github (attack-barometer) or rubyforge (barometer).
+It is fully functional (for three weather service APIs).
+
 == status
 
 Currently this project is in development and will only work for a few weather
 services (wunderground, google, yahoo).
 
-Features to be added before first release:
-- gem setup/config, apply to rubyforge
-
-Features to be added in future releases:
+Features to be added next:
 - even more weather service drivers (noaa, weather.com, weatherbug)
-- ability to query multiple services and combine/average the results
-- support iaco as a query format
 
 = dependencies
+
+=== Google API key
+
+In most cases you will need to have a free google geocode api key.
+Get one here: http://code.google.com/apis/maps/signup.html
+Then put it in the file '~/.barometer' by adding the line:
+geocode_google: YOUR_KEY_HERE
+
+You will need this for:
+- using the Barometer gem (unless you use queries that are directly supported
+  by the weather source API, ie yahoo will take a zip code directly and doesn't
+  require any geocoding)
+- running the Barometer binary
+- running the Barometer Web Demo
 
 === HTTParty
 
@@ -29,7 +44,7 @@ Why? HTTParty was created and designed specifically for consuming web services.
 I choose to use this over using the Net::HTTP library directly to allow for
 faster development of this project.
 
-HTTParty is also extended to include configurable Timoout support.
+HTTParty is also extended to include configurable Timeout support.
 
 === tzinfo
 
@@ -96,6 +111,18 @@ You can use barometer from the command line.
   # barometer berlin
   
 This will output the weather information for the given query.
+See the help for more command line information.
+
+  # barometer -h
+
+=== web demo
+
+There is a Sinatra application that demos the functionality of Barometer,
+and provides Barometer information.  Start this local demo with:
+
+  # barometer -w
+  
+NOTE: This requires the gems "sinatra" and "vegas".
   
 === fail
 
@@ -187,6 +214,25 @@ the data as shown in the above examples.
   weather.source(:wunderground).for(time)   # same as above but specific source
   
   puts weather.source(:wunderground).for(time).low.f
+  
+== averages
+
+If you consume more then one weather service, Barometer can provide averages
+for the values (currently only for the 'current' values and not the forecasted
+values).
+
+  require 'barometer'
+  
+  Barometer.google_geocode_key = "THE_GOOGLE_API_KEY"
+  # use yahoo and wunderground
+  Barometer.selection = { 1 => [:yahoo, :wunderground] }
+
+  barometer = Barometer.new("90210")
+  weather = barometer.measure
+
+  puts weather.temperture
+
+This will calculate the average temperature as given by :yahoo and :wunderground
   
 == simple answers
 

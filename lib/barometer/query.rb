@@ -31,20 +31,23 @@ module Barometer
       self.analyze!
     end
     
-    # analyze the saved query to determine the format.  for the format of
-    # :zipcode and :postalcode the country_code can also be set
+    # analyze the saved query to determine the format.
     def analyze!
       return unless @q
       if Barometer::Query.is_us_zipcode?(@q)
         @format = :zipcode
+        @country_code = Barometer::Query.format_to_country_code(@format)
       elsif Barometer::Query.is_canadian_postcode?(@q)
         @format = :postalcode
+        @country_code = Barometer::Query.format_to_country_code(@format)
       elsif Barometer::Query.is_coordinates?(@q)
         @format = :coordinates
+      elsif Barometer::Query.is_icao?(@q)
+        @format = :icao
+#        @country_code = Barometer::Query.icao_to_country_code(@q)
       else
         @format = :geocode
       end
-      @country_code = Barometer::Query.format_to_country_code(@format)
     end
     
     # take a list of acceptable (and ordered by preference) formats and convert
@@ -93,6 +96,7 @@ module Barometer
     def postalcode?; @format == :postalcode; end
     def coordinates?; @format == :coordinates; end
     def geocode?; @format == :geocode; end
+    def icao?; @format == :icao; end
     
     def self.is_us_zipcode?(query)
       us_zipcode_regex = /(^[0-9]{5}$)|(^[0-9]{5}-[0-9]{4}$)/
@@ -112,12 +116,25 @@ module Barometer
       return !(query =~ coordinates_regex).nil?
     end
     
+    def self.is_icao?(query)
+      # allow any 3 or 4 letter word ... unfortunately this means some locations
+      # (ie Utah, Goa, Kiev, etc) will be detected as ICAO.  This won't matter for
+      # returning weather results ... it will just effect what happens to the query.
+      # For example, wunderground will accept :icao above :coordinates and :geocode,
+      # which means that a city like Kiev would normally get converted to :coordinates
+      # but in this case it will be detected as :icao so it will be passed as is.
+      # Currently, only wunderground accepts ICAO, and they process ICAO the same as a
+      # city name, so it doesn't matter.
+      icao_regex = /^[A-Za-z]{3,4}$/
+      return !(query =~ icao_regex).nil?
+    end
+    
     #
     # CONVERTERS
     #
     
     # this will take all query formats and convert them to coordinates
-    # accepts- :zipcode, :postalcode, :geocode
+    # accepts- :zipcode, :postalcode, :geocode, :icao
     # returns- :coordinates
     # if the conversion fails, return nil
     def self.to_coordinates(query, format)
@@ -129,7 +146,7 @@ module Barometer
     end
     
     # this will take all query formats and convert them to coorinates
-    # accepts- :zipcode, :postalcode, :coordinates
+    # accepts- :zipcode, :postalcode, :coordinates, :icao
     # returns- :geocode
     def self.to_geocode(query, format)
       perform_geocode = false
@@ -143,8 +160,17 @@ module Barometer
       if perform_geocode
         geo = self.geocode(query, country_code)
         country_code ||= geo.country_code if geo
-        return nil unless geo && geo.locality && geo.region && geo.country
-        return ["#{geo.locality}, #{geo.region}, #{geo.country}", country_code, geo]
+        # different formats have different acceptance criteria
+        q = nil
+        case format
+        when :icao
+          return nil unless geo && geo.address && geo.country
+          q = "#{geo.address}, #{geo.country}"
+        else
+          return nil unless geo && geo.locality && geo.region && geo.country
+          q = "#{geo.locality}, #{geo.region}, #{geo.country}"
+        end
+        return [q, country_code, geo]
       else
         # without geocoding, the best we can do is just make use the given query as
         # the query for the "geocode" format
@@ -207,7 +233,6 @@ module Barometer
         },
         :format => :xml
       )['kml']['Response']
-      #puts location.inspect
       geo = Barometer::Geo.new(location)
     end
     
@@ -223,6 +248,30 @@ module Barometer
       end
       country_code
     end
+    
+    # todo, the fist letter in a 4-letter icao can designate country:
+    # c=canada
+    # k=usa
+    # etc...
+    # def self.icao_to_country_code(icao_code)
+    #   return unless icao_code.is_a?(String)
+    #   country_code = nil
+    #   if icao_code.size == 4
+    #     case icao_code.first_letter
+    #     when "C"
+    #       country_code = "CA"
+    #     when "K"
+    #       country_code = "US"
+    #     end
+    #     if coutry_code.nil?
+    #       case icao_code.first_two_letters
+    #       when "ET"
+    #         country_code = "GERMANY"
+    #       end
+    #     end
+    #   end  
+    #   country_code
+    # end
 
   end
 end  

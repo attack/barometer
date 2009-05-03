@@ -34,17 +34,9 @@ module Barometer
     # Quick access methods
     #
     
-    def current
-      (default = self.default) ? default.current : nil
-    end
-    
-    def forecast
-      (default = self.default) ? default.forecast : nil
-    end
-
-    def now
-      self.current
-    end
+    def current; (default = self.default) ? default.current : nil; end
+    def forecast; (default = self.default) ? default.forecast : nil; end
+    def now; self.current; end
     
     def today
       default = self.default
@@ -72,37 +64,48 @@ module Barometer
     # averages
     #
     
-    # average of all humidity values
-    # def humidity
-    # end
-    # 
-    # # average of all temperature values
-    # def temperature
-    # end
-    # 
-    # # average of all wind speed values
-    # def wind
-    # end
-    # 
-    # # average of all pressure values
-    # def pressure
-    # end
-    # 
-    # # average of all dew_point values
-    # def dew_point
-    # end
-    # 
-    # # average of all heat_index values
-    # def heat_index
-    # end
-    # 
-    # # average of all wind_chill values
-    # def wind_chill
-    # end
-    # 
-    # # average of all visibility values
-    # def visibility
-    # end
+    # TODO: not tested (except via averages)
+    def metric?
+      self.default ? self.default.metric? : true
+    end
+    
+    # TODO: not tested (except via averages)
+    # this assumes calculating for current, and that "to_f" for a value
+    # will return the value needed
+    # value_name = the name of the value we are averaging
+    def current_average(value_name)
+      values = []
+      @measurements.each do |measurement|
+        values << measurement.current.send(value_name).to_f if measurement.success?
+      end
+      return nil unless values && values.size > 0
+      values.inject(0.0) { |sum,v| sum += v } / values.size
+    end
+    
+    # TODO: not tested (except via averages)
+    def average(value_name, do_average=true, class_name=nil)
+      if class_name
+        if do_average
+          avg = Barometer.const_get(class_name).new(self.metric?)
+          avg << self.current_average(value_name)
+        else
+          avg = self.now.send(value_name)
+        end
+      else
+        avg = (do_average ? self.current_average(value_name) : self.now.send(value_name))
+      end
+      avg
+    end
+      
+    # average of all values
+    def humidity(do_average=true); average("humidity",do_average); end
+    def temperature(do_average=true); average("temperature",do_average,"Temperature"); end
+    def wind(do_average=true); average("wind",do_average,"Speed"); end
+    def pressure(do_average=true); average("pressure",do_average,"Pressure"); end
+    def dew_point(do_average=true); average("dew_point",do_average,"Temperature"); end
+    def heat_index(do_average=true); average("heat_index",do_average,"Temperature"); end
+    def wind_chill(do_average=true); average("wind_chill",do_average,"Temperature"); end
+    def visibility(do_average=true); average("visibility",do_average,"Distance"); end
     
     #
     # quick access methods

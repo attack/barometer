@@ -78,6 +78,174 @@ describe "Weather" do
     
   end
   
+  describe "when calculating averages" do
+    
+    before(:each) do
+      @weather = Barometer::Weather.new
+      @wunderground = Barometer::Measurement.new(:wunderground)
+      @wunderground.current = Barometer::CurrentMeasurement.new
+      @wunderground.success = true
+      @yahoo = Barometer::Measurement.new(:yahoo)
+      @yahoo.current = Barometer::CurrentMeasurement.new
+      @yahoo.success = true
+      @google = Barometer::Measurement.new(:google)
+      @weather.measurements << @wunderground
+      @weather.measurements << @yahoo
+      @weather.measurements << @google
+    end
+    
+    describe "for temperature" do
+      
+      before(:each) do
+        @weather.source(:wunderground).current.temperature = Barometer::Temperature.new
+        @weather.source(:wunderground).current.temperature.c = 10
+        @weather.source(:yahoo).current.temperature = Barometer::Temperature.new
+        @weather.source(:yahoo).current.temperature.c = 6
+      end
+
+      it "returns averages" do
+        @weather.temperature.c.should == 8
+      end
+      
+      it "returns default when disabled" do
+        @weather.temperature(false).c.should == 10
+      end
+      
+    end
+    
+    describe "for wind" do
+      
+      before(:each) do
+        @weather.source(:wunderground).current.wind = Barometer::Speed.new
+        @weather.source(:wunderground).current.wind.kph = 10
+        @weather.source(:yahoo).current.wind = Barometer::Speed.new
+        @weather.source(:yahoo).current.wind.kph = 6
+      end
+
+      it "returns averages" do
+        @weather.wind.kph.should == 8
+      end
+      
+      it "returns default when disabled" do
+        @weather.wind(false).kph.should == 10
+      end
+      
+    end
+    
+    describe "for humidity" do
+      
+      before(:each) do
+        @weather.source(:wunderground).current.humidity = 10
+        @weather.source(:yahoo).current.humidity = 6
+      end
+
+      it "returns averages" do
+        @weather.humidity.should == 8
+      end
+      
+      it "returns default when disabled" do
+        @weather.humidity(false).should == 10
+      end
+      
+    end
+    
+    describe "for pressure" do
+      
+      before(:each) do
+        @weather.source(:wunderground).current.pressure = Barometer::Pressure.new
+        @weather.source(:wunderground).current.pressure.mb = 10
+        @weather.source(:yahoo).current.pressure = Barometer::Pressure.new
+        @weather.source(:yahoo).current.pressure.mb = 6
+      end
+
+      it "returns averages" do
+        @weather.pressure.mb.should == 8
+      end
+      
+      it "returns default when disabled" do
+        @weather.pressure(false).mb.should == 10
+      end
+      
+    end
+    
+    describe "for dew_point" do
+      
+      before(:each) do
+        @weather.source(:wunderground).current.dew_point = Barometer::Temperature.new
+        @weather.source(:wunderground).current.dew_point.c = 10
+        @weather.source(:yahoo).current.dew_point = Barometer::Temperature.new
+        @weather.source(:yahoo).current.dew_point.c = 6
+      end
+
+      it "returns averages" do
+        @weather.dew_point.c.should == 8
+      end
+      
+      it "returns default when disabled" do
+        @weather.dew_point(false).c.should == 10
+      end
+      
+    end
+    
+    describe "for heat_index" do
+      
+      before(:each) do
+        @weather.source(:wunderground).current.heat_index = Barometer::Temperature.new
+        @weather.source(:wunderground).current.heat_index.c = 10
+        @weather.source(:yahoo).current.heat_index = Barometer::Temperature.new
+        @weather.source(:yahoo).current.heat_index.c = 6
+      end
+
+      it "returns averages" do
+        @weather.heat_index.c.should == 8
+      end
+      
+      it "returns default when disabled" do
+        @weather.heat_index(false).c.should == 10
+      end
+      
+    end
+    
+    describe "for wind_chill" do
+      
+      before(:each) do
+        @weather.source(:wunderground).current.wind_chill = Barometer::Temperature.new
+        @weather.source(:wunderground).current.wind_chill.c = 10
+        @weather.source(:yahoo).current.wind_chill = Barometer::Temperature.new
+        @weather.source(:yahoo).current.wind_chill.c = 6
+      end
+
+      it "returns averages" do
+        @weather.wind_chill.c.should == 8
+      end
+      
+      it "returns default when disabled" do
+        @weather.wind_chill(false).c.should == 10
+      end
+      
+    end
+    
+    describe "for visibility" do
+      
+      before(:each) do
+        @weather.source(:wunderground).current.visibility = Barometer::Distance.new
+        @weather.source(:wunderground).current.visibility.km = 10
+        @weather.source(:yahoo).current.visibility = Barometer::Distance.new
+        @weather.source(:yahoo).current.visibility.km = 6
+      end
+
+      it "returns averages" do
+        @weather.visibility.km.should == 8
+      end
+      
+      it "returns default when disabled" do
+        @weather.visibility(false).km.should == 10
+      end
+      
+    end
+    
+  end
+  
   describe "when answering the simple questions," do
     
     before(:each) do

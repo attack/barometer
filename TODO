@@ -7,5 +7,4 @@
 
 - Rdoc compatible documentation
 - Weather Service API key setting
-- support IACO as a query format
 - store links from weather response

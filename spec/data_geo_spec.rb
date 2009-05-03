@@ -35,6 +35,10 @@ describe "Geo" do
       @geo.country.should be_nil
     end
     
+    it "responds to address" do
+      @geo.address.should be_nil
+    end
+    
     it "responds to coordinates" do
       @geo.longitude = "99.99"
       @geo.latitude = "88.88"

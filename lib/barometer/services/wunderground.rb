@@ -39,7 +39,7 @@ module Barometer
   class Wunderground < Service
     
     def self.accepted_formats
-      [:zipcode, :postalcode, :coordinates, :geocode]
+      [:zipcode, :postalcode, :icao, :coordinates, :geocode]
     end
     
     def self.source_name
@@ -48,8 +48,9 @@ module Barometer
     
     # these are the icon codes that indicate "wet", used by wet? function
     def self.wet_icon_codes
-      %w(flurries rain sleet snow tstorms nt_flurries nt_rain nt_sleet nt_snow nt_tstorms)
+      %w(flurries rain sleet snow tstorms nt_flurries nt_rain nt_sleet nt_snow nt_tstorms chancerain)
     end
+    # these are the icon codes that indicate "sun", used by sunny? function
     def self.sunny_icon_codes
       %w(clear mostlysunny partlysunny sunny partlycloudy)
     end

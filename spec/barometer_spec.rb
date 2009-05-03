@@ -4,7 +4,7 @@ describe "Barometer" do
   
   before(:each) do
     @preference_hash = { 1 => [:wunderground] }
-    @key = "ABQIAAAAq8TH4offRcGrok8JVY_MyxRi_j0U6kJrkFvY4-OX2XYmEAa76BSFwMlSow1YgX8BOPUeve_shMG7xw"
+    @key = KEY
   end
   
   describe "and class methods" do

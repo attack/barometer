@@ -1,10 +1,10 @@
 module Graticule
   class Location
     
-    attr_accessor :country_code
+    attr_accessor :country_code, :address_line
     
     def attributes
-      [:latitude, :longitude, :street, :locality, :region, :postal_code, :country, :precision, :cuntry_code].inject({}) do |result,attr|
+      [:latitude, :longitude, :street, :locality, :region, :postal_code, :country, :precision, :cuntry_code, :address_line].inject({}) do |result,attr|
         result[attr] = self.send(attr) unless self.send(attr).blank?
         result
       end
@@ -39,6 +39,7 @@ module Graticule
             l.postal_code = value(address.elements['.//PostalCodeNumber/text()'])
             l.country = value(address.elements['.//CountryName/text()'])
             l.country_code = value(address.elements['.//CountryNameCode/text()'])
+            l.address_line = value(address.elements['.//AddressLine/text()'])
             l.precision = PRECISION[address.attribute('Accuracy').value.to_i] || :unknown
           end
         end
