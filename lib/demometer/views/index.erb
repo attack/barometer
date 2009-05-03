@@ -14,9 +14,9 @@
       <input id="query_metric" name="query[metric]" type="checkbox" value="1" checked="checked" />
     <br/>
     Source :
-      <input type="radio" name="query[source]" value="wunderground" checked="checked" /> Wunderground
-      <input type="radio" name="query[source]" value="yahoo" /> Yahoo
-      <input type="radio" name="query[source]" value="google" /> Google
+      <input type="checkbox" name="query[source]" value="wunderground" checked="checked" /> Wunderground
+      <input type="checkbox" name="query[source]" value="yahoo" /> Yahoo
+      <input type="checkbox" name="query[source]" value="google" /> Google
     <br/>
     Force Geocode? :
       <input id="query_geocode" name="query[geocode]" type="checkbox" value="1" checked="checked" />
@@ -35,24 +35,24 @@
   <h2>Averages</h2>
   <p>
     <ul>
-      <li>Humidity: <%= @weather.humidity.to_i %></li>
-      <li>Temperature: <%= @weather.temperature %></li>
-      <li>Wind: <%= @weather.wind %></li>
-      <li>Pressure: <%= @weather.pressure %></li>
-      <li>Dew Point: <%= @weather.dew_point %></li>
-      <li>Heat Index: <%= @weather.heat_index %></li>
-      <li>Wind Chill: <%= @weather.wind_chill %></li>
-      <li>Visibility: <%= @weather.visibility %></li>
+      <%= data("Humidity", @weather.humidity.to_i) %>
+      <%= data("Temperature", @weather.temperature) %>
+      <%= data("Wind", @weather.wind) %>
+      <%= data("Pressure", @weather.pressure) %>
+      <%= data("Dew Point", @weather.dew_point) %>
+      <%= data("Heat Index", @weather.heat_index) %>
+      <%= data("Wind Chill", @weather.wind_chill) %>
+      <%= data("Visibility", @weather.visibility) %>
     </ul>
   </p>
   
   <h2>Summary</h2>
   <p>
     <ul>
-      <li>Day?: <%= @weather.day? %></li>
-      <li>Sunny?: <%= @weather.sunny? %></li>
-      <li>Windy?: <%= @weather.windy? %></li>
-      <li>Wet?: <%= @weather.wet? %></li>
+      <%= data("Day?", @weather.day?) %>
+      <%= data("Sunny?", @weather.sunny?) %>
+      <%= data("Windy?", @weather.windy?) %>
+      <%= data("Wet?", @weather.wet?) %>
     </ul>
   </p>
   
@@ -60,14 +60,14 @@
   <h3>Query</h3>
   <p>
     <ul>
-      <li>Format: <%= @barometer.query.format %></li>
+      <%= data("Format", @barometer.query.format) %>
       <% if @barometer.query.geo %>
-      <li>Locality: <%= @barometer.query.geo.locality %></li>
-      <li>Region: <%= @barometer.query.geo.region %></li>
-      <li>Country: <%= @barometer.query.geo.country %></li>
-      <li>Country Code: <%= @barometer.query.geo.country_code %></li>
-      <li>Latitude: <%= @barometer.query.geo.latitude %></li>
-      <li>Longitude: <%= @barometer.query.geo.longitude %></li>
+      <%= data("Locality", @barometer.query.geo.locality) %>
+      <%= data("Region", @barometer.query.geo.region) %>
+      <%= data("Country", @barometer.query.geo.country) %>
+      <%= data("Country Code", @barometer.query.geo.country_code) %>
+      <%= data("Latitude", @barometer.query.geo.latitude) %>
+      <%= data("Longitude", @barometer.query.geo.longitude) %>
       <% end %>
     </ul>
   </p>

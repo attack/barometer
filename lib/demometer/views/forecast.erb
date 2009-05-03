@@ -1,14 +1,15 @@
 <h4>for: <%= forecast.date %></h4>
 <p>
   <ul>
-    <li>Date: <%= forecast.date %></li>
-    <li>Icon: <%= forecast.icon %></li>
-    <li>Condition: <%= forecast.condition %></li>
-    <li>High: <%= forecast.high %></li>
-    <li>Low: <%= forecast.low %></li>
-    <li>POP: <%= forecast.pop %></li>
+    <%= data("Date", forecast.date) %>
+    <%= data("Icon", forecast.icon) %>
+    <%= data("Condition", forecast.condition) %>
+    <%= data("High", forecast.high) %>
+    <%= data("Low", forecast.low) %>
+    <%= data("POP", forecast.pop) %>
     <% if forecast.sun %>
-    <li>Sun: rise - <%= forecast.sun.rise %>, set - <%= forecast.sun.set %></li>
+    <%= data("Sun Rise", forecast.sun.rise) %>
+    <%= data("Sun Set", forecast.sun.set) %>
     <% end %>
   </ul>
 </p>

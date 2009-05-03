@@ -1,10 +1,10 @@
 <h2><%= measurement.source.to_s.capitalize %></h2>
 <p>
   <ul>
-    <li>Source: <%= measurement.source %></li>
-    <li>Time: <%= measurement.time %></li>
-    <li>Metric: <%= measurement.metric? %></li>
-    <li>Success: <%= measurement.success? %></li>
+    <%= data("Source", measurement.source) %>
+    <%= data("Time", measurement.time) %>
+    <%= data("Metric", measurement.metric?) %>
+    <%= data("Success", measurement.success?) %>
   </ul>
 </p>
 
@@ -12,16 +12,16 @@
 <h3>Location</h3>
 <p>
   <ul>
-    <li>id: <%= measurement.location.id %></li>
-    <li>Name: <%= measurement.location.name %></li>
-    <li>City: <%= measurement.location.city %> %</li>
-    <li>State Name: <%= measurement.location.state_name %></li>
-    <li>State Code: <%= measurement.location.state_code %></li>
-    <li>Country: <%= measurement.location.country %></li>
-    <li>Country Code: <%= measurement.location.country_code %></li>
-    <li>Zip Code: <%= measurement.location.zip_code %></li>
-    <li>Latitude: <%= measurement.location.latitude %></li>
-    <li>Longitude: <%= measurement.location.longitude %></li>
+    <%= data("id", measurement.location.id) %>
+    <%= data("Name", measurement.location.name) %>
+    <%= data("City", measurement.location.city) %>
+    <%= data("State Name", measurement.location.state_name) %>
+    <%= data("State Code", measurement.location.state_code) %>
+    <%= data("Country", measurement.location.country) %>
+    <%= data("Country Code", measurement.location.country_code) %>
+    <%= data("Zip Code", measurement.location.zip_code) %>
+    <%= data("Latitude", measurement.location.latitude) %>
+    <%= data("Longitude", measurement.location.longitude) %>
   </ul>
 </p>
 <% end %>
@@ -30,16 +30,17 @@
 <h3>Station</h3>
 <p>
   <ul>
-    <li>id: <%= measurement.station.id %></li>
-    <li>Name: <%= measurement.station.name %></li>
-    <li>City: <%= measurement.station.city %> %</li>
-    <li>State Name: <%= measurement.station.state_name %></li>
-    <li>State Code: <%= measurement.station.state_code %></li>
-    <li>Country: <%= measurement.station.country %></li>
-    <li>Country Code: <%= measurement.station.country_code %></li>
-    <li>Zip Code: <%= measurement.station.zip_code %></li>
-    <li>Latitude: <%= measurement.station.latitude %></li>
-    <li>Longitude: <%= measurement.station.longitude %></li>
+    <%= data("id", measurement.station.id) %>
+    <%= data("Name", measurement.station.name) %>
+    <%= data("City", measurement.station.city) %>
+    <%= data("State Name", measurement.station.state_name) %>
+    <%= data("State Code", measurement.station.state_code) %>
+    <%= data("Country", measurement.station.country) %>
+    <%= data("Country Code", measurement.station.country_code) %>
+    <%= data("Zip Code", measurement.station.zip_code) %>
+    <%= data("Latitude", measurement.station.latitude) %>
+    <%= data("Longitude", measurement.station.longitude) %>
+    </ul>
   </ul>
 </p>
 <% end %>
@@ -48,9 +49,9 @@
 <h3>Timezone</h3>
 <p>
   <ul>
-    <li>Long: <%= measurement.timezone.timezone %></li>
-    <li>Code: <%= measurement.timezone.code %></li>
-    <li>DST?: <%= measurement.timezone.dst? %></li>
+    <%= data("Long", measurement.timezone.timezone) %>
+    <%= data("Code", measurement.timezone.code) %>
+    <%= data("DST?", measurement.timezone.dst?) %>
   </ul>
 </p>
 <% end %>
@@ -59,20 +60,25 @@
 <h3>Current</h3>
 <p>
   <ul>
-    <li>Time: <%= measurement.current.time %></li>
-    <li>Local Time: <%= measurement.current.local_time %></li>
-    <li>Humidity: <%= measurement.current.humidity %> %</li>
-    <li>Icon: <%= measurement.current.icon %></li>
-    <li>Condition: <%= measurement.current.condition %></li>
-    <li>Temperature: <%= measurement.current.temperature %></li>
-    <li>Dew Point: <%= measurement.current.dew_point %></li>
-    <li>Heat Index: <%= measurement.current.heat_index %></li>
-    <li>Wind Chill: <%= measurement.current.wind_chill %></li>
-    <li>Wind: <%= measurement.current.wind %> @ <%= measurement.current.wind.direction %> [<%= measurement.current.wind.degrees %> degrees]</li>
-    <li>Pressure: <%= measurement.current.pressure %></li>
-    <li>Visibility: <%= measurement.current.visibility %></li>
+    <%= data("Time", measurement.current.time) %>
+    <%= data("Local Time", measurement.current.local_time) %>
+    <%= data("Humidity", measurement.current.humidity) %>
+    <%= data("Icon", measurement.current.icon) %>
+    <%= data("Condition", measurement.current.condition) %>
+    <%= data("Temperature", measurement.current.temperature) %>
+    <%= data("Dew Point", measurement.current.dew_point) %>
+    <%= data("Heat Index", measurement.current.heat_index) %>
+    <%= data("Wind Chill", measurement.current.wind_chill) %>
+    <% if measurement.current.wind %>
+    <%= data("Wind Speed", measurement.current.wind) %>
+    <%= data("Wind Direction", measurement.current.wind.direction) %>
+    <%= data("Wind Degrees", measurement.current.wind.degrees) %>
+    <% end %>
+    <%= data("Pressure", measurement.current.pressure) %>
+    <%= data("Visibility", measurement.current.visibility) %>
     <% if measurement.current.sun %>
-    <li>Sun: rise - <%= measurement.current.sun.rise %>, set - <%= measurement.current.sun.set %></li>
+    <%= data("Sun Rise", measurement.current.sun.rise) %>
+    <%= data("Sun Set", measurement.current.sun.set) %>
     <% end %>
   </ul>
 </p>

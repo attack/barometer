@@ -12,6 +12,13 @@ end
 
 class Demometer < Sinatra::Default
 
+  helpers do
+    def data(title, value)
+      return if value.nil?
+      "<li>#{title}: #{value}</li>"
+    end
+  end
+
   get '/' do
     erb :index
   end
@@ -19,8 +26,10 @@ class Demometer < Sinatra::Default
   post '/' do
     # apply options
     Barometer.force_geocode = (params[:query][:geocode].to_s == "1" ? true : false)
-    Barometer.selection = { 1 => [ params[:query][:source].to_sym ] }
     metric = (params[:query][:metric].to_s == "1" ? true : false)
+    
+    # determine sources
+    Barometer.selection = { 1 => params[:query][:source].collect{|s| s.to_sym } }
     
     if params[:query] && !params[:query][:q].empty?
       @barometer = Barometer.new(params[:query][:q])
