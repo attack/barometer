@@ -1,0 +1,14 @@
+<h4>for: <%= forecast.date %></h4>
+<p>
+  <ul>
+    <li>Date: <%= forecast.date %></li>
+    <li>Icon: <%= forecast.icon %></li>
+    <li>Condition: <%= forecast.condition %></li>
+    <li>High: <%= forecast.high %></li>
+    <li>Low: <%= forecast.low %></li>
+    <li>POP: <%= forecast.pop %></li>
+    <% if forecast.sun %>
+    <li>Sun: rise - <%= forecast.sun.rise %>, set - <%= forecast.sun.set %></li>
+    <% end %>
+  </ul>
+</p>

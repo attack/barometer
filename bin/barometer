@@ -65,7 +65,7 @@ require 'yaml'
 KEY_FILE = File.expand_path(File.join('~', '.barometer'))
 
 class App
-  VERSION = '0.2.3'
+  VERSION = '0.3.0'
   
   attr_reader :options
 
@@ -168,11 +168,11 @@ class App
     
     def output_help
       output_version
-      RDoc::usage() #exits app
+      RDoc::usage('Usage') #exits app
     end
     
     def output_usage
-      RDoc::usage('usage') # gets usage from comments above
+      RDoc::usage('Usage') # gets usage from comments above
     end
     
     def output_version
@@ -237,7 +237,10 @@ def pretty_summary(s)
   return unless s
   section("AVERAGES") do
     pretty_hash({
-      "humidity" => s.humidity.to_i, "temperature" => s.temperature })
+      "humidity" => s.humidity.to_i, "temperature" => s.temperature,
+      "wind" => s.wind, "pressure" => s.pressure,
+      "dew_point" => s.dew_point, "heat_index" => s.heat_index,
+      "wind_chill" => s.wind_chill, "visibility" => s.visibility })
   end
   section("SUMMARY#{ " (@ #{@options.at})" if @options.at }") do
     pretty_hash({
@@ -375,17 +378,13 @@ end
 
 def run_web_mode(query=nil)
   
-  puts
-  puts "This is currently disabled"
-  puts
+  require File.expand_path(File.dirname(__FILE__) + '/../lib/demometer/demometer.rb')
+  require 'vegas'
   
-  #require File.expand_path(File.dirname(__FILE__) + '/../lib/webometer/webometer.rb')
-  #require 'vegas'
-  
-  #Vegas::Runner.new(Webometer, 'webometer') do |opts, app|
+  Vegas::Runner.new(Demometer, 'demometer') do |opts, app|
     # opts is an option parser object
     # app is your app class
-  #end
+  end
 end
 
 def geocode_google_key_message

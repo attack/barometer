@@ -10,7 +10,7 @@ unavailable.
 
 == version
 
-Version 0.1.0 is the current release of this gem.
+Version 0.3.0 is the current release of this gem.
 The gem is available from github (attack-barometer) or rubyforge (barometer).
 It is fully functional (for three weather service APIs).
 

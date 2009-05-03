@@ -1,0 +1,88 @@
+<h2><%= measurement.source.to_s.capitalize %></h2>
+<p>
+  <ul>
+    <li>Source: <%= measurement.source %></li>
+    <li>Time: <%= measurement.time %></li>
+    <li>Metric: <%= measurement.metric? %></li>
+    <li>Success: <%= measurement.success? %></li>
+  </ul>
+</p>
+
+<% if measurement.location %>
+<h3>Location</h3>
+<p>
+  <ul>
+    <li>id: <%= measurement.location.id %></li>
+    <li>Name: <%= measurement.location.name %></li>
+    <li>City: <%= measurement.location.city %> %</li>
+    <li>State Name: <%= measurement.location.state_name %></li>
+    <li>State Code: <%= measurement.location.state_code %></li>
+    <li>Country: <%= measurement.location.country %></li>
+    <li>Country Code: <%= measurement.location.country_code %></li>
+    <li>Zip Code: <%= measurement.location.zip_code %></li>
+    <li>Latitude: <%= measurement.location.latitude %></li>
+    <li>Longitude: <%= measurement.location.longitude %></li>
+  </ul>
+</p>
+<% end %>
+
+<% if measurement.station %>
+<h3>Station</h3>
+<p>
+  <ul>
+    <li>id: <%= measurement.station.id %></li>
+    <li>Name: <%= measurement.station.name %></li>
+    <li>City: <%= measurement.station.city %> %</li>
+    <li>State Name: <%= measurement.station.state_name %></li>
+    <li>State Code: <%= measurement.station.state_code %></li>
+    <li>Country: <%= measurement.station.country %></li>
+    <li>Country Code: <%= measurement.station.country_code %></li>
+    <li>Zip Code: <%= measurement.station.zip_code %></li>
+    <li>Latitude: <%= measurement.station.latitude %></li>
+    <li>Longitude: <%= measurement.station.longitude %></li>
+  </ul>
+</p>
+<% end %>
+
+<% if measurement.timezone %>
+<h3>Timezone</h3>
+<p>
+  <ul>
+    <li>Long: <%= measurement.timezone.timezone %></li>
+    <li>Code: <%= measurement.timezone.code %></li>
+    <li>DST?: <%= measurement.timezone.dst? %></li>
+  </ul>
+</p>
+<% end %>
+
+<% if measurement.current %>
+<h3>Current</h3>
+<p>
+  <ul>
+    <li>Time: <%= measurement.current.time %></li>
+    <li>Local Time: <%= measurement.current.local_time %></li>
+    <li>Humidity: <%= measurement.current.humidity %> %</li>
+    <li>Icon: <%= measurement.current.icon %></li>
+    <li>Condition: <%= measurement.current.condition %></li>
+    <li>Temperature: <%= measurement.current.temperature %></li>
+    <li>Dew Point: <%= measurement.current.dew_point %></li>
+    <li>Heat Index: <%= measurement.current.heat_index %></li>
+    <li>Wind Chill: <%= measurement.current.wind_chill %></li>
+    <li>Wind: <%= measurement.current.wind %> @ <%= measurement.current.wind.direction %> [<%= measurement.current.wind.degrees %> degrees]</li>
+    <li>Pressure: <%= measurement.current.pressure %></li>
+    <li>Visibility: <%= measurement.current.visibility %></li>
+    <% if measurement.current.sun %>
+    <li>Sun: rise - <%= measurement.current.sun.rise %>, set - <%= measurement.current.sun.set %></li>
+    <% end %>
+  </ul>
+</p>
+<% end %>
+
+<% if measurement.forecast %>
+<h3>Forecast</h3>
+
+<% measurement.forecast.each do |forecast| %>
+  <%= erb(:forecast, :locals => { :forecast => forecast }, :layout => false) %>
+<% end %>
+
+<% end %>

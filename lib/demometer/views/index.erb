@@ -1,0 +1,80 @@
+<h2 id='demo'>Measure the weather for:</h2>
+
+<br/>
+<form action="/" class="" id="" method="post">
+  <div class="text-input">
+    <input id="query_q" name="query[q]" size="25" type="text" />
+  </div>
+  <div class="submit-input">
+    <input src="/images/go.png" type="image" value="go &rarr;" />
+  </div>
+  <br/>
+  <div class="options-input">
+    Metric? :
+      <input id="query_metric" name="query[metric]" type="checkbox" value="1" checked="checked" />
+    <br/>
+    Source :
+      <input type="radio" name="query[source]" value="wunderground" checked="checked" /> Wunderground
+      <input type="radio" name="query[source]" value="yahoo" /> Yahoo
+      <input type="radio" name="query[source]" value="google" /> Google
+    <br/>
+    Force Geocode? :
+      <input id="query_geocode" name="query[geocode]" type="checkbox" value="1" checked="checked" />
+  </div>
+</form>
+
+<p>&nbsp;</p>
+<br/>
+
+<% if params[:query] && !params[:query][:q].empty? %>
+<h2>query: "<%= params[:query][:q] %>"</h2>
+<% end %>
+
+<% if @weather %>
+
+  <h2>Averages</h2>
+  <p>
+    <ul>
+      <li>Humidity: <%= @weather.humidity.to_i %></li>
+      <li>Temperature: <%= @weather.temperature %></li>
+      <li>Wind: <%= @weather.wind %></li>
+      <li>Pressure: <%= @weather.pressure %></li>
+      <li>Dew Point: <%= @weather.dew_point %></li>
+      <li>Heat Index: <%= @weather.heat_index %></li>
+      <li>Wind Chill: <%= @weather.wind_chill %></li>
+      <li>Visibility: <%= @weather.visibility %></li>
+    </ul>
+  </p>
+  
+  <h2>Summary</h2>
+  <p>
+    <ul>
+      <li>Day?: <%= @weather.day? %></li>
+      <li>Sunny?: <%= @weather.sunny? %></li>
+      <li>Windy?: <%= @weather.windy? %></li>
+      <li>Wet?: <%= @weather.wet? %></li>
+    </ul>
+  </p>
+  
+  <% if @barometer.query %>
+  <h3>Query</h3>
+  <p>
+    <ul>
+      <li>Format: <%= @barometer.query.format %></li>
+      <% if @barometer.query.geo %>
+      <li>Locality: <%= @barometer.query.geo.locality %></li>
+      <li>Region: <%= @barometer.query.geo.region %></li>
+      <li>Country: <%= @barometer.query.geo.country %></li>
+      <li>Country Code: <%= @barometer.query.geo.country_code %></li>
+      <li>Latitude: <%= @barometer.query.geo.latitude %></li>
+      <li>Longitude: <%= @barometer.query.geo.longitude %></li>
+      <% end %>
+    </ul>
+  </p>
+  <% end %>
+
+  <% @weather.measurements.each do |measurement| %>
+    <%= erb(:measurement, :locals => { :measurement => measurement }, :layout => false) %>
+  <% end %>
+  
+<% end %>
