@@ -52,8 +52,7 @@
 #   http://www.opensource.org/licenses/mit-license.php
 
 require 'rubygems'
-#require 'barometer'
-require 'lib/barometer'
+require 'barometer'
 
 require 'optparse' 
 require 'rdoc/usage'
