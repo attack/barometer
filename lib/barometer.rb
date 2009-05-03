@@ -35,8 +35,8 @@ module Barometer
     Barometer::Base.new(query)
   end
   
-  def self.selection=(selection=nil)
-    Barometer::Base.selection = selection
+  def self.config=(config=nil)
+    Barometer::Base.config = config
   end
   
   # shortcut to Barometer::Service.source method

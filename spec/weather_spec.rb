@@ -106,6 +106,17 @@ describe "Weather" do
       @weather.temperature.c.should == 10
     end
     
+    it "respects the measurement weight" do
+      @weather.source(:wunderground).current.temperature = Barometer::Temperature.new
+      @weather.source(:wunderground).current.temperature.c = 10
+      @weather.source(:yahoo).current.temperature = Barometer::Temperature.new
+      @weather.source(:yahoo).current.temperature.c = 4
+      
+      @weather.measurements.first.weight = 2
+      
+      @weather.temperature.c.should == 8
+    end
+    
     describe "for temperature" do
       
       before(:each) do

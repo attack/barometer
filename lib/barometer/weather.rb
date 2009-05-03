@@ -71,11 +71,19 @@ module Barometer
     # this assumes calculating for current, and that "to_f" for a value
     # will return the value needed
     # value_name = the name of the value we are averaging
+    # if a measurement has weighting, it will respect that
     def current_average(value_name)
       values = []
       @measurements.each do |measurement|
-        values << measurement.current.send(value_name).to_f if measurement.success? &&
-          measurement.current.send(value_name)
+        if measurement.weight && measurement.weight > 1
+          measurement.weight.times do
+            values << measurement.current.send(value_name).to_f if measurement.success? &&
+              measurement.current.send(value_name)
+          end
+        else
+          values << measurement.current.send(value_name).to_f if measurement.success? &&
+            measurement.current.send(value_name)
+        end
       end
       values.compact!
       return nil unless values && values.size > 0

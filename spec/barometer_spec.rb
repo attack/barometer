@@ -3,18 +3,18 @@ require 'spec_helper'
 describe "Barometer" do
   
   before(:each) do
-    @preference_hash = { 1 => [:wunderground] }
+    @config_hash = { 1 => [:wunderground] }
     @key = KEY
   end
   
   describe "and class methods" do
   
     it "defines selection" do
-      Barometer::Base.respond_to?("selection").should be_true
-      Barometer::Base.selection.should == { 1 => [:wunderground] }
-      Barometer::Base.selection = { 1 => [:yahoo] }
-      Barometer::Base.selection.should == { 1 => [:yahoo] }
-      Barometer.selection = @preference_hash
+      Barometer::Base.respond_to?("config").should be_true
+      Barometer::Base.config.should == { 1 => [:wunderground] }
+      Barometer::Base.config = { 1 => [:yahoo] }
+      Barometer::Base.config.should == { 1 => [:yahoo] }
+      Barometer.config = @config_hash
     end
     
     it "returns a Weather Service driver" do
@@ -153,8 +153,14 @@ describe "Barometer" do
     end
     
     it "raises OutOfSources if no services successful" do
-      Barometer::Base.selection = { 1 => [] }
+      Barometer::Base.config = { 1 => [] }
       lambda { @barometer.measure }.should raise_error(Barometer::OutOfSources)
+    end
+    
+    it "sets the weight" do
+      Barometer::Base.config = { 1 => {:wunderground => {:weight => 2}} }
+      @barometer.measure
+      @barometer.weather.measurements.first.weight.should == 2
     end
     
   end

@@ -10,7 +10,7 @@ unavailable.
 
 == version
 
-Version 0.3.2 is the current release of this gem.
+Version 0.3.3 is the current release of this gem.
 The gem is available from github (attack-barometer) or rubyforge (barometer).
 It is fully functional (for three weather service APIs).
 
@@ -91,13 +91,32 @@ with geo-coding.
   
   puts weather.current.temperture
   
-== multiple weather API, with hierarchy
+== source configuration
+
+Barometer can be configured to use multiple weather service APIs (either in
+a primary/failover config or in parallel).  Each weather service can also
+have its own config.
+
+Weather services in parallel
+
+  Barometer.config = { 1 => [:yahoo, :google] }
+  
+Weather services in primary/failover
+
+  Barometer.config = { 1 => [:yahoo], 2 => :wunderground }
+  
+Weather services, one with some configuration. In this case we are setting
+a weight value, this weight is respected when calculating averages.
+
+  Barometer.config = { 1 => [{:wunderground => {:weight => 2}}, :google] }
+  
+=== multiple weather API, with hierarchy
 
   require 'barometer'
   
   Barometer.google_geocode_key = "THE_GOOGLE_API_KEY"
   # use yahoo and google, if they both fail, use wunderground
-  Barometer.selection = { 1 => [:yahoo, :google], 2 => :wunderground }
+  Barometer.config = { 1 => [:yahoo, :google], 2 => :wunderground }
 
   barometer = Barometer.new("Paris")
   weather = barometer.measure
@@ -225,7 +244,7 @@ values).
   
   Barometer.google_geocode_key = "THE_GOOGLE_API_KEY"
   # use yahoo and wunderground
-  Barometer.selection = { 1 => [:yahoo, :wunderground] }
+  Barometer.config = { 1 => [:yahoo, :wunderground] }
 
   barometer = Barometer.new("90210")
   weather = barometer.measure
@@ -233,6 +252,12 @@ values).
   puts weather.temperture
 
 This will calculate the average temperature as given by :yahoo and :wunderground
+
+=== weights
+
+You can weight the values from a weather service so that the values from that
+web service have more influence then other values.  The weights are set in the
+config ... see the config section
   
 == simple answers
 

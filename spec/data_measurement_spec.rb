@@ -55,6 +55,10 @@ describe "Measurement" do
       @measurement.metric.should be_true
     end
     
+    it "responds to weight" do
+      @measurement.weight.should == 1
+    end
+    
   end
   
   describe "when writing data" do
@@ -131,6 +135,16 @@ describe "Measurement" do
       valid_data = Barometer::Location.new
       valid_data.class.should == Barometer::Location
       lambda { @measurement.location = valid_data }.should_not raise_error(ArgumentError)
+    end
+    
+    it "only accepts Fixnum for weight" do
+      invalid_data = "test"
+      invalid_data.class.should_not == Fixnum
+      lambda { @measurement.weight = invalid_data }.should raise_error(ArgumentError)
+      
+      valid_data = 1
+      valid_data.class.should == Fixnum
+      lambda { @measurement.weight = valid_data }.should_not raise_error(ArgumentError)
     end
     
   end

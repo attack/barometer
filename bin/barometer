@@ -65,7 +65,7 @@ require 'yaml'
 KEY_FILE = File.expand_path(File.join('~', '.barometer'))
 
 class App
-  VERSION = '0.3.2'
+  VERSION = '0.3.3'
   
   attr_reader :options
 
@@ -142,7 +142,7 @@ class App
     # Performs post-parse processing on options
     def process_options
       Barometer.force_geocode =  @options.geocode
-      Barometer.selection = { 1 => @options.sources.uniq }
+      Barometer.config = { 1 => @options.sources.uniq }
       Barometer.skip_graticule = @options.skip_graticule
       Barometer.timeout = @options.timeout
     end

@@ -29,7 +29,7 @@ class Demometer < Sinatra::Default
     metric = (params[:query][:metric].to_s == "1" ? true : false)
     
     # determine sources
-    Barometer.selection = { 1 => params[:query][:source].collect{|s| s.to_sym } }
+    Barometer.config = { 1 => params[:query][:source].collect{|s| s.to_sym } }
     
     if params[:query] && !params[:query][:q].empty?
       @barometer = Barometer.new(params[:query][:q])
