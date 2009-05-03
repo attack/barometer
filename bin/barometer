@@ -65,7 +65,7 @@ require 'yaml'
 KEY_FILE = File.expand_path(File.join('~', '.barometer'))
 
 class App
-  VERSION = '0.3.0'
+  VERSION = '0.3.1'
   
   attr_reader :options
 
