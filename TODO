@@ -2,6 +2,8 @@
 
 - a few methods in Barometer::Query have been added through refactoring, adjust tests!
 - improve bin
+- add all averages to bin
+- fix bin --help method
 
 == future
 

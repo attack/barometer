@@ -65,7 +65,7 @@ require 'yaml'
 KEY_FILE = File.expand_path(File.join('~', '.barometer'))
 
 class App
-  VERSION = '0.0.1'
+  VERSION = '0.2.3'
   
   attr_reader :options
 
@@ -353,6 +353,7 @@ end
 def pretty_info
   title("INFO", 1)
   value("GitHub", "http://github.com/attack/barometer")
+  value("Barometer Version", VERSION)
 end
 
 def pretty_output(barometer)
@@ -374,7 +375,9 @@ end
 
 def run_web_mode(query=nil)
   
-  raise "This is currently disabled"
+  puts
+  puts "This is currently disabled"
+  puts
   
   #require File.expand_path(File.dirname(__FILE__) + '/../lib/webometer/webometer.rb')
   #require 'vegas'
