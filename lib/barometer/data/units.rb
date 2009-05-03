@@ -19,16 +19,19 @@ module Barometer
     # assigns a value to the right attribute based on metric setting    
     def <<(value)
       return unless value
+      
+      # these values can be treated like 'nil'
+      nil_values = ["NA"]
     
       begin
         if value.is_a?(Array)
-          value_m = value[0].to_f
-          value_i = value[1].to_f
+          value_m = value[0].to_f if (value[0] && !nil_values.include?(value[0]))
+          value_i = value[1].to_f if (value[1] && !nil_values.include?(value[1]))
           value_b = nil
         else
           value_m = nil
           value_i = nil
-          value_b = value.to_f
+          value_b = value.to_f if (value && !nil_values.include?(value))
         end
       rescue
         # do nothing

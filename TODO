@@ -8,4 +8,5 @@
 
 - Rdoc compatible documentation
 - Weather Service API key setting
+- weather service weighting (for averages)
 - store links from weather response

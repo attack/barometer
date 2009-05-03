@@ -64,25 +64,24 @@ module Barometer
     # averages
     #
     
-    # TODO: not tested (except via averages)
     def metric?
       self.default ? self.default.metric? : true
     end
     
-    # TODO: not tested (except via averages)
     # this assumes calculating for current, and that "to_f" for a value
     # will return the value needed
     # value_name = the name of the value we are averaging
     def current_average(value_name)
       values = []
       @measurements.each do |measurement|
-        values << measurement.current.send(value_name).to_f if measurement.success?
+        values << measurement.current.send(value_name).to_f if measurement.success? &&
+          measurement.current.send(value_name)
       end
+      values.compact!
       return nil unless values && values.size > 0
-      values.inject(0.0) { |sum,v| sum += v } / values.size
+      values.inject(0.0) { |sum,v| sum += v if v } / values.size
     end
     
-    # TODO: not tested (except via averages)
     def average(value_name, do_average=true, class_name=nil)
       if class_name
         if do_average

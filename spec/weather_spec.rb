@@ -94,6 +94,18 @@ describe "Weather" do
       @weather.measurements << @google
     end
     
+    it "doesn't include nil values" do
+      @weather.source(:wunderground).current.temperature = Barometer::Temperature.new
+      @weather.source(:wunderground).current.temperature.c = 10
+      
+      @weather.temperature.c.should == 10
+      
+      @weather.source(:yahoo).current.temperature = Barometer::Temperature.new
+      @weather.source(:yahoo).current.temperature.c = nil
+      
+      @weather.temperature.c.should == 10
+    end
+    
     describe "for temperature" do
       
       before(:each) do

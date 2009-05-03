@@ -65,7 +65,7 @@ require 'yaml'
 KEY_FILE = File.expand_path(File.join('~', '.barometer'))
 
 class App
-  VERSION = '0.3.1'
+  VERSION = '0.3.2'
   
   attr_reader :options
 
@@ -168,11 +168,33 @@ class App
     
     def output_help
       output_version
-      RDoc::usage('Usage') #exits app
+      #output_usage
     end
     
     def output_usage
-      RDoc::usage('Usage') # gets usage from comments above
+      puts "Usage: "
+      puts "barometer [options] query"
+      puts
+      puts "For help use: barometer -h"
+      puts
+      puts "options:"
+      puts "  -v, --version       Display the version, then exit"
+      puts "  -V, --verbose       Verbose output"
+      puts "  -t, --timeout       seconds until service queries will timeout"
+      puts "  -g, --geocode       Force Geocoding of query"
+      puts "  -m, --metric        measure in metric"
+      puts "  -i, --imperial      measure in imperial"
+      puts "  --no-wunderground   DONT use default wunderground as source"
+      puts "  --yahoo             use yahoo as source"
+      puts "  --google            use google as source"
+      puts "  -p, --pop           pop threshold used to determine wet?"
+      puts "  -s, --wind          wind speed threshold used to determine windy?"
+      puts "  -a, --at            time/date used to determine when to calculate summary"
+      puts
+      puts "  Web Demo:"
+      puts "  -w, --web           run web-app with barometer demo"
+      puts "  -k, --kill          stop the web demo background process"
+      puts "  -S, --status        show the web demo status"
     end
     
     def output_version
