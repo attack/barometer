@@ -141,4 +141,139 @@ describe "Google" do
   
   end
   
+  describe "when answering the simple questions," do
+    
+    before(:each) do
+      @measurement = Barometer::Measurement.new
+    end
+    
+    describe "currently_wet_by_icon?" do
+      
+      before(:each) do
+        @measurement.current = Barometer::CurrentMeasurement.new
+      end
+    
+      it "returns true if matching icon code" do
+        @measurement.current.icon = "rain"
+        @measurement.current.icon?.should be_true
+        Barometer::Google.currently_wet_by_icon?(@measurement.current).should be_true
+      end
+      
+      it "returns false if NO matching icon code" do
+        @measurement.current.icon = "sunny"
+        @measurement.current.icon?.should be_true
+        Barometer::Google.currently_wet_by_icon?(@measurement.current).should be_false
+      end
+      
+    end
+    
+    describe "forecasted_wet_by_icon?" do
+      
+      before(:each) do
+        @measurement.forecast = [Barometer::ForecastMeasurement.new]
+        @measurement.forecast.first.date = Date.today
+        @measurement.forecast.size.should == 1
+      end
+    
+      it "returns true if matching icon code" do
+        @measurement.forecast.first.icon = "rain"
+        @measurement.forecast.first.icon?.should be_true
+        Barometer::Google.forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
+      end
+      
+      it "returns false if NO matching icon code" do
+        @measurement.forecast.first.icon = "sunny"
+        @measurement.forecast.first.icon?.should be_true
+        Barometer::Google.forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
+      end
+      
+    end
+    
+    describe "currently_sunny_by_icon?" do
+      
+      before(:each) do
+        @measurement.current = Barometer::CurrentMeasurement.new
+      end
+
+      it "returns true if matching icon code" do
+        @measurement.current.icon = "sunny"
+        @measurement.current.icon?.should be_true
+        Barometer::Google.currently_sunny_by_icon?(@measurement.current).should be_true
+      end
+      
+      it "returns false if NO matching icon code" do
+        @measurement.current.icon = "rain"
+        @measurement.current.icon?.should be_true
+        Barometer::Google.currently_sunny_by_icon?(@measurement.current).should be_false
+      end
+      
+    end
+    
+    describe "forecasted_sunny_by_icon?" do
+      
+      before(:each) do
+        @measurement.forecast = [Barometer::ForecastMeasurement.new]
+        @measurement.forecast.first.date = Date.today
+        @measurement.forecast.size.should == 1
+      end
+
+      it "returns true if matching icon code" do
+        @measurement.forecast.first.icon = "sunny"
+        @measurement.forecast.first.icon?.should be_true
+        Barometer::Google.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
+      end
+      
+      it "returns false if NO matching icon code" do
+        @measurement.forecast.first.icon = "rain"
+        @measurement.forecast.first.icon?.should be_true
+        Barometer::Google.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
+      end
+      
+    end
+    
+  end
+  
+  # describe "overall data correctness" do
+  #   
+  #   before(:each) do
+  #     @query = Barometer::Query.new("Calgary,AB")
+  #     @query.preferred = "Calgary,AB"
+  #     @measurement = Barometer::Measurement.new
+  #     
+  #     FakeWeb.register_uri(:get, 
+  #       "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query.preferred)}",
+  #       :string => File.read(File.join(File.dirname(__FILE__), 
+  #         'fixtures', 
+  #         'current_calgary_ab.xml')
+  #       )
+  #     )  
+  #     FakeWeb.register_uri(:get, 
+  #       "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query.preferred)}",
+  #       :string => File.read(File.join(File.dirname(__FILE__), 
+  #         'fixtures', 
+  #         'forecast_calgary_ab.xml')
+  #       )
+  #     )
+  #   end
+  # 
+  #  # TODO: complete this
+  #  it "should correctly build the data" do
+  #     result = Barometer::Wunderground._measure(@measurement, @query)
+  #     
+  #     # build timezone
+  #     @measurement.timezone.timezone.should == "America/Edmonton"
+  #     
+  #     time = Time.local(2009, 4, 23, 18, 00, 0)
+  #     rise = Time.local(time.year, time.month, time.day, 6, 23)
+  #     set = Time.local(time.year, time.month, time.day, 20, 45)
+  #     sun_rise = @measurement.timezone.tz.local_to_utc(rise)
+  #     sun_set = @measurement.timezone.tz.local_to_utc(set)
+  #     
+  #     # build current
+  #     @measurement.current.sun.rise.should == sun_rise
+  #     @measurement.current.sun.set.should == sun_set
+  #   end
+  #   
+  # end
+  
 end

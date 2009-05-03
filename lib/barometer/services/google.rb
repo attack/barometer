@@ -40,6 +40,15 @@ module Barometer
       :google
     end
     
+    # these are the icon codes that indicate "wet", used by wet? function
+    def self.wet_icon_codes
+      %w(rain chance_of_rain chance_of_storm thunderstorm mist)
+    end
+    # these are the icon codes that indicate "sun", used by sunny? function
+    def self.sunny_icon_codes
+      %w(sunny mostly_sunny partly_cloudy)
+    end
+    
     def self._measure(measurement, query, metric=true)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
       raise ArgumentError unless query.is_a?(Barometer::Query)
@@ -68,7 +77,10 @@ module Barometer
       
       if data['current_conditions']
         data = data['current_conditions']
-        current.icon = data['icon']['data'] if data['icon']
+        if data['icon']
+          icon_match = data['icon']['data'].match(/.*\/([A-Za-z_]*)\.png/)
+          current.icon = icon_match[1] if icon_match
+        end
         current.condition = data['condition']['data'] if data['condition']
 
         humidity_match = data['humidity']['data'].match(/[\d]+/)
@@ -100,7 +112,10 @@ module Barometer
       d = 0
       data.each do |forecast|
         forecast_measurement = ForecastMeasurement.new
-        forecast_measurement.icon = forecast['icon']['data'] if forecast['icon']
+        if forecast['icon']
+          icon_match = forecast['icon']['data'].match(/.*\/([A-Za-z_]*)\.png/)
+          forecast_measurement.icon = icon_match[1] if icon_match
+        end
         forecast_measurement.condition = forecast['condition']['data'] if forecast['condition']
 
         if (start_date + d).strftime("%a").downcase == forecast['day_of_week']['data'].downcase
