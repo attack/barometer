@@ -30,6 +30,9 @@ module Barometer
   # - state
   # - country
   #
+  # = Google terms of use
+  # This is an unoffical API.  There are no terms of use.
+  #
   class Google < Service
     
     def self.accepted_formats

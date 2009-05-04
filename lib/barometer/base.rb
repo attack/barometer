@@ -2,9 +2,6 @@ module Barometer
 
   class Base
     
-    # { 1 => { :wunderground => { :key => "", :weight => 2 },
-    #          :yahoo        => { :key => "", :weight => 1 } }
-    
     # allow the configuration of specific weather APIs to be used,
     # and the order in which they would be used
     @@config = { 1 => [:wunderground] }

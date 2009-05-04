@@ -59,6 +59,10 @@ describe "Measurement" do
       @measurement.weight.should == 1
     end
     
+    it "responds to links" do
+      @measurement.links.should == {}
+    end
+    
   end
   
   describe "when writing data" do
@@ -145,6 +149,16 @@ describe "Measurement" do
       valid_data = 1
       valid_data.class.should == Fixnum
       lambda { @measurement.weight = valid_data }.should_not raise_error(ArgumentError)
+    end
+    
+    it "only accepts Array for links" do
+      invalid_data = 1
+      invalid_data.class.should_not == Hash
+      lambda { @measurement.links = invalid_data }.should raise_error(ArgumentError)
+      
+      valid_data = {1 => nil}
+      valid_data.class.should == Hash
+      lambda { @measurement.links = valid_data }.should_not raise_error(ArgumentError)
     end
     
   end

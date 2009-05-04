@@ -36,6 +36,9 @@ module Barometer
   # - airport code (3-letter or 4-letter)
   # - lat,lon
   #
+  # = Wunderground terms of use
+  # Unable to locate.
+  #
   class Wunderground < Service
     
     def self.accepted_formats
@@ -60,6 +63,7 @@ module Barometer
       raise ArgumentError unless query.is_a?(Barometer::Query)
       measurement.source = self.source_name
       
+      
       # get current measurement
       begin
         current_result = self.get_current(query.preferred)
@@ -79,6 +83,11 @@ module Barometer
       measurement.location = self.build_location(current_result)
       measurement.station = self.build_station(current_result)
       measurement.timezone = self.build_timezone(forecast_result)
+      
+      # add links
+      if current_result["credit"] && current_result["credit_URL"]
+        measurement.links[current_result["credit"]] = current_result["credit_URL"]
+      end
       
       # add sun data to current
       sun = nil

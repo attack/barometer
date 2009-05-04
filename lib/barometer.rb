@@ -5,6 +5,7 @@ require 'barometer/query'
 require 'barometer/weather'
 require 'barometer/services'
 require 'barometer/data'
+require 'barometer/formats'
  
 module Barometer
   

@@ -7,20 +7,6 @@ describe "Services" do
     @query = Barometer::Query.new(query_term)
     @service = Barometer::Service.source(:wunderground)
     @time = Time.now
-    FakeWeb.register_uri(:get, 
-      "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{query_term}",
-      :string => File.read(File.join(File.dirname(__FILE__), 
-        'fixtures', 
-        'current_calgary_ab.xml')
-      )
-    )
-    FakeWeb.register_uri(:get, 
-      "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{query_term}",
-      :string => File.read(File.join(File.dirname(__FILE__), 
-        'fixtures', 
-        'forecast_calgary_ab.xml')
-      )
-    )
   end
   
   describe "and the class method" do

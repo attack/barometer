@@ -107,41 +107,24 @@ describe "Barometer" do
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(query_term)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
+          'fixtures/services/wunderground', 
           'current_calgary_ab.xml')
         )
       )
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(query_term)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
+          'fixtures/services/wunderground',
           'forecast_calgary_ab.xml')
         )
       )
       FakeWeb.register_uri(:get, 
         "http://maps.google.com:80/maps/geo?gl=&q=Calgary%2CAB&output=xml&key=#{@key}",
         :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
-          'geocode_calgary_ab.xml')
+          'fixtures/services/google',
+          'calgary_ab.xml')
         )
       )
-      
-      
-      FakeWeb.register_uri(:get, 
-        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=51.055149%2C-114.062438",
-        :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
-          'current_calgary_ab.xml')
-        )
-      )  
-      FakeWeb.register_uri(:get, 
-        "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=51.055149%2C-114.062438",
-        :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
-          'forecast_calgary_ab.xml')
-        )
-      )
-      
     end
     
     it "responds to measure" do

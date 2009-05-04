@@ -19,7 +19,7 @@ module Barometer
     # current and forecasted data
     attr_reader :current, :forecast
     attr_reader :timezone, :station, :location
-    attr_reader :success, :time, :weight
+    attr_reader :success, :time, :weight, :links
     attr_accessor :metric
     
     def initialize(source=nil, metric=true)
@@ -27,6 +27,7 @@ module Barometer
       @metric = metric
       @success = false
       @weight = 1
+      @links = {}
     end
     
     def success!
@@ -133,6 +134,11 @@ module Barometer
     def weight=(weight)
       raise ArgumentError unless weight.is_a?(Fixnum)
       @weight = weight
+    end
+    
+    def links=(links)
+      raise ArgumentError unless links.is_a?(Hash)
+      @links = links
     end
     
     #

@@ -146,14 +146,14 @@ describe "Wunderground" do
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query.preferred)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
+          'fixtures/services/wunderground',
           'current_calgary_ab.xml')
         )
       )  
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query.preferred)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
+          'fixtures/services/wunderground',
           'forecast_calgary_ab.xml')
         )
       )
@@ -294,14 +294,14 @@ describe "Wunderground" do
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query.preferred)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
+          'fixtures/services/wunderground',
           'current_calgary_ab.xml')
         )
       )  
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query.preferred)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
+          'fixtures/services/wunderground',
           'forecast_calgary_ab.xml')
         )
       )

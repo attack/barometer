@@ -1,6 +1,6 @@
 module Barometer
   #
-  # = Yahoo Weather
+  # = Yahoo! Weather
   # www.yahoo.com
   #
   # - key required: NO
@@ -29,6 +29,18 @@ module Barometer
   # where query can be:
   # - zipcode (US)
   # - Yahoo Location ID (International) - not currently supported
+  #
+  # = Yahoo! terms of use
+  # The feeds are provided free of charge for use by individuals and non-profit
+  # organizations for personal, non-commercial uses. We ask that you provide
+  # attribution to Yahoo! Weather in connection with your use of the feeds.
+  # If you provide this attribution in text, please use: "Yahoo! Weather." If you
+  # provide this attribution with a graphic, please use the Yahoo! Weather logo that
+  # we have included in the feed itself.
+  # We reserve all rights in and to the Yahoo! Weather logo, and your right to use
+  # the Yahoo! Weather logo is limited to providing attribution in connection with
+  # these RSS feeds. Yahoo! also reserves the right to require you to cease
+  # distributing these feeds at any time for any reason.
   #
   # == notes
   # - the Yahoo Location ID is a propreitary number (possibly shared with weather.com)
@@ -74,6 +86,11 @@ module Barometer
       measurement.current = self.build_current(result, metric)
       measurement.forecast = self.build_forecast(result, metric)
       measurement.location = self.build_location(result, query.geo)
+      
+      # add links
+      if result["title"] && result["link"]
+        measurement.links[result["title"]] = result["link"]
+      end
       
       # add to current
       sun = nil

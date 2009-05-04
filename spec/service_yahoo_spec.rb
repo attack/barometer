@@ -105,9 +105,9 @@ describe "Yahoo" do
       
       FakeWeb.register_uri(:get, 
         "http://weather.yahooapis.com:80/forecastrss?u=c&p=#{CGI.escape(@query.preferred)}",
-        :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
-          'yahoo_90210.xml')
+        :string => File.read(File.join(File.dirname(__FILE__),  
+          'fixtures/services/yahoo',
+          '90210.xml')
         )
       )  
     end
@@ -247,8 +247,8 @@ describe "Yahoo" do
       FakeWeb.register_uri(:get, 
         "http://weather.yahooapis.com:80/forecastrss?u=c&p=#{CGI.escape(@query.preferred)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
-          'yahoo_90210.xml')
+          'fixtures/services/yahoo',
+          '90210.xml')
         )
       )  
     end

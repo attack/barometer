@@ -3,7 +3,10 @@ require 'spec_helper'
 describe "Query" do
   
   before(:each) do
-    @zipcode = "90210"
+    @short_zipcode = "90210"
+    @zipcode = @short_zipcode
+    @long_zipcode = "90210-5555"
+    @weather_id = "USGA0028"
     @postal_code = "T5B 4M9"
     @coordinates = "40.756054,-73.986951"
     @geocode = "New York, NY"
@@ -12,45 +15,17 @@ describe "Query" do
     # actual conversions
     @zipcode_to_coordinates = "34.1030032,-118.4104684"
     @zipcode_to_geocode = "Beverly Hills, CA, USA"
+    @zipcode_to_weather_id = "USCA0090"
     @postalcode_to_coordinates = "53.570447,-113.456083"
     @geocode_to_coordinates = "40.756054,-73.986951"
+    @geocode_to_weather_id = "USNY0996"
     @coordinates_to_geocode = "New York, NY, USA"
+    @coordinates_to_weather_id = "USNY0996"
+    @icao_to_coordinates = "37.615223,-122.389979"
+    @icao_to_geocode = "San Francisco Airport, USA"
     
     Barometer.google_geocode_key = nil
-    Barometer::Query.google_geocode_key = nil
     #Barometer.skip_graticule = true
-  end
-  
-  describe "the class methods" do
-    
-    it "detects a zipcode" do
-      Barometer::Query.is_us_zipcode?(@zipcode).should be_true
-      Barometer::Query.is_us_zipcode?(@postal_code).should be_false
-      Barometer::Query.is_us_zipcode?(@coordinates).should be_false
-      Barometer::Query.is_coordinates?(@icao).should be_false
-    end
-    
-    it "detects a postalcode" do
-      Barometer::Query.is_canadian_postcode?(@postal_code).should be_true
-      Barometer::Query.is_canadian_postcode?(@zipcode).should be_false
-      Barometer::Query.is_canadian_postcode?(@coordinates).should be_false
-      Barometer::Query.is_coordinates?(@icao).should be_false
-    end
-    
-    it "detects a coordinates" do
-      Barometer::Query.is_coordinates?(@coordinates).should be_true
-      Barometer::Query.is_coordinates?(@zipcode).should be_false
-      Barometer::Query.is_coordinates?(@postal_code).should be_false
-      Barometer::Query.is_coordinates?(@icao).should be_false
-    end
-    
-    it "detects an ICAO" do
-      Barometer::Query.is_icao?(@coordinates).should be_false
-      Barometer::Query.is_icao?(@zipcode).should be_false
-      Barometer::Query.is_icao?(@postal_code).should be_false
-      Barometer::Query.is_icao?(@icao).should be_true
-    end
-    
   end
   
   describe "determines the query format" do
@@ -60,18 +35,20 @@ describe "Query" do
       @query.country_code.should be_nil
     end
 
+    it "recognizes a short zip code" do
+      @query.q = @short_zipcode
+      @query.format.should be_nil
+      @query.analyze!
+      @query.format.to_sym.should == :short_zipcode
+      @query.country_code.should == "US"
+    end
+
     it "recognizes a zip code" do
-      @query.q = @zipcode
+      @query.q = @long_zipcode
       @query.format.should be_nil
       @query.analyze!
       @query.format.to_sym.should == :zipcode
-      
       @query.country_code.should == "US"
-      @query.zipcode?.should be_true
-      @query.postalcode?.should be_false
-      @query.icao?.should be_false
-      @query.coordinates?.should be_false
-      @query.geocode?.should be_false
     end
     
     it "recognizes a postal code" do
@@ -79,13 +56,7 @@ describe "Query" do
       @query.format.should be_nil
       @query.analyze!
       @query.format.to_sym.should == :postalcode
-      
       @query.country_code.should == "CA"
-      @query.zipcode?.should be_false
-      @query.postalcode?.should be_true
-      @query.icao?.should be_false
-      @query.coordinates?.should be_false
-      @query.geocode?.should be_false
     end
     
     it "recognizes icao" do
@@ -93,13 +64,15 @@ describe "Query" do
       @query.format.should be_nil
       @query.analyze!
       @query.format.to_sym.should == :icao
-      
       @query.country_code.should be_nil
-      @query.zipcode?.should be_false
-      @query.postalcode?.should be_false
-      @query.icao?.should be_true
-      @query.coordinates?.should be_false
-      @query.geocode?.should be_false
+    end
+    
+    it "recognizes weather_id" do
+      @query.q = @weather_id
+      @query.format.should be_nil
+      @query.analyze!
+      @query.format.to_sym.should == :weather_id
+      @query.country_code.should == "US"
     end
     
     it "recognizes latitude/longitude" do
@@ -107,13 +80,7 @@ describe "Query" do
       @query.format.should be_nil
       @query.analyze!
       @query.format.to_sym.should == :coordinates
-      
       @query.country_code.should be_nil
-      @query.zipcode?.should be_false
-      @query.postalcode?.should be_false
-      @query.icao?.should be_false
-      @query.coordinates?.should be_true
-      @query.geocode?.should be_false
     end
     
     it "defaults to a general geo_location" do
@@ -121,13 +88,7 @@ describe "Query" do
       @query.format.should be_nil
       @query.analyze!
       @query.format.to_sym.should == :geocode
-      
       @query.country_code.should be_nil
-      @query.zipcode?.should be_false
-      @query.postalcode?.should be_false
-      @query.icao?.should be_false
-      @query.coordinates?.should be_false
-      @query.geocode?.should be_true
     end
     
   end
@@ -141,10 +102,6 @@ describe "Query" do
     it "responds to q" do
       @query.q.should be_nil
     end
-    
-#    it "responds to geo" do
-#      @query.geo.should be_nil
-#    end
     
     it "responds to format" do
       @query.format.should be_nil
@@ -165,20 +122,13 @@ describe "Query" do
     end
     
     it "responds to google_api_key" do
-      Barometer::Query.google_geocode_key.should be_nil
-    end
-    
-    it "sets the google_api_key" do
-      key = "KEY"
-      Barometer::Query.google_geocode_key = key
-      Barometer::Query.google_geocode_key.should == key
+      Barometer.google_geocode_key.should be_nil
     end
     
     it "defaults to the Module geocode key" do
       key = "KEY"
-      Barometer::Query.google_geocode_key.should be_nil
       Barometer.google_geocode_key = key
-      Barometer::Query.google_geocode_key.should == key
+      Barometer.google_geocode_key.should == key
     end
     
     it "responds to preferred" do
@@ -187,168 +137,6 @@ describe "Query" do
     
     it "responds to geo" do
       @query.geo.should be_nil
-    end
-    
-  end
-  
-  use_graticule = true
-  
-  if use_graticule
-  describe "when converting queries" do
-    
-    before(:each) do
-      @key = KEY
-      url_start = "http://maps.google.com/maps/geo?"
-      #
-      # for Graticule and/or HTTParty geocoding
-      #
-      FakeWeb.register_uri(:get, 
-        "#{url_start}gl=US&key=#{@key}&output=xml&q=90210",
-        :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
-          'geocode_90210.xml')
-        )
-      )
-      FakeWeb.register_uri(:get, 
-        "#{url_start}gl=CA&key=#{@key}&output=xml&q=T5B%204M9",
-        :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
-          'geocode_T5B4M9.xml')
-        )
-      )
-      #
-      # for Graticule geocoding
-      #
-      FakeWeb.register_uri(:get, 
-        "#{url_start}gl=&key=#{@key}&output=xml&q=New%20York,%20NY",
-        :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
-          'geocode_newyork_ny.xml')
-        )
-      )
-      FakeWeb.register_uri(:get, 
-        "#{url_start}gl=&key=#{@key}&output=xml&q=40.756054,-73.986951",
-        :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
-          'geocode_40_73.xml')
-        )
-      )
-      #
-      # for HTTParty geocoding
-      #
-      FakeWeb.register_uri(:get, 
-        "#{url_start}output=xml&q=New%20York%2C%20NY&gl=&key=#{@key}",
-        :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
-          'geocode_newyork_ny.xml')
-        )
-      )
-      FakeWeb.register_uri(:get, 
-        "#{url_start}gl=&output=xml&q=#{CGI.escape("40.756054,-73.986951")}&key=#{@key}",
-        :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
-          'geocode_40_73.xml')
-        )
-      )
-      FakeWeb.register_uri(:get, 
-        "#{url_start}output=xml&q=KSFO&gl=&key=#{@key}",
-        :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures', 
-          'geocode_ksfo.xml')
-        )
-      )
-    end
-
-    describe "to coordinates," do
-      
-      before(:each) do
-        Barometer::Query.google_geocode_key = @key
-      end
-
-      it "skips conversion unless Graticule enabled or no API key" do
-        Barometer::Query.google_geocode_key = nil
-        Barometer::Query.google_geocode_key.should be_nil
-        Barometer.google_geocode_key = nil
-        Barometer.google_geocode_key.should be_nil
-        Barometer::Query.to_coordinates(@geocode, :geocode).should be_nil
-      end
-      
-      it "attempts conversion if Graticule enabled and has API key" do
-        Barometer::Query.to_coordinates(@geocode, :geocode).should_not be_nil
-      end
-      
-      it "converts from geocode" do
-        Barometer::Query.to_coordinates(@geocode, :geocode).first.should == "40.756054,-73.986951"
-      end
-      
-      it "converts from zipcode" do
-        Barometer::Query.to_coordinates(@zipcode, :zipcode).first.should == "34.1030032,-118.4104684"
-      end
-      
-      it "converts from postalcode" do
-        Barometer::Query.to_coordinates(@postal_code, :postalcode).first.should == "53.570447,-113.456083"
-      end
-      
-      it "converts from icao" do
-        Barometer::Query.to_coordinates(@icao, :icao).first.should == "37.615223,-122.389979"
-      end
-      
-    end
-    
-    describe "to geocode" do
-      
-      before(:each) do
-        Barometer::Query.google_geocode_key = @key
-      end
-      
-      describe "when Graticule enabled," do
-        
-        it "converts from coordinates" do
-          Barometer::Query.to_geocode(@coordinates, :coordinates).first.should == "New York, NY, USA"
-        end
-
-        it "converts from zipcode" do
-          Barometer::Query.to_geocode(@zipcode, :zipcode).first.should == "Beverly Hills, CA, USA"
-        end
-
-        it "converts from postalcode" do
-          Barometer::Query.to_geocode(@postal_code, :postalcode).first.should == @postal_code
-        end
-        
-        it "converts from icao" do
-          Barometer::Query.to_geocode(@icao, :icao).first.should == "San Francisco Airport, USA"
-        end
-
-      end
-      
-      describe "when Graticule disabled," do
-        
-        it "uses coordinates" do
-          Barometer::Query.google_geocode_key = nil
-          Barometer::Query.google_geocode_key.should be_nil
-          Barometer.google_geocode_key = nil
-          Barometer.google_geocode_key.should be_nil
-          Barometer::Query.to_geocode(@coordinates, :coordinates).first.should == @coordinates
-        end
-
-        it "uses zipcode" do
-          Barometer::Query.google_geocode_key = nil
-          Barometer::Query.google_geocode_key.should be_nil
-          Barometer.google_geocode_key = nil
-          Barometer.google_geocode_key.should be_nil
-          Barometer::Query.to_geocode(@zipcode, :zipcode).first.should == @zipcode
-        end
-
-        it "uses postalcode" do
-          Barometer::Query.google_geocode_key = nil
-          Barometer::Query.google_geocode_key.should be_nil
-          Barometer.google_geocode_key = nil
-          Barometer.google_geocode_key.should be_nil
-          Barometer::Query.to_geocode(@postal_code, :postalcode).first.should == @postal_code
-        end
-        
-      end
-      
     end
     
   end
@@ -364,44 +152,62 @@ describe "Query" do
       lambda { query.convert!(acceptable_formats) }.should raise_error
     end
     
-    describe "and the query is already of an acceptable format" do
+    describe "and the query is already the preferred format" do
       
-      before(:each) do
-        # all formats accepted
-        @acceptable_formats = [:zipcode, :postalcode, :geocode, :coordinates]
+      it "returns the short_zipcode untouched" do
+        preferred = [:short_zipcode]
+        query = Barometer::Query.new(@short_zipcode)
+        query.convert!(preferred).should == @short_zipcode
+        query.country_code.should == "US"
       end
       
-      it "returns the zipcode untouched" do
-        query = Barometer::Query.new(@zipcode)
-        query.convert!(@acceptable_formats).should == @zipcode
+      it "returns the long_zipcode untouched" do
+        preferred = [:zipcode]
+        query = Barometer::Query.new(@long_zipcode)
+        query.convert!(preferred).should == @long_zipcode
         query.country_code.should == "US"
       end
       
       it "returns the postalcode untouched" do
+        preferred = [:postalcode]
         query = Barometer::Query.new(@postal_code)
-        query.convert!(@acceptable_formats).should == @postal_code
+        query.convert!(preferred).should == @postal_code
         query.country_code.should == "CA"
       end
       
+      it "returns the icao untouched" do
+        preferred = [:icao]
+        query = Barometer::Query.new(@icao)
+        query.convert!(preferred).should == @icao
+      end
+      
       it "returns the coordinates untouched" do
+        preferred = [:coordinates]
         query = Barometer::Query.new(@coordinates)
-        query.convert!(@acceptable_formats).should == @coordinates
+        query.convert!(preferred).should == @coordinates
       end
       
       it "returns the geocode untouched" do
+        preferred = [:geocode]
         query = Barometer::Query.new(@geocode)
-        query.convert!(@acceptable_formats).should == @geocode
+        query.convert!(preferred).should == @geocode
       end
       
     end
     
     describe "and the query needs converting" do
       
-      describe "with an intial format of :zipcode," do
+      describe "with an intial format of :short_zipcode," do
         
         before(:each) do
-          @query = Barometer::Query.new(@zipcode)
-          Barometer::Query.google_geocode_key = KEY
+          @query = Barometer::Query.new(@short_zipcode)
+          Barometer.google_geocode_key = KEY
+        end
+        
+        it "converts to zipcode" do
+          acceptable_formats = [:zipcode]
+          @query.convert!(acceptable_formats).should == @zipcode
+          @query.country_code.should == "US"
         end
         
         it "converts to coordinates" do
@@ -416,9 +222,68 @@ describe "Query" do
           @query.country_code.should == "US"
         end
         
+        it "converts to weather_id" do
+          acceptable_formats = [:weather_id]
+          @query.convert!(acceptable_formats).should == @zipcode_to_weather_id
+          @query.country_code.should == "US"
+        end
+        
+        it "skips converting to icao" do
+          acceptable_formats = [:icao]
+          @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
+        end
+        
         it "skips converting to postalcode" do
           acceptable_formats = [:postalcode]
           @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
+        end
+        
+      end
+      
+      describe "with an intial format of :zipcode," do
+        
+        before(:each) do
+          @query = Barometer::Query.new(@zipcode)
+          Barometer.google_geocode_key = KEY
+          Barometer.force_geocode = false
+        end
+        
+        it "converts to coordinates" do
+          acceptable_formats = [:coordinates]
+          @query.convert!(acceptable_formats).should == @zipcode_to_coordinates
+          @query.country_code.should == "US"
+        end
+        
+        it "converts to geocode" do
+          acceptable_formats = [:geocode]
+          @query.convert!(acceptable_formats).should == @zipcode_to_geocode
+          @query.country_code.should == "US"
+        end
+        
+        it "skips converting to icao" do
+          acceptable_formats = [:icao]
+          @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
+        end
+        
+        it "skips converting to postalcode" do
+          acceptable_formats = [:postalcode]
+          @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
+        end
+        
+        it "skips converting to short_zipcode" do
+          @query = Barometer::Query.new(@long_zipcode)
+          acceptable_formats = [:short_zipcode]
+          @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
+        end
+        
+        it "converts to weather_id" do
+          acceptable_formats = [:weather_id]
+          @query.convert!(acceptable_formats).should == @zipcode_to_weather_id
           @query.country_code.should == "US"
         end
         
@@ -428,7 +293,7 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@postal_code)
-          Barometer::Query.google_geocode_key = KEY
+          Barometer.google_geocode_key = KEY
         end
         
         it "converts to coordinates" do
@@ -440,28 +305,25 @@ describe "Query" do
         it "skips converting to geocode" do
           acceptable_formats = [:geocode]
           @query.convert!(acceptable_formats).should == @postal_code
-          @query.country_code.should == "CA"
+          @query.country_code.should be_nil
         end
         
-        it "skips converting to zipcode" do
-          acceptable_formats = [:zipcode]
+        it "skips converting to icao" do
+          acceptable_formats = [:icao]
           @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should == "CA"
+          @query.country_code.should be_nil
         end
         
-      end
-      
-      describe "with an intial format of :geocode," do
-        
-        before(:each) do
-          @query = Barometer::Query.new(@geocode)
-          Barometer::Query.google_geocode_key = KEY
+        it "skips converting to short_zipcode" do
+          acceptable_formats = [:short_zipcode]
+          @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
         end
         
-        it "converts to coordinates" do
-          acceptable_formats = [:coordinates]
-          @query.convert!(acceptable_formats).should == @geocode_to_coordinates
-          @query.country_code.should == "US"
+        it "skips converting to weather_id" do
+          acceptable_formats = [:weather_id]
+          @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
         end
         
         it "skips converting to zipcode" do
@@ -470,8 +332,92 @@ describe "Query" do
           @query.country_code.should be_nil
         end
         
+      end
+      
+      describe "with an intial format of :icao," do
+        
+        before(:each) do
+          @query = Barometer::Query.new(@icao)
+          Barometer.google_geocode_key = KEY
+        end
+        
+        it "converts to coordinates" do
+          acceptable_formats = [:coordinates]
+          @query.convert!(acceptable_formats).should == @icao_to_coordinates
+          @query.country_code.should == "US"
+        end
+        
+        it "converts to geocode" do
+          acceptable_formats = [:geocode]
+          @query.convert!(acceptable_formats).should == @icao_to_geocode
+          @query.country_code.should == "US"
+        end
+        
         it "skips converting to postalcode" do
           acceptable_formats = [:postalcode]
+          @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
+        end
+        
+        it "skips converting to short_zipcode" do
+          acceptable_formats = [:short_zipcode]
+          @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
+        end
+        
+        it "skips converting to weather_id" do
+          acceptable_formats = [:weather_id]
+          @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
+        end
+        
+        it "skips converting to zipcode" do
+          acceptable_formats = [:zipcode]
+          @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
+        end
+        
+      end
+      
+      describe "with an intial format of :geocode," do
+        
+        before(:each) do
+          @query = Barometer::Query.new(@geocode)
+          Barometer.google_geocode_key = KEY
+        end
+        
+        it "converts to coordinates" do
+          acceptable_formats = [:coordinates]
+          @query.convert!(acceptable_formats).should == @geocode_to_coordinates
+          @query.country_code.should == "US"
+        end
+        
+        it "skips converting to icao" do
+          acceptable_formats = [:icao]
+          @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
+        end
+        
+        it "skips converting to postalcode" do
+          acceptable_formats = [:postalcode]
+          @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
+        end
+        
+        it "skips converting to short_zipcode" do
+          acceptable_formats = [:short_zipcode]
+          @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
+        end
+        
+        it "converts to weather_id" do
+          acceptable_formats = [:weather_id]
+          @query.convert!(acceptable_formats).should == @geocode_to_weather_id
+          @query.country_code.should == "US"
+        end
+        
+        it "skips converting to zipcode" do
+          acceptable_formats = [:zipcode]
           @query.convert!(acceptable_formats).should be_nil
           @query.country_code.should be_nil
         end
@@ -482,7 +428,7 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@coordinates)
-          Barometer::Query.google_geocode_key = KEY
+          Barometer.google_geocode_key = KEY
         end
         
         it "converts to geocode" do
@@ -491,8 +437,8 @@ describe "Query" do
           @query.country_code.should == "US"
         end
         
-        it "skips converting to zipcode" do
-          acceptable_formats = [:zipcode]
+        it "skips converting to icao" do
+          acceptable_formats = [:icao]
           @query.convert!(acceptable_formats).should be_nil
           @query.country_code.should be_nil
         end
@@ -503,11 +449,28 @@ describe "Query" do
           @query.country_code.should be_nil
         end
         
+        it "skips converting to short_zipcode" do
+          acceptable_formats = [:short_zipcode]
+          @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
+        end
+        
+        it "converts to weather_id" do
+          acceptable_formats = [:weather_id]
+          @query.convert!(acceptable_formats).should == @coordinates_to_weather_id
+          @query.country_code.should == "US"
+        end
+        
+        it "skips converting to zipcode" do
+          acceptable_formats = [:zipcode]
+          @query.convert!(acceptable_formats).should be_nil
+          @query.country_code.should be_nil
+        end
+        
       end
       
     end
     
-  end
   end
   
 end
