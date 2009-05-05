@@ -7,6 +7,7 @@ module Barometer
   #
   class Query::Icao < Query::Format
   
+    def self.format; :icao; end
     def self.regex
       # allow any 3 or 4 letter word ... unfortunately this means some locations
       # (ie Utah, Goa, Kiev, etc) will be detected as ICAO.  This won't matter for
@@ -17,10 +18,6 @@ module Barometer
       # Currently, only wunderground accepts ICAO, and they process ICAO the same as a
       # city name, so it doesn't matter.
       /^[A-Za-z]{3,4}$/
-    end
-  
-    def self.format
-      :icao
     end
   
     # todo, the fist letter in a 4-letter icao can designate country:

@@ -6,13 +6,11 @@ module Barometer
   #
   class Query::Geocode < Query::Format
   
+    def self.format; :geocode; end
+
     # everything is a geocode (if it is a String)
     def self.is?(query=nil)
       query.is_a?(String) ? true : false
-    end
-  
-    def self.format
-      :geocode
     end
   
     # convert to this format

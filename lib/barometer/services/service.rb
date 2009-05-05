@@ -13,14 +13,13 @@ module Barometer
   # drivers.  Each driver inherits from this class.
   # 
   # Basically, all a service is required to do is take a query
-  # (ie "Paris") and return a complete Barometer::Measurement instance.
+  # (ie "Paris") and return a complete Data::Measurement instance.
   #
   class Service
-    
     # all service drivers will use the HTTParty gem
     include HTTParty
     
-    # Retrieves the weather source Service object
+    # retrieves the weather source Service object
     def self.source(source_name)
       raise ArgumentError unless (source_name.is_a?(String) || source_name.is_a?(Symbol))
       source_name = source_name.to_s.split("_").collect{ |s| s.capitalize }.join('')
@@ -51,6 +50,9 @@ module Barometer
     # NOTE: The following methods MUST be re-defined by each driver.
     #
     
+    # STUB: define this method to actually retireve the source_name
+    def self.source_name; raise NotImplementedError; end
+
     # STUB: define this method to indicate what query formats are accepted
     def self.accepted_formats; raise NotImplementedError; end
     
@@ -59,8 +61,9 @@ module Barometer
       raise NotImplementedError
     end
 
-    # STUB: define this method to actually retireve the source_name
-    def self.source_name; raise NotImplementedError; end
+    #
+    # NOTE: The following methods can be re-defined by each driver. [OPTIONAL]
+    #
 
     # STUB: define this method to check for the existance of API keys,
     #       this method is NOT needed if requires_keys? returns false
@@ -68,11 +71,7 @@ module Barometer
 
     # STUB: define this method to check for the existance of API keys,
     #       this method is NOT needed if requires_keys? returns false
-def self.keys=(keys=nil); nil; end
-
-    #
-    # NOTE: The following methods can be re-defined by each driver. [OPTIONAL]
-    #
+    def self.keys=(keys=nil); nil; end
 
     # DEFAULT: override this if you need to determine if the country is specified
     def self.supports_country?(query=nil); true; end
@@ -323,7 +322,6 @@ def self.keys=(keys=nil); nil; end
     def self.sunny_icon_codes; nil; end
     
   end
-  
 end  
   
   # def key_name

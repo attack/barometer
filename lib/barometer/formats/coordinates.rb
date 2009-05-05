@@ -6,13 +6,8 @@ module Barometer
   #
   class Query::Coordinates < Query::Format
   
-    def self.regex
-      /^[-]?[0-9\.]+[,]{1}[-]?[0-9\.]+$/
-    end
-  
-    def self.format
-      :coordinates
-    end
+    def self.format; :coordinates; end
+    def self.regex; /^[-]?[0-9\.]+[,]{1}[-]?[0-9\.]+$/; end
   
     # make the given query of this format
     def self.to(current_query, current_format, current_country_code=nil)

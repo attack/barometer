@@ -6,13 +6,8 @@ module Barometer
   #
   class Query::WeatherID < Query::Format
   
-    def self.regex
-      /(^[A-Za-z]{4}[0-9]{4}$)/
-    end
-  
-    def self.format
-      :weather_id
-    end
+    def self.format; :weather_id; end
+    def self.regex; /(^[A-Za-z]{4}[0-9]{4}$)/; end
   
     # the first two letters of the :weather_id is the country_code
     def self.country_code(query=nil)

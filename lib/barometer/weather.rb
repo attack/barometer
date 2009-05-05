@@ -1,16 +1,10 @@
 module Barometer
-  
   class Weather
     
-    # hash of measurements indexed by :source
     attr_accessor :measurements
     
-    def initialize
-      @measurements = []
-    end
+    def initialize; @measurements = []; end
     
-    # the default source is the first source/measurement that we
-    # have successful results for
     def default
       return nil unless self.sources
       self.source(self.sources.first)
@@ -34,6 +28,7 @@ module Barometer
     # Quick access methods
     #
     
+    def metric?; self.default ? self.default.metric? : true; end
     def current; (default = self.default) ? default.current : nil; end
     def forecast; (default = self.default) ? default.forecast : nil; end
     def now; self.current; end
@@ -53,6 +48,7 @@ module Barometer
       default && default.forecast ? default.for(query) : nil
     end
     
+    
     #
     # helper methods
     #
@@ -63,10 +59,6 @@ module Barometer
     #
     # averages
     #
-    
-    def metric?
-      self.default ? self.default.metric? : true
-    end
     
     # this assumes calculating for current, and that "to_f" for a value
     # will return the value needed

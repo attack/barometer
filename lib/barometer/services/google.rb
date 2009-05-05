@@ -35,19 +35,12 @@ module Barometer
   #
   class Google < Service
     
-    def self.accepted_formats
-      [:zipcode, :postalcode, :geocode]
-    end
+    def self.source_name; :google; end
+    def self.accepted_formats; [:zipcode, :postalcode, :geocode]; end
     
-    def self.source_name
-      :google
-    end
-    
-    # these are the icon codes that indicate "wet", used by wet? function
     def self.wet_icon_codes
       %w(rain chance_of_rain chance_of_storm thunderstorm mist)
     end
-    # these are the icon codes that indicate "sun", used by sunny? function
     def self.sunny_icon_codes
       %w(sunny mostly_sunny partly_cloudy)
     end

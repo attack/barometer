@@ -1,5 +1,4 @@
 module Barometer
-
   class Base
     
     # allow the configuration of specific weather APIs to be used,
@@ -72,5 +71,4 @@ module Barometer
     end
 
   end
-
 end

@@ -45,13 +45,8 @@ module Barometer
   #
   class Yahoo < Service
     
-    def self.accepted_formats
-      [:zipcode, :weather_id]
-    end
-    
-    def self.source_name
-      :yahoo
-    end
+    def self.source_name; :yahoo; end
+    def self.accepted_formats; [:zipcode, :weather_id]; end
     
     # these are the icon codes that indicate "wet", used by wet? function
     def self.wet_icon_codes
@@ -78,12 +73,10 @@ module Barometer
       measurement.forecast = self.build_forecast(result, metric)
       measurement.location = self.build_location(result, query.geo)
       
-      # add links
       if result["title"] && result["link"]
         measurement.links[result["title"]] = result["link"]
       end
       
-      # add to current
       sun = nil
       if measurement.current
         sun = self.build_sun(result)
@@ -96,12 +89,11 @@ module Barometer
         end
       end
       
-# save the local time
-local_time = self.build_local_time(result)
-if local_time
-  measurement.measured_at = local_time
-  measurement.current.current_at = local_time
-end
+      local_time = self.build_local_time(result)
+      if local_time
+        measurement.measured_at = local_time
+        measurement.current.current_at = local_time
+      end
       
       measurement
     end
@@ -226,26 +218,6 @@ end
     
     def self.build_sun(data)
       raise ArgumentError unless data.is_a?(Hash)
-      # sun = nil
-      # if data && data['yweather:astronomy'] && data['item']
-      #   # get the TIME ZONE CODE
-      #   zone_match = data['item']['pubDate'].match(/ ([A-Z]*)$/)
-      #   zone = zone_match[1] if zone_match
-      #   # get the sun rise and set
-      #   rise = Barometer::Zone.merge(
-      #     data['yweather:astronomy']['sunrise'],
-      #     data['item']['pubDate'],
-      #     zone
-      #   )
-      #   set = Barometer::Zone.merge(
-      #     data['yweather:astronomy']['sunset'],
-      #     data['item']['pubDate'],
-      #     zone
-      #   )
-      #   sun = Data::Sun.new(rise, set)
-      # end
-      # sun || Data::Sun.new
-      
       sun = nil
       if data && data['yweather:astronomy'] && data['item']
         local_rise = Data::LocalTime.parse(data['yweather:astronomy']['sunrise'])
@@ -255,19 +227,6 @@ end
       sun || Data::Sun.new
     end
 
-    # def self.build_timezone(data)
-    #   raise ArgumentError unless data.is_a?(Hash)
-    #   
-    #   timezone = nil
-    #   if data && data['simpleforecast'] &&
-    #      data['simpleforecast']['forecastday'] &&
-    #      data['simpleforecast']['forecastday'].first &&
-    #      data['simpleforecast']['forecastday'].first['date']
-    #     timezone = Barometer::Zone.new(Time.now.utc,data['simpleforecast']['forecastday'].first['date']['tz_long'])
-    #   end
-    #   timezone
-    # end
-    
     # use HTTParty to get the current weather
     def self.get_all(query, metric=true)
       Barometer::Yahoo.get(

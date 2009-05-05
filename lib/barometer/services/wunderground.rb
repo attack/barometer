@@ -1,5 +1,7 @@
 module Barometer
   #
+  #   [DEFAULT PROVIDER]
+  #
   # = Weather Underground
   # www.wunderground.com
   #
@@ -44,12 +46,9 @@ module Barometer
   #
   class Wunderground < Service
     
+    def self.source_name; :wunderground; end
     def self.accepted_formats
       [:zipcode, :postalcode, :icao, :coordinates, :geocode]
-    end
-    
-    def self.source_name
-      :wunderground
     end
     
     # these are the icon codes that indicate "wet", used by wet? function
@@ -66,8 +65,6 @@ module Barometer
       raise ArgumentError unless query.is_a?(Barometer::Query)
       measurement.source = self.source_name
       
-      
-      # get current measurement
       begin
         current_result = self.get_current(query.preferred)
         measurement.current = self.build_current(current_result, metric)
@@ -75,7 +72,6 @@ module Barometer
         return measurement
       end
       
-      # get forecast measurement
       begin
         forecast_result = self.get_forecast(query.preferred)
         measurement.forecast = self.build_forecast(forecast_result, metric)
@@ -87,12 +83,10 @@ module Barometer
       measurement.station = self.build_station(current_result)
       measurement.timezone = self.build_timezone(forecast_result)
       
-      # add links
       if current_result["credit"] && current_result["credit_URL"]
         measurement.links[current_result["credit"]] = current_result["credit_URL"]
       end
       
-      # add sun data to current
       sun = nil
       if measurement.current
          sun = self.build_sun(forecast_result, measurement.timezone)
@@ -105,7 +99,6 @@ module Barometer
         end
       end
       
-      # save the local time
       local_time = measurement.timezone ? Data::LocalTime.parse(
         measurement.timezone.utc_to_local(Time.now.utc)
       ) : nil
@@ -207,15 +200,6 @@ module Barometer
       station
     end
     
-    # <forecastday>
-    #       <date>
-    #         <pretty_short>9:00 PM CST</pretty_short>
-    #         <pretty>9:00 PM CST on January 15, 2008</pretty>
-    #         <isdst>0</isdst>
-    #         <tz_short>CST</tz_short>
-    #         <tz_long>America/Chicago</tz_long>
-    #       </date>
-    #     </forecastday>
     def self.build_timezone(data)
       raise ArgumentError unless data.is_a?(Hash)
       timezone = nil
@@ -233,47 +217,6 @@ module Barometer
     def self.build_sun(data, timezone)
       raise ArgumentError unless data.is_a?(Hash)
       raise ArgumentError unless timezone.is_a?(Data::Zone)
-      
-      # sun = nil
-      # if data
-      #   time = nil
-      #   if data['simpleforecast'] &&
-      #      data['simpleforecast']['forecastday'] &&
-      #      data['simpleforecast']['forecastday'].first &&
-      #      data['simpleforecast']['forecastday'].first['date']
-      #     
-      #     # construct current date
-      #     date_data = data['simpleforecast']['forecastday'].first['date']
-      #     time = Time.local(
-      #       date_data['year'], date_data['month'], date_data['day'],
-      #       date_data['hour'], date_data['min'], date_data['sec']
-      #     )
-      #   end
-      #   if time && data['moon_phase']
-      #     # get the sun rise and set times (ie "6:32 am")
-      #     if data['moon_phase']['sunrise']
-      #       rise = Time.local(
-      #         time.year, time.month, time.day,
-      #         data['moon_phase']['sunrise']['hour'],
-      #         data['moon_phase']['sunrise']['minute']
-      #       )
-      #     end
-      #     if data['moon_phase']['sunset']
-      #       set = Time.local(
-      #         time.year, time.month, time.day,
-      #         data['moon_phase']['sunset']['hour'],
-      #         data['moon_phase']['sunset']['minute']
-      #       )
-      #     end
-      #   
-      #     sun = Data::Sun.new(
-      #       timezone.tz.local_to_utc(rise),
-      #       timezone.tz.local_to_utc(set)
-      #     )
-      #   end
-      # end
-      # 
-      # sun || Data::Sun.new
       sun = nil
       if data
         if data['moon_phase']

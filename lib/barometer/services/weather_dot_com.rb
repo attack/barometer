@@ -43,11 +43,8 @@ module Barometer
     @@partner_key = nil
     @@license_key = nil
 
-    def self.accepted_formats
-      [:short_zipcode, :weather_id]
-    end
-
     def self.source_name; :weather_dot_com; end
+    def self.accepted_formats; [:short_zipcode, :weather_id]; end
 
     def self.keys=(keys)
       raise ArgumentError unless keys.is_a?(Hash)
@@ -160,22 +157,8 @@ module Barometer
           forecast_measurement.low << forecast['low']
           
           # build sun
-          # offset = 0
-          # if data['loc']
-          #   offset = data['loc']['zone'].to_i
-          # end
-          # rise_local_time = forecast['sunr']
-          # set_local_time = forecast['suns']
-          # rise = Barometer::Zone.merge(rise_local_time, local_date, offset)
-          # set = Barometer::Zone.merge(set_local_time, local_date, offset)
-          # sun = Data::Sun.new(rise, set)
-          # forecast_measurement.sun = sun
-          
-          # build sun
           rise_local_time = Data::LocalTime.parse(forecast['sunr'])
           set_local_time = Data::LocalTime.parse(forecast['suns'])
-          # rise = Barometer::Zone.merge(rise_local_time, local_date, offset)
-          # set = Barometer::Zone.merge(set_local_time, local_date, offset)
           sun = Data::Sun.new(rise_local_time, set_local_time)
           forecast_measurement.sun = sun
           
@@ -243,25 +226,6 @@ module Barometer
     
     def self.build_sun(data)
       raise ArgumentError unless data.is_a?(Hash)
-      # sun = nil
-      # if data
-      #   if data['loc']
-      #     # get the TIME ZONE OFFSET
-      #     offset = data['loc']['zone'].to_i
-      #     rise_local_time = data['loc']['sunr']
-      #     set_local_time = data['loc']['suns']
-      #   end
-      #   local_date = data['cc']['lsup'] if data['cc']
-      #   
-      #   # get the sun rise and set
-      #   if rise_local_time && local_date
-      #     rise = Barometer::Zone.merge(rise_local_time, local_date, offset)
-      #     set = Barometer::Zone.merge(set_local_time, local_date, offset)
-      #     sun = Data::Sun.new(rise, set)
-      #   end
-      # end
-      # sun || Data::Sun.new
-      
       sun = nil
       if data
         if data['loc']
