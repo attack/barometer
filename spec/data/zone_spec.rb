@@ -1,17 +1,17 @@
 require 'spec_helper'
 
-describe "Zone" do
+describe "Data::Zone" do
   
   describe "and class methods" do
     
     it "responds to now and returns Time object" do
-      Barometer::Zone.respond_to?("now").should be_true
-      Barometer::Zone.now.is_a?(Time).should be_true
+      Data::Zone.respond_to?("now").should be_true
+      Data::Zone.now.is_a?(Time).should be_true
     end
 
     it "responds to today and returns Date object" do
-      Barometer::Zone.respond_to?("today").should be_true
-      Barometer::Zone.today.is_a?(Date).should be_true
+      Data::Zone.respond_to?("today").should be_true
+      Data::Zone.today.is_a?(Date).should be_true
     end
     
   end
@@ -21,7 +21,7 @@ describe "Zone" do
     before(:each) do
       @utc = Time.now.utc
       @timezone = "Europe/Paris"
-      @zone = Barometer::Zone.new(@timezone)
+      @zone = Data::Zone.new(@timezone)
     end
     
     it "responds to timezone" do
@@ -30,26 +30,26 @@ describe "Zone" do
     end
     
     it "responds to tz" do
-      lambda { Barometer::Zone.new("invalid timezone") }.should raise_error(TZInfo::InvalidTimezoneIdentifier)
+      lambda { Data::Zone.new("invalid timezone") }.should raise_error(TZInfo::InvalidTimezoneIdentifier)
       
-      zone = Barometer::Zone.new(@timezone)
+      zone = Data::Zone.new(@timezone)
       zone.tz.should_not be_nil
     end
     
     it "responds to code" do
       @zone.respond_to?("code").should be_true
-      zone = Barometer::Zone.new(@timezone)
+      zone = Data::Zone.new(@timezone)
       zone.tz = nil
       zone.tz.should be_nil
       zone.code.should == ""
       
-      zone = Barometer::Zone.new(@timezone)
+      zone = Data::Zone.new(@timezone)
       zone.code.should == "CEST"
     end
     
     it "responds to dst?" do
       @zone.respond_to?("dst?").should be_true
-      zone = Barometer::Zone.new(@timezone)
+      zone = Data::Zone.new(@timezone)
       zone.tz = nil
       zone.tz.should be_nil
       zone.dst?.should be_nil
@@ -66,11 +66,11 @@ describe "Zone" do
     end
     
     it "responds to now" do
-      Barometer::Zone.respond_to?("now").should be_true
+      Data::Zone.respond_to?("now").should be_true
     end
     
     it "responds to today" do
-      Barometer::Zone.respond_to?("today").should be_true
+      Data::Zone.respond_to?("today").should be_true
     end
     
     it "converts local_time to utc" do
@@ -104,7 +104,7 @@ describe "Zone" do
       # in two UTC times that are off by the same offset
       original_difference = local_offset - target_offset
       
-      target_utc_time = Barometer::Zone.code_to_utc(target_time, target_zone)
+      target_utc_time = Data::Zone.code_to_utc(target_time, target_zone)
       local_utc_time = local_time.utc
       
       (target_utc_time - local_time.utc).to_i.should == original_difference.to_i
@@ -118,7 +118,7 @@ describe "Zone" do
       date = Date.parse(merge_date)
       time = Time.parse(merge_time)
       
-      utc_time = Barometer::Zone.merge(merge_time, merge_date, merge_zonecode)
+      utc_time = Data::Zone.merge(merge_time, merge_date, merge_zonecode)
       
       utc_time.year.should == date.year
       utc_time.month.should == date.month

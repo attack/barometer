@@ -36,7 +36,7 @@ describe "Google" do
     
     it "returns Barometer::CurrentMeasurement object" do
       current = Barometer::Google.build_current({})
-      current.is_a?(Barometer::CurrentMeasurement).should be_true
+      current.is_a?(Data::CurrentMeasurement).should be_true
     end
     
   end
@@ -66,15 +66,15 @@ describe "Google" do
     end
     
     it "requires Barometer::Geo input" do
-      geo = Barometer::Geo.new({})
+      geo = Data::Geo.new({})
       lambda { Barometer::Google.build_location({}) }.should raise_error(ArgumentError)
       lambda { Barometer::Google.build_location(geo) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::Location object" do
-      geo = Barometer::Geo.new({})
+      geo = Data::Geo.new({})
       location = Barometer::Google.build_location(geo)
-      location.is_a?(Barometer::Location).should be_true
+      location.is_a?(Data::Location).should be_true
     end
     
   end
@@ -97,12 +97,12 @@ describe "Google" do
     before(:each) do
       @query = Barometer::Query.new("Calgary,AB")
       @query.preferred = "Calgary,AB"
-      @measurement = Barometer::Measurement.new
+      @measurement = Data::Measurement.new
       
       FakeWeb.register_uri(:get, 
         "http://google.com/ig/api?weather=#{CGI.escape(@query.preferred)}&hl=en-GB",
         :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures/services/google', 
+          '../fixtures/services/google', 
           'calgary_ab.xml')
         )
       )  
@@ -130,8 +130,8 @@ describe "Google" do
       
       it "returns a Barometer::Measurement object" do
         result = Barometer::Google._measure(@measurement, @query)
-        result.is_a?(Barometer::Measurement).should be_true
-        result.current.is_a?(Barometer::CurrentMeasurement).should be_true
+        result.is_a?(Data::Measurement).should be_true
+        result.current.is_a?(Data::CurrentMeasurement).should be_true
         result.forecast.is_a?(Array).should be_true
         
         result.source.should == :google
@@ -144,13 +144,13 @@ describe "Google" do
   describe "when answering the simple questions," do
     
     before(:each) do
-      @measurement = Barometer::Measurement.new
+      @measurement = Data::Measurement.new
     end
     
     describe "currently_wet_by_icon?" do
       
       before(:each) do
-        @measurement.current = Barometer::CurrentMeasurement.new
+        @measurement.current = Data::CurrentMeasurement.new
       end
     
       it "returns true if matching icon code" do
@@ -170,7 +170,7 @@ describe "Google" do
     describe "forecasted_wet_by_icon?" do
       
       before(:each) do
-        @measurement.forecast = [Barometer::ForecastMeasurement.new]
+        @measurement.forecast = [Data::ForecastMeasurement.new]
         @measurement.forecast.first.date = Date.today
         @measurement.forecast.size.should == 1
       end
@@ -192,7 +192,7 @@ describe "Google" do
     describe "currently_sunny_by_icon?" do
       
       before(:each) do
-        @measurement.current = Barometer::CurrentMeasurement.new
+        @measurement.current = Data::CurrentMeasurement.new
       end
 
       it "returns true if matching icon code" do
@@ -212,7 +212,7 @@ describe "Google" do
     describe "forecasted_sunny_by_icon?" do
       
       before(:each) do
-        @measurement.forecast = [Barometer::ForecastMeasurement.new]
+        @measurement.forecast = [Data::ForecastMeasurement.new]
         @measurement.forecast.first.date = Date.today
         @measurement.forecast.size.should == 1
       end

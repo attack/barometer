@@ -5,7 +5,7 @@ describe "Units" do
   describe "when initialized" do
     
     before(:each) do
-      @units = Barometer::Units.new
+      @units = Data::Units.new
     end
     
     it "responds to metric, defaults to true" do
@@ -15,7 +15,7 @@ describe "Units" do
     it "allows metric to be set" do
       @units.metric.should be_true
       
-      @units2 = Barometer::Units.new(false)
+      @units2 = Data::Units.new(false)
       @units2.metric.should be_false
     end
     
@@ -32,7 +32,7 @@ describe "Units" do
   describe "changing units" do
     
     before(:each) do
-      @units = Barometer::Units.new
+      @units = Data::Units.new
     end
     
     it "indicates if metric?" do
@@ -62,7 +62,7 @@ describe "Units" do
     
     before(:each) do
       module Barometer
-        class Units
+        class Data::Units
           attr_accessor :a, :b
           def metric_default=(value)
             self.a = value
@@ -72,8 +72,8 @@ describe "Units" do
           end
         end
       end
-      @units_metric = Barometer::Units.new(true)
-      @units_imperial = Barometer::Units.new(false)
+      @units_metric = Data::Units.new(true)
+      @units_imperial = Data::Units.new(false)
       @test_value_a = 5.5
       @test_value_b = 9.9
     end

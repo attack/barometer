@@ -94,13 +94,13 @@ describe "Services" do
       lambda { Barometer::Service.measure(@query) }.should_not raise_error(ArgumentError)
     end
     
-    it "returns a Barometer::Measurement object" do
-      @service.measure(@query).is_a?(Barometer::Measurement).should be_true
+    it "returns a Data::Measurement object" do
+      @service.measure(@query).is_a?(Data::Measurement).should be_true
     end
     
     it "returns current and future" do
       measurement = @service.measure(@query)
-      measurement.current.is_a?(Barometer::CurrentMeasurement).should be_true
+      measurement.current.is_a?(Data::CurrentMeasurement).should be_true
       measurement.forecast.is_a?(Array).should be_true
     end
     
@@ -113,7 +113,8 @@ describe "Services" do
       # so the original file must be reloaded
       load 'lib/barometer/services/service.rb'
       
-      @measurement = Barometer::Measurement.new
+      @measurement = Data::Measurement.new
+      @now = Data::LocalTime.parse("2:05 pm")
     end
     
     describe "windy?" do
@@ -130,9 +131,9 @@ describe "Services" do
         lambda { Barometer::Service.windy?(@measurement,1.1) }.should_not raise_error(ArgumentError)
       end
       
-      it "requires time as a Time object" do
-        lambda { Barometer::Service.windy?(@measurement,1,"a") }.should raise_error(ArgumentError)
-        lambda { Barometer::Service.windy?(@measurement,1,Time.now.utc) }.should_not raise_error(ArgumentError)
+      it "requires time as a Data::LocalTime object" do
+        #lambda { Barometer::Service.windy?(@measurement,1,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.windy?(@measurement,1,@now) }.should_not raise_error(ArgumentError)
       end
 
       it "stubs forecasted_windy?" do
@@ -142,7 +143,7 @@ describe "Services" do
       describe "and is current" do
         
         before(:each) do
-          module Barometer; class Measurement
+          module Barometer; class Data::Measurement
             def current?(a=nil); true; end
           end; end
         end
@@ -170,7 +171,7 @@ describe "Services" do
       describe "and is NOT current" do
         
         before(:each) do
-          module Barometer; class Measurement
+          module Barometer; class Data::Measurement
             def current?(a=nil); false; end
           end; end
         end
@@ -204,7 +205,7 @@ describe "Services" do
         # so the original file must be reloaded
         load 'lib/barometer/services/service.rb'
         
-        @measurement = Barometer::Measurement.new
+        @measurement = Data::Measurement.new
         @threshold = 10
       end
 
@@ -221,20 +222,20 @@ describe "Services" do
       end
 
       it "returns nil when value unavailable" do
-        measurement = Barometer::Measurement.new
+        measurement = Data::Measurement.new
         Barometer::Service.currently_windy?(measurement,@threshold).should be_nil
-        measurement.current = Barometer::CurrentMeasurement.new
+        measurement.current = Data::CurrentMeasurement.new
         Barometer::Service.currently_windy?(measurement,@threshold).should be_nil
-        measurement.current.wind = Barometer::Speed.new
+        measurement.current.wind = Data::Speed.new
         Barometer::Service.currently_windy?(measurement,@threshold).should be_nil
       end
 
       describe "when metric" do
 
         before(:each) do
-          @measurement = Barometer::Measurement.new
-          @measurement.current = Barometer::CurrentMeasurement.new
-          @measurement.current.wind = Barometer::Speed.new
+          @measurement = Data::Measurement.new
+          @measurement.current = Data::CurrentMeasurement.new
+          @measurement.current.wind = Data::Speed.new
           @measurement.metric!
           @measurement.metric?.should be_true
         end
@@ -255,9 +256,9 @@ describe "Services" do
       describe "when imperial" do
 
         before(:each) do
-          @measurement = Barometer::Measurement.new
-          @measurement.current = Barometer::CurrentMeasurement.new
-          @measurement.current.wind = Barometer::Speed.new
+          @measurement = Data::Measurement.new
+          @measurement.current = Data::CurrentMeasurement.new
+          @measurement.current.wind = Data::Speed.new
           @measurement.imperial!
           @measurement.metric?.should be_false
         end
@@ -290,15 +291,15 @@ describe "Services" do
         lambda { Barometer::Service.wet?(@measurement,1.1) }.should_not raise_error(ArgumentError)
       end
       
-      it "requires time as a Time object" do
-        lambda { Barometer::Service.wet?(@measurement,1,"a") }.should raise_error(ArgumentError)
-        lambda { Barometer::Service.wet?(@measurement,1,Time.now.utc) }.should_not raise_error(ArgumentError)
+      it "requires time as a Data::LocalTime object" do
+        #lambda { Barometer::Service.wet?(@measurement,1,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.wet?(@measurement,1,@now) }.should_not raise_error(ArgumentError)
       end
 
       describe "and is current" do
         
         before(:each) do
-          module Barometer; class Measurement
+          module Barometer; class Data::Measurement
             def current?(a=nil); true; end
           end; end
         end
@@ -326,7 +327,7 @@ describe "Services" do
       describe "and is NOT current" do
         
         before(:each) do
-          module Barometer; class Measurement
+          module Barometer; class Data::Measurement
             def current?(a=nil); false; end
           end; end
         end
@@ -360,7 +361,7 @@ describe "Services" do
         # so the original file must be reloaded
         load 'lib/barometer/services/service.rb'
         
-        @measurement = Barometer::Measurement.new
+        @measurement = Data::Measurement.new
         @threshold = 10
         @temperature = 15
       end
@@ -378,18 +379,18 @@ describe "Services" do
       end
     
       it "returns nil when value unavailable" do
-        measurement = Barometer::Measurement.new
+        measurement = Data::Measurement.new
         Barometer::Service.currently_wet?(measurement,@threshold).should be_nil
-        measurement.current = Barometer::CurrentMeasurement.new
+        measurement.current = Data::CurrentMeasurement.new
         Barometer::Service.currently_wet?(measurement,@threshold).should be_nil
-        measurement.current.wind = Barometer::Speed.new
+        measurement.current.wind = Data::Speed.new
         Barometer::Service.currently_wet?(measurement,@threshold).should be_nil
       end
       
       describe "currently_wet_by_icon?" do
 
         before(:each) do
-          @measurement.current = Barometer::CurrentMeasurement.new
+          @measurement.current = Data::CurrentMeasurement.new
         end
 
         it "requires a Barometer::Measurement object" do
@@ -429,10 +430,10 @@ describe "Services" do
         describe "when metric" do
  
           before(:each) do
-            @measurement = Barometer::Measurement.new
-            @measurement.current = Barometer::CurrentMeasurement.new
-            @measurement.current.temperature = Barometer::Temperature.new
-            @measurement.current.dew_point = Barometer::Temperature.new
+            @measurement = Data::Measurement.new
+            @measurement.current = Data::CurrentMeasurement.new
+            @measurement.current.temperature = Data::Temperature.new
+            @measurement.current.dew_point = Data::Temperature.new
             @measurement.metric!
             @measurement.metric?.should be_true
           end
@@ -454,10 +455,10 @@ describe "Services" do
         describe "when imperial" do
           
           before(:each) do
-            @measurement = Barometer::Measurement.new
-            @measurement.current = Barometer::CurrentMeasurement.new
-            @measurement.current.temperature = Barometer::Temperature.new
-            @measurement.current.dew_point = Barometer::Temperature.new
+            @measurement = Data::Measurement.new
+            @measurement.current = Data::CurrentMeasurement.new
+            @measurement.current.temperature = Data::Temperature.new
+            @measurement.current.dew_point = Data::Temperature.new
             @measurement.imperial!
             @measurement.metric?.should be_false
           end
@@ -481,8 +482,8 @@ describe "Services" do
       describe "and currently_wet_by_humidity?" do
         
         before(:each) do
-          @measurement = Barometer::Measurement.new
-          @measurement.current = Barometer::CurrentMeasurement.new
+          @measurement = Data::Measurement.new
+          @measurement.current = Data::CurrentMeasurement.new
         end
         
         it "returns true when humidity >= 99%" do
@@ -502,8 +503,8 @@ describe "Services" do
       describe "and currently_wet_by_pop?" do
         
         before(:each) do
-          @measurement = Barometer::Measurement.new
-          @measurement.forecast = [Barometer::ForecastMeasurement.new]
+          @measurement = Data::Measurement.new
+          @measurement.forecast = [Data::ForecastMeasurement.new]
           @measurement.forecast.first.date = Date.today
           @measurement.forecast.size.should == 1
         end
@@ -529,7 +530,7 @@ describe "Services" do
         # so the original file must be reloaded
         load 'lib/barometer/services/service.rb'
         
-        @measurement = Barometer::Measurement.new
+        @measurement = Data::Measurement.new
         @threshold = 10
         @temperature = 15
       end
@@ -546,22 +547,22 @@ describe "Services" do
         lambda { Barometer::Service.forecasted_wet?(@measurement,1.1) }.should_not raise_error(ArgumentError)
       end
 
-      it "requires utc_time as a Time object" do
-        lambda { Barometer::Service.forecasted_wet?(@measurement,1,"string") }.should raise_error(ArgumentError)
-        lambda { Barometer::Service.forecasted_wet?(@measurement,1,Time.now.utc) }.should_not raise_error(ArgumentError)
+      it "requires utc_time as a Data::LocalTime object" do
+        #lambda { Barometer::Service.forecasted_wet?(@measurement,1,"string") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.forecasted_wet?(@measurement,1,@now) }.should_not raise_error(ArgumentError)
       end
 
       it "returns nil when value unavailable" do
-        measurement = Barometer::Measurement.new
+        measurement = Data::Measurement.new
         Barometer::Service.forecasted_wet?(measurement,@threshold).should be_nil
-        measurement.forecast = [Barometer::ForecastMeasurement.new]
+        measurement.forecast = [Data::ForecastMeasurement.new]
         Barometer::Service.forecasted_wet?(measurement,@threshold).should be_nil
       end
       
       describe "forecasted_wet_by_icon?" do
 
         before(:each) do
-          @measurement.forecast = [Barometer::ForecastMeasurement.new]
+          @measurement.forecast = [Data::ForecastMeasurement.new]
           @measurement.forecast.first.date = Date.today
           @measurement.forecast.size.should == 1
         end
@@ -607,8 +608,8 @@ describe "Services" do
       describe "and forecasted_wet_by_pop?" do
         
         before(:each) do
-          @measurement = Barometer::Measurement.new
-          @measurement.forecast = [Barometer::ForecastMeasurement.new]
+          @measurement = Data::Measurement.new
+          @measurement.forecast = [Data::ForecastMeasurement.new]
           @measurement.forecast.first.date = Date.today
           @measurement.forecast.size.should == 1
         end
@@ -635,15 +636,15 @@ describe "Services" do
         lambda { Barometer::Service.day?(@measurement) }.should_not raise_error(ArgumentError)
       end
       
-      it "requires time as a Time object" do
-        lambda { Barometer::Service.day?(@measurement,"a") }.should raise_error(ArgumentError)
-        lambda { Barometer::Service.day?(@measurement,Time.now.utc) }.should_not raise_error(ArgumentError)
+      it "requires time as a Data::LocalTime object" do
+        #lambda { Barometer::Service.day?(@measurement,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.day?(@measurement,@now) }.should_not raise_error(ArgumentError)
       end
       
       describe "and is current" do
         
         before(:each) do
-          module Barometer; class Measurement
+          module Barometer; class Data::Measurement
             def current?(a=nil); true; end
           end; end
         end
@@ -671,7 +672,7 @@ describe "Services" do
       describe "and is NOT current" do
         
         before(:each) do
-          module Barometer; class Measurement
+          module Barometer; class Data::Measurement
             def current?(a=nil); false; end
           end; end
         end
@@ -705,7 +706,7 @@ describe "Services" do
         # so the original file must be reloaded
         load 'lib/barometer/services/service.rb'
         
-        @measurement = Barometer::Measurement.new
+        @measurement = Data::Measurement.new
       end
 
       it "requires a measurement object" do
@@ -715,23 +716,36 @@ describe "Services" do
       end
       
       it "returns nil when value unavailable" do
-        measurement = Barometer::Measurement.new
+        measurement = Data::Measurement.new
         Barometer::Service.currently_day?(measurement).should be_nil
       end
       
       describe "and currently_after_sunrise?" do
         
         before(:each) do
-          @measurement = Barometer::CurrentMeasurement.new
+          @measurement = Data::CurrentMeasurement.new
+          @now = Data::LocalTime.parse("2:02 pm")
+          @past = @now - (60*60)
+          @future = @now + (60*60)
         end
         
         it "returns true when now is past sun_rise" do
-          @measurement.sun = Barometer::Sun.new(Time.now.utc - (60*60))
+          @measurement.sun = Data::Sun.new(@past)
+          @measurement.current_at.should be_nil
+          Barometer::Service.currently_after_sunrise?(@measurement).should be_nil
+          
+          @measurement.current_at = @now
+          @measurement.current_at.should_not be_nil
           Barometer::Service.currently_after_sunrise?(@measurement).should be_true
         end
 
         it "returns false when now if before sun_rise" do
-          @measurement.sun = Barometer::Sun.new(Time.now.utc + (60*60))
+          @measurement.sun = Data::Sun.new(@future)
+          @measurement.current_at.should be_nil
+          Barometer::Service.currently_after_sunrise?(@measurement).should be_nil
+          
+          @measurement.current_at = @now
+          @measurement.current_at.should_not be_nil
           Barometer::Service.currently_after_sunrise?(@measurement).should be_false
         end
         
@@ -740,16 +754,29 @@ describe "Services" do
       describe "and currently_before_sunset?" do
         
         before(:each) do
-          @measurement = Barometer::CurrentMeasurement.new
+          @measurement = Data::CurrentMeasurement.new
+          @now = Data::LocalTime.parse("2:02 pm")
+          @past = @now - (60*60)
+          @future = @now + (60*60)
         end
         
         it "returns true when now is before sun_set" do
-          @measurement.sun = Barometer::Sun.new(nil,Time.now.utc + (60*60))
+          @measurement.sun = Data::Sun.new(nil,@future)
+          @measurement.current_at.should be_nil
+          Barometer::Service.currently_before_sunset?(@measurement).should be_nil
+          
+          @measurement.current_at = @now
+          @measurement.current_at.should_not be_nil
           Barometer::Service.currently_before_sunset?(@measurement).should be_true
         end
 
         it "returns false when now if after sun_set" do
-          @measurement.sun = Barometer::Sun.new(nil,Time.now.utc - (60*60))
+          @measurement.sun = Data::Sun.new(nil,@past)
+          @measurement.current_at.should be_nil
+          Barometer::Service.currently_before_sunset?(@measurement).should be_nil
+          
+          @measurement.current_at = @now
+          @measurement.current_at.should_not be_nil
           Barometer::Service.currently_before_sunset?(@measurement).should be_false
         end
         
@@ -764,7 +791,7 @@ describe "Services" do
         # so the original file must be reloaded
         load 'lib/barometer/services/service.rb'
         
-        @measurement = Barometer::Measurement.new
+        @measurement = Data::Measurement.new
       end
 
       it "requires a measurement object" do
@@ -773,34 +800,33 @@ describe "Services" do
         lambda { Barometer::Service.forecasted_day?(@measurement) }.should_not raise_error(ArgumentError)
       end
       
-      it "requires time as a Time object" do
-        lambda { Barometer::Service.forecasted_day?(@measurement,"a") }.should raise_error(ArgumentError)
-        lambda { Barometer::Service.forecasted_day?(@measurement,Time.now.utc) }.should_not raise_error(ArgumentError)
+      it "requires time as a Data::LocalTime object" do
+        #lambda { Barometer::Service.forecasted_day?(@measurement,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.forecasted_day?(@measurement,@now) }.should_not raise_error(ArgumentError)
       end
 
       it "returns nil when value unavailable" do
-        measurement = Barometer::Measurement.new
+        measurement = Data::Measurement.new
         Barometer::Service.forecasted_day?(measurement).should be_nil
       end
       
       describe "and forecasted_after_sunrise?" do
         
         before(:each) do
-          @measurement = Barometer::ForecastMeasurement.new
+          @measurement = Data::ForecastMeasurement.new
+          @now = Data::LocalDateTime.parse("2:02 pm")
+          @past = @now - (60*60)
+          @future = @now + (60*60)
         end
         
         it "returns true when now is past sun_rise" do
-          one_day_from_now = Time.now.utc + (60*60*24)
-          @measurement.date = Date.parse(one_day_from_now.strftime("%d %B %Y"))
-          @measurement.sun = Barometer::Sun.new(one_day_from_now - (60*60))
-          Barometer::Service.forecasted_after_sunrise?(@measurement, one_day_from_now).should be_true
+          @measurement.sun = Data::Sun.new(@past)
+          Barometer::Service.forecasted_after_sunrise?(@measurement, @now).should be_true
         end
       
         it "returns false when now if before sun_rise" do
-          one_day_from_now = Time.now.utc + (60*60*24)
-          @measurement.date = Date.parse(one_day_from_now.strftime("%d %B %Y"))
-          @measurement.sun = Barometer::Sun.new(one_day_from_now + (60*60))
-          Barometer::Service.forecasted_after_sunrise?(@measurement, one_day_from_now).should be_false
+          @measurement.sun = Data::Sun.new(@future)
+          Barometer::Service.forecasted_after_sunrise?(@measurement, @now).should be_false
         end
         
       end
@@ -808,21 +834,20 @@ describe "Services" do
       describe "and forecasted_before_sunset?" do
         
         before(:each) do
-          @measurement = Barometer::ForecastMeasurement.new
+          @measurement = Data::ForecastMeasurement.new
+          @now = Data::LocalDateTime.parse("2:02 pm")
+          @past = @now - (60*60)
+          @future = @now + (60*60)
         end
         
         it "returns true when now is before sun_set" do
-          one_day_from_now = Time.now.utc + (60*60*24)
-          @measurement.date = Date.parse(one_day_from_now.strftime("%d %B %Y"))
-          @measurement.sun = Barometer::Sun.new(nil,one_day_from_now + (60*60))
-          Barometer::Service.forecasted_before_sunset?(@measurement,one_day_from_now).should be_true
+          @measurement.sun = Data::Sun.new(nil,@future)
+          Barometer::Service.forecasted_before_sunset?(@measurement,@now).should be_true
         end
       
         it "returns false when now if after sun_set" do
-          one_day_from_now = Time.now.utc + (60*60*24)
-          @measurement.date = Date.parse(one_day_from_now.strftime("%d %B %Y"))
-          @measurement.sun = Barometer::Sun.new(nil,one_day_from_now - (60*60))
-          Barometer::Service.forecasted_before_sunset?(@measurement,one_day_from_now).should be_false
+          @measurement.sun = Data::Sun.new(nil,@past)
+          Barometer::Service.forecasted_before_sunset?(@measurement,@now).should be_false
         end
         
       end
@@ -837,9 +862,9 @@ describe "Services" do
         lambda { Barometer::Service.sunny?(@measurement) }.should_not raise_error(ArgumentError)
       end
       
-      it "requires time as a Time object" do
-        lambda { Barometer::Service.sunny?(@measurement,"a") }.should raise_error(ArgumentError)
-        lambda { Barometer::Service.sunny?(@measurement,Time.now.utc) }.should_not raise_error(ArgumentError)
+      it "requires time as a Data::LocalTime object" do
+        #lambda { Barometer::Service.sunny?(@measurement,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.sunny?(@measurement,@now) }.should_not raise_error(ArgumentError)
       end
 
       it "returns false if night time"
@@ -860,7 +885,7 @@ describe "Services" do
       describe "and is current" do
         
         before(:each) do
-          module Barometer; class Measurement
+          module Barometer; class Data::Measurement
             def current?(a=nil); true; end
           end; end
         end
@@ -888,7 +913,7 @@ describe "Services" do
       describe "and is NOT current" do
         
         before(:each) do
-          module Barometer; class Measurement
+          module Barometer; class Data::Measurement
             def current?(a=nil); false; end
           end; end
         end
@@ -922,7 +947,7 @@ describe "Services" do
         # so the original file must be reloaded
         load 'lib/barometer/services/service.rb'
         
-        @measurement = Barometer::Measurement.new
+        @measurement = Data::Measurement.new
       end
     
       it "requires a measurement object" do
@@ -932,14 +957,14 @@ describe "Services" do
       end
     
       it "returns nil when value unavailable" do
-        measurement = Barometer::Measurement.new
+        measurement = Data::Measurement.new
         Barometer::Service.currently_sunny?(measurement).should be_nil
-        measurement.current = Barometer::CurrentMeasurement.new
+        measurement.current = Data::CurrentMeasurement.new
         Barometer::Service.currently_sunny?(measurement).should be_nil
       end
       
       it "returns false if night time" do
-        @measurement.current = Barometer::CurrentMeasurement.new
+        @measurement.current = Data::CurrentMeasurement.new
         module Barometer; class Service; def self.currently_day?(a=nil)
           true
         end; end; end
@@ -956,7 +981,7 @@ describe "Services" do
       describe "currently_sunny_by_icon?" do
 
         before(:each) do
-          @measurement.current = Barometer::CurrentMeasurement.new
+          @measurement.current = Data::CurrentMeasurement.new
         end
 
         it "requires a Barometer::Measurement object" do
@@ -1000,7 +1025,7 @@ describe "Services" do
         # so the original file must be reloaded
         load 'lib/barometer/services/service.rb'
         
-        @measurement = Barometer::Measurement.new
+        @measurement = Data::Measurement.new
       end
     
       it "requires a measurement object" do
@@ -1009,30 +1034,31 @@ describe "Services" do
         lambda { Barometer::Service.forecasted_sunny?(@measurement) }.should_not raise_error(ArgumentError)
       end
 
-      it "requires utc_time as a Time object" do
-        lambda { Barometer::Service.forecasted_sunny?(@measurement,"string") }.should raise_error(ArgumentError)
-        lambda { Barometer::Service.forecasted_sunny?(@measurement,Time.now.utc) }.should_not raise_error(ArgumentError)
+      it "requires utc_time as a Data::LocalTime object" do
+        #lambda { Barometer::Service.forecasted_sunny?(@measurement,"string") }.should raise_error(ArgumentError)
+        lambda { Barometer::Service.forecasted_sunny?(@measurement,@now) }.should_not raise_error(ArgumentError)
       end
 
       it "returns nil when value unavailable" do
-        measurement = Barometer::Measurement.new
+        measurement = Data::Measurement.new
         Barometer::Service.forecasted_sunny?(measurement).should be_nil
-        measurement.forecast = [Barometer::ForecastMeasurement.new]
+        measurement.forecast = [Data::ForecastMeasurement.new]
         measurement.forecast.size.should == 1
         Barometer::Service.forecasted_sunny?(measurement).should be_nil
       end
 
       it "returns false if night time" do
-        @measurement.forecast = [Barometer::ForecastMeasurement.new]
+        @measurement.forecast = [Data::ForecastMeasurement.new]
         @measurement.forecast.size.should == 1
-        @measurement.forecast[0].date = Date.today
+        target_date = Date.today
+        @measurement.forecast[0].date = target_date
         module Barometer; class Service; def self.forecasted_day?(a=nil, b=nil)
           true
         end; end; end
         module Barometer; class Service; def self.forecasted_sunny_by_icon?(a=nil, b=nil)
           true
         end; end; end
-        Barometer::Service.forecasted_sunny?(@measurement).should be_true
+        Barometer::Service.forecasted_sunny?(@measurement, target_date).should be_true
         module Barometer; class Service; def self.forecasted_day?(a=nil, b=nil)
           false
         end; end; end
@@ -1042,7 +1068,7 @@ describe "Services" do
       describe "forecasted_sunny_by_icon?" do
 
         before(:each) do
-          @measurement.forecast = [Barometer::ForecastMeasurement.new]
+          @measurement.forecast = [Data::ForecastMeasurement.new]
           @measurement.forecast.first.date = Date.today
           @measurement.forecast.size.should == 1
         end

@@ -5,11 +5,7 @@ describe "Current Measurement" do
   describe "when initialized" do
     
     before(:each) do
-      @current = Barometer::CurrentMeasurement.new
-    end
-    
-    it "responds to time" do
-      @current.time.should be_nil
+      @current = Data::CurrentMeasurement.new
     end
     
     it "responds to humidity" do
@@ -61,7 +57,7 @@ describe "Current Measurement" do
   describe "when writing data" do
     
     before(:each) do
-      @current = Barometer::CurrentMeasurement.new
+      @current = Data::CurrentMeasurement.new
     end
     
     # it "only accepts Time for time" do
@@ -109,83 +105,83 @@ describe "Current Measurement" do
       lambda { @current.condition = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Barometer::Temperature for temperature" do
+    it "only accepts Data::Temperature for temperature" do
       invalid_data = 1
-      invalid_data.class.should_not == Barometer::Temperature
+      invalid_data.class.should_not == Data::Temperature
       lambda { @current.temperature = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Barometer::Temperature.new
-      valid_data.class.should == Barometer::Temperature
+      valid_data = Data::Temperature.new
+      valid_data.class.should == Data::Temperature
       lambda { @current.temperature = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Barometer::Temperature for dew_point" do
+    it "only accepts Data::Temperature for dew_point" do
       invalid_data = 1
-      invalid_data.class.should_not == Barometer::Temperature
+      invalid_data.class.should_not == Data::Temperature
       lambda { @current.dew_point = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Barometer::Temperature.new
-      valid_data.class.should == Barometer::Temperature
+      valid_data = Data::Temperature.new
+      valid_data.class.should == Data::Temperature
       lambda { @current.dew_point = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Barometer::Temperature for heat_index" do
+    it "only accepts Data::Temperature for heat_index" do
       invalid_data = 1
-      invalid_data.class.should_not == Barometer::Temperature
+      invalid_data.class.should_not == Data::Temperature
       lambda { @current.heat_index = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Barometer::Temperature.new
-      valid_data.class.should == Barometer::Temperature
+      valid_data = Data::Temperature.new
+      valid_data.class.should == Data::Temperature
       lambda { @current.heat_index = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Barometer::Temperature for wind_chill" do
+    it "only accepts Data::Temperature for wind_chill" do
       invalid_data = 1
-      invalid_data.class.should_not == Barometer::Temperature
+      invalid_data.class.should_not == Data::Temperature
       lambda { @current.wind_chill = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Barometer::Temperature.new
-      valid_data.class.should == Barometer::Temperature
+      valid_data = Data::Temperature.new
+      valid_data.class.should == Data::Temperature
       lambda { @current.wind_chill = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Barometer::Speed for wind" do
+    it "only accepts Data::Speed for wind" do
       invalid_data = 1
-      invalid_data.class.should_not == Barometer::Speed
+      invalid_data.class.should_not == Data::Speed
       lambda { @current.wind = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Barometer::Speed.new
-      valid_data.class.should == Barometer::Speed
+      valid_data = Data::Speed.new
+      valid_data.class.should == Data::Speed
       lambda { @current.wind = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Barometer::Pressure for pressure" do
+    it "only accepts Data::Pressure for pressure" do
       invalid_data = 1
-      invalid_data.class.should_not == Barometer::Pressure
+      invalid_data.class.should_not == Data::Pressure
       lambda { @current.pressure = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Barometer::Pressure.new
-      valid_data.class.should == Barometer::Pressure
+      valid_data = Data::Pressure.new
+      valid_data.class.should == Data::Pressure
       lambda { @current.pressure = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Barometer::Distance for visibility" do
+    it "only accepts Data::Distance for visibility" do
       invalid_data = 1
-      invalid_data.class.should_not == Barometer::Distance
+      invalid_data.class.should_not == Data::Distance
       lambda { @current.visibility = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Barometer::Distance.new
-      valid_data.class.should == Barometer::Distance
+      valid_data = Data::Distance.new
+      valid_data.class.should == Data::Distance
       lambda { @current.visibility = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Barometer::Sun for sun" do
+    it "only accepts Data::Sun for sun" do
       invalid_data = 1
-      invalid_data.class.should_not == Barometer::Sun
+      invalid_data.class.should_not == Data::Sun
       lambda { @current.sun = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Barometer::Sun.new
-      valid_data.class.should == Barometer::Sun
+      valid_data = Data::Sun.new
+      valid_data.class.should == Data::Sun
       lambda { @current.sun = valid_data }.should_not raise_error(ArgumentError)
     end
     
@@ -194,7 +190,7 @@ describe "Current Measurement" do
   describe "method missing" do
     
     before(:each) do
-      @current = Barometer::CurrentMeasurement.new
+      @current = Data::CurrentMeasurement.new
     end
     
     it "responds to method + ?" do

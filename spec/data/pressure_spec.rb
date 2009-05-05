@@ -5,17 +5,17 @@ describe "Pressure" do
   describe "when initialized" do
     
     before(:each) do
-      @pressure = Barometer::Pressure.new
+      @pressure = Data::Pressure.new
     end
     
     it "defines METRIC_UNITS" do
-      Barometer::Pressure.const_defined?("METRIC_UNITS").should be_true
-      Barometer::Pressure::METRIC_UNITS.should == "mb"
+      Data::Pressure.const_defined?("METRIC_UNITS").should be_true
+      Data::Pressure::METRIC_UNITS.should == "mb"
     end
     
     it "defines IMPERIAL_UNITS" do
-      Barometer::Pressure.const_defined?("IMPERIAL_UNITS").should be_true
-      Barometer::Pressure::IMPERIAL_UNITS.should == "in"
+      Data::Pressure.const_defined?("IMPERIAL_UNITS").should be_true
+      Data::Pressure::IMPERIAL_UNITS.should == "in"
     end
     
     it "responds to millibars" do
@@ -52,20 +52,20 @@ describe "Pressure" do
     end
     
     it "requires a value, that is either Integer or Float" do
-      Barometer::Pressure.mb_to_in(nil).should be_nil
-      Barometer::Pressure.in_to_mb(nil).should be_nil
+      Data::Pressure.mb_to_in(nil).should be_nil
+      Data::Pressure.in_to_mb(nil).should be_nil
       
       not_float_or_integer = "string"
-      Barometer::Pressure.mb_to_in(not_float_or_integer).should be_nil
-      Barometer::Pressure.in_to_mb(not_float_or_integer).should be_nil
+      Data::Pressure.mb_to_in(not_float_or_integer).should be_nil
+      Data::Pressure.in_to_mb(not_float_or_integer).should be_nil
     end
     
     it "converts MB to IN" do
-      ((Barometer::Pressure.mb_to_in(@mb)*100).round/100.0).should == @in
+      ((Data::Pressure.mb_to_in(@mb)*100).round/100.0).should == @in
     end
     
     it "converts IN to MB" do
-      ((Barometer::Pressure.in_to_mb(@in)*100).round/100.0).should == @mb
+      ((Data::Pressure.in_to_mb(@in)*100).round/100.0).should == @mb
     end
   
   end
@@ -73,7 +73,7 @@ describe "Pressure" do
   describe "updating" do
     
     before(:each) do
-      @pressure = Barometer::Pressure.new
+      @pressure = Data::Pressure.new
       @in = 21.31
       @mb = 721.64
     end
@@ -123,7 +123,7 @@ describe "Pressure" do
   describe "storing" do
     
     before(:each) do
-      @pressure = Barometer::Pressure.new
+      @pressure = Data::Pressure.new
       @in = 21.31
       @mb = 721.64
     end
@@ -165,7 +165,7 @@ describe "Pressure" do
   describe "retrieving" do
     
     before(:each) do
-      @pressure = Barometer::Pressure.new
+      @pressure = Data::Pressure.new
       @in = 21.31
       @mb = 721.64
     end
@@ -233,52 +233,52 @@ describe "Pressure" do
     before(:each) do
       @in = 21.31
       @mb = 721.64
-      @pressure_low = Barometer::Pressure.new
+      @pressure_low = Data::Pressure.new
       @pressure_low.mb = (@mb - 1.0)
-      @pressure_high = Barometer::Pressure.new
+      @pressure_high = Data::Pressure.new
       @pressure_high.mb = (@mb + 1.0)
-      @pressure = Barometer::Pressure.new
+      @pressure = Data::Pressure.new
       @pressure.mb = @mb
-      @pressure_same = Barometer::Pressure.new
+      @pressure_same = Data::Pressure.new
       @pressure_same.mb = @mb
     end
     
     it "defines <=>" do
-      Barometer::Pressure.method_defined?("<=>").should be_true
+      Data::Pressure.method_defined?("<=>").should be_true
       (@pressure_low <=> @pressure_high).should == -1
       (@pressure_high <=> @pressure_low).should == 1
       (@pressure <=> @pressure_same).should == 0
     end
     
     it "defines <" do
-      Barometer::Pressure.method_defined?("<").should be_true
+      Data::Pressure.method_defined?("<").should be_true
       @pressure_low.should < @pressure_high
       @pressure_high.should_not < @pressure_low
       @pressure.should_not < @pressure_same
     end
     
     it "defines >" do
-      Barometer::Pressure.method_defined?(">").should be_true
+      Data::Pressure.method_defined?(">").should be_true
       @pressure_low.should_not > @pressure_high
       @pressure_high.should > @pressure_low
       @pressure.should_not > @pressure_same
     end
     
     it "defines ==" do
-      Barometer::Pressure.method_defined?("==").should be_true
+      Data::Pressure.method_defined?("==").should be_true
       @pressure_low.should_not == @pressure_high
       @pressure.should == @pressure_same
     end
     
     it "defines <=" do
-      Barometer::Pressure.method_defined?("<=").should be_true
+      Data::Pressure.method_defined?("<=").should be_true
       @pressure_low.should <= @pressure_high
       @pressure_high.should_not <= @pressure_low
       @pressure.should <= @pressure_same
     end
     
     it "defines >=" do
-      Barometer::Pressure.method_defined?(">=").should be_true
+      Data::Pressure.method_defined?(">=").should be_true
       @pressure_low.should_not >= @pressure_high
       @pressure_high.should >= @pressure_low
       @pressure.should >= @pressure_same
@@ -291,7 +291,7 @@ describe "Pressure" do
     before(:each) do
       @in = 21.31
       @mb = 721.64
-      @pressure = Barometer::Pressure.new
+      @pressure = Data::Pressure.new
       @pressure.mb = @mb
     end
     
@@ -315,20 +315,20 @@ describe "Pressure" do
     
     it "returns just the integer value with units" do
       @pressure.metric?.should be_true
-      @pressure.to_s.should == "#{@mb.to_i} #{Barometer::Pressure::METRIC_UNITS}"
+      @pressure.to_s.should == "#{@mb.to_i} #{Data::Pressure::METRIC_UNITS}"
 
       @pressure.imperial!
       @pressure.metric?.should be_false
-      @pressure.to_s.should == "#{@in.to_i} #{Barometer::Pressure::IMPERIAL_UNITS}"
+      @pressure.to_s.should == "#{@in.to_i} #{Data::Pressure::IMPERIAL_UNITS}"
     end
     
     it "returns just the units" do
       @pressure.metric?.should be_true
-      @pressure.units.should == Barometer::Pressure::METRIC_UNITS
+      @pressure.units.should == Data::Pressure::METRIC_UNITS
 
       @pressure.imperial!
       @pressure.metric?.should be_false
-      @pressure.units.should == Barometer::Pressure::IMPERIAL_UNITS
+      @pressure.units.should == Data::Pressure::IMPERIAL_UNITS
     end
 
   end

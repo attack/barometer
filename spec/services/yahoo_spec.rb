@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Yahoo" do
   
   before(:each) do
-    @accepted_formats = [:zipcode]
+    @accepted_formats = [:zipcode, :weather_id]
     #@base_uri = "http://google.com"
   end
   
@@ -12,10 +12,6 @@ describe "Yahoo" do
     it "defines accepted_formats" do
       Barometer::Yahoo.accepted_formats.should == @accepted_formats
     end
-    
-    # it "defines base_uri" do
-    #   Barometer::Google.base_uri.should == @base_uri
-    # end
     
     it "defines get_all" do
       Barometer::Yahoo.respond_to?("get_all").should be_true
@@ -36,7 +32,7 @@ describe "Yahoo" do
     
     it "returns Barometer::CurrentMeasurement object" do
       current = Barometer::Yahoo.build_current({})
-      current.is_a?(Barometer::CurrentMeasurement).should be_true
+      current.is_a?(Data::CurrentMeasurement).should be_true
     end
     
   end
@@ -71,42 +67,29 @@ describe "Yahoo" do
     end
     
     it "requires Barometer::Geo input" do
-      geo = Barometer::Geo.new({})
+      geo = Data::Geo.new({})
       lambda { Barometer::Yahoo.build_location({}, {}) }.should raise_error(ArgumentError)
       lambda { Barometer::Yahoo.build_location({}, geo) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::Location object" do
       location = Barometer::Yahoo.build_location({})
-      location.is_a?(Barometer::Location).should be_true
+      location.is_a?(Data::Location).should be_true
     end
     
   end
 
-  # describe "building the timezone" do
-  #   
-  #   it "defines the build method" do
-  #     Barometer::Yahoo.respond_to?("build_timezone").should be_true
-  #   end
-  #   
-  #   it "requires Hash input" do
-  #     lambda { Barometer::Yahoo.build_timezone }.should raise_error(ArgumentError)
-  #     lambda { Barometer::Yahoo.build_timezone({}) }.should_not raise_error(ArgumentError)
-  #   end
-  #   
-  # end
-  
   describe "when measuring" do
   
     before(:each) do
       @query = Barometer::Query.new("90210")
       @query.preferred = "90210"
-      @measurement = Barometer::Measurement.new
+      @measurement = Data::Measurement.new
       
       FakeWeb.register_uri(:get, 
         "http://weather.yahooapis.com:80/forecastrss?u=c&p=#{CGI.escape(@query.preferred)}",
         :string => File.read(File.join(File.dirname(__FILE__),  
-          'fixtures/services/yahoo',
+          '../fixtures/services/yahoo',
           '90210.xml')
         )
       )  
@@ -121,7 +104,7 @@ describe "Yahoo" do
       it "requires a Barometer::Measurement object" do
         lambda { Barometer::Yahoo._measure(nil, @query) }.should raise_error(ArgumentError)
         lambda { Barometer::Yahoo._measure("invlaid", @query) }.should raise_error(ArgumentError)
-  
+
         lambda { Barometer::Yahoo._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
       end
   
@@ -134,8 +117,8 @@ describe "Yahoo" do
       
       it "returns a Barometer::Measurement object" do
         result = Barometer::Yahoo._measure(@measurement, @query)
-        result.is_a?(Barometer::Measurement).should be_true
-        result.current.is_a?(Barometer::CurrentMeasurement).should be_true
+        result.is_a?(Data::Measurement).should be_true
+        result.current.is_a?(Data::CurrentMeasurement).should be_true
         result.forecast.is_a?(Array).should be_true
         
         result.source.should == :yahoo
@@ -148,13 +131,13 @@ describe "Yahoo" do
   describe "when answering the simple questions," do
     
     before(:each) do
-      @measurement = Barometer::Measurement.new
+      @measurement = Data::Measurement.new
     end
     
     describe "currently_wet_by_icon?" do
       
       before(:each) do
-        @measurement.current = Barometer::CurrentMeasurement.new
+        @measurement.current = Data::CurrentMeasurement.new
       end
 
       it "returns true if matching icon code" do
@@ -174,7 +157,7 @@ describe "Yahoo" do
     describe "forecasted_wet_by_icon?" do
       
       before(:each) do
-        @measurement.forecast = [Barometer::ForecastMeasurement.new]
+        @measurement.forecast = [Data::ForecastMeasurement.new]
         @measurement.forecast.first.date = Date.today
         @measurement.forecast.size.should == 1
       end
@@ -196,7 +179,7 @@ describe "Yahoo" do
     describe "currently_sunny_by_icon?" do
       
       before(:each) do
-        @measurement.current = Barometer::CurrentMeasurement.new
+        @measurement.current = Data::CurrentMeasurement.new
       end
 
       it "returns true if matching icon code" do
@@ -216,7 +199,7 @@ describe "Yahoo" do
     describe "forecasted_sunny_by_icon?" do
       
       before(:each) do
-        @measurement.forecast = [Barometer::ForecastMeasurement.new]
+        @measurement.forecast = [Data::ForecastMeasurement.new]
         @measurement.forecast.first.date = Date.today
         @measurement.forecast.size.should == 1
       end
@@ -242,12 +225,12 @@ describe "Yahoo" do
     before(:each) do
       @query = Barometer::Query.new("90210")
       @query.preferred = "90210"
-      @measurement = Barometer::Measurement.new
+      @measurement = Data::Measurement.new
 
       FakeWeb.register_uri(:get, 
         "http://weather.yahooapis.com:80/forecastrss?u=c&p=#{CGI.escape(@query.preferred)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures/services/yahoo',
+          '../fixtures/services/yahoo',
           '90210.xml')
         )
       )  
@@ -257,12 +240,14 @@ describe "Yahoo" do
     it "should correctly build the data" do
       result = Barometer::Yahoo._measure(@measurement, @query)
       
-      sun_rise = Barometer::Zone.merge("6:09 am", "Sun, 26 Apr 2009 10:51 am PDT", "PDT")
-      sun_set = Barometer::Zone.merge("7:34 pm", "Sun, 26 Apr 2009 10:51 am PDT", "PDT")
+      #sun_rise = Barometer::Zone.merge("6:09 am", "Sun, 26 Apr 2009 10:51 am PDT", "PDT")
+      #sun_set = Barometer::Zone.merge("7:34 pm", "Sun, 26 Apr 2009 10:51 am PDT", "PDT")
       
       # build current
-      @measurement.current.sun.rise.should == sun_rise
-      @measurement.current.sun.set.should == sun_set
+      #@measurement.current.sun.rise.should == sun_rise
+      #@measurement.current.sun.set.should == sun_set
+      @measurement.current.sun.rise.to_s.should == "06:09 am"
+      @measurement.current.sun.set.to_s.should == "07:34 pm"
       
       # builds location
       @measurement.location.city.should == "Beverly Hills"
@@ -272,13 +257,13 @@ describe "Yahoo" do
       
       @measurement.forecast[0].condition.should == "Mostly Sunny"
       @measurement.forecast[0].icon.should == "34"
-      @measurement.forecast[0].sun.rise.should == sun_rise + (60*60*24*0)
-      @measurement.forecast[0].sun.set.should == sun_set + (60*60*24*0)
+      @measurement.forecast[0].sun.rise.should  == "06:09 am"
+      @measurement.forecast[0].sun.set.should == "07:34 pm"
       
       @measurement.forecast[1].condition.should == "Cloudy"
       @measurement.forecast[1].icon.should == "26"
-      @measurement.forecast[1].sun.rise.should == sun_rise + (60*60*24*1)
-      @measurement.forecast[1].sun.set.should == sun_set + (60*60*24*1)
+      @measurement.forecast[1].sun.rise.should == "06:09 am"
+      @measurement.forecast[1].sun.set.should == "07:34 pm"
       
     end
     # <yweather:location city="Beverly Hills" region="CA" country="US"/>

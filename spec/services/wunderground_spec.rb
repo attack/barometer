@@ -36,7 +36,7 @@ describe "Wunderground" do
     
     it "returns Barometer::CurrentMeasurement object" do
       current = Barometer::Wunderground.build_current({})
-      current.is_a?(Barometer::CurrentMeasurement).should be_true
+      current.is_a?(Data::CurrentMeasurement).should be_true
     end
     
   end
@@ -72,7 +72,7 @@ describe "Wunderground" do
     
     it "returns Barometer::Location object" do
       station = Barometer::Wunderground.build_station({})
-      station.is_a?(Barometer::Location).should be_true
+      station.is_a?(Data::Location).should be_true
     end
     
   end
@@ -90,7 +90,7 @@ describe "Wunderground" do
     
     it "returns Barometer::Location object" do
       location = Barometer::Wunderground.build_location({})
-      location.is_a?(Barometer::Location).should be_true
+      location.is_a?(Data::Location).should be_true
     end
     
   end
@@ -111,7 +111,7 @@ describe "Wunderground" do
   describe "building the sun data" do
        
     before(:each) do
-      @zone = Barometer::Zone.new("Europe/Paris")
+      @zone = Data::Zone.new("Europe/Paris")
     end
 
     it "defines the build method" do
@@ -131,7 +131,7 @@ describe "Wunderground" do
     
     it "returns Barometer::Sun object" do
       sun = Barometer::Wunderground.build_sun({},@zone)
-      sun.is_a?(Barometer::Sun).should be_true
+      sun.is_a?(Data::Sun).should be_true
     end
     
   end
@@ -141,19 +141,19 @@ describe "Wunderground" do
     before(:each) do
       @query = Barometer::Query.new("Calgary,AB")
       @query.preferred = "Calgary,AB"
-      @measurement = Barometer::Measurement.new
+      @measurement = Data::Measurement.new
       
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query.preferred)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures/services/wunderground',
+          '../fixtures/services/wunderground',
           'current_calgary_ab.xml')
         )
       )  
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query.preferred)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures/services/wunderground',
+          '../fixtures/services/wunderground',
           'forecast_calgary_ab.xml')
         )
       )
@@ -181,8 +181,8 @@ describe "Wunderground" do
       
       it "returns a Barometer::Measurement object" do
         result = Barometer::Wunderground._measure(@measurement, @query)
-        result.is_a?(Barometer::Measurement).should be_true
-        result.current.is_a?(Barometer::CurrentMeasurement).should be_true
+        result.is_a?(Data::Measurement).should be_true
+        result.current.is_a?(Data::CurrentMeasurement).should be_true
         result.forecast.is_a?(Array).should be_true
         
         result.source.should == :wunderground
@@ -195,13 +195,13 @@ describe "Wunderground" do
   describe "when answering the simple questions," do
     
     before(:each) do
-      @measurement = Barometer::Measurement.new
+      @measurement = Data::Measurement.new
     end
     
     describe "currently_wet_by_icon?" do
       
       before(:each) do
-        @measurement.current = Barometer::CurrentMeasurement.new
+        @measurement.current = Data::CurrentMeasurement.new
       end
 
       it "returns true if matching icon code" do
@@ -221,7 +221,7 @@ describe "Wunderground" do
     describe "forecasted_wet_by_icon?" do
       
       before(:each) do
-        @measurement.forecast = [Barometer::ForecastMeasurement.new]
+        @measurement.forecast = [Data::ForecastMeasurement.new]
         @measurement.forecast.first.date = Date.today
         @measurement.forecast.size.should == 1
       end
@@ -243,7 +243,7 @@ describe "Wunderground" do
     describe "currently_sunny_by_icon?" do
       
       before(:each) do
-        @measurement.current = Barometer::CurrentMeasurement.new
+        @measurement.current = Data::CurrentMeasurement.new
       end
 
       it "returns true if matching icon code" do
@@ -263,7 +263,7 @@ describe "Wunderground" do
     describe "forecasted_sunny_by_icon?" do
       
       before(:each) do
-        @measurement.forecast = [Barometer::ForecastMeasurement.new]
+        @measurement.forecast = [Data::ForecastMeasurement.new]
         @measurement.forecast.first.date = Date.today
         @measurement.forecast.size.should == 1
       end
@@ -289,19 +289,19 @@ describe "Wunderground" do
     before(:each) do
       @query = Barometer::Query.new("Calgary,AB")
       @query.preferred = "Calgary,AB"
-      @measurement = Barometer::Measurement.new
+      @measurement = Data::Measurement.new
       
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query.preferred)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures/services/wunderground',
+          '../fixtures/services/wunderground',
           'current_calgary_ab.xml')
         )
       )  
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query.preferred)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures/services/wunderground',
+          '../fixtures/services/wunderground',
           'forecast_calgary_ab.xml')
         )
       )
@@ -314,15 +314,17 @@ describe "Wunderground" do
       # build timezone
       @measurement.timezone.timezone.should == "America/Edmonton"
       
-      time = Time.local(2009, 4, 23, 18, 00, 0)
-      rise = Time.local(time.year, time.month, time.day, 6, 23)
-      set = Time.local(time.year, time.month, time.day, 20, 45)
-      sun_rise = @measurement.timezone.tz.local_to_utc(rise)
-      sun_set = @measurement.timezone.tz.local_to_utc(set)
+      # time = Time.local(2009, 4, 23, 18, 00, 0)
+      # rise = Time.local(time.year, time.month, time.day, 6, 23)
+      # set = Time.local(time.year, time.month, time.day, 20, 45)
+      # sun_rise = @measurement.timezone.tz.local_to_utc(rise)
+      # sun_set = @measurement.timezone.tz.local_to_utc(set)
       
       # build current
-      @measurement.current.sun.rise.should == sun_rise
-      @measurement.current.sun.set.should == sun_set
+      #@measurement.current.sun.rise.should == sun_rise
+      #@measurement.current.sun.set.should == sun_set
+      @measurement.current.sun.rise.to_s.should == "06:23 am"
+      @measurement.current.sun.set.to_s.should == "08:45 pm"
     end
     
   end

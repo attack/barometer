@@ -5,17 +5,17 @@ describe "Speed" do
   describe "when initialized" do
     
     it "defines METRIC_UNITS" do
-      Barometer::Speed.const_defined?("METRIC_UNITS").should be_true
-      Barometer::Speed::METRIC_UNITS.should == "kph"
+      Data::Speed.const_defined?("METRIC_UNITS").should be_true
+      Data::Speed::METRIC_UNITS.should == "kph"
     end
     
     it "defines IMPERIAL_UNITS" do
-      Barometer::Speed.const_defined?("IMPERIAL_UNITS").should be_true
-      Barometer::Speed::IMPERIAL_UNITS.should == "mph"
+      Data::Speed.const_defined?("IMPERIAL_UNITS").should be_true
+      Data::Speed::IMPERIAL_UNITS.should == "mph"
     end
     
     before(:each) do
-      @speed = Barometer::Speed.new
+      @speed = Data::Speed.new
     end
     
     it "responds to kilometers" do
@@ -60,21 +60,21 @@ describe "Speed" do
     end
     
     it "requires a value, that is either Integer or Float" do
-      Barometer::Speed.km_to_m(nil).should be_nil
-      Barometer::Speed.m_to_km(nil).should be_nil
+      Data::Speed.km_to_m(nil).should be_nil
+      Data::Speed.m_to_km(nil).should be_nil
       
       not_float_or_integer = "string"
-      Barometer::Speed.km_to_m(not_float_or_integer).should be_nil
-      Barometer::Speed.m_to_km(not_float_or_integer).should be_nil
+      Data::Speed.km_to_m(not_float_or_integer).should be_nil
+      Data::Speed.m_to_km(not_float_or_integer).should be_nil
     end
     
     it "converts km/h to mph" do
       # to get equality, we need to tone down the precision
-      ((Barometer::Speed.km_to_m(@km)*10).round/10.0).should == @m
+      ((Data::Speed.km_to_m(@km)*10).round/10.0).should == @m
     end
     
     it "converts mph to km/h" do
-      Barometer::Speed.m_to_km(@m).should == @km
+      Data::Speed.m_to_km(@m).should == @km
     end
   
   end
@@ -82,7 +82,7 @@ describe "Speed" do
   describe "updating" do
     
     before(:each) do
-      @speed = Barometer::Speed.new
+      @speed = Data::Speed.new
       @m = 10.0
       @km = 16.09
     end
@@ -132,7 +132,7 @@ describe "Speed" do
   describe "storing" do
     
     before(:each) do
-      @speed = Barometer::Speed.new
+      @speed = Data::Speed.new
       @m = 10.0
       @km = 16.09
     end
@@ -202,7 +202,7 @@ describe "Speed" do
   describe "retrieving" do
     
     before(:each) do
-      @speed = Barometer::Speed.new
+      @speed = Data::Speed.new
       @m = 10.0
       @km = 16.09
     end
@@ -271,52 +271,52 @@ describe "Speed" do
     before(:each) do
       @m = 10.0
       @km = 16.09
-      @speed_low = Barometer::Speed.new
+      @speed_low = Data::Speed.new
       @speed_low.kph = (@km - 1.0)
-      @speed_high = Barometer::Speed.new
+      @speed_high = Data::Speed.new
       @speed_high.kph = (@km + 1.0)
-      @speed = Barometer::Speed.new
+      @speed = Data::Speed.new
       @speed.kph = @km
-      @speed_same = Barometer::Speed.new
+      @speed_same = Data::Speed.new
       @speed_same.kph = @km
     end
     
     it "defines <=>" do
-      Barometer::Speed.method_defined?("<=>").should be_true
+      Data::Speed.method_defined?("<=>").should be_true
       (@speed_low <=> @speed_high).should == -1
       (@speed_high <=> @speed_low).should == 1
       (@speed <=> @speed_same).should == 0
     end
     
     it "defines <" do
-      Barometer::Speed.method_defined?("<").should be_true
+      Data::Speed.method_defined?("<").should be_true
       @speed_low.should < @speed_high
       @speed_high.should_not < @speed_low
       @speed.should_not < @speed_same
     end
     
     it "defines >" do
-      Barometer::Speed.method_defined?(">").should be_true
+      Data::Speed.method_defined?(">").should be_true
       @speed_low.should_not > @speed_high
       @speed_high.should > @speed_low
       @speed.should_not > @speed_same
     end
     
     it "defines ==" do
-      Barometer::Speed.method_defined?("==").should be_true
+      Data::Speed.method_defined?("==").should be_true
       @speed_low.should_not == @speed_high
       @speed.should == @speed_same
     end
     
     it "defines <=" do
-      Barometer::Speed.method_defined?("<=").should be_true
+      Data::Speed.method_defined?("<=").should be_true
       @speed_low.should <= @speed_high
       @speed_high.should_not <= @speed_low
       @speed.should <= @speed_same
     end
     
     it "defines >=" do
-      Barometer::Speed.method_defined?(">=").should be_true
+      Data::Speed.method_defined?(">=").should be_true
       @speed_low.should_not >= @speed_high
       @speed_high.should >= @speed_low
       @speed.should >= @speed_same
@@ -328,8 +328,8 @@ describe "Speed" do
     
     before(:each) do
       @m = 10.51
-      @km = ((Barometer::Speed.m_to_km(@m)*100).round/100.0)
-      @speed = Barometer::Speed.new
+      @km = ((Data::Speed.m_to_km(@m)*100).round/100.0)
+      @speed = Data::Speed.new
       @speed.mph = @m
     end
     
@@ -353,20 +353,20 @@ describe "Speed" do
     
     it "returns just the integer value with units" do
       @speed.metric?.should be_true
-      @speed.to_s.should == "#{@km.to_i} #{Barometer::Speed::METRIC_UNITS}"
+      @speed.to_s.should == "#{@km.to_i} #{Data::Speed::METRIC_UNITS}"
 
       @speed.imperial!
       @speed.metric?.should be_false
-      @speed.to_s.should == "#{@m.to_i} #{Barometer::Speed::IMPERIAL_UNITS}"
+      @speed.to_s.should == "#{@m.to_i} #{Data::Speed::IMPERIAL_UNITS}"
     end
     
     it "returns just the units" do
       @speed.metric?.should be_true
-      @speed.units.should == Barometer::Speed::METRIC_UNITS
+      @speed.units.should == Data::Speed::METRIC_UNITS
 
       @speed.imperial!
       @speed.metric?.should be_false
-      @speed.units.should == Barometer::Speed::IMPERIAL_UNITS
+      @speed.units.should == Data::Speed::IMPERIAL_UNITS
     end
 
   end

@@ -5,7 +5,7 @@ describe "Location" do
   describe "when initialized" do
     
     before(:each) do
-      @location = Barometer::Location.new
+      @location = Data::Location.new
     end
     
     it "responds to id" do

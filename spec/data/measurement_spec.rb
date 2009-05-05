@@ -5,7 +5,7 @@ describe "Measurement" do
   describe "when initialized" do
     
     before(:each) do
-      @measurement = Barometer::Measurement.new
+      @measurement = Data::Measurement.new
     end
     
     it "responds to source" do
@@ -14,13 +14,13 @@ describe "Measurement" do
     
     it "stores the source" do
       source = :wunderground
-      measurement = Barometer::Measurement.new(source)
+      measurement = Data::Measurement.new(source)
       measurement.source.should_not be_nil
       measurement.source.should == source
     end
     
-    it "responds to time" do
-      @measurement.time.should be_nil
+    it "responds to utc_time_stamp" do
+      @measurement.utc_time_stamp.should be_nil
     end
     
     it "responds to current" do
@@ -63,12 +63,20 @@ describe "Measurement" do
       @measurement.links.should == {}
     end
     
+    it "responds to measured_at" do
+      @measurement.measured_at.should be_nil
+    end
+    
+    # it "responds to measured_for" do
+    #   @measurement.links.should == {}
+    # end
+    
   end
   
   describe "when writing data" do
     
     before(:each) do
-      @measurement = Barometer::Measurement.new
+      @measurement = Data::Measurement.new
     end
     
     it "only accepts Symbol for source" do
@@ -81,23 +89,23 @@ describe "Measurement" do
       lambda { @measurement.source = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Time for time" do
+    it "only accepts Time for utc_time_stamp" do
       invalid_data = 1
       invalid_data.class.should_not == Time
-      lambda { @measurement.time = invalid_data }.should raise_error(ArgumentError)
+      lambda { @measurement.utc_time_stamp = invalid_data }.should raise_error(ArgumentError)
       
       valid_data = Time.now.utc
       valid_data.class.should == Time
-      lambda { @measurement.time = valid_data }.should_not raise_error(ArgumentError)
+      lambda { @measurement.utc_time_stamp = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Barometer::CurrentMeasurement for current" do
+    it "only accepts Data::CurrentMeasurement for current" do
       invalid_data = "invalid"
-      invalid_data.class.should_not == Barometer::CurrentMeasurement
+      invalid_data.class.should_not == Data::CurrentMeasurement
       lambda { @measurement.current = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Barometer::CurrentMeasurement.new
-      valid_data.class.should == Barometer::CurrentMeasurement
+      valid_data = Data::CurrentMeasurement.new
+      valid_data.class.should == Data::CurrentMeasurement
       lambda { @measurement.current = valid_data }.should_not raise_error(ArgumentError)
     end
     
@@ -111,33 +119,33 @@ describe "Measurement" do
       lambda { @measurement.forecast = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Barometer::Zone for timezone" do
+    it "only accepts Data::Zone for timezone" do
       invalid_data = 1
-      invalid_data.class.should_not == Barometer::Zone
+      invalid_data.class.should_not == Data::Zone
       lambda { @measurement.timezone = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Barometer::Zone.new("Europe/Paris")
-      valid_data.class.should == Barometer::Zone
+      valid_data = Data::Zone.new("Europe/Paris")
+      valid_data.class.should == Data::Zone
       lambda { @measurement.timezone = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Barometer::Location for station" do
+    it "only accepts Data::Location for station" do
       invalid_data = 1
-      invalid_data.class.should_not == Barometer::Location
+      invalid_data.class.should_not == Data::Location
       lambda { @measurement.station = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Barometer::Location.new
-      valid_data.class.should == Barometer::Location
+      valid_data = Data::Location.new
+      valid_data.class.should == Data::Location
       lambda { @measurement.station = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Barometer::Location for location" do
+    it "only accepts Data::Location for location" do
       invalid_data = 1
-      invalid_data.class.should_not == Barometer::Location
+      invalid_data.class.should_not == Data::Location
       lambda { @measurement.location = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Barometer::Location.new
-      valid_data.class.should == Barometer::Location
+      valid_data = Data::Location.new
+      valid_data.class.should == Data::Location
       lambda { @measurement.location = valid_data }.should_not raise_error(ArgumentError)
     end
     
@@ -161,32 +169,42 @@ describe "Measurement" do
       lambda { @measurement.links = valid_data }.should_not raise_error(ArgumentError)
     end
     
+    it "only accepts Data::LocalTime for measured_at" do
+      invalid_data = 1
+      invalid_data.class.should_not == Data::LocalTime
+      lambda { @measurement.measured_at = invalid_data }.should raise_error(ArgumentError)
+      
+      valid_data = Data::LocalTime.new
+      valid_data.class.should == Data::LocalTime
+      lambda { @measurement.measured_at = valid_data }.should_not raise_error(ArgumentError)
+    end
+    
   end
   
   describe "and the helpers" do
     
     before(:each) do
-      @measurement = Barometer::Measurement.new
+      @measurement = Data::Measurement.new
     end
     
     it "changes state to successful (if successful)" do
       @measurement.success.should be_false
       @measurement.success!
-      @measurement.time.should be_nil
+      @measurement.utc_time_stamp.should be_nil
       @measurement.current.should be_nil
       @measurement.success.should be_false
       
-      @measurement.current = Barometer::CurrentMeasurement.new
-      @measurement.current.temperature = Barometer::Temperature.new
+      @measurement.current = Data::CurrentMeasurement.new
+      @measurement.current.temperature = Data::Temperature.new
       @measurement.current.temperature.c = 10
-      @measurement.time.should_not be_nil
+      @measurement.utc_time_stamp.should_not be_nil
       @measurement.success!
       @measurement.success.should be_true
     end
     
     it "returns successful state" do
-      @measurement.current = Barometer::CurrentMeasurement.new
-      @measurement.current.temperature = Barometer::Temperature.new
+      @measurement.current = Data::CurrentMeasurement.new
+      @measurement.current.temperature = Data::Temperature.new
       @measurement.current.temperature.c = 10
       @measurement.success!
       @measurement.success.should be_true
@@ -198,30 +216,46 @@ describe "Measurement" do
       @measurement.success?.should be_false
     end
     
-    it "stamps the time" do
-      @measurement.time.should be_nil
+    it "stamps the utc_time_stamp" do
+      @measurement.utc_time_stamp.should be_nil
       @measurement.stamp!
-      @measurement.time.should_not be_nil
+      @measurement.utc_time_stamp.should_not be_nil
     end
     
     it "indicates if current" do
-      @measurement.time.should be_nil
+      @measurement.current.should be_nil
       @measurement.current?.should be_false
-      @measurement.stamp!
-      @measurement.time.should_not be_nil
-      @measurement.current?.should be_true
       
-      @measurement.time -= (60*60*3)
-      @measurement.current?.should be_true
-      
-      @measurement.time -= (60*60*5)
+      @measurement.current = Data::CurrentMeasurement.new
+      @measurement.current.current_at.should be_nil
       @measurement.current?.should be_false
+        
+      @measurement.current.current_at = Data::LocalTime.new(9,0,0)
+      @measurement.current?.should be_true
+      @measurement.current?("9:00 am").should be_true
+      
+      
     end
+      
+    
+    # it "indicates if current" do
+    #   #@measurement.time.should be_nil
+    #   @measurement.current?.should be_false
+    #   @measurement.stamp!
+    #   @measurement.time.should_not be_nil
+    #   @measurement.current?.should be_true
+    #   
+    #   @measurement.time -= (60*60*3)
+    #   @measurement.current?.should be_true
+    #   
+    #   @measurement.time -= (60*60*5)
+    #   @measurement.current?.should be_false
+    # end
     
     describe "changing units" do
 
       before(:each) do
-        @measurement = Barometer::Measurement.new
+        @measurement = Data::Measurement.new
       end
 
       it "indicates if metric?" do
@@ -252,13 +286,13 @@ describe "Measurement" do
   describe "when searching forecasts using 'for'" do
     
     before(:each) do
-      @measurement = Barometer::Measurement.new
+      @measurement = Data::Measurement.new
       
       # create a measurement object with a forecast array that includes
       # dates for 4 consecutive days starting with tommorrow
       @measurement.forecast = []
       1.upto(4) do |i|
-        forecast_measurement = Barometer::ForecastMeasurement.new
+        forecast_measurement = Data::ForecastMeasurement.new
         forecast_measurement.date = Date.parse((Time.now + (i * 60 * 60 * 24)).to_s)
         @measurement.forecast << forecast_measurement
       end
@@ -296,6 +330,12 @@ describe "Measurement" do
       @measurement.for(@tommorrow).should == @measurement.forecast.first
     end
     
+    it "fidns the date using Data::LocalDateTime" do
+      tommorrow = Data::LocalDateTime.parse(@tommorrow.to_s)
+      tommorrow.class.should == Data::LocalDateTime
+      @measurement.for(tommorrow).should == @measurement.forecast.first
+    end
+    
     it "finds nothing when there is not a match" do
       yesterday = (Time.now - (60 * 60 * 24))
       yesterday.class.should == Time
@@ -307,7 +347,8 @@ describe "Measurement" do
   describe "when answering the simple questions," do
     
     before(:each) do
-      @measurement = Barometer::Measurement.new(:wunderground)
+      @measurement = Data::Measurement.new(:wunderground)
+      @now = Data::LocalDateTime.parse("2009-05-01 2:05 pm")
     end
     
     describe "windy?" do
@@ -319,8 +360,8 @@ describe "Measurement" do
       end
       
       it "requires time as a Time object" do
-        lambda { @measurement.windy?(1,"a") }.should raise_error(ArgumentError)
-        lambda { @measurement.windy?(1,Time.now.utc) }.should_not raise_error(ArgumentError)
+        #lambda { @measurement.windy?(1,false) }.should raise_error(ArgumentError)
+        lambda { @measurement.windy?(1,@now) }.should_not raise_error(ArgumentError)
       end
 
       it "returns true if a source returns true" do
@@ -348,8 +389,8 @@ describe "Measurement" do
       end
       
       it "requires time as a Time object" do
-        lambda { @measurement.wet?(1,"a") }.should raise_error(ArgumentError)
-        lambda { @measurement.wet?(1,Time.now.utc) }.should_not raise_error(ArgumentError)
+        #lambda { @measurement.wet?(1,"a") }.should raise_error(ArgumentError)
+        lambda { @measurement.wet?(1,@now) }.should_not raise_error(ArgumentError)
       end
 
       it "returns true if a source returns true" do
@@ -371,8 +412,8 @@ describe "Measurement" do
     describe "day?" do
       
       it "requires time as a Time object" do
-        lambda { @measurement.day?("a") }.should raise_error(ArgumentError)
-        lambda { @measurement.day?(Time.now.utc) }.should_not raise_error(ArgumentError)
+        #lambda { @measurement.day?("a") }.should raise_error(ArgumentError)
+        lambda { @measurement.day?(@now) }.should_not raise_error(ArgumentError)
       end
 
       it "returns true if a source returns true" do
@@ -394,8 +435,8 @@ describe "Measurement" do
     describe "sunny?" do
       
       it "requires time as a Time object" do
-        lambda { @measurement.sunny?("a") }.should raise_error(ArgumentError)
-        lambda { @measurement.sunny?(Time.now.utc) }.should_not raise_error(ArgumentError)
+        #lambda { @measurement.sunny?("a") }.should raise_error(ArgumentError)
+        lambda { @measurement.sunny?(@now) }.should_not raise_error(ArgumentError)
       end
 
       it "returns true if a source returns true" do
