@@ -66,27 +66,6 @@ This information doesn't mean that much if it can't be converted to times
 that don't correspond to the applicable timezone.
 Tzinfo handles this time zone manipulation.
 
-== graticule (very soft dependency)
-
-Why? Barometer returns the weather for a given location.  Most weather service
-APIs are somewhat restricted on the query format they receive.  To bridge
-this gap and allow for maximum flexibility on the 'barometer' query format,
-the query will be geo-coded using the Google geocoding service, if required.
-Graticule can provide this geocoding interface.
-
-Using Graticule requires a free Google API key for geocoding.  It is possible
-to use barometer without geocoding, though your query format will be
-limited to that of the weather service API.
-
-ALTERNATE: If you supply a Google API key but don't install the Graticule gem,
-HTTParty will be used instead to provide the same geocoding.  Basically
-Graticule is only used if it exists.
-
-NOTE: you can force Barometer not to use Graticule, even if you have it installed
-using the following:
-
-  Barometer.skip_graticule = true
-
 = usage
 
 You can use barometer right out of the box, as it is configured to use one

@@ -13,10 +13,6 @@ module Barometer
   def self.google_geocode_key; @@google_geocode_key; end;
   def self.google_geocode_key=(key); @@google_geocode_key = key; end;
   
-  @@skip_graticule = false
-  def self.skip_graticule; @@skip_graticule; end;
-  def self.skip_graticule=(value); @@skip_graticule = value; end;
-  
   # sometimes a query is used as is and never gets geocoded (ie zipcode)
   # often, it is useful have queries geocoded to know where in the
   # world that query points to.  you can force the geocoding of

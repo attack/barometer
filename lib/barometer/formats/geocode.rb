@@ -50,27 +50,7 @@ module Barometer
     end
     
     def self.geocode(query, country_code=nil)
-      use_graticule = false
-      unless Barometer::skip_graticule
-        begin
-          require 'rubygems'
-          require 'graticule'
-          $:.unshift(File.dirname(__FILE__))
-          # load some changes to Graticule
-          # TODO: attempt to get changes into Graticule gem
-          require 'extensions/graticule'
-          use_graticule = true
-        rescue LoadError
-          # do nothing, we will use HTTParty
-        end
-      end
-
-      if use_graticule
-        geo = _geocode_graticule(query, country_code)
-      else
-        geo = _geocode_httparty(query, country_code)
-      end
-      geo
+      _geocode_httparty(query, country_code)
     end
 
     private
@@ -79,13 +59,6 @@ module Barometer
       !Barometer.google_geocode_key.nil?
     end
     
-    def self._geocode_graticule(query, country_code=nil)
-      return nil unless _has_geocode_key?
-      geocoder = Graticule.service(:google).new(Barometer.google_geocode_key)
-      location = geocoder.locate(query, country_code)
-      geo = Data::Geo.new(location)
-    end
-
     def self._geocode_httparty(query, country_code=nil)
       return nil unless _has_geocode_key?
       location = Barometer::Query.get(

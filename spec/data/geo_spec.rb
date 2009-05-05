@@ -1,8 +1,5 @@
 require 'spec_helper'
 
-require 'rubygems'
-require 'graticule'
-
 describe "Data::Geo" do
   
   describe "when initialized" do
@@ -45,17 +42,13 @@ describe "Data::Geo" do
       @geo.coordinates.should == [@geo.latitude, @geo.longitude].join(',')
     end
     
-    it "requires Graticule::Location or Hash object" do
-      location = Graticule::Location.new
+    it "requires Hash object" do
       lambda { Data::Geo.new(1) }.should raise_error(ArgumentError)
-      Data::Geo.new(location)
-      lambda { Data::Geo.new(location) }.should_not raise_error(ArgumentError)
       lambda { Data::Geo.new(Hash.new) }.should_not raise_error(ArgumentError)
     end
     
     it "returns a Barometer::Geo object" do
-      location = Graticule::Location.new
-      geo = Data::Geo.new(location)
+      geo = Data::Geo.new(Hash.new)
       geo.is_a?(Data::Geo).should be_true
     end
     
@@ -67,24 +60,13 @@ describe "Data::Geo" do
       @geo = Data::Geo.new
     end
     
-    describe "from Graticule" do
-    
-      it "requires Graticule::Location object (or nil)" do
-        location = Graticule::Location.new
-        lambda { @geo.build_from_graticule(1) }.should raise_error(ArgumentError)
-        lambda { @geo.build_from_graticule }.should_not raise_error(ArgumentError)
-        lambda { @geo.build_from_graticule(location) }.should_not raise_error(ArgumentError)
-      end
-      
-    end
-    
     describe "from HTTParty" do
     
       it "accepts HTTParty::Response object" do
         location = Hash.new
-        lambda { @geo.build_from_httparty(1) }.should raise_error(ArgumentError)
-        lambda { @geo.build_from_httparty }.should_not raise_error(ArgumentError)
-        lambda { @geo.build_from_httparty(location) }.should_not raise_error(ArgumentError)
+        lambda { @geo.build_from_hash(1) }.should raise_error(ArgumentError)
+        lambda { @geo.build_from_hash }.should_not raise_error(ArgumentError)
+        lambda { @geo.build_from_hash(location) }.should_not raise_error(ArgumentError)
       end
       
     end

@@ -77,7 +77,6 @@ class App
     @options = OpenStruct.new
     @options.timeout = 15
     @options.geocode = false
-    @options.skip_graticule = false
     @options.metric = true
     @options.sources = [:wunderground]
     @options.verbode = false
@@ -121,7 +120,6 @@ class App
       opt.on('-t n', '--timeout n') {|n| @options.timeout = n }
       opt.on('-w', '--web')        { @options.web = true; ARGV.shift }
       opt.on('-g', '--geocode')    { @options.geocode = true }
-      opt.on('--skip')             { @options.skip_graticule = true }
       opt.on('-m', '--metric')     { @options.metric = true }
       opt.on('-i', '--imperial')   { @options.metric = false }
       opt.on('--no-wunderground')  { @options.sources = @options.sources.delete_if{|s| s == :wunderground} }
@@ -168,7 +166,6 @@ class App
         @options.sources << config_weather_dot_com
       end
       Barometer.config = { 1 => @options.sources }
-      Barometer.skip_graticule = @options.skip_graticule
       Barometer.timeout = @options.timeout
     end
     
