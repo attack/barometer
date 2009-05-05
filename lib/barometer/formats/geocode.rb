@@ -85,7 +85,7 @@ module Barometer
       return nil unless _has_geocode_key?
       geocoder = Graticule.service(:google).new(Barometer.google_geocode_key)
       location = geocoder.locate(query, country_code)
-      geo = Barometer::Geo.new(location)
+      geo = Data::Geo.new(location)
     end
 
     def self._geocode_httparty(query, country_code=nil)
@@ -102,7 +102,7 @@ module Barometer
         :timeout => Barometer.timeout
       )
       location = location['kml']['Response'] if location && location['kml']
-      location ? (geo = Barometer::Geo.new(location)) : nil
+      location ? (geo = Data::Geo.new(location)) : nil
     end
     
   end

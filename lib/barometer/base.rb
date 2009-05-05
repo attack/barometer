@@ -23,7 +23,7 @@ module Barometer
       level = 1
       until self.success?
         if sources = @@config[level]
-          _dig(sources, metric)
+          _dig(sources, nil, metric)
         else
           raise OutOfSources
         end
@@ -51,7 +51,7 @@ module Barometer
         _measure(data, config, metric)
       elsif data.is_a?(Array)
         data.each do |datum|
-          _dig(datum, config, metric)
+          _dig(datum, nil, metric)
         end
       elsif data.is_a?(Hash)
         data.each do |datum, config|
@@ -62,13 +62,13 @@ module Barometer
     
     # do that actual source measurement
     def _measure(datum, config=nil, metric=nil)
+      Barometer.source(datum.to_sym).keys = config[:keys] if (config && config[:keys])
       measurement = Barometer.source(datum.to_sym).measure(@query, metric)
       if config && config[:weight]
         measurement.weight = config[:weight]
       end
       @success = true if measurement.success?
       @weather.measurements << measurement
-      # do something with the config
     end
 
   end

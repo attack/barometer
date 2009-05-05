@@ -7,10 +7,10 @@ module Barometer
   # This is basically a data holding class for the forecasted weather
   # conditions.
   #
-  class ForecastMeasurement
+  class Data::ForecastMeasurement
     
     attr_reader :date, :icon, :condition
-    attr_reader :low, :high, :pop, :sun
+    attr_reader :low, :high, :pop, :wind, :humidity, :sun, :night
     
     def date=(date)
       raise ArgumentError unless date.is_a?(Date)
@@ -28,12 +28,12 @@ module Barometer
     end
     
     def high=(high)
-      raise ArgumentError unless high.is_a?(Barometer::Temperature)
+      raise ArgumentError unless high.is_a?(Data::Temperature)
       @high = high
     end
     
     def low=(low)
-      raise ArgumentError unless low.is_a?(Barometer::Temperature)
+      raise ArgumentError unless low.is_a?(Data::Temperature)
       @low = low
     end
     
@@ -42,9 +42,24 @@ module Barometer
       @pop = pop
     end
     
+    def wind=(wind)
+      raise ArgumentError unless wind.is_a?(Data::Speed)
+      @wind = wind
+    end
+    
+    def humidity=(humidity)
+      raise ArgumentError unless humidity.is_a?(Fixnum)
+      @humidity = humidity
+    end
+    
     def sun=(sun)
-      raise ArgumentError unless sun.is_a?(Barometer::Sun)
+      raise ArgumentError unless sun.is_a?(Data::Sun)
       @sun = sun
+    end
+    
+    def night=(night)
+      raise ArgumentError unless night.is_a?(Data::NightMeasurement)
+      @night = night
     end
     
     #

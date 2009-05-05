@@ -1,9 +1,25 @@
 == now
 
+- before 0.4.0
+- web demo must display night-measurements
+- web demo must pick up weather.com keys
+- Weather Service API key setting
+- finish LocalDateTime
+- make sure you can compare LocalTime to LocalDateTime in LocalTime class
+
+- ability to force timezone lookups (use geoname), then use this data
+ to do conversions
+
 - style the demo app
 - more drivers
 
 == future
 
 - Rdoc compatible documentation
-- Weather Service API key setting
+- add uv info to current
+- add moon info to current
+- weather.com simple_questions improve answers (use extra data)
+
+== bugs
+
+- yahoo crashes on "bora bora"

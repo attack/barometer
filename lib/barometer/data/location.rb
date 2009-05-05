@@ -6,7 +6,7 @@ module Barometer
   # gave the measurement data for a weather query, or the location
   # that was queried
   #
-  class Location
+  class Data::Location
     
     attr_accessor :id, :name, :city
     attr_accessor :state_name, :state_code, :country, :country_code, :zip_code

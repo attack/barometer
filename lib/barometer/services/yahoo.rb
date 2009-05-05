@@ -15,8 +15,6 @@ module Barometer
   # - sun rise/set: YES (today only)
   # - provides timezone: PARTIAL (just short code)
   # - requires TZInfo: NO
-  # NOTE: since this only supports US, the short code can be used
-  #       to convert times (until yahoo location id support is added)
   #
   # == resources
   # - API: http://developer.yahoo.com/weather/
@@ -28,7 +26,7 @@ module Barometer
   #
   # where query can be:
   # - zipcode (US)
-  # - Yahoo Location ID (International) - not currently supported
+  # - Yahoo! Location ID [actually weather.com id] (International)
   #
   # = Yahoo! terms of use
   # The feeds are provided free of charge for use by individuals and non-profit
@@ -43,14 +41,12 @@ module Barometer
   # distributing these feeds at any time for any reason.
   #
   # == notes
-  # - the Yahoo Location ID is a propreitary number (possibly shared with weather.com)
-  #   so this driver currently does not provide a way to get/use this number,
-  #   therefore International support is currently missing
+  # - the Yahoo! Location ID is a propreitary number (shared with weather.com)
   #
   class Yahoo < Service
     
     def self.accepted_formats
-      [:zipcode]
+      [:zipcode, :weather_id]
     end
     
     def self.source_name
@@ -66,14 +62,9 @@ module Barometer
       codes = (29..34).to_a + [36]
       codes.collect {|c| c.to_s}
     end
-    
-    # override, only currently supports US
-    def self.supports_country?(query=nil)
-      query && query.country_code && query.country_code.downcase == "us"
-    end
 
     def self._measure(measurement, query, metric=true)
-      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      raise ArgumentError unless measurement.is_a?(Data::Measurement)
       raise ArgumentError unless query.is_a?(Barometer::Query)
       measurement.source = self.source_name
       
@@ -100,42 +91,85 @@ module Barometer
       end
       # use todays sun data for all future days
       if measurement.forecast && sun
-        start_date = Date.parse(measurement.current.local_time)
         measurement.forecast.each do |forecast|
-          days_in_future = forecast.date - start_date
-          forecast.sun = Barometer::Sun.add_days!(sun,days_in_future.to_i)
+          forecast.sun = sun
         end
       end
+      
+# save the local time
+local_time = self.build_local_time(result)
+if local_time
+  measurement.measured_at = local_time
+  measurement.current.current_at = local_time
+end
       
       measurement
     end
     
+def self.build_local_time(data)
+  if data
+    if data['item']
+      # what time is it now?
+      now_utc = Time.now.utc
+      
+      # get published date
+      pub_date = data['item']['pubDate']
+      
+      # get the TIME ZONE CODE
+      zone_match = data['item']['pubDate'].match(/ ([A-Z]*)$/)
+      zone = zone_match[1] if zone_match
+      
+      # try converting pub_date to utc
+      pub_date_utc = Data::Zone.code_to_utc(Time.parse(pub_date), zone)
+      
+      # how far back was this?
+      data_age_in_seconds = now_utc - pub_date_utc
+      
+      # is this older then 2 hours
+      if (data_age_in_seconds < 0) || (data_age_in_seconds > (60 * 60 * 2))
+        # we may have converted the time wrong.
+        # if pub_date in the future, then?
+        # if pub_date too far back, then?
+        
+        # for now do nothing ... don't set measured_time
+        return nil
+      else
+        # everything seems fine
+        # convert now to the local time 
+        offset = Data::Zone.zone_to_offset(zone)
+        return Data::LocalTime.parse(now_utc + offset)
+      end
+      nil
+    end
+  end
+end
+    
     def self.build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
-      current = CurrentMeasurement.new
+      current = Data::CurrentMeasurement.new
       if data
         if data['item'] && data['item']['yweather:condition']
           condition_result = data['item']['yweather:condition']
-          current.local_time = condition_result['date']
+          current.updated_at = Data::LocalDateTime.parse(condition_result['date'])
           current.icon = condition_result['code']
           current.condition = condition_result['text']
-          current.temperature = Temperature.new(metric)
+          current.temperature = Data::Temperature.new(metric)
           current.temperature << condition_result['temp']
         end
         if data['yweather:atmosphere']
           atmosphere_result = data['yweather:atmosphere']
           current.humidity = atmosphere_result['humidity'].to_i
-          current.pressure = Pressure.new(metric)
+          current.pressure = Data::Pressure.new(metric)
           current.pressure << atmosphere_result['pressure']
-          current.visibility = Distance.new(metric)
+          current.visibility = Data::Distance.new(metric)
           current.visibility << atmosphere_result['visibility']
         end
         if data['yweather:wind']
           wind_result = data['yweather:wind']
-          current.wind = Speed.new(metric)
+          current.wind = Data::Speed.new(metric)
           current.wind << wind_result['speed']
           current.wind.degrees = wind_result['degrees'].to_f
-          current.wind_chill = Temperature.new(metric)
+          current.wind_chill = Data::Temperature.new(metric)
           current.wind_chill << wind_result['chill']
         end
       end
@@ -150,13 +184,13 @@ module Barometer
          forecast_result = data['item']['yweather:forecast']
          
         forecast_result.each do |forecast|
-          forecast_measurement = ForecastMeasurement.new
+          forecast_measurement = Data::ForecastMeasurement.new
           forecast_measurement.icon = forecast['code']
           forecast_measurement.date = Date.parse(forecast['date'])
           forecast_measurement.condition = forecast['text']
-          forecast_measurement.high = Temperature.new(metric)
+          forecast_measurement.high = Data::Temperature.new(metric)
           forecast_measurement.high << forecast['high'].to_f
-          forecast_measurement.low = Temperature.new(metric)
+          forecast_measurement.low = Data::Temperature.new(metric)
           forecast_measurement.low << forecast['low'].to_f
           forecasts << forecast_measurement
         end
@@ -166,8 +200,8 @@ module Barometer
     
     def self.build_location(data, geo=nil)
       raise ArgumentError unless data.is_a?(Hash)
-      raise ArgumentError unless (geo.nil? || geo.is_a?(Barometer::Geo))
-      location = Location.new
+      raise ArgumentError unless (geo.nil? || geo.is_a?(Data::Geo))
+      location = Data::Location.new
       # use the geocoded data if available, otherwise get data from result
       if geo
         location.city = geo.locality
@@ -192,25 +226,33 @@ module Barometer
     
     def self.build_sun(data)
       raise ArgumentError unless data.is_a?(Hash)
+      # sun = nil
+      # if data && data['yweather:astronomy'] && data['item']
+      #   # get the TIME ZONE CODE
+      #   zone_match = data['item']['pubDate'].match(/ ([A-Z]*)$/)
+      #   zone = zone_match[1] if zone_match
+      #   # get the sun rise and set
+      #   rise = Barometer::Zone.merge(
+      #     data['yweather:astronomy']['sunrise'],
+      #     data['item']['pubDate'],
+      #     zone
+      #   )
+      #   set = Barometer::Zone.merge(
+      #     data['yweather:astronomy']['sunset'],
+      #     data['item']['pubDate'],
+      #     zone
+      #   )
+      #   sun = Data::Sun.new(rise, set)
+      # end
+      # sun || Data::Sun.new
+      
       sun = nil
       if data && data['yweather:astronomy'] && data['item']
-        # get the TIME ZONE CODE
-        zone_match = data['item']['pubDate'].match(/ ([A-Z]*)$/)
-        zone = zone_match[1] if zone_match
-        # get the sun rise and set
-        rise = Barometer::Zone.merge(
-          data['yweather:astronomy']['sunrise'],
-          data['item']['pubDate'],
-          zone
-        )
-        set = Barometer::Zone.merge(
-          data['yweather:astronomy']['sunset'],
-          data['item']['pubDate'],
-          zone
-        )
-        sun = Sun.new(rise, set)
+        local_rise = Data::LocalTime.parse(data['yweather:astronomy']['sunrise'])
+        local_set = Data::LocalTime.parse(data['yweather:astronomy']['sunset'])
+        sun = Data::Sun.new(local_rise, local_set)
       end
-      sun || Sun.new
+      sun || Data::Sun.new
     end
 
     # def self.build_timezone(data)
@@ -238,54 +280,3 @@ module Barometer
     
   end
 end
-
-# Condition Codes
-# 0   tornado
-# 1   tropical storm
-# 2   hurricane
-# 3   severe thunderstorms
-# 4   thunderstorms
-# 5   mixed rain and snow
-# 6   mixed rain and sleet
-# 7   mixed snow and sleet
-# 8   freezing drizzle
-# 9   drizzle
-# 10  freezing rain
-# 11  showers
-# 12  showers
-# 13  snow flurries
-# 14  light snow showers
-# 15  blowing snow
-# 16  snow
-# 17  hail
-# 18  sleet
-# 19  dust
-# 20  foggy
-# 21  haze
-# 22  smoky
-# 23  blustery
-# 24  windy
-# 25  cold
-# 26  cloudy
-# 27  mostly cloudy (night)
-# 28  mostly cloudy (day)
-# 29  partly cloudy (night)
-# 30  partly cloudy (day)
-# 31  clear (night)
-# 32  sunny
-# 33  fair (night)
-# 34  fair (day)
-# 35  mixed rain and hail
-# 36  hot
-# 37  isolated thunderstorms
-# 38  scattered thunderstorms
-# 39  scattered thunderstorms
-# 40  scattered showers
-# 41  heavy snow
-# 42  scattered snow showers
-# 43  heavy snow
-# 44  partly cloudy
-# 45  thundershowers
-# 46  snow showers
-# 47  isolated thundershowers
-# 3200  not available

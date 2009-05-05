@@ -1,5 +1,5 @@
 module Barometer
-  class Units
+  class Data::Units
     include Comparable
     
     attr_accessor :metric
@@ -21,7 +21,7 @@ module Barometer
       return unless value
       
       # these values can be treated like 'nil'
-      nil_values = ["NA"]
+      nil_values = ["NA", "N/A", ""]
     
       begin
         if value.is_a?(Array)

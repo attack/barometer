@@ -16,6 +16,9 @@ module Barometer
   # - sun rise/set: YES (today only)
   # - provides timezone: YES
   # - requires TZInfo: YES
+  # *NOTE: If accuarcy of times and converting, this service is the top choice.
+  #        They provide the full timezone name that is needed for the most
+  #        accurate time conversions.
   #
   # == resources
   # - API: http://wiki.wunderground.com/index.php/API_-_XML
@@ -59,7 +62,7 @@ module Barometer
     end
 
     def self._measure(measurement, query, metric=true)
-      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      raise ArgumentError unless measurement.is_a?(Data::Measurement)
       raise ArgumentError unless query.is_a?(Barometer::Query)
       measurement.source = self.source_name
       
@@ -97,48 +100,50 @@ module Barometer
       end
       # use todays sun data for all future days
       if measurement.forecast && sun
-        start_date = Date.parse(measurement.current.time)
         measurement.forecast.each do |forecast|
-          days_in_future = forecast.date - start_date
-          forecast.sun = Barometer::Sun.add_days!(sun,days_in_future.to_i)
+          forecast.sun = sun
         end
       end
       
+      # save the local time
+      local_time = measurement.timezone ? Data::LocalTime.parse(
+        measurement.timezone.utc_to_local(Time.now.utc)
+      ) : nil
+      measurement.measured_at = local_time
+      measurement.current.current_at = local_time
+      
       measurement
     end
-
+    
     def self.build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       
-      current = CurrentMeasurement.new
-      #current.time = Time.parse(current_result['observation_time_rfc822']) unless
-      #  current_result['observation_time_rfc822'].blank?
-      current.time = data['observation_time_rfc822']
-      current.local_time = data['observation_time']
+      current = Data::CurrentMeasurement.new
+      current.updated_at = Data::LocalDateTime.parse(data['observation_time'])
       current.humidity = data['relative_humidity'].to_i
       current.icon = data['icon'] if data['icon']
       
-      current.temperature = Temperature.new(metric)
+      current.temperature = Data::Temperature.new(metric)
       current.temperature << [data['temp_c'], data['temp_f']]
       
-      current.wind = Speed.new(metric)
+      current.wind = Data::Speed.new(metric)
       current.wind.mph = data['wind_mph'].to_f
       current.wind.degrees = data['wind_degrees'].to_i
       current.wind.direction = data['wind_dir']
       
-      current.pressure = Pressure.new(metric)
+      current.pressure = Data::Pressure.new(metric)
       current.pressure << [data['pressure_mb'], data['pressure_in']]
       
-      current.dew_point = Temperature.new(metric)
+      current.dew_point = Data::Temperature.new(metric)
       current.dew_point << [data['dewpoint_c'], data['dewpoint_f']]
       
-      current.heat_index = Temperature.new(metric)
+      current.heat_index = Data::Temperature.new(metric)
       current.heat_index << [data['heat_index_c'], data['heat_index_f']]
       
-      current.wind_chill = Temperature.new(metric)
+      current.wind_chill = Data::Temperature.new(metric)
       current.wind_chill << [data['windchill_c'], data['windchill_f']]
       
-      current.visibility = Distance.new(metric)
+      current.visibility = Data::Distance.new(metric)
       current.visibility << [data['visibility_km'], data['visibility_mi']]
       
       current
@@ -152,15 +157,15 @@ module Barometer
          data['simpleforecast']['forecastday']
          
         data['simpleforecast']['forecastday'].each do |forecast|
-          forecast_measurement = ForecastMeasurement.new
+          forecast_measurement = Data::ForecastMeasurement.new
           forecast_measurement.icon = forecast['icon']
           forecast_measurement.date = Date.parse(forecast['date']['pretty'])
           forecast_measurement.pop = forecast['pop'].to_i
           
-          forecast_measurement.high = Temperature.new(metric)
+          forecast_measurement.high = Data::Temperature.new(metric)
           forecast_measurement.high << [forecast['high']['celsius'],forecast['high']['fahrenheit']]
           
-          forecast_measurement.low = Temperature.new(metric)
+          forecast_measurement.low = Data::Temperature.new(metric)
           forecast_measurement.low << [forecast['low']['celsius'],forecast['low']['fahrenheit']]
           
           forecasts << forecast_measurement
@@ -171,7 +176,7 @@ module Barometer
 
     def self.build_location(data)
       raise ArgumentError unless data.is_a?(Hash)
-      location = Location.new
+      location = Data::Location.new
       if data['display_location']
         location.name = data['display_location']['full']
         location.city = data['display_location']['city']
@@ -187,7 +192,7 @@ module Barometer
     
     def self.build_station(data)
       raise ArgumentError unless data.is_a?(Hash)
-      station = Location.new
+      station = Data::Location.new
       station.id = data['station_id']
       if data['observation_location']
         station.name = data['observation_location']['full']
@@ -218,7 +223,7 @@ module Barometer
          data['simpleforecast']['forecastday'] &&
          data['simpleforecast']['forecastday'].first &&
          data['simpleforecast']['forecastday'].first['date']
-        timezone = Barometer::Zone.new(
+        timezone = Data::Zone.new(
           data['simpleforecast']['forecastday'].first['date']['tz_long']
         )
       end
@@ -227,48 +232,71 @@ module Barometer
     
     def self.build_sun(data, timezone)
       raise ArgumentError unless data.is_a?(Hash)
-      raise ArgumentError unless timezone.is_a?(Barometer::Zone)
+      raise ArgumentError unless timezone.is_a?(Data::Zone)
       
+      # sun = nil
+      # if data
+      #   time = nil
+      #   if data['simpleforecast'] &&
+      #      data['simpleforecast']['forecastday'] &&
+      #      data['simpleforecast']['forecastday'].first &&
+      #      data['simpleforecast']['forecastday'].first['date']
+      #     
+      #     # construct current date
+      #     date_data = data['simpleforecast']['forecastday'].first['date']
+      #     time = Time.local(
+      #       date_data['year'], date_data['month'], date_data['day'],
+      #       date_data['hour'], date_data['min'], date_data['sec']
+      #     )
+      #   end
+      #   if time && data['moon_phase']
+      #     # get the sun rise and set times (ie "6:32 am")
+      #     if data['moon_phase']['sunrise']
+      #       rise = Time.local(
+      #         time.year, time.month, time.day,
+      #         data['moon_phase']['sunrise']['hour'],
+      #         data['moon_phase']['sunrise']['minute']
+      #       )
+      #     end
+      #     if data['moon_phase']['sunset']
+      #       set = Time.local(
+      #         time.year, time.month, time.day,
+      #         data['moon_phase']['sunset']['hour'],
+      #         data['moon_phase']['sunset']['minute']
+      #       )
+      #     end
+      #   
+      #     sun = Data::Sun.new(
+      #       timezone.tz.local_to_utc(rise),
+      #       timezone.tz.local_to_utc(set)
+      #     )
+      #   end
+      # end
+      # 
+      # sun || Data::Sun.new
       sun = nil
       if data
-        time = nil
-        if data['simpleforecast'] &&
-           data['simpleforecast']['forecastday'] &&
-           data['simpleforecast']['forecastday'].first &&
-           data['simpleforecast']['forecastday'].first['date']
-          
-          # construct current date
-          date_data = data['simpleforecast']['forecastday'].first['date']
-          time = Time.local(
-            date_data['year'], date_data['month'], date_data['day'],
-            date_data['hour'], date_data['min'], date_data['sec']
-          )
-        end
-        if time && data['moon_phase']
-          # get the sun rise and set times (ie "6:32 am")
+        if data['moon_phase']
           if data['moon_phase']['sunrise']
-            rise = Time.local(
-              time.year, time.month, time.day,
-              data['moon_phase']['sunrise']['hour'],
-              data['moon_phase']['sunrise']['minute']
+            rise = Data::LocalTime.new(
+              data['moon_phase']['sunrise']['hour'].to_i,
+              data['moon_phase']['sunrise']['minute'].to_i
             )
           end
           if data['moon_phase']['sunset']
-            set = Time.local(
-              time.year, time.month, time.day,
-              data['moon_phase']['sunset']['hour'],
-              data['moon_phase']['sunset']['minute']
+            set = Data::LocalTime.new(
+              data['moon_phase']['sunset']['hour'].to_i,
+              data['moon_phase']['sunset']['minute'].to_i
             )
           end
         
-          sun = Sun.new(
-            timezone.tz.local_to_utc(rise),
-            timezone.tz.local_to_utc(set)
+          sun = Data::Sun.new(
+            rise,
+            set
           )
         end
       end
-      
-      sun || Sun.new
+      sun || Data::Sun.new
     end
     
     # use HTTParty to get the current weather

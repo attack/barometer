@@ -34,6 +34,7 @@
 #   --no-wunderground   DONT use default wunderground as source
 #   --yahoo             use yahoo as source
 #   --google            use google as source
+#   --weather           use weather.com as source
 #   -p, --pop           pop threshold used to determine wet?
 #   -s, --wind          wind speed threshold used to determine windy?
 #   -a, --at            time/date used to determine when to calculate summary
@@ -52,7 +53,7 @@
 #   http://www.opensource.org/licenses/mit-license.php
 
 require 'rubygems'
-require 'barometer'
+require 'lib/barometer'
 
 require 'optparse' 
 require 'rdoc/usage'
@@ -63,9 +64,9 @@ require 'yaml'
 
 # file where API keys are stored
 KEY_FILE = File.expand_path(File.join('~', '.barometer'))
+BAROMETER_VERSION = '0.4.0'
 
 class App
-  VERSION = '0.3.3'
   
   attr_reader :options
 
@@ -126,6 +127,7 @@ class App
       opt.on('--no-wunderground')  { @options.sources = @options.sources.delete_if{|s| s == :wunderground} }
       opt.on('--yahoo')            { @options.sources << :yahoo }
       opt.on('--google')           { @options.sources << :google }
+      opt.on('--weather')          { @options.sources << :weather_dot_com }
       opt.on('-p n', '--pop n')    {|n| @options.pop = n.to_i || 50 }
       opt.on('-s n', '--wind n')   {|n| @options.metric ? @options.windy_m = n.to_f || 10 : @options.windy_i = n.to_f || 7 }
       
@@ -138,11 +140,34 @@ class App
       process_options
       true      
     end
+    
+    def config_weather_dot_com
+      if File.exists?(KEY_FILE)
+      	keys = YAML.load_file(KEY_FILE)
+      	if keys["weather"] && keys["weather"]["partner"] && keys["weather"]["license"]
+      	  partner_key = keys["weather"]["partner"].to_s
+      	  license_key = keys["weather"]["license"].to_s
+        else
+          weather_key_message
+          exit
+        end
+      else
+        File.open(KEY_FILE, 'w') {|f| f << "\nweather:\n  partner: PARTNER_KEY\n  license: LICENSE_KEY" }
+        weather_key_message
+        exit
+      end
+      { :weather_dot_com => { :keys => { :partner => partner_key, :license => license_key } } }
+    end
 
     # Performs post-parse processing on options
     def process_options
+      @options.sources = @options.sources.uniq
       Barometer.force_geocode =  @options.geocode
-      Barometer.config = { 1 => @options.sources.uniq }
+      if @options.sources.include?(:weather_dot_com)
+        @options.sources.delete(:weather_dot_com)
+        @options.sources << config_weather_dot_com
+      end
+      Barometer.config = { 1 => @options.sources }
       Barometer.skip_graticule = @options.skip_graticule
       Barometer.timeout = @options.timeout
     end
@@ -187,6 +212,7 @@ class App
       puts "  --no-wunderground   DONT use default wunderground as source"
       puts "  --yahoo             use yahoo as source"
       puts "  --google            use google as source"
+      puts "  --weather           use weather.com as source"
       puts "  -p, --pop           pop threshold used to determine wet?"
       puts "  -s, --wind          wind speed threshold used to determine windy?"
       puts "  -a, --at            time/date used to determine when to calculate summary"
@@ -319,13 +345,14 @@ def pretty_current(c)
   return unless c
   section("CURRENT", 2) do
     pretty_hash({
-      "Time" => c.time, "Local Time" => c.local_time,
+      "Measured at" => c.current_at, "Updated at" => c.updated_at,
       "Humidity" => c.humidity, "Icon" => c.icon,
       "Condition" => c.condition, "Temperature" => c.temperature,
       "Dew Point" => c.dew_point, "Heat Index" => c.heat_index,
-      "Pressure" => c.pressure, "Visibility" => c.visibility })
-    pretty_hash({ "Wind Chill" => c.wind_chill, "Wind" => c.wind,
-      "Wind Direction" => c.wind.direction, "Degrees" => c.wind.degrees }) if c.wind
+      "Pressure" => c.pressure, "Visibility" => c.visibility,
+      "Wind Chill" => c.wind_chill })
+    pretty_hash({ "Wind" => c.wind, "Wind Direction" => c.wind.direction,
+      "Wind Degrees" => c.wind.degrees }) if c.wind
     pretty_hash({ "Sun Rise" => c.sun.rise, "Sun Set" => c.sun.set }) if c.sun
   end
 end
@@ -336,14 +363,26 @@ def pretty_forecast(f)
     pretty_hash({
       "Date" => f.date, "Icon" => f.icon,
       "Condition" => f.condition, "High" => f.high,
-      "Low" => f.low, "POP" => f.pop })
+      "Low" => f.low, "POP" => f.pop, "Humidity" => f.humidity })
+    pretty_hash({ "Wind" => f.wind, "Wind Direction" => f.wind.direction,
+      "Wind Degrees" => f.wind.degrees }) if f.wind
     pretty_hash({ "Sun Rise" => f.sun.rise, "Sun Set" => f.sun.set }) if f.sun
+    if f.night
+      puts
+      title("NIGHT", 4)
+      pretty_hash({
+        "Date" => f.night.date, "Icon" => f.night.icon,
+        "Condition" => f.night.condition, "POP" => f.night.pop,
+        "Humidity" => f.night.humidity })
+      pretty_hash({ "Wind" => f.night.wind, "Wind Direction" => f.night.wind.direction,
+        "Wind Degrees" => f.night.wind.degrees }) if f.night.wind
+    end
   end
 end
 
 def pretty_forecasts(forecasts)
   return unless forecasts
-  section("FORECAST", 3, false) do
+  section("FORECAST(s)", 3, false) do
     blank
     forecasts.each do |forecast|
       pretty_forecast(forecast)
@@ -355,7 +394,8 @@ def pretty_measurement(m)
   return unless m
   section(m.source.to_s, 1) do
     pretty_hash({
-      "Source" => m.source, "Time" => m.time,
+      "Measured At" => m.measured_at,
+      "Source" => m.source, "Time Stamp" => m.utc_time_stamp,
       "Metric" => m.metric?, "Success" => m.success? })
   end
   pretty_location(m.location)
@@ -378,7 +418,7 @@ end
 def pretty_info
   title("INFO", 1)
   value("GitHub", "http://github.com/attack/barometer")
-  value("Barometer Version", VERSION)
+  value("Barometer Version", BAROMETER_VERSION)
 end
 
 def pretty_output(barometer)
@@ -411,24 +451,38 @@ end
 
 def geocode_google_key_message
   puts
+  puts "MISSING KEYS !!!"
   puts "Please update the key_file '#{KEY_FILE}' with your google api key"
   puts "Get it here: http://code.google.com/apis/maps/signup.html"
-  puts "The, add this line to the file:"
-  puts "geocode_google: YOUR_KEY_KERE"
+  puts "Then, add this line to the file:"
+  puts "google:"
+  puts "  geocode: YOUR_KEY_KERE"
+  puts
+end
+
+def weather_key_message
+  puts
+  puts "MISSING KEYS !!!"
+  puts "Please update the key_file '#{KEY_FILE}' with your weather api keys"
+  puts "Get it here: ???"
+  puts "Then, add these lines to the file:"
+  puts "weather:"
+  puts "  partner: PARTNER_KEY"
+  puts "  license: LICENSE_KEY"
   puts
 end
 
 # set API keys
 if File.exists?(KEY_FILE)
 	keys = YAML.load_file(KEY_FILE)
-	if keys["geocode_google"]
-	  Barometer.google_geocode_key = keys["geocode_google"]
+	if keys["google"] && keys["google"]["geocode"]
+	  Barometer.google_geocode_key = keys["google"]["geocode"]
   else
     geocode_google_key_message
     exit
   end
 else
-  File.open(KEY_FILE, 'w') {|f| f << "geocode_google: YOUR_KEY_KERE" }
+  File.open(KEY_FILE, 'w') {|f| f << "google: geocode: YOUR_KEY_KERE" }
   geocode_google_key_message
   exit
 end

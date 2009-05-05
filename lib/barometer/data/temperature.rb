@@ -9,7 +9,7 @@ module Barometer
   # All comparison operations will be done in the absolute
   # scale of Kelvin (K)
   #
-  class Temperature < Barometer::Units
+  class Data::Temperature < Data::Units
     
     METRIC_UNITS = "C"
     IMPERIAL_UNITS = "F"
@@ -72,7 +72,7 @@ module Barometer
     def c=(c)
       return if !c || !(c.is_a?(Integer) || c.is_a?(Float))
       @celsius = c.to_f
-      @kelvin = Temperature.c_to_k(c.to_f)
+      @kelvin = Data::Temperature.c_to_k(c.to_f)
       self.update_fahrenheit(c.to_f)
     end
     
@@ -80,7 +80,7 @@ module Barometer
     def f=(f)
       return if !f || !(f.is_a?(Integer) || f.is_a?(Float))
       @fahrenheit = f.to_f
-      @kelvin = Temperature.f_to_k(f.to_f)
+      @kelvin = Data::Temperature.f_to_k(f.to_f)
       self.update_celsius(f.to_f)
     end
     
@@ -88,19 +88,19 @@ module Barometer
     def k=(k)
       return if !k || !(k.is_a?(Integer) || k.is_a?(Float))
       @kelvin = k.to_f
-      @celsius = Temperature.k_to_c(k.to_f)
-      @fahrenheit = Temperature.k_to_f(k.to_f)
+      @celsius = Data::Temperature.k_to_c(k.to_f)
+      @fahrenheit = Data::Temperature.k_to_f(k.to_f)
     end
     
     # return the stored celsius or convert from Kelvin
     def c(as_integer=true)
-      c = (@celsius || Temperature.k_to_c(@kelvin))
+      c = (@celsius || Data::Temperature.k_to_c(@kelvin))
       c ? (as_integer ? c.to_i : (100*c).round/100.0) : nil
     end
     
     # return the stored fahrenheit or convert from Kelvin
     def f(as_integer=true)
-      f = (@fahrenheit || Temperature.k_to_f(@kelvin))
+      f = (@fahrenheit || Data::Temperature.k_to_f(@kelvin))
       f ? (as_integer ? f.to_i : (100*f).round/100.0) : nil
     end
     
@@ -140,7 +140,7 @@ module Barometer
     # celsius remains.  if so, clear it.
     def update_celsius(f)
       return unless @celsius
-      difference = Temperature.f_to_c(f.to_f) - @celsius
+      difference = Data::Temperature.f_to_c(f.to_f) - @celsius
       # only clear celsius if the stored celsius is off be more then 1 degree
       # then the conversion of fahrenheit
       @celsius = nil unless difference.abs <= 1.0
@@ -150,7 +150,7 @@ module Barometer
     # fahrenheit remains.  if so, clear it.
     def update_fahrenheit(c)
       return unless @fahrenheit
-      difference = Temperature.c_to_f(c.to_f) - @fahrenheit
+      difference = Data::Temperature.c_to_f(c.to_f) - @fahrenheit
       # only clear fahrenheit if the stored fahrenheit is off be more then 1 degree
       # then the conversion of celsius
       @fahrenheit = nil unless difference.abs <= 1.0

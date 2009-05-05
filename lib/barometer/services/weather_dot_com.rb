@@ -8,13 +8,13 @@ module Barometer
   # - supported countries: US (by zipcode), International (by Weather Location ID)
   #
   # === performs geo coding
-  # - ?city: NO
-  # - ?coordinates: NO
+  # - city: PARTIAL (just a name)
+  # - coordinates: YES
   #
   # === time info
-  # - sun rise/set: ?
-  # - provides timezone: ?
-  # - requires TZInfo: ?
+  # - sun rise/set: YES
+  # - provides timezone: NO, but provides a utc offset
+  # - requires TZInfo: NO
   #
   # == resources
   # - API: ?
@@ -32,205 +32,265 @@ module Barometer
   # == notes
   # - the Weather Location ID is a propreitary number (possibly shared with yahoo.com)
   #
-  
-  #url = "http://xoap.weather.com/weather/local/#{self.id}"
-  #url << "?par=#{@@partner_id}"
-  #url << "&key=#{@@license_key}"
-  #url << "&prod=xoap"
-  #url << "&link=xoap"
-  #url << "&cc=*" if options[:current_conditions]
-  #url << "&dayf=#{options[:days]}" if options[:days] && (1..5).include?(options[:days].to_i)
-  #url << "&unit=#{options[:unit]}" if options[:unit] = (VALID_UNITS.include?(options[:unit]) ? options[:unit] : DEFAULT_UNIT)
-  #url
+  # == TODO
+  # - improve "forecasted_wet_by_icon?" to determine if day or night and use right code
+  # - improve "forecasted_sunny_by_icon?" to determine if day or night and use right code
+  # - improve "forcasted_wet_by_humidity?" to use forecasted values
+  # - improve "forcasted_windy?" to use forecasted values
+  #
   class WeatherDotCom < Service
     
+    @@partner_key = nil
+    @@license_key = nil
 
     def self.accepted_formats
-      [:short_zipcode, :weather_id ]
+      [:short_zipcode, :weather_id]
     end
 
-    def self.source_name
-      :weather
+    def self.source_name; :weather_dot_com; end
+
+    def self.keys=(keys)
+      raise ArgumentError unless keys.is_a?(Hash)
+      keys.each do |key, value|
+        @@partner_key = value.to_s if key.to_s.downcase == "partner"
+        @@license_key = value.to_s if key.to_s.downcase == "license"
+      end
     end
 
-    # these are the icon codes that indicate "wet", used by wet? function
-    # def self.wet_icon_codes
-    #   codes = [1] + (3..18).to_a + [35] + (37..43).to_a + (45..47).to_a
-    #   codes.collect {|c| c.to_s}
-    # end
-    # def self.sunny_icon_codes
-    #   codes = (29..34).to_a + [36]
-    #   codes.collect {|c| c.to_s}
-    # end
-    # 
-    # # override, only currently supports US
-    # def self.supports_country?(query=nil)
-    #   query && query.country_code && query.country_code.downcase == "us"
-    # end
+    def self.has_keys?; !@@partner_key.nil? && !@@license_key.nil?; end
+    def self.requires_keys?; true; end
 
-    # def self._measure(measurement, query, metric=true)
-    #   raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
-    #   raise ArgumentError unless query.is_a?(Barometer::Query)
-    #   measurement.source = self.source_name
-    # 
-    #   begin
-    #     result = self.get_all(query.preferred, metric)
-    #   rescue Timeout::Error => e
-    #     return measurement
-    #   end
-    # 
-    #   measurement.current = self.build_current(result, metric)
-    #   measurement.forecast = self.build_forecast(result, metric)
-    #   measurement.location = self.build_location(result, query.geo)
-    # 
-    #   # add links
-    #   if result["title"] && result["link"]
-    #     measurement.links[result["title"]] = result["link"]
-    #   end
-    # 
-    #   # add to current
-    #   sun = nil
-    #   if measurement.current
-    #     sun = self.build_sun(result)
-    #     measurement.current.sun = sun
-    #   end
-    #   # use todays sun data for all future days
-    #   if measurement.forecast && sun
-    #     start_date = Date.parse(measurement.current.local_time)
-    #     measurement.forecast.each do |forecast|
-    #       days_in_future = forecast.date - start_date
-    #       forecast.sun = Barometer::Sun.add_days!(sun,days_in_future.to_i)
-    #     end
-    #   end
-    # 
-    #   measurement
-    # end
+    def self.wet_icon_codes
+      codes = (0..18).to_a + [35] + (37..43).to_a + (45..47).to_a
+      codes.collect {|c| c.to_s}
+    end
+    def self.sunny_icon_codes
+      codes = [19, 22, 28, 30, 32, 34, 36]
+      codes.collect {|c| c.to_s}
+    end
 
-    # def self.build_current(data, metric=true)
-    #   raise ArgumentError unless data.is_a?(Hash)
-    #   current = CurrentMeasurement.new
-    #   if data
-    #     if data['item'] && data['item']['yweather:condition']
-    #       condition_result = data['item']['yweather:condition']
-    #       current.local_time = condition_result['date']
-    #       current.icon = condition_result['code']
-    #       current.condition = condition_result['text']
-    #       current.temperature = Temperature.new(metric)
-    #       current.temperature << condition_result['temp']
-    #     end
-    #     if data['yweather:atmosphere']
-    #       atmosphere_result = data['yweather:atmosphere']
-    #       current.humidity = atmosphere_result['humidity'].to_i
-    #       current.pressure = Pressure.new(metric)
-    #       current.pressure << atmosphere_result['pressure']
-    #       current.visibility = Distance.new(metric)
-    #       current.visibility << atmosphere_result['visibility']
-    #     end
-    #     if data['yweather:wind']
-    #       wind_result = data['yweather:wind']
-    #       current.wind = Speed.new(metric)
-    #       current.wind << wind_result['speed']
-    #       current.wind.degrees = wind_result['degrees'].to_f
-    #       current.wind_chill = Temperature.new(metric)
-    #       current.wind_chill << wind_result['chill']
-    #     end
-    #   end
-    #   current
-    # end
+    def self._measure(measurement, query, metric=true)
+      raise ArgumentError unless measurement.is_a?(Data::Measurement)
+      raise ArgumentError unless query.is_a?(Barometer::Query)
+      measurement.source = self.source_name
+      
+      begin
+        result = self.get_all(query.preferred, metric)
+      rescue Timeout::Error => e
+        return measurement
+      end
+    
+      measurement.current = self.build_current(result, metric)
+      measurement.forecast = self.build_forecast(result, metric)
+      measurement.location = self.build_location(result, query.geo)
+      measurement.current.sun = self.build_sun(result)
+      
+      # add links
+      if result && result['lnks'] && result['lnks']['link']
+        result['lnks']['link'].each do |link_hash|
+          measurement.links[link_hash['t']] = link_hash['l']
+        end
+      end
+      
+      # set local time of measurement
+      local_time = self.build_local_time(result)
+      measurement.measured_at = local_time
+      measurement.current.current_at = local_time
 
-    # def self.build_forecast(data, metric=true)
-    #   raise ArgumentError unless data.is_a?(Hash)
-    #   forecasts = []
-    # 
-    #   if data && data['item'] && data['item']['yweather:forecast']
-    #      forecast_result = data['item']['yweather:forecast']
-    # 
-    #     forecast_result.each do |forecast|
-    #       forecast_measurement = ForecastMeasurement.new
-    #       forecast_measurement.icon = forecast['code']
-    #       forecast_measurement.date = Date.parse(forecast['date'])
-    #       forecast_measurement.condition = forecast['text']
-    #       forecast_measurement.high = Temperature.new(metric)
-    #       forecast_measurement.high << forecast['high'].to_f
-    #       forecast_measurement.low = Temperature.new(metric)
-    #       forecast_measurement.low << forecast['low'].to_f
-    #       forecasts << forecast_measurement
-    #     end
-    #   end
-    #   forecasts
-    # end
+      measurement
+    end
+    
+    # WARNING
+    # this is a best guess method.  the data provided for time conversions
+    # leaves a lot to be desired.  some time zones, offsets, local times are
+    # out to lunch.  eg. Tahiti (all times seem to be 30 min off), but there
+    # is no way to determine this
+    #
+    # regardless of the above, this method will trust the data given to it
+    #
+    def self.build_local_time(data)
+      (data && data['loc']) ? Data::LocalTime.parse(data['loc']['tm']) : nil
+    end
+    
+    def self.build_current(data, metric=true)
+      raise ArgumentError unless data.is_a?(Hash)
+      current = Data::CurrentMeasurement.new
+      if data
+        if data['cc']
+          current.updated_at = Data::LocalDateTime.parse(data['cc']['lsup'])
+          current.icon = data['cc']['icon']
+          current.condition = data['cc']['t']
+          current.humidity = data['cc']['hmid'].to_i
+          current.temperature = Data::Temperature.new(metric)
+          current.temperature << data['cc']['tmp']
+          current.dew_point = Data::Temperature.new(metric)
+          current.dew_point << data['cc']['dewp']
+          current.wind_chill = Data::Temperature.new(metric)
+          current.wind_chill << data['cc']['flik']
+          current.visibility = Data::Distance.new(metric)
+          current.visibility << data['cc']['vis']
+          if data['cc']['wind']
+            current.wind = Data::Speed.new(metric)
+            current.wind << data['cc']['wind']['s']
+            current.wind.degrees = data['cc']['wind']['d'].to_f
+            current.wind.direction = data['cc']['wind']['t']
+          end
+          if data['cc']['bar']
+            current.pressure = Data::Pressure.new(metric)
+            current.pressure << data['cc']['bar']['r']
+          end
+        end
+      end
+      current
+    end
+    
+    def self.build_forecast(data, metric=true)
+      raise ArgumentError unless data.is_a?(Hash)
+      forecasts = []
+    
+      if data && data['dayf'] && data['dayf']['day']
+        local_date = data['dayf']['lsup']
+        data['dayf']['day'].each do |forecast|
+          forecast_measurement = Data::ForecastMeasurement.new
+          forecast_measurement.date = Date.parse(forecast['dt'])
+          
+          forecast_measurement.high = Data::Temperature.new(metric)
+          forecast_measurement.high << forecast['hi']
+          forecast_measurement.low = Data::Temperature.new(metric)
+          forecast_measurement.low << forecast['low']
+          
+          # build sun
+          # offset = 0
+          # if data['loc']
+          #   offset = data['loc']['zone'].to_i
+          # end
+          # rise_local_time = forecast['sunr']
+          # set_local_time = forecast['suns']
+          # rise = Barometer::Zone.merge(rise_local_time, local_date, offset)
+          # set = Barometer::Zone.merge(set_local_time, local_date, offset)
+          # sun = Data::Sun.new(rise, set)
+          # forecast_measurement.sun = sun
+          
+          # build sun
+          rise_local_time = Data::LocalTime.parse(forecast['sunr'])
+          set_local_time = Data::LocalTime.parse(forecast['suns'])
+          # rise = Barometer::Zone.merge(rise_local_time, local_date, offset)
+          # set = Barometer::Zone.merge(set_local_time, local_date, offset)
+          sun = Data::Sun.new(rise_local_time, set_local_time)
+          forecast_measurement.sun = sun
+          
+          if forecast['part']
+            forecast['part'].each do |part|
+              if part['p'] == 'd'
+                # add this to the ForecastMeasurement
+                forecast_measurement.condition = part['t']
+                forecast_measurement.icon = part['icon']
+                forecast_measurement.pop = part['ppcp'].to_i
+                forecast_measurement.humidity = part['hmid'].to_i
+                
+                if part['wind']
+                  forecast_measurement.wind = Data::Speed.new(metric)
+                  forecast_measurement.wind << part['wind']['s']
+                  forecast_measurement.wind.degrees = part['wind']['d'].to_i
+                  forecast_measurement.wind.direction = part['wind']['t']
+                end
+                
+              elsif part['p'] == 'n'  
+                # add this to the NightMeasurement
+                forecast_measurement.night = Data::NightMeasurement.new
+                forecast_measurement.night.condition = part['t']
+                forecast_measurement.night.icon = part['icon']
+                forecast_measurement.night.pop = part['ppcp'].to_i
+                forecast_measurement.night.humidity = part['hmid'].to_i
+                
+                if part['wind']
+                  forecast_measurement.night.wind = Data::Speed.new(metric)
+                  forecast_measurement.night.wind << part['wind']['s']
+                  forecast_measurement.night.wind.degrees = part['wind']['d'].to_i
+                  forecast_measurement.night.wind.direction = part['wind']['t']
+                end
+                
+              end
+            end
+          end
+          forecasts << forecast_measurement
+        end
+      end
+      forecasts
+    end
 
-    # def self.build_location(data, geo=nil)
-    #   raise ArgumentError unless data.is_a?(Hash)
-    #   raise ArgumentError unless (geo.nil? || geo.is_a?(Barometer::Geo))
-    #   location = Location.new
-    #   # use the geocoded data if available, otherwise get data from result
-    #   if geo
-    #     location.city = geo.locality
-    #     location.state_code = geo.region
-    #     location.country = geo.country
-    #     location.country_code = geo.country_code
-    #     location.latitude = geo.latitude
-    #     location.longitude = geo.longitude
-    #   else
-    #     if data && data['yweather:location']
-    #       location.city = data['yweather:location']['city']
-    #       location.state_code = data['yweather:location']['region']
-    #       location.country_code = data['yweather:location']['country']
-    #       if data['item']
-    #         location.latitude = data['item']['geo:lat']
-    #         location.longitude = data['item']['geo:long']
-    #       end
-    #     end
-    #   end
-    #   location
-    # end
-
-    # def self.build_sun(data)
-    #   raise ArgumentError unless data.is_a?(Hash)
-    #   sun = nil
-    #   if data && data['yweather:astronomy'] && data['item']
-    #     # get the TIME ZONE CODE
-    #     zone_match = data['item']['pubDate'].match(/ ([A-Z]*)$/)
-    #     zone = zone_match[1] if zone_match
-    #     # get the sun rise and set
-    #     rise = Barometer::Zone.merge(
-    #       data['yweather:astronomy']['sunrise'],
-    #       data['item']['pubDate'],
-    #       zone
-    #     )
-    #     set = Barometer::Zone.merge(
-    #       data['yweather:astronomy']['sunset'],
-    #       data['item']['pubDate'],
-    #       zone
-    #     )
-    #     sun = Sun.new(rise, set)
-    #   end
-    #   sun || Sun.new
-    # end
-
-    # def self.build_timezone(data)
-    #   raise ArgumentError unless data.is_a?(Hash)
-    #   
-    #   timezone = nil
-    #   if data && data['simpleforecast'] &&
-    #      data['simpleforecast']['forecastday'] &&
-    #      data['simpleforecast']['forecastday'].first &&
-    #      data['simpleforecast']['forecastday'].first['date']
-    #     timezone = Barometer::Zone.new(Time.now.utc,data['simpleforecast']['forecastday'].first['date']['tz_long'])
-    #   end
-    #   timezone
-    # end
+    def self.build_location(data, geo=nil)
+      raise ArgumentError unless data.is_a?(Hash)
+      raise ArgumentError unless (geo.nil? || geo.is_a?(Data::Geo))
+      location = Data::Location.new
+      # use the geocoded data if available, otherwise get data from result
+      if geo
+        location.city = geo.locality
+        location.state_code = geo.region
+        location.country = geo.country
+        location.country_code = geo.country_code
+        location.latitude = geo.latitude
+        location.longitude = geo.longitude
+      else
+        if data && data['loc']
+          location.name = data['loc']['dnam']
+          location.latitude = data['loc']['lat']
+          location.longitude = data['loc']['lon']
+        end
+      end
+      location
+    end
+    
+    def self.build_sun(data)
+      raise ArgumentError unless data.is_a?(Hash)
+      # sun = nil
+      # if data
+      #   if data['loc']
+      #     # get the TIME ZONE OFFSET
+      #     offset = data['loc']['zone'].to_i
+      #     rise_local_time = data['loc']['sunr']
+      #     set_local_time = data['loc']['suns']
+      #   end
+      #   local_date = data['cc']['lsup'] if data['cc']
+      #   
+      #   # get the sun rise and set
+      #   if rise_local_time && local_date
+      #     rise = Barometer::Zone.merge(rise_local_time, local_date, offset)
+      #     set = Barometer::Zone.merge(set_local_time, local_date, offset)
+      #     sun = Data::Sun.new(rise, set)
+      #   end
+      # end
+      # sun || Data::Sun.new
+      
+      sun = nil
+      if data
+        if data['loc']
+          rise_local_time = Data::LocalTime.parse(data['loc']['sunr'])
+          set_local_time = Data::LocalTime.parse(data['loc']['suns'])
+        end  
+        sun = Data::Sun.new(rise_local_time, set_local_time)
+      end
+      sun || Data::Sun.new
+    end
 
     # use HTTParty to get the current weather
-    # def self.get_all(query, metric=true)
-    #   Barometer::Yahoo.get(
-    #     "http://weather.yahooapis.com/forecastrss",
-    #     :query => {:p => query, :u => (metric ? 'c' : 'f')},
-    #     :format => :xml,
-    #     :timeout => Barometer.timeout
-    #   )['rss']['channel']
-    # end
+    def self.get_all(query, metric=true)
+      Barometer::WeatherDotCom.get(
+        "http://xoap.weather.com/weather/local/#{query}",
+        :query => { :par => @@partner_key, :key => @@license_key,
+          :prod => "xoap", :link => "xoap", :cc => "*",
+          :dayf => "5", :unit => (metric ? 'm' : 's')
+        },
+        :format => :xml,
+        :timeout => Barometer.timeout
+      )['weather']
+    end
 
   end
 end
+
+# FUTURE DATA TO SUPPORT?
+#    "cc"=>
+#     {"obst"=>"Santa Monica, CA",
+#      "uv"=>{"i"=>"0", "t"=>"Low"},
+#      "moon"=>{"icon"=>"9", "t"=>"Waxing Gibbous"}

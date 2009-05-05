@@ -53,7 +53,7 @@ module Barometer
     end
     
     def self._measure(measurement, query, metric=true)
-      raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      raise ArgumentError unless measurement.is_a?(Data::Measurement)
       raise ArgumentError unless query.is_a?(Barometer::Query)
       measurement.source = self.source_name
       
@@ -71,11 +71,11 @@ module Barometer
 
     def self.build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
-      current = CurrentMeasurement.new
+      current = Data::CurrentMeasurement.new
 
       if data && data['forecast_information'] &&
          data['forecast_information']['current_date_time']
-        current.time = data['forecast_information']['current_date_time']['data']
+        current.updated_at = Data::LocalDateTime.parse(data['forecast_information']['current_date_time']['data'])
       end
       
       if data['current_conditions']
@@ -89,10 +89,10 @@ module Barometer
         humidity_match = data['humidity']['data'].match(/[\d]+/)
         current.humidity = humidity_match[0].to_i if humidity_match
       
-        current.temperature = Temperature.new(metric)
+        current.temperature = Data::Temperature.new(metric)
         current.temperature << [data['temp_c']['data'], data['temp_f']['data']]
       
-        current.wind = Speed.new(metric)
+        current.wind = Data::Speed.new(metric)
         begin
           current.wind << data['wind_condition']['data'].match(/[\d]+/)[0]
           current.wind.direction = data['wind_condition']['data'].match(/Wind:.*?([\w]+).*?at/)[1]
@@ -114,7 +114,7 @@ module Barometer
       # go through each forecast and create an instance
       d = 0
       data.each do |forecast|
-        forecast_measurement = ForecastMeasurement.new
+        forecast_measurement = Data::ForecastMeasurement.new
         if forecast['icon']
           icon_match = forecast['icon']['data'].match(/.*\/([A-Za-z_]*)\.png/)
           forecast_measurement.icon = icon_match[1] if icon_match
@@ -125,9 +125,9 @@ module Barometer
           forecast_measurement.date = start_date + d
         end
 
-        forecast_measurement.high = Temperature.new(metric)
+        forecast_measurement.high = Data::Temperature.new(metric)
         forecast_measurement.high << forecast['high']['data']
-        forecast_measurement.low = Temperature.new(metric)
+        forecast_measurement.low = Data::Temperature.new(metric)
         forecast_measurement.low << forecast['low']['data']
         
         forecasts << forecast_measurement
@@ -137,8 +137,8 @@ module Barometer
     end
     
     def self.build_location(geo=nil)
-      raise ArgumentError unless (geo.nil? || geo.is_a?(Barometer::Geo))
-      location = Location.new
+      raise ArgumentError unless (geo.nil? || geo.is_a?(Data::Geo))
+      location = Data::Location.new
       if geo
         location.city = geo.locality
         location.state_code = geo.region

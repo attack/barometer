@@ -11,7 +11,7 @@ module Barometer
   # NOTE: this currently only supports the scale of
   #       kilometers (km) and miles (m).  There is currently
   #       no way to scale to smaller units (eg km -> m -> mm)
-  class Distance < Barometer::Units
+  class Data::Distance < Data::Units
     
     METRIC_UNITS = "km"
     IMPERIAL_UNITS = "m"
@@ -61,13 +61,13 @@ module Barometer
     
     # return the stored kilometers or convert from miles
     def km(as_integer=true)
-      km = (@kilometers || Distance.m_to_km(@miles))
+      km = (@kilometers || Data::Distance.m_to_km(@miles))
       km ? (as_integer ? km.to_i : (100*km).round/100.0) : nil
     end
     
     # return the stored miles or convert from kilometers
     def m(as_integer=true)
-      m = (@miles || Distance.km_to_m(@kilometers))
+      m = (@miles || Data::Distance.km_to_m(@kilometers))
       m ? (as_integer ? m.to_i : (100*m).round/100.0) : nil
     end
     
@@ -107,7 +107,7 @@ module Barometer
     # kilometers remains.  if so, clear it.
     def update_kilometers(m)
       return unless @kilometers
-      difference = Distance.m_to_km(m.to_f) - @kilometers
+      difference = Data::Distance.m_to_km(m.to_f) - @kilometers
       # only clear kilometers if the stored kilometers is off be more then 1 unit
       # then the conversion of miles
       @kilometers = nil unless difference.abs <= 1.0
@@ -117,7 +117,7 @@ module Barometer
     # miles remains.  if so, clear it.
     def update_miles(km)
       return unless @miles
-      difference = Distance.km_to_m(km.to_f) - @miles
+      difference = Data::Distance.km_to_m(km.to_f) - @miles
       # only clear miles if the stored miles is off be more then 1 unit
       # then the conversion of kilometers
       @miles = nil unless difference.abs <= 1.0

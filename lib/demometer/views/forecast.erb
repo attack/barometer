@@ -7,6 +7,12 @@
     <%= data("High", forecast.high) %>
     <%= data("Low", forecast.low) %>
     <%= data("POP", forecast.pop) %>
+    <%= data("Humidity", forecast.humidity) %>
+    <% if forecast.wind %>
+    <%= data("Wind Speed", forecast.wind) %>
+    <%= data("Wind Direction", forecast.wind.direction) %>
+    <%= data("Wind Degrees", forecast.wind.degrees) %>
+    <% end %>
     <% if forecast.sun %>
     <%= data("Sun Rise", forecast.sun.rise) %>
     <%= data("Sun Set", forecast.sun.set) %>

@@ -12,7 +12,7 @@ module Barometer
   #       that this class was designed for storing weather data,
   #       and it seems that it is more common in this case
   #
-  class Pressure < Barometer::Units
+  class Data::Pressure < Data::Units
     
     METRIC_UNITS = "mb"
     IMPERIAL_UNITS = "in"
@@ -63,13 +63,13 @@ module Barometer
     
     # return the stored millibars or convert from inches
     def mb(as_integer=true)
-      mb = (@millibars || Pressure.in_to_mb(@inches))
+      mb = (@millibars || Data::Pressure.in_to_mb(@inches))
       mb ? (as_integer ? mb.to_i : (100*mb).round/100.0) : nil
     end
     
     # return the stored inches or convert from millibars
     def in(as_integer=true)
-      inches = (@inches || Pressure.mb_to_in(@millibars))
+      inches = (@inches || Data::Pressure.mb_to_in(@millibars))
       inches ? (as_integer ? inches.to_i : (100*inches).round/100.0) : nil
     end
     
@@ -109,7 +109,7 @@ module Barometer
     # millibars remains.  if so, clear it.
     def update_millibars(inches)
       return unless @millibars
-      difference = Pressure.in_to_mb(inches.to_f) - @millibars
+      difference = Data::Pressure.in_to_mb(inches.to_f) - @millibars
       # only clear millibars if the stored millibars is off be more then 1 unit
       # then the conversion of inches
       @millibars = nil unless difference.abs <= 1.0
@@ -119,7 +119,7 @@ module Barometer
     # inches remains.  if so, clear it.
     def update_inches(mb)
       return unless @inches
-      difference = Pressure.mb_to_in(mb.to_f) - @inches
+      difference = Data::Pressure.mb_to_in(mb.to_f) - @inches
       # only clear inches if the stored inches is off be more then 1 unit
       # then the conversion of millibars
       @inches = nil unless difference.abs <= 1.0

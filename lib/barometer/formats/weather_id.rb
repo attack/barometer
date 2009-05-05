@@ -54,7 +54,7 @@ module Barometer
       )
       if response
         begin
-          res_match = response.match(/loc id='([0-9a-zA-Z]*)'/)
+          res_match = response.match(/loc id=[\\]?['|""]([0-9a-zA-Z]*)[\\]?['|""]/)
           return res_match[1] if res_match
         rescue
           return nil

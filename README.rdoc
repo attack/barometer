@@ -10,26 +10,29 @@ unavailable.
 
 == version
 
-Version 0.3.3 is the current release of this gem.
+Version 0.4.0 is the current release of this gem.
 The gem is available from github (attack-barometer) or rubyforge (barometer).
-It is fully functional (for three weather service APIs).
+It is fully functional (for four weather service APIs).
 
 == status
 
 Currently this project is in development and will only work for a few weather
-services (wunderground, google, yahoo).
+services (wunderground, google, yahoo, weather.com).
 
 Features to be added next:
-- even more weather service drivers (noaa, weather.com, weatherbug)
+- even more weather service drivers (noaa, weatherbug)
+- icon support
 
 = dependencies
 
-=== Google API key
+== Google API key
 
 In most cases you will need to have a free google geocode api key.
 Get one here: http://code.google.com/apis/maps/signup.html
-Then put it in the file '~/.barometer' by adding the line:
-geocode_google: YOUR_KEY_HERE
+Then put it in the file '~/.barometer' by adding the lines:
+
+  google:
+    geocode: YOUR_KEY_HERE
 
 You will need this for:
 - using the Barometer gem (unless you use queries that are directly supported
@@ -38,7 +41,17 @@ You will need this for:
 - running the Barometer binary
 - running the Barometer Web Demo
 
-=== HTTParty
+=== other keys
+
+The same file can hold all your weather service API keys.
+
+eg. weather.com
+
+  weather:
+    partner: YOUR_PARTNER_KEY
+    license: YOUR_LICENSE_KEY
+
+== HTTParty
 
 Why? HTTParty was created and designed specifically for consuming web services.
 I choose to use this over using the Net::HTTP library directly to allow for
@@ -46,14 +59,14 @@ faster development of this project.
 
 HTTParty is also extended to include configurable Timeout support.
 
-=== tzinfo
+== tzinfo
 
 Why? Barometer deals with time information for locations all over the world.
 This information doesn't mean that much if it can't be converted to times 
 that don't correspond to the applicable timezone.
 Tzinfo handles this time zone manipulation.
 
-=== graticule (very soft dependency)
+== graticule (very soft dependency)
 
 Why? Barometer returns the weather for a given location.  Most weather service
 APIs are somewhat restricted on the query format they receive.  To bridge
@@ -91,6 +104,15 @@ with geo-coding.
   
   puts weather.current.temperture
   
+== sources
+
+The available sources are:
+
+  Wunderground.com (:wunderground) [default]
+  Yahoo! Weather (:yahoo)
+  Google Weather (:google)
+  Weather.com (:weather_dot_com)
+  
 == source configuration
 
 Barometer can be configured to use multiple weather service APIs (either in
@@ -109,6 +131,10 @@ Weather services, one with some configuration. In this case we are setting
 a weight value, this weight is respected when calculating averages.
 
   Barometer.config = { 1 => [{:wunderground => {:weight => 2}}, :google] }
+  
+Weather services, one with keys.
+
+  Barometer.config = { 1 => [:yahoo, {:weather_dot_com => {:keys => {:partner => PARTNER_KEY, :license => LICENSE_KEY } }}] }
   
 === multiple weather API, with hierarchy
 

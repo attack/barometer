@@ -5,7 +5,7 @@ module Barometer
   # Used to store location data from Graticule or HTTParty and convert
   # into just the data needed for geocoding
   #
-  class Geo
+  class Data::Geo
     
     attr_accessor :latitude, :longitude
     attr_accessor :locality, :region, :country, :country_code, :address
