@@ -1,8 +1,11 @@
 module Barometer
   #
-  # Postal Code Format
+  # Format: Zip Code (short)
   #
   # eg. 90210
+  #
+  # This class is used to determine if a query is a
+  # :short_zipcode and what the country_code is.
   #
   class Query::ShortZipcode < Query::Format
   

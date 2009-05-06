@@ -1,76 +1,66 @@
 module Barometer
   #
-  # Geocode Format
+  # Format: Geocode
   #
   # eg. 123 Elm St, Mystery, Alaska, USA
   #
+  # This class is used to determine if a query is a
+  # :geocode, how to convert to :geocode
+  #
   class Query::Geocode < Query::Format
-  
+
     def self.format; :geocode; end
-
-    # everything is a geocode (if it is a String)
-    def self.is?(query=nil)
-      query.is_a?(String) ? true : false
+    def self.is?(query=nil); query.is_a?(String) ? true : false; end
+    def self.convertable_formats
+      [:short_zipcode, :zipcode, :coordinates, :weather_id, :icao]
     end
-  
-    # convert to this format
-    def self.to(current_query, current_format, current_country_code=nil)
-      perform_geocode = _has_geocode_key?
 
-      skip_formats = [:postalcode]
-      return [current_query,current_country_code,nil] if skip_formats.include?(current_format)
-      
-      # treat special cases
-      # this will convert the weather_id to a name, that can be further geocoded
-      if current_format == :weather_id
-        current_query = Barometer::Query::WeatherID.from(current_query)
+    # convert to this format, X -> :geocode
+    #
+    def self.to(original_query)
+      raise ArgumentError unless is_a_query?(original_query)
+      unless converts?(original_query)
+        return (original_query.format == format ? original_query : nil)
       end
-      
-      if perform_geocode
-        geo = self.geocode(current_query, current_country_code)
-        current_country_code ||= geo.country_code if geo
-        # different formats have different acceptance criteria
-        q = current_query
-        case current_format
-        when :icao
-          if geo && geo.address && geo.country
-            q = "#{geo.address}, #{geo.country}"
-          end
-        else
-          if geo && geo.locality && geo.region && geo.country
-            q = "#{geo.locality}, #{geo.region}, #{geo.country}"
-          end
-        end
-        return [q, current_country_code, geo]
-      else
-        # without geocoding, the best we can do is just make use the given query as
-        # the query for the "geocode" format
-        return [current_query, current_country_code, nil]
-      end
-    end
+      converted_query = Barometer::Query.new
     
-    def self.geocode(query, country_code=nil)
-      _geocode_httparty(query, country_code)
+      converted_query = (original_query.format == :weather_id ?
+        Barometer::Query::WeatherID.reverse(original_query) :
+        geocode(original_query))
+      converted_query
+    end
+
+    # geocode the query
+    #
+    def self.geocode(original_query)
+      raise ArgumentError unless is_a_query?(original_query)
+      converted_query = Barometer::Query.new
+
+      converted_query.geo = _geocode(original_query)
+      if converted_query.geo
+        converted_query.country_code = converted_query.geo.country_code
+        converted_query.q = converted_query.geo.to_s
+        converted_query.format = format
+      end
+      converted_query
     end
 
     private
-    
+
     def self._has_geocode_key?
       !Barometer.google_geocode_key.nil?
     end
-    
-    def self._geocode_httparty(query, country_code=nil)
+
+    def self._geocode(query)
+      raise ArgumentError unless is_a_query?(query)
       return nil unless _has_geocode_key?
       location = Barometer::Query.get(
         "http://maps.google.com/maps/geo",
         :query => {
-          :gl => country_code,
-          :key => Barometer.google_geocode_key,
-          :output => "xml",
-          :q => query
+          :gl => query.country_code, :key => Barometer.google_geocode_key,
+          :output => "xml", :q => query.q
         },
-        :format => :xml,
-        :timeout => Barometer.timeout
+        :format => :xml, :timeout => Barometer.timeout
       )
       location = location['kml']['Response'] if location && location['kml']
       location ? (geo = Data::Geo.new(location)) : nil

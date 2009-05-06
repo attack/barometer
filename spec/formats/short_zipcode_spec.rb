@@ -2,6 +2,11 @@ require 'spec_helper'
 
 describe "Query::ShortZipcode" do
   
+  before(:each) do
+    @valid = "90210"
+    @invalid = "90210-5555"
+  end
+  
   describe "and class methods" do
     
     it "returns a format" do
@@ -20,11 +25,6 @@ describe "Query::ShortZipcode" do
     
     describe "is?," do
       
-      before(:each) do
-        @valid = "90210"
-        @invalid = "90210-5555"
-      end
-      
       it "recognizes a valid format" do
         Barometer::Query::ShortZipcode.is?(@valid).should be_true
       end
@@ -37,6 +37,15 @@ describe "Query::ShortZipcode" do
   
     it "stubs to" do
       Barometer::Query::ShortZipcode.to.should be_nil
+    end
+    
+    it "stubs convertable_formats" do
+      Barometer::Query::ShortZipcode.convertable_formats.should == []
+    end
+    
+    it "doesn't convert" do
+      query = Barometer::Query.new(@valid)
+      Barometer::Query::ShortZipcode.converts?(query).should be_false
     end
     
   end

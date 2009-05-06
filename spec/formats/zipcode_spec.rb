@@ -29,6 +29,12 @@ describe "Query::Zipcode" do
       Barometer::Query::Zipcode.regex.is_a?(Regexp).should be_true
     end
     
+    it "returns the convertable_formats" do
+      Barometer::Query::Zipcode.convertable_formats.should_not be_nil
+      Barometer::Query::Zipcode.convertable_formats.is_a?(Array).should be_true
+      Barometer::Query::Zipcode.convertable_formats.include?(:short_zipcode).should be_true
+    end
+    
     describe "is?," do
       
       before(:each) do
@@ -48,17 +54,54 @@ describe "Query::Zipcode" do
   
     describe "when converting using 'to'," do
       
+      it "requires a Barometer::Query object" do
+        lambda { Barometer::Query::Zipcode.to }.should raise_error(ArgumentError)
+        lambda { Barometer::Query::Zipcode.to("invalid") }.should raise_error(ArgumentError)
+        query = Barometer::Query.new(@zipcode)
+        query.is_a?(Barometer::Query).should be_true
+        lambda { Barometer::Query::Zipcode.to(original_query) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "returns a Barometer::Query" do
+        query = Barometer::Query.new(@short_zipcode)
+        Barometer::Query::Zipcode.to(query).is_a?(Barometer::Query).should be_true
+      end
+      
       it "converts from short_zipcode" do
-        Barometer::Query::Zipcode.to(@short_zipcode, :short_zipcode).should == @short_zipcode
+        query = Barometer::Query.new(@short_zipcode)
+        query.format.should == :short_zipcode
+        new_query = Barometer::Query::Zipcode.to(query)
+        new_query.q.should == @short_zipcode
+        new_query.format.should == :zipcode
+        new_query.country_code.should == "US"
+        new_query.geo.should be_nil
       end
       
       it "returns nil for other formats" do
-        Barometer::Query::Zipcode.to(@zipcode, :zipcode).should be_nil
-        Barometer::Query::Zipcode.to(@weather_id, :weather_id).should be_nil
-        Barometer::Query::Zipcode.to(@postal_code, :postalcode).should be_nil
-        Barometer::Query::Zipcode.to(@coordinates, :coordinates).should be_nil
-        Barometer::Query::Zipcode.to(@geocode, :geocode).should be_nil
-        Barometer::Query::Zipcode.to(@icao, :icao).should be_nil
+        query = Barometer::Query.new(@zipcode)
+        query.format = :zipcode
+        query.format.should == :zipcode
+        Barometer::Query::Zipcode.to(query).should be_nil
+        
+        query = Barometer::Query.new(@weather_id)
+        query.format.should == :weather_id
+        Barometer::Query::Zipcode.to(query).should be_nil
+        
+        query = Barometer::Query.new(@postal_code)
+        query.format.should == :postalcode
+        Barometer::Query::Zipcode.to(query).should be_nil
+        
+        query = Barometer::Query.new(@coordinates)
+        query.format.should == :coordinates
+        Barometer::Query::Zipcode.to(query).should be_nil
+        
+        query = Barometer::Query.new(@geocode)
+        query.format.should == :geocode
+        Barometer::Query::Zipcode.to(query).should be_nil
+        
+        query = Barometer::Query.new(@icao)
+        query.format.should == :icao
+        Barometer::Query::Zipcode.to(query).should be_nil
       end
       
     end

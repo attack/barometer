@@ -1,81 +1,105 @@
 module Barometer
   #
-  # Weather ID (specific to weather.com)
+  # Format: Weather ID (specific to weather.com)
   #
   # eg. USGA0028
   #
+  # This class is used to determine if a query is a
+  # :weather_id, how to convert to and from :weather_id
+  # and what the country_code is.
+  #
   class Query::WeatherID < Query::Format
   
+    FIXES_FILE = File.expand_path(
+      File.join('lib', 'barometer', 'translations', 'weather_country_codes.yml'))
+    @@fixes = nil
+    
     def self.format; :weather_id; end
     def self.regex; /(^[A-Za-z]{4}[0-9]{4}$)/; end
-  
-    # the first two letters of the :weather_id is the country_code
-    def self.country_code(query=nil)
-      return ArgumentError unless query.is_a?(String)
-      (query && query.size >= 2) ? query[0..1] : nil
+    def self.convertable_formats
+      [:short_zipcode, :zipcode, :coordinates, :geocode]
     end
-  
-    # convert to this format
-    def self.to(current_query, current_format)
       
-      skip_formats = [:weather_id, :postalcode, :icao]
-      return nil if skip_formats.include?(current_format)
+    # the first two letters of the :weather_id is the country_code
+    #
+    def self.country_code(query=nil)
+      (query && query.size >= 2) ? _fix_country(query[0..1]) : nil
+    end
       
-      geo_query = nil
-      if current_format == :geocode
-        geo_query = current_query
-      else
-        geo_query, country_code, geo = Barometer::Query::Geocode.to(current_query, current_format)
-      end
-      [_search(geo_query), country_code, geo]
+    # convert to this format, X -> :weather_id
+    #
+    def self.to(original_query)
+      raise ArgumentError unless is_a_query?(original_query)
+      return nil unless converts?(original_query)
+      converted_query = Barometer::Query.new
+
+      # convert original query to :geocode, as that is the only
+      # format we can convert directly from to weather_id
+      converted_query = Barometer::Query::Geocode.to(original_query)
+      converted_query.q = _search(converted_query.q)
+      converted_query.format = format
+      converted_query.country_code = country_code(converted_query.q)
+      converted_query
     end
     
-    # reverse lookup
-    def self.from(query=nil)
-      _reverse(query)
+    # reverse lookup, :weather_id -> (:geocode || :coordinates)
+    #
+    def self.reverse(original_query)
+      raise ArgumentError unless is_a_query?(original_query)
+      return nil unless original_query.format == format
+      converted_query = Barometer::Query.new
+      converted_query.q = _reverse(original_query.q)
+      converted_query.format = Barometer::Query::Geocode.format
+      converted_query
     end
     
     private
     
     # :geocode -> :weather_id
     # search weather.com for the given query
+    #
     def self._search(query=nil)
       return nil unless query
-      response = Barometer::Query.get(
-        "http://xoap.weather.com/search/search",
-        :query => { :where => query },
-        :format => :plain,
-        :timeout => Barometer.timeout
-      )
-      if response
-        begin
-          res_match = response.match(/loc id=[\\]?['|""]([0-9a-zA-Z]*)[\\]?['|""]/)
-          return res_match[1] if res_match
-        rescue
-          return nil
-        end
-      else
-        return nil
-      end
+      response = Barometer::WeatherDotCom.search(query)
+      _parse_weather_id(response)
     end
     
     # :weather_id -> :geocode
-    # Yahoo! understands :weather_id as a query.  Get response from
-    # Yahoo! and parse the location data
+    # query yahoo with :weather_id and parse geo_data
+    #
     def self._reverse(query=nil)
       return nil unless query
-      response = Barometer::Query.get(
-        "http://weather.yahooapis.com/forecastrss",
-        :query => {:p => query },
-        :format => :xml,
-        :timeout => Barometer.timeout
-      )['rss']['channel']
-      if response && response["yweather:location"]
-        location = response["yweather:location"]
-        return [location["city"], location["region"], location["country"]].join(', ')
-      else
-        return nil
-      end
+      response = Barometer::Yahoo.fetch(query)
+      _parse_geocode(response)
+    end
+    
+    # match the first :weather_id (from search results)
+    #
+    def self._parse_weather_id(text)
+      return nil unless text
+      match = text.match(/loc id=[\\]?['|""]([0-9a-zA-Z]*)[\\]?['|""]/)
+      match ? match[1] : nil
+    end
+    
+    # parse the geo_data
+    #
+    def self._parse_geocode(text)
+      return nil unless text && text["yweather:location"]
+      loc = text["yweather:location"]
+      output = [loc["city"], loc["region"], _fix_country(loc["country"])]
+      output.delete("")
+      output.compact.join(', ')
+    end
+    
+    # fix the country code
+    #
+    # weather.com uses non-standard two letter country codes that
+    # hinder the ability to determine the country or fetch geo_data.
+    # correct these "mistakes"
+    #
+    def self._fix_country(country_code)
+      @@fixes ||= YAML.load_file(FIXES_FILE)
+      @@fixes[country_code.upcase.to_s] || country_code
     end
 
   end

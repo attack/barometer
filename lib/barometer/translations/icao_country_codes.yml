@@ -1,0 +1,9 @@
+# first term - icao code
+# second term - standard country_code
+#
+one_letter:
+    C : CA
+    K : US
+    
+two_letter:
+    ET : DE
