@@ -18,7 +18,7 @@ describe "Barometer" do
     end
     
     it "returns a Weather Service driver" do
-      Barometer.source(:wunderground).should == Barometer::Wunderground
+      Barometer.source(:wunderground).should == Barometer::WeatherService::Wunderground
     end
     
     it "sets the Graticule Google geocoding API key" do
@@ -114,7 +114,7 @@ describe "Barometer" do
       FakeWeb.register_uri(:get, 
         "http://maps.google.com:80/maps/geo?gl=&q=Calgary%2CAB&output=xml&key=#{@key}",
         :string => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures/services/google',
+          'fixtures/geocode',
           'calgary_ab.xml')
         )
       )

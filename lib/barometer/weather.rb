@@ -1,16 +1,25 @@
 module Barometer
+  #
+  # Weather
+  #
+  # holds all the measurements taken and provdes
+  # methods to interact with the data
+  #
   class Weather
     
     attr_accessor :measurements
     
     def initialize; @measurements = []; end
     
+    # the default measurement is the first successful measurement
+    #
     def default
       return nil unless self.sources
       self.source(self.sources.first)
     end
     
     # find the measurement for the given source, if it exists
+    #
     def source(source)
       raise ArgumentError unless (source.is_a?(String) || source.is_a?(Symbol))
       @measurements.each do |measurement|
@@ -20,6 +29,7 @@ module Barometer
     end
     
     # list successful sources
+    #
     def sources
       @measurements.collect {|m| m.source.to_sym if m.success?}.compact
     end
@@ -43,6 +53,10 @@ module Barometer
       default && default.forecast ? default.forecast[1] : nil
     end
     
+    # measurement search
+    # this will search the default measurements forecasts looking for
+    # the matching date
+    #
     def for(query)
       default = self.default
       default && default.forecast ? default.for(query) : nil
@@ -64,6 +78,7 @@ module Barometer
     # will return the value needed
     # value_name = the name of the value we are averaging
     # if a measurement has weighting, it will respect that
+    #
     def current_average(value_name)
       values = []
       @measurements.each do |measurement|
@@ -97,6 +112,7 @@ module Barometer
     end
       
     # average of all values
+    #
     def humidity(do_average=true); average("humidity",do_average); end
     def temperature(do_average=true); average("temperature",do_average,"Temperature"); end
     def wind(do_average=true); average("wind",do_average,"Speed"); end
@@ -124,14 +140,14 @@ module Barometer
     #
     
     def windy?(threshold=10, time_string=nil)
-      local_time = Data::LocalTime.parse(time_string)
+      local_datetime = Data::LocalDateTime.parse(time_string)
       raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
-      raise ArgumentError unless local_time.is_a?(Data::LocalTime)
+      raise ArgumentError unless (local_datetime.nil? || local_datetime.is_a?(Data::LocalDateTime))
       
       is_windy = nil
       @measurements.each do |measurement|
         if measurement.success?
-          is_windy = measurement.windy?(threshold, local_time)
+          is_windy = measurement.windy?(threshold, local_datetime)
           return is_windy if !is_windy.nil?
         end
       end
@@ -139,14 +155,14 @@ module Barometer
     end
 
     def wet?(threshold=50, time_string=nil)
-      local_time = Data::LocalTime.parse(time_string)
+      local_datetime = Data::LocalDateTime.parse(time_string)
       raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
-      raise ArgumentError unless local_time.is_a?(Data::LocalTime)
+      raise ArgumentError unless (local_datetime.nil? || local_datetime.is_a?(Data::LocalDateTime))
       
       is_wet = nil
       @measurements.each do |measurement|
         if measurement.success?
-          is_wet = measurement.wet?(threshold, local_time)
+          is_wet = measurement.wet?(threshold, local_datetime)
           return is_wet if !is_wet.nil?
         end
       end
@@ -154,13 +170,13 @@ module Barometer
     end
 
     def day?(time_string=nil)
-      local_time = Data::LocalTime.parse(time_string)
-      raise ArgumentError unless local_time.is_a?(Data::LocalTime)
+      local_datetime = Data::LocalDateTime.parse(time_string)
+      raise ArgumentError unless (local_datetime.nil? || local_datetime.is_a?(Data::LocalDateTime))
       
       is_day = nil
       @measurements.each do |measurement|
         if measurement.success?
-          is_day = measurement.day?(local_time)
+          is_day = measurement.day?(local_datetime)
           return is_day if !is_day.nil?
         end
       end
@@ -168,21 +184,21 @@ module Barometer
     end
 
     def night?(time_string=nil)
-      local_time = Data::LocalTime.parse(time_string)
-      raise ArgumentError unless local_time.is_a?(Data::LocalTime)
-      is_day = self.day?(local_time)
+      local_datetime = Data::LocalDateTime.parse(time_string)
+      raise ArgumentError unless (local_datetime.nil? || local_datetime.is_a?(Data::LocalDateTime))
+      is_day = self.day?(local_datetime)
       is_day.nil? ? nil : !is_day
     end
 
     def sunny?(time_string=nil)
-      local_time = Data::LocalTime.parse(time_string)
-      raise ArgumentError unless local_time.is_a?(Data::LocalTime)
+      local_datetime = Data::LocalDateTime.parse(time_string)
+      raise ArgumentError unless (local_datetime.nil? || local_datetime.is_a?(Data::LocalDateTime))
       
       is_sunny = nil
       @measurements.each do |measurement|
         if measurement.success?
-          return false if self.day?(local_time) == false
-          is_sunny = measurement.sunny?(local_time)
+          return false if self.day?(local_datetime) == false
+          is_sunny = measurement.sunny?(local_datetime)
           return is_sunny if !is_sunny.nil?
         end
       end

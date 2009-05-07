@@ -1,10 +1,3 @@
-require 'rubygems'
-require 'httparty'
-
-$:.unshift(File.dirname(__FILE__))
-# load some changes to Httparty
-require 'extensions/httparty'
-
 module Barometer
   #
   # This class represents a query and can answer the
@@ -25,13 +18,11 @@ module Barometer
   #
   class Query
     
-    # all service drivers will use the HTTParty gem
-    include HTTParty
-    
-    POSSIBLE_FORMATS = %w(
+    # This array defines the order to check a query for the format
+    #
+    FORMATS = %w(
       ShortZipcode Zipcode Postalcode WeatherID Coordinates Icao Geocode
     )
-    DEFAULT_FORMAT = "Geocode"
     FORMAT_MAP = {
       :short_zipcode => "ShortZipcode", :zipcode => "Zipcode",
       :postalcode => "Postalcode", :weather_id => "WeatherID",
@@ -39,57 +30,76 @@ module Barometer
       :geocode => "Geocode"
     }
     
-    attr_reader   :format
-    attr_accessor :q, :preferred, :country_code, :geo
+    attr_accessor :format, :q, :country_code, :geo
     
     def initialize(query=nil)
+      return unless query
       @q = query
       self.analyze!
     end
 
     # analyze the saved query to determine the format.
+    # this delegates the detection to each formats class
+    # until th right one is found
+    #
     def analyze!
       return unless @q
-      POSSIBLE_FORMATS.each do |format|
-        if Barometer::Query.const_get(format.to_s).is?(@q)
-          @format = Barometer::Query.const_get(format.to_s).format
-          @country_code = Barometer::Query.const_get(format.to_s).country_code(@q)
+      FORMATS.each do |format|
+        if Query::Format.const_get(format.to_s).is?(@q)
+          @format = Query::Format.const_get(format.to_s).format
+          @country_code = Query::Format.const_get(format.to_s).country_code(@q)
           break
         end
-      end
-      unless @format
-        @format = Barometer::Query.const_get(DEFAULT_FORMAT.to_s).format
       end
     end
     
     # take a list of acceptable (and ordered by preference) formats and convert
-    # the current query (q) into the most preferred and acceptable format. as a
-    # side effect of some conversions, the country_code might be known, then save it
+    # the current query (q) into the most preferred and acceptable format. a
+    # side effect of the conversions may reveal the country_code, if so save it
+    #
     def convert!(preferred_formats=nil)
       raise ArgumentError unless (preferred_formats && preferred_formats.size > 0)
-      @preferred = nil
       
-      # go through each acceptable format and try to convert to that
-      converted = false
-      preferred_formats.each do |preferred_format|
-        klass = FORMAT_MAP[preferred_format.to_sym]
-        if preferred_format == @format
-          converted = true
-          @preferred ||= @q
-        end
-        unless converted
-          @preferred, @country_code, @geo =  Barometer::Query.const_get(klass.to_s).to(@q, @format)
-          converted = true if @preferred
-        end
-        @country_code ||= Barometer::Query.const_get(klass.to_s).country_code(@preferred) if converted
+      # why convert if we are already there?
+      skip_conversion = false
+      if preferred_formats.include?(@format.to_sym)
+        skip_conversion = true
+        converted_query = self.dup
       end
       
-      # if we haven't already geocoded and we are forcing it, do it now
-      if !@geo && Barometer.force_geocode
-        not_used_coords, not_used_code, @geo = Barometer::Query::Coordinates.to(@q, @format)
+      unless skip_conversion
+        # go through each acceptable format and try to convert to that
+        converted = false
+        converted_query = Barometer::Query.new
+        preferred_formats.each do |preferred_format|
+          klass = FORMAT_MAP[preferred_format.to_sym]
+          if preferred_format == @format
+            converted = true
+            converted_query = Barometer::Query.new(@q)
+          end
+          unless converted
+            converted_query =  Query::Format.const_get(klass.to_s).to(self)
+            converted = true if converted_query
+          end
+          if converted
+            converted_query.country_code ||= Query::Format.const_get(klass.to_s).country_code(converted_query.q)
+            break
+          end
+        end
       end
       
-      @preferred
+      # force geocode?, unless we already did
+      #
+      if Barometer.force_geocode && !@geo
+        if converted_query && converted_query.geo
+          @geo = converted_query.geo
+        else
+          geo_query = Query::Format::Coordinates.to(converted_query)
+          @geo = geo_query.geo if (geo_query && geo_query.geo)
+        end
+      end
+      
+      converted_query
     end
     
   end

@@ -3,6 +3,7 @@ module Barometer
     
     # allow the configuration of specific weather APIs to be used,
     # and the order in which they would be used
+    #
     @@config = { 1 => [:wunderground] }
     def self.config; @@config; end;
     def self.config=(hash); @@config = hash; end;
@@ -16,6 +17,9 @@ module Barometer
       @success = false
     end
     
+    # iterate through all the configured sources and
+    # collect weather data for each one
+    #
     def measure(metric=nil)
       return nil unless @query
 
@@ -45,6 +49,7 @@ module Barometer
     # { 1 => [:wunderground, {:yahoo => {:weight => 2}}]}
     # { 1 => {:wunderground => {:weight => 2}}}
     # { 1 => [{:wunderground => {:weight => 2}}]}
+    #
     def _dig(data, config=nil, metric=nil)
       if data.is_a?(String) || data.is_a?(Symbol)
         _measure(data, config, metric)
@@ -60,6 +65,7 @@ module Barometer
     end
     
     # do that actual source measurement
+    #
     def _measure(datum, config=nil, metric=nil)
       Barometer.source(datum.to_sym).keys = config[:keys] if (config && config[:keys])
       measurement = Barometer.source(datum.to_sym).measure(@query, metric)

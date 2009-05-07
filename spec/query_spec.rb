@@ -64,7 +64,7 @@ describe "Query" do
       @query.format.should be_nil
       @query.analyze!
       @query.format.to_sym.should == :icao
-      @query.country_code.should be_nil
+      @query.country_code.should == "US"
     end
     
     it "recognizes weather_id" do
@@ -131,10 +131,6 @@ describe "Query" do
       Barometer.google_geocode_key.should == key
     end
     
-    it "responds to preferred" do
-      @query.preferred.should be_nil
-    end
-    
     it "responds to geo" do
       @query.geo.should be_nil
     end
@@ -157,40 +153,40 @@ describe "Query" do
       it "returns the short_zipcode untouched" do
         preferred = [:short_zipcode]
         query = Barometer::Query.new(@short_zipcode)
-        query.convert!(preferred).should == @short_zipcode
+        query.convert!(preferred).q.should == @short_zipcode
         query.country_code.should == "US"
       end
       
       it "returns the long_zipcode untouched" do
         preferred = [:zipcode]
         query = Barometer::Query.new(@long_zipcode)
-        query.convert!(preferred).should == @long_zipcode
+        query.convert!(preferred).q.should == @long_zipcode
         query.country_code.should == "US"
       end
       
       it "returns the postalcode untouched" do
         preferred = [:postalcode]
         query = Barometer::Query.new(@postal_code)
-        query.convert!(preferred).should == @postal_code
+        query.convert!(preferred).q.should == @postal_code
         query.country_code.should == "CA"
       end
       
       it "returns the icao untouched" do
         preferred = [:icao]
         query = Barometer::Query.new(@icao)
-        query.convert!(preferred).should == @icao
+        query.convert!(preferred).q.should == @icao
       end
       
       it "returns the coordinates untouched" do
         preferred = [:coordinates]
         query = Barometer::Query.new(@coordinates)
-        query.convert!(preferred).should == @coordinates
+        query.convert!(preferred).q.should == @coordinates
       end
       
       it "returns the geocode untouched" do
         preferred = [:geocode]
         query = Barometer::Query.new(@geocode)
-        query.convert!(preferred).should == @geocode
+        query.convert!(preferred).q.should == @geocode
       end
       
     end
@@ -206,38 +202,42 @@ describe "Query" do
         
         it "converts to zipcode" do
           acceptable_formats = [:zipcode]
-          @query.convert!(acceptable_formats).should == @zipcode
-          @query.country_code.should == "US"
+          query = @query.convert!(acceptable_formats)
+          query.q.should == @zipcode
+          query.country_code.should == "US"
         end
         
         it "converts to coordinates" do
           acceptable_formats = [:coordinates]
-          @query.convert!(acceptable_formats).should == @zipcode_to_coordinates
-          @query.country_code.should == "US"
+          query = @query.convert!(acceptable_formats)
+          query.q.should == @zipcode_to_coordinates
+          query.country_code.should == "US"
         end
         
         it "converts to geocode" do
           acceptable_formats = [:geocode]
-          @query.convert!(acceptable_formats).should == @zipcode_to_geocode
-          @query.country_code.should == "US"
+          query = @query.convert!(acceptable_formats)
+          query.q.should == @zipcode_to_geocode
+          query.country_code.should == "US"
         end
         
         it "converts to weather_id" do
           acceptable_formats = [:weather_id]
-          @query.convert!(acceptable_formats).should == @zipcode_to_weather_id
-          @query.country_code.should == "US"
+          query = @query.convert!(acceptable_formats)
+          query.q.should == @zipcode_to_weather_id
+          query.country_code.should == "US"
         end
         
         it "skips converting to icao" do
           acceptable_formats = [:icao]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "skips converting to postalcode" do
           acceptable_formats = [:postalcode]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
       end
@@ -252,39 +252,42 @@ describe "Query" do
         
         it "converts to coordinates" do
           acceptable_formats = [:coordinates]
-          @query.convert!(acceptable_formats).should == @zipcode_to_coordinates
-          @query.country_code.should == "US"
+          query = @query.convert!(acceptable_formats)
+          query.q.should == @zipcode_to_coordinates
+          query.country_code.should == "US"
         end
         
         it "converts to geocode" do
           acceptable_formats = [:geocode]
-          @query.convert!(acceptable_formats).should == @zipcode_to_geocode
-          @query.country_code.should == "US"
+          query = @query.convert!(acceptable_formats)
+          query.q.should == @zipcode_to_geocode
+          query.country_code.should == "US"
         end
         
         it "skips converting to icao" do
           acceptable_formats = [:icao]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "skips converting to postalcode" do
           acceptable_formats = [:postalcode]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "skips converting to short_zipcode" do
           @query = Barometer::Query.new(@long_zipcode)
           acceptable_formats = [:short_zipcode]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "converts to weather_id" do
           acceptable_formats = [:weather_id]
-          @query.convert!(acceptable_formats).should == @zipcode_to_weather_id
-          @query.country_code.should == "US"
+          query = @query.convert!(acceptable_formats)
+          query.q.should == @zipcode_to_weather_id
+          query.country_code.should == "US"
         end
         
       end
@@ -298,38 +301,39 @@ describe "Query" do
         
         it "converts to coordinates" do
           acceptable_formats = [:coordinates]
-          @query.convert!(acceptable_formats).should == @postalcode_to_coordinates
-          @query.country_code.should == "CA"
+          query = @query.convert!(acceptable_formats)
+          query.q.should == @postalcode_to_coordinates
+          query.country_code.should == "CA"
         end
         
         it "skips converting to geocode" do
           acceptable_formats = [:geocode]
-          @query.convert!(acceptable_formats).should == @postal_code
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "skips converting to icao" do
           acceptable_formats = [:icao]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "skips converting to short_zipcode" do
           acceptable_formats = [:short_zipcode]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "skips converting to weather_id" do
           acceptable_formats = [:weather_id]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "skips converting to zipcode" do
           acceptable_formats = [:zipcode]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
       end
@@ -343,38 +347,40 @@ describe "Query" do
         
         it "converts to coordinates" do
           acceptable_formats = [:coordinates]
-          @query.convert!(acceptable_formats).should == @icao_to_coordinates
-          @query.country_code.should == "US"
+          query = @query.convert!(acceptable_formats)
+          query.q.should == @icao_to_coordinates
+          query.country_code.should == "US"
         end
         
         it "converts to geocode" do
           acceptable_formats = [:geocode]
-          @query.convert!(acceptable_formats).should == @icao_to_geocode
-          @query.country_code.should == "US"
+          query = @query.convert!(acceptable_formats)
+          query.q.should == @icao_to_geocode
+          query.country_code.should == "US"
         end
         
         it "skips converting to postalcode" do
           acceptable_formats = [:postalcode]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "skips converting to short_zipcode" do
           acceptable_formats = [:short_zipcode]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "skips converting to weather_id" do
           acceptable_formats = [:weather_id]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "skips converting to zipcode" do
           acceptable_formats = [:zipcode]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
       end
@@ -388,38 +394,40 @@ describe "Query" do
         
         it "converts to coordinates" do
           acceptable_formats = [:coordinates]
-          @query.convert!(acceptable_formats).should == @geocode_to_coordinates
-          @query.country_code.should == "US"
+          query = @query.convert!(acceptable_formats)
+          query.q.should == @geocode_to_coordinates
+          query.country_code.should == "US"
         end
         
         it "skips converting to icao" do
           acceptable_formats = [:icao]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "skips converting to postalcode" do
           acceptable_formats = [:postalcode]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "skips converting to short_zipcode" do
           acceptable_formats = [:short_zipcode]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "converts to weather_id" do
           acceptable_formats = [:weather_id]
-          @query.convert!(acceptable_formats).should == @geocode_to_weather_id
-          @query.country_code.should == "US"
+          query = @query.convert!(acceptable_formats)
+          query.q.should == @geocode_to_weather_id
+          query.country_code.should == "US"
         end
         
         it "skips converting to zipcode" do
           acceptable_formats = [:zipcode]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
       end
@@ -433,38 +441,40 @@ describe "Query" do
         
         it "converts to geocode" do
           acceptable_formats = [:geocode]
-          @query.convert!(acceptable_formats).should == @coordinates_to_geocode
-          @query.country_code.should == "US"
+          query = @query.convert!(acceptable_formats)
+          query.q.should == @coordinates_to_geocode
+          query.country_code.should == "US"
         end
         
         it "skips converting to icao" do
           acceptable_formats = [:icao]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "skips converting to postalcode" do
           acceptable_formats = [:postalcode]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "skips converting to short_zipcode" do
           acceptable_formats = [:short_zipcode]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
         it "converts to weather_id" do
           acceptable_formats = [:weather_id]
-          @query.convert!(acceptable_formats).should == @coordinates_to_weather_id
-          @query.country_code.should == "US"
+          query = @query.convert!(acceptable_formats)
+          query.q.should == @coordinates_to_weather_id
+          query.country_code.should == "US"
         end
         
         it "skips converting to zipcode" do
           acceptable_formats = [:zipcode]
-          @query.convert!(acceptable_formats).should be_nil
-          @query.country_code.should be_nil
+          query = @query.convert!(acceptable_formats)
+          query.should be_nil
         end
         
       end

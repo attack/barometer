@@ -273,7 +273,7 @@ describe "Weather" do
     
     before(:each) do
       @weather = Barometer::Weather.new
-      @now = Data::LocalTime.parse("2:05 pm")
+      @now = Data::LocalDateTime.parse("2:05 pm")
     end
     
     describe "windy?" do

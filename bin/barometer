@@ -78,10 +78,11 @@ class App
     @options.timeout = 15
     @options.geocode = false
     @options.metric = true
-    @options.sources = [:wunderground]
+    @options.sources = []
     @options.verbode = false
     @options.web = false
-    @options.at = Time.now.utc
+    @options.at = nil
+    @options.default = true
     
     # thresholds
     @options.windy_m = 10
@@ -122,10 +123,10 @@ class App
       opt.on('-g', '--geocode')    { @options.geocode = true }
       opt.on('-m', '--metric')     { @options.metric = true }
       opt.on('-i', '--imperial')   { @options.metric = false }
-      opt.on('--no-wunderground')  { @options.sources = @options.sources.delete_if{|s| s == :wunderground} }
-      opt.on('--yahoo')            { @options.sources << :yahoo }
-      opt.on('--google')           { @options.sources << :google }
-      opt.on('--weather')          { @options.sources << :weather_dot_com }
+      opt.on('--wunderground')     { @options.sources << :wunderground; @options.default = false }
+      opt.on('--yahoo')            { @options.sources << :yahoo; @options.default = false }
+      opt.on('--google')           { @options.sources << :google; @options.default = false }
+      opt.on('--weather')          { @options.sources << :weather_dot_com; @options.default = false }
       opt.on('-p n', '--pop n')    {|n| @options.pop = n.to_i || 50 }
       opt.on('-s n', '--wind n')   {|n| @options.metric ? @options.windy_m = n.to_f || 10 : @options.windy_i = n.to_f || 7 }
       
@@ -159,6 +160,7 @@ class App
 
     # Performs post-parse processing on options
     def process_options
+      @options.sources << :wunderground if @options.default
       @options.sources = @options.sources.uniq
       Barometer.force_geocode =  @options.geocode
       if @options.sources.include?(:weather_dot_com)
@@ -297,13 +299,19 @@ end
 
 def pretty_query(q)
   return unless q
-  section("QUERY", 2) do
-    pretty_hash({"Format" => q.format})
+  section("ORIGINAL QUERY", 1) do
     pretty_hash({
-      "Address" => q.geo.address,
-      "Locality" => q.geo.locality, "Region" => q.geo.region,
-      "Country" => q.geo.country, "Country Code" => q.geo.country_code,
-      "Latitude" => q.geo.latitude, "Longitude" => q.geo.longitude }) if q.geo
+      "Query" => q.q, "Format" => q.format,
+      "Country Code" => q.country_code })
+  end
+  if q.geo
+    section("GEO", 2) do
+      pretty_hash({
+        "Address" => q.geo.address, "Query" => q.geo.query,
+        "Locality" => q.geo.locality, "Region" => q.geo.region,
+        "Country" => q.geo.country, "Country Code" => q.geo.country_code,
+        "Latitude" => q.geo.latitude, "Longitude" => q.geo.longitude })
+    end
   end
 end
 
@@ -394,6 +402,9 @@ def pretty_measurement(m)
       "Measured At" => m.measured_at,
       "Source" => m.source, "Time Stamp" => m.utc_time_stamp,
       "Metric" => m.metric?, "Success" => m.success? })
+  end
+  section("MODIFIED QUERY", 2) do
+    pretty_hash({ "Query" => m.query, "Format" => m.format })
   end
   pretty_location(m.location)
   pretty_station(m.station)
