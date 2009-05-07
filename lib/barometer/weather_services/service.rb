@@ -15,7 +15,7 @@ module Barometer
   # Basically, all a service is required to do is take a query
   # (ie "Paris") and return a complete Data::Measurement instance.
   #
-  class Service
+  class WeatherService
     # all service drivers will use the HTTParty gem
     include HTTParty
     
@@ -23,9 +23,9 @@ module Barometer
     def self.source(source_name)
       raise ArgumentError unless (source_name.is_a?(String) || source_name.is_a?(Symbol))
       source_name = source_name.to_s.split("_").collect{ |s| s.capitalize }.join('')
-      raise ArgumentError unless Barometer.const_defined?(source_name)
-      raise ArgumentError unless Barometer.const_get(source_name).superclass == Barometer::Service
-      Barometer.const_get(source_name)
+      raise ArgumentError unless Barometer::WeatherService.const_defined?(source_name)
+      raise ArgumentError unless Barometer::WeatherService.const_get(source_name).superclass == Barometer::WeatherService
+      Barometer::WeatherService.const_get(source_name)
     end
 
     #
@@ -36,8 +36,12 @@ module Barometer
       
       measurement = Data::Measurement.new(self.source_name, metric)
       if self.meets_requirements?(query)
-        query.convert!(self.accepted_formats)
-        measurement = self._measure(measurement, query, metric) if query.preferred
+        converted_query = query.convert!(self.accepted_formats)
+        if converted_query
+          measurement.query = converted_query.q
+          measurement.format = converted_query.format
+          measurement = self._measure(measurement, converted_query, metric)
+        end
       end
       measurement
     end
@@ -87,7 +91,7 @@ module Barometer
     # WINDY?
     #
     def self.windy?(measurement, threshold=10, time_string=nil)
-      local_time = Data::LocalDateTime.parse(time_string)
+      local_time = Data::LocalDateTime.parse(time_string) if time_string
       raise ArgumentError unless measurement.is_a?(Data::Measurement)
       raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
       raise ArgumentError unless (local_time.is_a?(Data::LocalDateTime) || local_time.nil?)
@@ -115,7 +119,7 @@ module Barometer
     # WET?
     #
     def self.wet?(measurement, threshold=50, time_string=nil)
-      local_time = Data::LocalDateTime.parse(time_string)
+      local_time = Data::LocalDateTime.parse(time_string) if time_string
       raise ArgumentError unless measurement.is_a?(Data::Measurement)
       raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
       raise ArgumentError unless (local_time.is_a?(Data::LocalDateTime) || local_time.nil?)
@@ -165,7 +169,7 @@ module Barometer
     
     # cookie cutter answer
     def self.forecasted_wet?(measurement, threshold=50, time_string=nil)
-      local_time = Data::LocalDateTime.parse(time_string)
+      local_time = Data::LocalDateTime.parse(time_string) if time_string
       raise ArgumentError unless measurement.is_a?(Data::Measurement)
       raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
       raise ArgumentError unless (local_time.is_a?(Data::LocalDateTime) || local_time.nil?)
@@ -209,13 +213,13 @@ module Barometer
     # DAY?
     #
     def self.day?(measurement, time_string=nil)
-      local_time = Data::LocalDateTime.parse(time_string)
+      local_datetime = Data::LocalDateTime.parse(time_string) if time_string
       raise ArgumentError unless measurement.is_a?(Data::Measurement)
-      raise ArgumentError unless (local_time.is_a?(Data::LocalDateTime) || local_time.nil?)
+      raise ArgumentError unless (local_datetime.is_a?(Data::LocalDateTime) || local_datetime.nil?)
 
-      measurement.current?(local_time) ?
+      measurement.current?(local_datetime) ?
         self.currently_day?(measurement) :
-        self.forecasted_day?(measurement, local_time)
+        self.forecasted_day?(measurement, local_datetime)
     end
     
     def self.currently_day?(measurement)
@@ -242,37 +246,37 @@ module Barometer
     end
 
     def self.forecasted_day?(measurement, time_string=nil)
-      local_time = Data::LocalDateTime.parse(time_string)
+      local_datetime = Data::LocalDateTime.parse(time_string) if time_string
       raise ArgumentError unless measurement.is_a?(Data::Measurement)
-      raise ArgumentError unless (local_time.is_a?(Data::LocalDateTime) || local_time.nil?)
+      raise ArgumentError unless (local_datetime.is_a?(Data::LocalDateTime) || local_datetime.nil?)
       return nil unless measurement.forecast
-      forecast_measurement = measurement.for(local_time)
+      forecast_measurement = measurement.for(local_datetime)
       return nil unless forecast_measurement
-      self.forecasted_after_sunrise?(forecast_measurement, local_time) &&
-        self.forecasted_before_sunset?(forecast_measurement, local_time)
+      self.forecasted_after_sunrise?(forecast_measurement, local_datetime) &&
+        self.forecasted_before_sunset?(forecast_measurement, local_datetime)
     end
     
     def self.forecasted_after_sunrise?(forecast_measurement, time_string)
-      local_time = Data::LocalDateTime.parse(time_string)
+      local_datetime = Data::LocalDateTime.parse(time_string) if time_string
       raise ArgumentError unless forecast_measurement.is_a?(Data::ForecastMeasurement)
-      raise ArgumentError unless local_time.is_a?(Data::LocalDateTime)
+      raise ArgumentError unless (local_datetime.is_a?(Data::LocalDateTime) || local_datetime.nil?)
       return nil unless forecast_measurement.sun && forecast_measurement.sun.rise
-      local_time >= forecast_measurement.sun.rise
+      local_datetime >= forecast_measurement.sun.rise
     end 
     
     def self.forecasted_before_sunset?(forecast_measurement, time_string)
-      local_time = Data::LocalDateTime.parse(time_string)
+      local_datetime = Data::LocalDateTime.parse(time_string) if time_string
       raise ArgumentError unless forecast_measurement.is_a?(Data::ForecastMeasurement)
-      raise ArgumentError unless local_time.is_a?(Data::LocalDateTime)
+      raise ArgumentError unless (local_datetime.is_a?(Data::LocalDateTime) || local_datetime.nil?)
       return nil unless forecast_measurement.sun && forecast_measurement.sun.set
-      local_time <= forecast_measurement.sun.set
+      local_datetime <= forecast_measurement.sun.set
     end
     
     #
     # SUNNY?
     #
     def self.sunny?(measurement, time_string=nil)
-      local_time = Data::LocalDateTime.parse(time_string)
+      local_time = Data::LocalDateTime.parse(time_string) if time_string
       raise ArgumentError unless measurement.is_a?(Data::Measurement)
       raise ArgumentError unless (local_time.is_a?(Data::LocalDateTime) || local_time.nil?)
       measurement.current?(local_time) ?
@@ -290,7 +294,7 @@ module Barometer
     
     # cookie cutter answer
     def self.forecasted_sunny?(measurement, time_string=nil)
-      local_time = Data::LocalDateTime.parse(time_string)
+      local_time = Data::LocalDateTime.parse(time_string) if time_string
       raise ArgumentError unless measurement.is_a?(Data::Measurement)
       raise ArgumentError unless (local_time.is_a?(Data::LocalDateTime) || local_time.nil?)
       return nil unless measurement.forecast

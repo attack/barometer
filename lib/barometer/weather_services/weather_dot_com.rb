@@ -38,7 +38,7 @@ module Barometer
   # - improve "forcasted_wet_by_humidity?" to use forecasted values
   # - improve "forcasted_windy?" to use forecasted values
   #
-  class WeatherDotCom < Service
+  class WeatherService::WeatherDotCom < WeatherService
     
     @@partner_key = nil
     @@license_key = nil
@@ -72,7 +72,7 @@ module Barometer
       measurement.source = self.source_name
       
       begin
-        result = self.get_all(query.preferred, metric)
+        result = self.fetch(query.q, metric)
       rescue Timeout::Error => e
         return measurement
       end
@@ -238,8 +238,9 @@ module Barometer
     end
 
     # use HTTParty to get the current weather
-    def self.get_all(query, metric=true)
-      Barometer::WeatherDotCom.get(
+    #
+    def self.fetch(query, metric=true)
+      self.get(
         "http://xoap.weather.com/weather/local/#{query}",
         :query => { :par => @@partner_key, :key => @@license_key,
           :prod => "xoap", :link => "xoap", :cc => "*",
@@ -249,7 +250,7 @@ module Barometer
         :timeout => Barometer.timeout
       )['weather']
     end
-
+    
   end
 end
 

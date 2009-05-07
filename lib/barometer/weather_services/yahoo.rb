@@ -43,7 +43,7 @@ module Barometer
   # == notes
   # - the Yahoo! Location ID is a propreitary number (shared with weather.com)
   #
-  class Yahoo < Service
+  class WeatherService::Yahoo < WeatherService
     
     def self.source_name; :yahoo; end
     def self.accepted_formats; [:zipcode, :weather_id]; end
@@ -64,7 +64,7 @@ module Barometer
       measurement.source = self.source_name
       
       begin
-        result = self.get_all(query.preferred, metric)
+        result = self.fetch(query.q, metric)
       rescue Timeout::Error => e
         return measurement
       end
@@ -108,28 +108,31 @@ def self.build_local_time(data)
       pub_date = data['item']['pubDate']
       
       # get the TIME ZONE CODE
-      zone_match = data['item']['pubDate'].match(/ ([A-Z]*)$/)
-      zone = zone_match[1] if zone_match
+      zone_match = pub_date.match(/ ([A-Z]*)$/) if pub_date
       
-      # try converting pub_date to utc
-      pub_date_utc = Data::Zone.code_to_utc(Time.parse(pub_date), zone)
-      
-      # how far back was this?
-      data_age_in_seconds = now_utc - pub_date_utc
-      
-      # is this older then 2 hours
-      if (data_age_in_seconds < 0) || (data_age_in_seconds > (60 * 60 * 2))
-        # we may have converted the time wrong.
-        # if pub_date in the future, then?
-        # if pub_date too far back, then?
+      if zone_match
+        zone = zone_match[1] 
         
-        # for now do nothing ... don't set measured_time
-        return nil
-      else
-        # everything seems fine
-        # convert now to the local time 
-        offset = Data::Zone.zone_to_offset(zone)
-        return Data::LocalTime.parse(now_utc + offset)
+        # try converting pub_date to utc
+#        pub_date_utc = Data::Zone.code_to_utc(Time.parse(pub_date), zone) if zone
+     
+        # how far back was this?
+ #       data_age_in_seconds = now_utc - pub_date_utc
+      
+        # is this older then 2 hours
+#        if (data_age_in_seconds < 0) || (data_age_in_seconds > (60 * 60 * 2))
+          # we may have converted the time wrong.
+          # if pub_date in the future, then?
+          # if pub_date too far back, then?
+        
+          # for now do nothing ... don't set measured_time
+#          return nil
+#        else
+          # everything seems fine
+          # convert now to the local time 
+          offset = Data::Zone.zone_to_offset(zone)
+          return Data::LocalTime.parse(now_utc + offset)
+#        end
       end
       nil
     end
@@ -228,8 +231,8 @@ end
     end
 
     # use HTTParty to get the current weather
-    def self.get_all(query, metric=true)
-      Barometer::Yahoo.get(
+    def self.fetch(query, metric=true)
+      self.get(
         "http://weather.yahooapis.com/forecastrss",
         :query => {:p => query, :u => (metric ? 'c' : 'f')},
         :format => :xml,

@@ -44,7 +44,7 @@ module Barometer
   # = Wunderground terms of use
   # Unable to locate.
   #
-  class Wunderground < Service
+  class WeatherService::Wunderground < WeatherService
     
     def self.source_name; :wunderground; end
     def self.accepted_formats
@@ -53,7 +53,7 @@ module Barometer
     
     # these are the icon codes that indicate "wet", used by wet? function
     def self.wet_icon_codes
-      %w(flurries rain sleet snow tstorms nt_flurries nt_rain nt_sleet nt_snow nt_tstorms chancerain)
+      %w(flurries rain sleet snow tstorms nt_flurries nt_rain nt_sleet nt_snow nt_tstorms chancerain chancetstorms)
     end
     # these are the icon codes that indicate "sun", used by sunny? function
     def self.sunny_icon_codes
@@ -66,14 +66,14 @@ module Barometer
       measurement.source = self.source_name
       
       begin
-        current_result = self.get_current(query.preferred)
+        current_result = self.get_current(query.q)
         measurement.current = self.build_current(current_result, metric)
       rescue Timeout::Error => e
         return measurement
       end
       
       begin
-        forecast_result = self.get_forecast(query.preferred)
+        forecast_result = self.get_forecast(query.q)
         measurement.forecast = self.build_forecast(forecast_result, metric)
       rescue Timeout::Error => e
         return measurement
@@ -112,7 +112,7 @@ module Barometer
       raise ArgumentError unless data.is_a?(Hash)
       
       current = Data::CurrentMeasurement.new
-      current.updated_at = Data::LocalDateTime.parse(data['observation_time'])
+      current.updated_at = Data::LocalDateTime.parse(data['observation_time']) if data['observation_time']
       current.humidity = data['relative_humidity'].to_i
       current.icon = data['icon'] if data['icon']
       
@@ -211,7 +211,7 @@ module Barometer
           data['simpleforecast']['forecastday'].first['date']['tz_long']
         )
       end
-      timezone
+      timezone || Data::Zone.new(nil)
     end
     
     def self.build_sun(data, timezone)
@@ -244,7 +244,8 @@ module Barometer
     
     # use HTTParty to get the current weather
     def self.get_current(query)
-      Barometer::Wunderground.get(
+      return unless query
+      self.get(
        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml",
        :query => {:query => query},
        :format => :xml,
@@ -254,7 +255,8 @@ module Barometer
     
     # use HTTParty to get the forecasted weather
     def self.get_forecast(query)
-      Barometer::Wunderground.get(
+      return unless query
+      self.get(
         "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml",
         :query => {:query => query},
         :format => :xml,

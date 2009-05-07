@@ -21,7 +21,7 @@ module Barometer
   # - API: http://unknown
   #
   # === Possible queries:
-  # - 
+  # - http://google.com/ig/api?weather=perth
   #
   # where query can be:
   # - zipcode (US or Canadian)
@@ -33,7 +33,7 @@ module Barometer
   # = Google terms of use
   # This is an unoffical API.  There are no terms of use.
   #
-  class Google < Service
+  class WeatherService::Google < WeatherService
     
     def self.source_name; :google; end
     def self.accepted_formats; [:zipcode, :postalcode, :geocode]; end
@@ -51,7 +51,7 @@ module Barometer
       measurement.source = self.source_name
       
       begin
-        result = self.get_all(query.preferred, metric)
+        result = self.get_all(query.q, metric)
       rescue Timeout::Error => e
         return measurement
       end
@@ -66,10 +66,11 @@ module Barometer
       raise ArgumentError unless data.is_a?(Hash)
       current = Data::CurrentMeasurement.new
 
-      if data && data['forecast_information'] &&
-         data['forecast_information']['current_date_time']
-        current.updated_at = Data::LocalDateTime.parse(data['forecast_information']['current_date_time']['data'])
-      end
+      # google gives utc time, no way to convert to local
+      #if data && data['forecast_information'] &&
+      #   data['forecast_information']['current_date_time']
+      #  current.updated_at = Data::LocalDateTime.parse(data['forecast_information']['current_date_time']['data'])
+      #end
       
       if data['current_conditions']
         data = data['current_conditions']
@@ -145,7 +146,7 @@ module Barometer
     
     # use HTTParty to get the current weather
     def self.get_all(query, metric=true)
-      Barometer::Google.get(
+      self.get(
         "http://google.com/ig/api",
         :query => {:weather => query, :hl => (metric ? "en-GB" : "en-US")},
         :format => :xml,

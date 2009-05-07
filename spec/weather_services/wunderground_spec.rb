@@ -1,4 +1,5 @@
 require 'spec_helper'
+include Barometer
 
 describe "Wunderground" do
   
@@ -10,15 +11,15 @@ describe "Wunderground" do
   describe "the class methods" do
     
     it "defines accepted_formats" do
-      Barometer::Wunderground.accepted_formats.should == @accepted_formats
+      WeatherService::Wunderground.accepted_formats.should == @accepted_formats
     end
     
     it "defines get_current" do
-      Barometer::Wunderground.respond_to?("get_current").should be_true
+      WeatherService::Wunderground.respond_to?("get_current").should be_true
     end
     
     it "defines get_forecast" do
-      Barometer::Wunderground.respond_to?("get_forecast").should be_true
+      WeatherService::Wunderground.respond_to?("get_forecast").should be_true
     end
     
   end
@@ -26,16 +27,17 @@ describe "Wunderground" do
   describe "building the current data" do
     
     it "defines the build method" do
-      Barometer::Wunderground.respond_to?("build_current").should be_true
+      WeatherService::Wunderground.respond_to?("build_current").should be_true
     end
     
     it "requires Hash input" do
-      lambda { Barometer::Wunderground.build_current }.should raise_error(ArgumentError)
-      lambda { Barometer::Wunderground.build_current({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground.build_current }.should raise_error(ArgumentError)
+      WeatherService::Wunderground.build_current({})
+      lambda { WeatherService::Wunderground.build_current({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::CurrentMeasurement object" do
-      current = Barometer::Wunderground.build_current({})
+      current = WeatherService::Wunderground.build_current({})
       current.is_a?(Data::CurrentMeasurement).should be_true
     end
     
@@ -44,16 +46,16 @@ describe "Wunderground" do
   describe "building the forecast data" do
     
     it "defines the build method" do
-      Barometer::Wunderground.respond_to?("build_forecast").should be_true
+      WeatherService::Wunderground.respond_to?("build_forecast").should be_true
     end
     
     it "requires Hash input" do
-      lambda { Barometer::Wunderground.build_forecast }.should raise_error(ArgumentError)
-      lambda { Barometer::Wunderground.build_forecast({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground.build_forecast }.should raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground.build_forecast({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Array object" do
-      current = Barometer::Wunderground.build_forecast({})
+      current = WeatherService::Wunderground.build_forecast({})
       current.is_a?(Array).should be_true
     end
     
@@ -62,16 +64,16 @@ describe "Wunderground" do
   describe "building the station data" do
     
     it "defines the build method" do
-      Barometer::Wunderground.respond_to?("build_station").should be_true
+      WeatherService::Wunderground.respond_to?("build_station").should be_true
     end
     
     it "requires Hash input" do
-      lambda { Barometer::Wunderground.build_station }.should raise_error(ArgumentError)
-      lambda { Barometer::Wunderground.build_station({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground.build_station }.should raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground.build_station({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::Location object" do
-      station = Barometer::Wunderground.build_station({})
+      station = WeatherService::Wunderground.build_station({})
       station.is_a?(Data::Location).should be_true
     end
     
@@ -80,16 +82,16 @@ describe "Wunderground" do
   describe "building the location data" do
     
     it "defines the build method" do
-      Barometer::Wunderground.respond_to?("build_location").should be_true
+      WeatherService::Wunderground.respond_to?("build_location").should be_true
     end
     
     it "requires Hash input" do
-      lambda { Barometer::Wunderground.build_location }.should raise_error(ArgumentError)
-      lambda { Barometer::Wunderground.build_location({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground.build_location }.should raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground.build_location({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::Location object" do
-      location = Barometer::Wunderground.build_location({})
+      location = WeatherService::Wunderground.build_location({})
       location.is_a?(Data::Location).should be_true
     end
     
@@ -98,12 +100,12 @@ describe "Wunderground" do
   describe "building the timezone" do
     
     it "defines the build method" do
-      Barometer::Wunderground.respond_to?("build_timezone").should be_true
+      WeatherService::Wunderground.respond_to?("build_timezone").should be_true
     end
     
     it "requires Hash input" do
-      lambda { Barometer::Wunderground.build_timezone }.should raise_error(ArgumentError)
-      lambda { Barometer::Wunderground.build_timezone({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground.build_timezone }.should raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground.build_timezone({}) }.should_not raise_error(ArgumentError)
     end
     
   end
@@ -115,22 +117,22 @@ describe "Wunderground" do
     end
 
     it "defines the build method" do
-      Barometer::Wunderground.respond_to?("build_sun").should be_true
+      WeatherService::Wunderground.respond_to?("build_sun").should be_true
     end
     
     it "requires Hash input" do
-      lambda { Barometer::Wunderground.build_sun }.should raise_error(ArgumentError)
-      lambda { Barometer::Wunderground.build_sun({},@zone) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground.build_sun }.should raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground.build_sun({},@zone) }.should_not raise_error(ArgumentError)
     end
     
     it "requires Barometer::Zone input" do
-      lambda { Barometer::Wunderground.build_sun({}) }.should raise_error(ArgumentError)
-      lambda { Barometer::Wunderground.build_sun({}, "invalid") }.should raise_error(ArgumentError)
-      lambda { Barometer::Wunderground.build_sun({},@zone) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground.build_sun({}) }.should raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground.build_sun({}, "invalid") }.should raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground.build_sun({},@zone) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::Sun object" do
-      sun = Barometer::Wunderground.build_sun({},@zone)
+      sun = WeatherService::Wunderground.build_sun({},@zone)
       sun.is_a?(Data::Sun).should be_true
     end
     
@@ -140,18 +142,17 @@ describe "Wunderground" do
 
     before(:each) do
       @query = Barometer::Query.new("Calgary,AB")
-      @query.preferred = "Calgary,AB"
       @measurement = Data::Measurement.new
       
       FakeWeb.register_uri(:get, 
-        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query.preferred)}",
+        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query.q)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
           '../fixtures/services/wunderground',
           'current_calgary_ab.xml')
         )
       )  
       FakeWeb.register_uri(:get, 
-        "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query.preferred)}",
+        "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query.q)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
           '../fixtures/services/wunderground',
           'forecast_calgary_ab.xml')
@@ -162,25 +163,25 @@ describe "Wunderground" do
     describe "all" do
       
       it "responds to _measure" do
-        Barometer::Wunderground.respond_to?("_measure").should be_true
+        WeatherService::Wunderground.respond_to?("_measure").should be_true
       end
       
       it "requires a Barometer::Measurement object" do
-        lambda { Barometer::Wunderground._measure(nil, @query) }.should raise_error(ArgumentError)
-        lambda { Barometer::Wunderground._measure("invlaid", @query) }.should raise_error(ArgumentError)
+        lambda { WeatherService::Wunderground._measure(nil, @query) }.should raise_error(ArgumentError)
+        lambda { WeatherService::Wunderground._measure("invlaid", @query) }.should raise_error(ArgumentError)
 
-        lambda { Barometer::Wunderground._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
+        lambda { WeatherService::Wunderground._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
       end
 
       it "requires a Barometer::Query query" do
-        lambda { Barometer::Wunderground._measure }.should raise_error(ArgumentError)
-        lambda { Barometer::Wunderground._measure(@measurement, 1) }.should raise_error(ArgumentError)
+        lambda { WeatherService::Wunderground._measure }.should raise_error(ArgumentError)
+        lambda { WeatherService::Wunderground._measure(@measurement, 1) }.should raise_error(ArgumentError)
         
-        lambda { Barometer::Wunderground._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
+        lambda { WeatherService::Wunderground._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
       end
       
       it "returns a Barometer::Measurement object" do
-        result = Barometer::Wunderground._measure(@measurement, @query)
+        result = WeatherService::Wunderground._measure(@measurement, @query)
         result.is_a?(Data::Measurement).should be_true
         result.current.is_a?(Data::CurrentMeasurement).should be_true
         result.forecast.is_a?(Array).should be_true
@@ -207,13 +208,13 @@ describe "Wunderground" do
       it "returns true if matching icon code" do
         @measurement.current.icon = "rain"
         @measurement.current.icon?.should be_true
-        Barometer::Wunderground.currently_wet_by_icon?(@measurement.current).should be_true
+        WeatherService::Wunderground.currently_wet_by_icon?(@measurement.current).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.current.icon = "sunny"
         @measurement.current.icon?.should be_true
-        Barometer::Wunderground.currently_wet_by_icon?(@measurement.current).should be_false
+        WeatherService::Wunderground.currently_wet_by_icon?(@measurement.current).should be_false
       end
       
     end
@@ -229,13 +230,13 @@ describe "Wunderground" do
       it "returns true if matching icon code" do
         @measurement.forecast.first.icon = "rain"
         @measurement.forecast.first.icon?.should be_true
-        Barometer::Wunderground.forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
+        WeatherService::Wunderground.forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.forecast.first.icon = "sunny"
         @measurement.forecast.first.icon?.should be_true
-        Barometer::Wunderground.forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
+        WeatherService::Wunderground.forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
       end
       
     end
@@ -249,13 +250,13 @@ describe "Wunderground" do
       it "returns true if matching icon code" do
         @measurement.current.icon = "sunny"
         @measurement.current.icon?.should be_true
-        Barometer::Wunderground.currently_sunny_by_icon?(@measurement.current).should be_true
+        WeatherService::Wunderground.currently_sunny_by_icon?(@measurement.current).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.current.icon = "rain"
         @measurement.current.icon?.should be_true
-        Barometer::Wunderground.currently_sunny_by_icon?(@measurement.current).should be_false
+        WeatherService::Wunderground.currently_sunny_by_icon?(@measurement.current).should be_false
       end
       
     end
@@ -271,13 +272,13 @@ describe "Wunderground" do
       it "returns true if matching icon code" do
         @measurement.forecast.first.icon = "sunny"
         @measurement.forecast.first.icon?.should be_true
-        Barometer::Wunderground.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
+        WeatherService::Wunderground.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.forecast.first.icon = "rain"
         @measurement.forecast.first.icon?.should be_true
-        Barometer::Wunderground.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
+        WeatherService::Wunderground.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
       end
       
     end
@@ -288,18 +289,17 @@ describe "Wunderground" do
     
     before(:each) do
       @query = Barometer::Query.new("Calgary,AB")
-      @query.preferred = "Calgary,AB"
       @measurement = Data::Measurement.new
       
       FakeWeb.register_uri(:get, 
-        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query.preferred)}",
+        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query.q)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
           '../fixtures/services/wunderground',
           'current_calgary_ab.xml')
         )
       )  
       FakeWeb.register_uri(:get, 
-        "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query.preferred)}",
+        "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query.q)}",
         :string => File.read(File.join(File.dirname(__FILE__), 
           '../fixtures/services/wunderground',
           'forecast_calgary_ab.xml')
@@ -309,7 +309,7 @@ describe "Wunderground" do
 
    # TODO: complete this
    it "should correctly build the data" do
-      result = Barometer::Wunderground._measure(@measurement, @query)
+      result = WeatherService::Wunderground._measure(@measurement, @query)
       
       # build timezone
       @measurement.timezone.timezone.should == "America/Edmonton"
