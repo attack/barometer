@@ -365,14 +365,14 @@ describe "Measurement" do
       end
 
       it "returns true if a source returns true" do
-        module Barometer; class Service
+        module Barometer; class WeatherService
           def self.windy?(a=nil,b=nil,c=nil); true; end
         end; end
         @measurement.windy?.should be_true
       end
 
       it "returns false if a measurement returns false" do
-        module Barometer; class Service
+        module Barometer; class WeatherService
           def self.windy?(a=nil,b=nil,c=nil); false; end
         end; end
         @measurement.windy?.should be_false
@@ -394,14 +394,14 @@ describe "Measurement" do
       end
 
       it "returns true if a source returns true" do
-        module Barometer; class Service
+        module Barometer; class WeatherService
           def self.wet?(a=nil,b=nil,c=nil); true; end
         end; end
         @measurement.wet?.should be_true
       end
 
       it "returns false if a measurement returns false" do
-        module Barometer; class Service
+        module Barometer; class WeatherService
           def self.wet?(a=nil,b=nil,c=nil); false; end
         end; end
         @measurement.wet?.should be_false
@@ -417,14 +417,14 @@ describe "Measurement" do
       end
 
       it "returns true if a source returns true" do
-        module Barometer; class Service
+        module Barometer; class WeatherService
           def self.day?(a=nil,b=nil); true; end
         end; end
         @measurement.day?.should be_true
       end
 
       it "returns false if a measurement returns false" do
-        module Barometer; class Service
+        module Barometer; class WeatherService
           def self.day?(a=nil,b=nil); false; end
         end; end
         @measurement.day?.should be_false
@@ -440,34 +440,34 @@ describe "Measurement" do
       end
 
       it "returns true if a source returns true" do
-        module Barometer; class Service
+        module Barometer; class WeatherService
           def self.day?(a=nil,b=nil); true; end
         end; end
-        module Barometer; class Service
+        module Barometer; class WeatherService
           def self.sunny?(a=nil,b=nil); true; end
         end; end
         @measurement.sunny?.should be_true
       end
 
       it "returns false if a measurement returns false" do
-        module Barometer; class Service
+        module Barometer; class WeatherService
           def self.day?(a=nil,b=nil); true; end
         end; end
-        module Barometer; class Service
+        module Barometer; class WeatherService
           def self.sunny?(a=nil,b=nil); false; end
         end; end
         @measurement.sunny?.should be_false
       end
       
       it "returns false if night time" do
-        module Barometer; class Service
+        module Barometer; class WeatherService
           def self.day?(a=nil,b=nil); true; end
         end; end
-        module Barometer; class Service
+        module Barometer; class WeatherService
           def self.sunny?(a=nil,b=nil); true; end
         end; end
         @measurement.sunny?.should be_true
-        module Barometer; class Service
+        module Barometer; class WeatherService
           def self.day?(a=nil,b=nil); false; end
         end; end
         @measurement.sunny?.should be_false

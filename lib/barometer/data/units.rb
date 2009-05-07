@@ -4,9 +4,7 @@ module Barometer
     
     attr_accessor :metric
     
-    def initialize(metric=true)
-      @metric = metric
-    end
+    def initialize(metric=true); @metric = metric; end
     
     #
     # HELPERS
@@ -16,7 +14,8 @@ module Barometer
     def metric!; @metric=true; end
     def imperial!; @metric=false; end
 
-    # assigns a value to the right attribute based on metric setting    
+    # assigns a value to the right attribute based on metric setting
+    #
     def <<(value)
       return unless value
       
@@ -37,22 +36,14 @@ module Barometer
         # do nothing
       end
     
-      if self.metric?
-        self.metric_default = value_m || value_b
-      else
+      self.metric? ? self.metric_default = value_m || value_b :
         self.imperial_default = value_i || value_b
-      end
     end
     
-    # STUB: define this method to actually retireve the metric_default
-    def metric_default=(value)
-      raise NotImplementedError
-    end
-
-    # STUB: define this method to actually retireve the imperial_default
-    def imperial_default=(value)
-      raise NotImplementedError
-    end
+    # stubs
+    #
+    def metric_default=(value); raise NotImplementedError; end
+    def imperial_default=(value); raise NotImplementedError; end
 
   end
 end

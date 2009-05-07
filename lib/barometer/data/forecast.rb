@@ -12,6 +12,8 @@ module Barometer
     attr_reader :date, :icon, :condition
     attr_reader :low, :high, :pop, :wind, :humidity, :sun, :night
     
+    # accessors (with input checking)
+    #
     def date=(date)
       raise ArgumentError unless date.is_a?(Date)
       @date = date
@@ -67,6 +69,7 @@ module Barometer
     #
     
     # creates "?" helpers for all attributes (which maps to nil?)
+    #
     def method_missing(method,*args)
       # if the method ends in ?, then strip it off and see if we
       # respond to the method without the ?

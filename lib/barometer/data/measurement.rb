@@ -14,14 +14,12 @@ module Barometer
   #
   class Data::Measurement
     
-    # the weather service source
-    attr_reader :source
-    # current and forecasted data
+    attr_reader :source, :weight
     attr_reader :measured_at, :utc_time_stamp
     attr_reader :current, :forecast
-    attr_reader :timezone, :station, :location
-    attr_reader :success, :weight, :links
-    attr_accessor :metric
+    attr_reader :timezone, :station, :location, :links
+    attr_reader :success
+    attr_accessor :metric, :query, :format
     
     def initialize(source=nil, metric=true)
       @source = source
@@ -32,9 +30,8 @@ module Barometer
     end
     
     def success!
-      if current && current.temperature && !current.temperature.c.nil?
-        @success = true
-      end
+       current && current.temperature &&
+         !current.temperature.c.nil? && @success = true
     end
     
     def stamp!; @utc_time_stamp = Time.now.utc; end
@@ -43,6 +40,7 @@ module Barometer
     def metric!; @metric=true; end
     def imperial!; @metric=false; end
     
+    #
     # this will tell us if the measurement is still current ... if it is still
     # current this means that the CurrentMeasurement can still used as now
     #
@@ -54,32 +52,16 @@ module Barometer
     # and then you want to know if self.windy?(5_hours_in_future) ... we could
     # not use the current data for this answser as the time 5_hours_in_future
     # is not current
-    # def current?(utc_time=Time.now.utc)
-    #   return false unless @time
-    #   raise ArgumentError unless utc_time.is_a?(Time)
-    #   hours_still_current = 4
-    #   difference = (@time - utc_time).to_i
-    #   difference = (difference*(-1)).to_i if difference < 0
-    #   difference <= (60*60*hours_still_current).to_i
-    # end
-    
-    # use local times
+    #
     def current?(local_time=nil)
-      
       current_at = ((self.current && self.current.current_at) ?
         self.current.current_at : self.measured_at)
       
       local_time = (local_time.nil? ? current_at : Data::LocalTime.parse(local_time))
       return false unless local_time
-
       raise ArgumentError unless local_time.is_a?(Data::LocalTime)
+      
       hours_still_current = 4
-      
-      # what to do if time is not set ... we need to get the current local time
-      #
-      # for now, just used the measured_at time ... if this doesn't exist
-      # then the question cannot be answered
-      
       difference = (local_time.diff(current_at)).to_i.abs
       difference <= (60*60*hours_still_current).to_i
     end
@@ -97,16 +79,16 @@ module Barometer
       
       # Format date into a Date class
       date = case date.class.name
-      when 'String'
-        Date.parse(date)
       when 'Date'
         date
-      when 'DateTime'
-        Date.new(date.year, date.month, date.day)
-      when 'Time'
-        Date.new(date.year, date.month, date.day)
       when 'Data::LocalDateTime'
         date.to_d
+      when 'String'
+        Date.parse(date)
+      when 'Time'
+        Date.new(date.year, date.month, date.day)
+      when 'DateTime'
+        Date.new(date.year, date.month, date.day)
       end
       
       day = nil
@@ -115,6 +97,10 @@ module Barometer
       end
       return day
     end
+    
+    #
+    # accesors (with input checking)
+    #
     
     def source=(source)
       raise ArgumentError unless source.is_a?(Symbol)
@@ -130,7 +116,6 @@ module Barometer
       raise ArgumentError unless current.is_a?(Data::CurrentMeasurement)
       @current = current
       self.stamp!
-      # self-determine success
       self.success!
     end
     
@@ -140,7 +125,6 @@ module Barometer
     end
     
     def timezone=(timezone)
-      #raise ArgumentError unless timezone.is_a?(String)
       raise ArgumentError unless timezone.is_a?(Data::Zone)
       @timezone = timezone
     end
@@ -176,30 +160,30 @@ module Barometer
     #
     
     def windy?(threshold=10, time_string=nil)
-      local_datetime = Data::LocalDateTime.parse(time_string)
+      local_datetime = Data::LocalDateTime.parse(time_string) if time_string
       raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
-      raise ArgumentError unless local_datetime.is_a?(Data::LocalDateTime)
-      Barometer::Service.source(@source).windy?(self, threshold, local_datetime)
+      raise ArgumentError unless (local_datetime.is_a?(Data::LocalDateTime) || local_datetime.nil?)
+      Barometer::WeatherService.source(@source).windy?(self, threshold, local_datetime)
     end
     
     def wet?(threshold=50, time_string=nil)
-      local_datetime = Data::LocalDateTime.parse(time_string)
+      local_datetime = Data::LocalDateTime.parse(time_string) if time_string
       raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
-      raise ArgumentError unless local_datetime.is_a?(Data::LocalDateTime)
-      Barometer::Service.source(@source).wet?(self, threshold, local_datetime)
+      raise ArgumentError unless (local_datetime.is_a?(Data::LocalDateTime) || local_datetime.nil?)
+      Barometer::WeatherService.source(@source).wet?(self, threshold, local_datetime)
     end
     
     def day?(time_string=nil)
-      local_datetime = Data::LocalDateTime.parse(time_string)
-      raise ArgumentError unless local_datetime.is_a?(Data::LocalDateTime)
-      Barometer::Service.source(@source).day?(self, local_datetime)
+      local_datetime = Data::LocalDateTime.parse(time_string) if time_string
+      raise ArgumentError unless (local_datetime.is_a?(Data::LocalDateTime) || local_datetime.nil?)
+      Barometer::WeatherService.source(@source).day?(self, local_datetime)
     end
     
     def sunny?(time_string=nil)
-      local_datetime = Data::LocalDateTime.parse(time_string)
-      raise ArgumentError unless local_datetime.is_a?(Data::LocalDateTime)
+      local_datetime = Data::LocalDateTime.parse(time_string) if time_string
+      raise ArgumentError unless (local_datetime.is_a?(Data::LocalDateTime) || local_datetime.nil?)
       return false if self.day?(local_datetime) == false
-      Barometer::Service.source(@source).sunny?(self, local_datetime)
+      Barometer::WeatherService.source(@source).sunny?(self, local_datetime)
     end
     
   end

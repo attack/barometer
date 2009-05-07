@@ -2,10 +2,19 @@ require 'spec_helper'
 
 describe "Data::LocalDateTime" do
   
+  before(:each) do
+    @y = 2009
+    @mon = 5
+    @d = 1
+    @h = 12
+    @m = 11
+    @s = 10
+  end
+  
   describe "when initialized" do
     
     before(:each) do
-      @datetime = Data::LocalDateTime.new
+      @datetime = Data::LocalDateTime.new(@y,@mon,@d)
     end
     
     it "responds to hour" do
@@ -21,15 +30,15 @@ describe "Data::LocalDateTime" do
     end
     
     it "responds to year" do
-      @datetime.year.should == 0
+      @datetime.year.should == @y
     end
     
     it "responds to month" do
-      @datetime.month.should == 0
+      @datetime.month.should == @mon
     end
     
     it "responds to day" do
-      @datetime.day.should == 0
+      @datetime.day.should == @d
     end
     
   end
@@ -37,12 +46,6 @@ describe "Data::LocalDateTime" do
   describe "conversion" do
     
     before(:each) do
-      @y = 2009
-      @mon = 5
-      @d = 1
-      @h = 12
-      @m = 11
-      @s = 10
       @datetime = Data::LocalDateTime.new(@y,@mon,@d,@h,@m,@s)
     end
   
@@ -144,79 +147,66 @@ describe "Data::LocalDateTime" do
     
   end
   
-  # describe "storing" do
-  #   
-  #   before(:each) do
-  #     @h = 12
-  #     @m = 11
-  #     @s = 10
-  #     @time = Data::LocalTime.new(@h,@m,@s)
-  #   end
-  #   
-  #   it "requires Fixnum (accepts nil)" do
-  #     invalid_data = "s"
-  #     valid_data = 1
-  #     lambda { @time.hour = invalid_data }.should raise_error(ArgumentError)
-  #     lambda { @time.hour = valid_data }.should_not raise_error(ArgumentError)
-  #     lambda { @time.hour = nil }.should_not raise_error(ArgumentError)
-  #     lambda { @time.min = invalid_data }.should raise_error(ArgumentError)
-  #     lambda { @time.min = valid_data }.should_not raise_error(ArgumentError)
-  #     lambda { @time.min = nil }.should_not raise_error(ArgumentError)
-  #     lambda { @time.sec = invalid_data }.should raise_error(ArgumentError)
-  #     lambda { @time.sec = valid_data }.should_not raise_error(ArgumentError)
-  #     lambda { @time.sec = nil }.should_not raise_error(ArgumentError)
-  #   end
-  #   
-  #   it "rolls over seconds" do
-  #     time = Data::LocalTime.new(0,0,60)
-  #     time.sec.should == 0
-  #     time.min.should == 1
-  #   end
-  #   
-  #   it "rolls over minutes" do
-  #     time = Data::LocalTime.new(0,60,0)
-  #     time.min.should == 0
-  #     time.hour.should == 1
-  #   end
-  #   
-  #   it "rolls over hours" do
-  #     time = Data::LocalTime.new(24,0,0)
-  #     time.sec.should == 0
-  #     time.min.should == 0
-  #     time.hour.should == 0
-  #   end
-  #   
-  #   it "rolls over everything" do
-  #     time = Data::LocalTime.new(50,600,601)
-  #     time.sec.should == 1
-  #     time.min.should == 10
-  #     time.hour.should == 12
-  #   end
-  #   
-  #   it "add seconds" do
-  #     time = Data::LocalTime.new(0,0,0)
-  #     time = time + 61
-  #     time.sec.should == 1
-  #     time.min.should == 1
-  #   end
-  #   
-  # end
+  describe "storing" do
+    
+    before(:each) do
+      @datetime = Data::LocalDateTime.new(@y,@mon,@d,@h,@m,@s)
+    end
+    
+    it "requires Fixnum (accepts nil)" do
+      invalid_data = "s"
+      valid_data = 1
+      lambda { @datetime.year = invalid_data }.should raise_error(ArgumentError)
+      lambda { @datetime.year = valid_data }.should_not raise_error(ArgumentError)
+      lambda { @datetime.year = nil }.should raise_error(ArgumentError)
+      lambda { @datetime.month = invalid_data }.should raise_error(ArgumentError)
+      lambda { @datetime.month = valid_data }.should_not raise_error(ArgumentError)
+      lambda { @datetime.month = nil }.should raise_error(ArgumentError)
+      lambda { @datetime.day = invalid_data }.should raise_error(ArgumentError)
+      lambda { @datetime.day = valid_data }.should_not raise_error(ArgumentError)
+      lambda { @datetime.day = nil }.should raise_error(ArgumentError)
+    end
+    
+    it "rejects invalid dates during init" do
+      lambda { Data::LocalDateTime.new(2009,0,1) }.should raise_error(ArgumentError)
+      lambda { Data::LocalDateTime.new(2009,1,0) }.should raise_error(ArgumentError)
+      lambda { Data::LocalDateTime.new(2009,13,1) }.should raise_error(ArgumentError)
+      lambda { Data::LocalDateTime.new(2009,1,32) }.should raise_error(ArgumentError)
+    end
+    
+    it "rejects invalid days" do
+      lambda { @datetime.day = nil }.should raise_error(ArgumentError)
+      lambda { @datetime.day = 32 }.should raise_error(ArgumentError)
+      lambda { @datetime.day = "a" }.should raise_error(ArgumentError)
+      lambda { @datetime.day = 0 }.should raise_error(ArgumentError)
+    end
+    
+    it "rejects invalid months" do
+      lambda { @datetime.month = nil }.should raise_error(ArgumentError)
+      lambda { @datetime.month = 32 }.should raise_error(ArgumentError)
+      lambda { @datetime.month = "a" }.should raise_error(ArgumentError)
+      lambda { @datetime.month = 0 }.should raise_error(ArgumentError)
+    end
+    
+    it "rejects invalid years" do
+      lambda { @datetime.year = nil }.should raise_error(ArgumentError)
+      lambda { @datetime.year = "a" }.should raise_error(ArgumentError)
+    end
+    
+  end
   
-  # describe "retrieving" do
-  #   
-  #   before(:each) do
-  #     @h = 6
-  #     @m = 30
-  #     @s = 20
-  #     @time = Data::LocalTime.new(@h,@m,@s)
-  #   end
-  #   
-  #   it "returns pretty string" do
-  #     @time.to_s.should == "06:30 am"
-  #     @time.to_s(true).should == "06:30:20 am"
-  #   end
-  #   
-  # end
+    describe "retrieving" do
+      
+      before(:each) do
+        @datetime = Data::LocalDateTime.new(@y,@mon,@d,@h,@m,@s)
+      end
+      
+      it "returns pretty string" do
+        @datetime.to_s.should == "2009-05-01"
+        @datetime.to_s(true).should == "2009-05-01 12:11:10 pm"
+      end
+      
+    end
   
   describe "comparators" do
     
@@ -224,6 +214,12 @@ describe "Data::LocalDateTime" do
       @datetime_low = Data::LocalDateTime.new(2009,5,4,0,0,1)
       @datetime_mid = Data::LocalDateTime.new(2009,5,5,12,0,0)
       @datetime_high = Data::LocalDateTime.new(2009,5,6,23,59,59)
+    end
+    
+    it "counts days" do
+      Data::LocalDateTime.new(0,1,1,0,0,0)._total_days.should == 1
+      Data::LocalDateTime.new(0,2,1,0,0,0)._total_days.should == 32
+      Data::LocalDateTime.new(1,1,1,0,0,0)._total_days.should == 367
     end
     
     it "defines <=>" do
@@ -269,45 +265,5 @@ describe "Data::LocalDateTime" do
     end
     
   end
-  
-  # describe "math" do
-  #   
-  #   it "counts the total seconds" do
-  #     Data::LocalTime.new(0,0,1).total_seconds.should == 1
-  #     Data::LocalTime.new(0,1,0).total_seconds.should == (1*60)
-  #     Data::LocalTime.new(1,0,0).total_seconds.should == (1*60*60)
-  #   end
-  #   
-  #   it "provides a difference" do
-  #     a = Data::LocalTime.new(0,0,1)
-  #     b = Data::LocalTime.new(1,0,0)
-  #     diff = (1*60*60) - 1
-  #     a.diff(b).should == diff
-  #     b.diff(a).should == diff
-  #   end
-  #   
-  #   it "adds time" do
-  #     a = Data::LocalTime.new(0,0,1)
-  #     b = Data::LocalTime.new(1,0,0)
-  #     c = (a + b)
-  #     c.is_a?(Data::LocalTime).should be_true
-  #     c.should == Data::LocalTime.new(1,0,1)
-  #     
-  #     b = Data::LocalTime.new(1,0,0)
-  #     (b + 1).should == Data::LocalTime.new(1,0,1)
-  #   end
-  #   
-  #   it "subtracts time" do
-  #     a = Data::LocalTime.new(0,0,1)
-  #     b = Data::LocalTime.new(1,0,0)
-  #     c = (b - a)
-  #     c.is_a?(Data::LocalTime).should be_true
-  #     c.should == Data::LocalTime.new(0,59,59)
-  #     
-  #     b = Data::LocalTime.new(1,0,0)
-  #     (b - 1).should == Data::LocalTime.new(0,59,59)
-  #   end
-  #   
-  # end
   
 end

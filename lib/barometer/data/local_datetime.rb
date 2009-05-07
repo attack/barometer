@@ -10,95 +10,89 @@ module Barometer
     
     attr_reader :year, :month, :day
 
-    def initialize(y=0,mon=0,d=0,h=0,m=0,s=0)
-      self.year = y
-      self.month = mon
+    def initialize(y,mon,d,h=0,m=0,s=0)
+      raise(ArgumentError, "invalid date") unless y && mon && d && Date.civil(y,mon,d)
+      @year = y
+      @month = mon
       @day = d
-#      self.day = day
       super(h,m,s)
       self
     end
     
     def year=(y)
-      raise ArgumentError unless (y.is_a?(Fixnum) || y.nil?)
+      unless y && y.is_a?(Fixnum) && Date.civil(y,@month,@day)
+        raise(ArgumentError, "invalid year")
+      end
       @year = y
     end
     
     def month=(m)
-      raise ArgumentError unless (m.is_a?(Fixnum) || m.nil?)
-      month_cap = 12
-      if m.to_i >= month_cap.to_i
-        result = m.divmod(month_cap)
-        @month = result[1]
-        self.year = @year + result[0]
-      else
-        @month = m
+      unless m && m.is_a?(Fixnum) && Date.civil(@year,m,@day)
+        raise(ArgumentError, "invalid month")
       end
+      @month = m
     end
     
-def day=(d)
-  @day = d
-end
-    
-    # def day=(s)
-    #   raise ArgumentError unless (s.is_a?(Fixnum) || s.nil?)
-    #   second_cap = 60
-    #   if s.to_i >= second_cap.to_i
-    #     result = s.divmod(second_cap)
-    #     @sec = result[1]
-    #     self.min = @min + result[0]
-    #   else
-    #     @sec = s
-    #   end
-    # end
+    def day=(d)
+      unless d && d.is_a?(Fixnum) && Date.civil(@year,@month,d)
+        raise(ArgumentError, "invalid day")
+      end
+      @day = d
+    end
   
     def parse(string)
-      if string.is_a?(Time) || string.is_a?(DateTime)
-        @year = string.year
-        @month = string.mon
-        @day = string.day
-        @hour = string.hour
-        @min = string.min
-        @sec = string.sec
-      elsif string.is_a?(Date)
-        @year = string.year
-        @month = string.mon
-        @day = string.day
-      elsif string.is_a?(String)
-        datetime = Time.parse(string)
-        @year = datetime.year
-        @month = datetime.mon
-        @day = datetime.day
-        @hour = datetime.hour
-        @min = datetime.min
-        @sec = datetime.sec
-      end
+      return unless string
+      new_date = Data::LocalDateTime.parse(string)
+      @year = new_date.year
+      @month = new_date.month
+      @day = new_date.day
+      @hour = new_date.hour
+      @min = new_date.min
+      @sec = new_date.sec
       self
     end
     
     def self.parse(string)
+      return nil unless string
       return string if string.is_a?(Data::LocalDateTime)
-      local = Data::LocalDateTime.new
-      local.parse(string)
-      local
+      
+      year = nil; month = nil; day = nil;
+      hour = nil; min = nil; sec = nil;
+      if string.is_a?(Time) || string.is_a?(DateTime)
+        year = string.year
+        month = string.mon
+        day = string.day
+        hour = string.hour
+        min = string.min
+        sec = string.sec
+      elsif string.is_a?(Date)
+        year = string.year
+        month = string.mon
+        day = string.day
+      elsif string.is_a?(String)
+        datetime = Time.parse(string)
+        year = datetime.year
+        month = datetime.mon
+        day = datetime.day
+        hour = datetime.hour
+        min = datetime.min
+        sec = datetime.sec
+      end
+      Data::LocalDateTime.new(year, month, day, hour, min, sec)
     end
     
     # convert to a Date class
+    #
     def to_d
-      return nil if self.nil? 
       Date.civil(@year, @month, @day)
     end
     
     # convert to a DateTime class
+    #
     def to_dt
       DateTime.new(@year, @month, @day, @hour, @min, @sec)
     end
-    
-    # improve this
-    def total_days
-      (@year * 365) + (@month * 31) + @day
-    end
-
+  
     def <=>(other)
       if other.is_a?(String) || other.is_a?(Time) || other.is_a?(DateTime) || other.is_a?(Date)
         the_other = Data::LocalDateTime.parse(other)
@@ -110,57 +104,33 @@ end
       if (other.is_a?(String) || other.is_a?(Time) || other.is_a?(DateTime)) &&
         the_other.is_a?(Data::LocalDateTime)
         # we are counting days + seconds
-        if (total_days <=> the_other.total_days) == 0
+        if (_total_days <=> the_other._total_days) == 0
           return total_seconds <=> the_other.total_seconds
         else
-          return total_days <=> the_other.total_days
+          return _total_days <=> the_other._total_days
         end
       elsif other.is_a?(Date) && the_other.is_a?(Data::LocalDateTime)
         # we are counting days
-        return total_days <=> the_other.total_days
+        return _total_days <=> the_other._total_days
       elsif the_other.is_a?(Data::LocalTime)
         # we are counting seconds
         return total_seconds <=> the_other.total_seconds
       end
     end
-    
-    # def +(seconds)
-    #   local_time = Data::LocalTime.new
-    #   if seconds.is_a?(Fixnum) || seconds.is_a?(Float)
-    #     local_time.sec = self.total_seconds + seconds.to_i
-    #   elsif seconds.is_a?(Data::LocalTime)
-    #     this_total = self.total_seconds + seconds.total_seconds
-    #     local_time.sec = this_total
-    #   end
-    #   local_time
-    # end
-
-    # def -(seconds)
-    #   local_time = Data::LocalTime.new
-    #   if seconds.is_a?(Fixnum) || seconds.is_a?(Float)
-    #     local_time.sec = self.total_seconds - seconds.to_i
-    #   elsif seconds.is_a?(Data::LocalTime)
-    #     #self.sec += seconds.total_seconds
-    #     this_total = self.total_seconds - seconds.total_seconds
-    #     local_time.sec = this_total
-    #   end
-    #   local_time
-    # end
-
-    # def diff(other)
-    #   the_other = Data::LocalTime.parse(other)
-    #   raise ArgumentError unless the_other.is_a?(Data::LocalTime)
-    #   (self.total_seconds - the_other.total_seconds).to_i.abs
-    # end
   
-    # def to_s(seconds=false)
-    #   time = self.to_t
-    #   format = (seconds ? "%I:%M:%S %p" : "%I:%M %p")
-    #   time.strftime(format).downcase
-    # end
+    def to_s(time=false)
+      datetime = self.to_dt
+      format = (time ? "%Y-%m-%d %I:%M:%S %p" : "%Y-%m-%d")
+      datetime.strftime(format).downcase
+    end
     
-    def nil?
-      @year == 0 && @month == 0 && @day == 0 && super
+    def nil?; @year == 0 && @month == 0 && @day == 0 && super; end
+    
+    # this assumes all years have 366 days (which only is true for leap years)
+    # but since this is just for comparisons, this will be accurate
+    #
+    def _total_days
+      self.to_d.yday + (@year * 366)
     end
     
   end

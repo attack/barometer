@@ -8,6 +8,10 @@ describe "Data::Geo" do
       @geo = Data::Geo.new
     end
     
+    it "responds to query" do
+      @geo.query.should be_nil
+    end
+    
     it "responds to latitude" do
       @geo.latitude.should be_nil
     end
@@ -40,6 +44,17 @@ describe "Data::Geo" do
       @geo.longitude = "99.99"
       @geo.latitude = "88.88"
       @geo.coordinates.should == [@geo.latitude, @geo.longitude].join(',')
+    end
+    
+    it "should print a string" do
+      @geo = Data::Geo.new
+      @geo.to_s.should == ""
+      @geo.address = "address"
+      @geo.to_s.should == "address"
+      @geo.locality = "locality"
+      @geo.to_s.should == "address, locality"
+      @geo.country_code = "code"
+      @geo.to_s.should == "address, locality, code"
     end
     
     it "requires Hash object" do

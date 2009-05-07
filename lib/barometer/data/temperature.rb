@@ -36,12 +36,14 @@ module Barometer
     end
     
     # Tf = (9/5)*Tc+32
+    #
     def self.c_to_f(c)
       return nil unless c && (c.is_a?(Integer) || c.is_a?(Float))
        ((9.0/5.0)*c.to_f)+32.0
     end
     
     # Tc = (5/9)*(Tf-32)
+    #
     def self.f_to_c(f)
       return nil unless f && (f.is_a?(Integer) || f.is_a?(Float))
       (5.0/9.0)*(f.to_f-32.0)
@@ -69,6 +71,7 @@ module Barometer
     #
     
     # store celsius and kelvin
+    #
     def c=(c)
       return if !c || !(c.is_a?(Integer) || c.is_a?(Float))
       @celsius = c.to_f
@@ -77,6 +80,7 @@ module Barometer
     end
     
     # store fahrenheit and kelvin
+    #
     def f=(f)
       return if !f || !(f.is_a?(Integer) || f.is_a?(Float))
       @fahrenheit = f.to_f
@@ -85,6 +89,7 @@ module Barometer
     end
     
     # store kelvin, convert to all
+    #
     def k=(k)
       return if !k || !(k.is_a?(Integer) || k.is_a?(Float))
       @kelvin = k.to_f
@@ -93,12 +98,14 @@ module Barometer
     end
     
     # return the stored celsius or convert from Kelvin
+    #
     def c(as_integer=true)
       c = (@celsius || Data::Temperature.k_to_c(@kelvin))
       c ? (as_integer ? c.to_i : (100*c).round/100.0) : nil
     end
     
     # return the stored fahrenheit or convert from Kelvin
+    #
     def f(as_integer=true)
       f = (@fahrenheit || Data::Temperature.k_to_f(@kelvin))
       f ? (as_integer ? f.to_i : (100*f).round/100.0) : nil
@@ -117,27 +124,32 @@ module Barometer
     #
     
     # will just return the value (no units)
+    #
     def to_i(metric=nil)
       (metric || (metric.nil? && self.metric?)) ? self.c : self.f
     end
     
     # will just return the value (no units) with more precision
+    #
     def to_f(metric=nil)
       (metric || (metric.nil? && self.metric?)) ? self.c(false) : self.f(false)
     end
     
     # will return the value with units
+    #
     def to_s(metric=nil)
       (metric || (metric.nil? && self.metric?)) ? "#{self.c} #{METRIC_UNITS}" : "#{self.f} #{IMPERIAL_UNITS}"
     end
     
     # will just return the units (no value)
+    #
     def units(metric=nil)
       (metric || (metric.nil? && self.metric?)) ? METRIC_UNITS : IMPERIAL_UNITS
     end
     
     # when we set fahrenheit, it is possible the a non-equivalent value of
     # celsius remains.  if so, clear it.
+    #
     def update_celsius(f)
       return unless @celsius
       difference = Data::Temperature.f_to_c(f.to_f) - @celsius
@@ -148,6 +160,7 @@ module Barometer
     
     # when we set celsius, it is possible the a non-equivalent value of
     # fahrenheit remains.  if so, clear it.
+    #
     def update_fahrenheit(c)
       return unless @fahrenheit
       difference = Data::Temperature.c_to_f(c.to_f) - @fahrenheit

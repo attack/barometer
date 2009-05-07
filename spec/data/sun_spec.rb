@@ -46,31 +46,4 @@ describe "Data::Sun" do
     
   end
   
-  # describe "when adjusting times" do
-  #   
-  #   before(:each) do
-  #     @local_time_rise = Data::LocalTime.new.parse(Time.now)
-  #     @local_time_set = Data::LocalTime.new.parse(Time.now + (60*60*8))
-  #     @sun = Data::Sun.new(@local_time_rise, @local_time_set)
-  #   end
-  #   
-  #   it "requires a Barometer::Sun object" do
-  #     lambda { Data::Sun.add_days!("invalid") }.should raise_error(ArgumentError)
-  #     lambda { Data::Sun.add_days!(@sun) }.should_not raise_error(ArgumentError)
-  #   end
-  #   
-  #   it "requires a Fixnum object" do
-  #     lambda { Data::Sun.add_days!(@sun,1.1) }.should raise_error(ArgumentError)
-  #     lambda { Data::Sun.add_days!(@sun,1) }.should_not raise_error(ArgumentError)
-  #   end
-  #   
-  #   it "adds X days to both sun_rise and sun_set" do
-  #     days_to_add = 2
-  #     new_sun = Data::Sun.add_days!(@sun, days_to_add)
-  #     new_sun.rise.should == @sun.rise + (60*60*24*days_to_add)
-  #     new_sun.set.should == @sun.set + (60*60*24*days_to_add)
-  #   end
-  #   
-  # end
-  
 end

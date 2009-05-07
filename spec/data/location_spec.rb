@@ -54,6 +54,17 @@ describe "Location" do
       @location.coordinates.should == [@location.latitude, @location.longitude].join(',')
     end
     
+    it "should print a string" do
+      @location = Data::Location.new
+      @location.to_s.should == ""
+      @location.name = "name"
+      @location.to_s.should == "name"
+      @location.city = "city"
+      @location.to_s.should == "name, city"
+      @location.country_code = "code"
+      @location.to_s.should == "name, city, code"
+    end
+
   end
   
 end

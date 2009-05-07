@@ -52,6 +52,14 @@ describe "Current Measurement" do
       @current.sun.should be_nil
     end
     
+    it "responds to current_at" do
+      @current.current_at.should be_nil
+    end
+    
+    it "responds to updated_at" do
+      @current.updated_at.should be_nil
+    end
+    
   end
   
   describe "when writing data" do
@@ -59,16 +67,6 @@ describe "Current Measurement" do
     before(:each) do
       @current = Data::CurrentMeasurement.new
     end
-    
-    # it "only accepts Time for time" do
-    #   invalid_data = 1
-    #   invalid_data.class.should_not == Time
-    #   lambda { @current.time = invalid_data }.should raise_error(ArgumentError)
-    #   
-    #   valid_data = Time.new
-    #   valid_data.class.should == Time
-    #   lambda { @current.time = valid_data }.should_not raise_error(ArgumentError)
-    # end
     
     it "only accepts Fixnum or Float for humidity" do
       invalid_data = "invalid"
@@ -183,6 +181,36 @@ describe "Current Measurement" do
       valid_data = Data::Sun.new
       valid_data.class.should == Data::Sun
       lambda { @current.sun = valid_data }.should_not raise_error(ArgumentError)
+    end
+    
+    it "only accepts Data::LocalTime || Data::LocalDateTime current_at" do
+      invalid_data = 1
+      invalid_data.class.should_not == Data::LocalTime
+      invalid_data.class.should_not == Data::LocalDateTime
+      lambda { @current.current_at = invalid_data }.should raise_error(ArgumentError)
+      
+      valid_data = Data::LocalTime.new
+      valid_data.class.should == Data::LocalTime
+      lambda { @current.current_at = valid_data }.should_not raise_error(ArgumentError)
+      
+      valid_data = Data::LocalDateTime.new(2009,1,1)
+      valid_data.class.should == Data::LocalDateTime
+      lambda { @current.current_at = valid_data }.should_not raise_error(ArgumentError)
+    end
+    
+    it "only accepts Data::LocalTime || Data::LocalDateTime current_at" do
+      invalid_data = 1
+      invalid_data.class.should_not == Data::LocalTime
+      invalid_data.class.should_not == Data::LocalDateTime
+      lambda { @current.updated_at = invalid_data }.should raise_error(ArgumentError)
+      
+      valid_data = Data::LocalTime.new
+      valid_data.class.should == Data::LocalTime
+      lambda { @current.updated_at = valid_data }.should_not raise_error(ArgumentError)
+      
+      valid_data = Data::LocalDateTime.new(2009,1,1)
+      valid_data.class.should == Data::LocalDateTime
+      lambda { @current.updated_at = valid_data }.should_not raise_error(ArgumentError)
     end
     
   end

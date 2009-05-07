@@ -73,6 +73,7 @@ module Barometer
     end
     
     # convert to a Time class
+    #
     def to_t
       date = Date.today
       Time.local(date.year,date.month,date.day,@hour,@min,@sec)
@@ -92,16 +93,6 @@ module Barometer
       total_seconds <=> the_other.total_seconds
     end
     
-    # def ==(other)
-    #   if other.is_a?(String) || other.is_a?(Time) || other.is_a?(DateTime)
-    #     the_other = Data::LocalTime.parse(other)
-    #   else
-    #     the_other = other
-    #   end
-    #   raise ArgumentError unless the_other.is_a?(Data::LocalTime)
-    #   self.total_seconds == the_other.total_seconds
-    # end
-  
     def +(seconds)
       local_time = Data::LocalTime.new
       if seconds.is_a?(Fixnum) || seconds.is_a?(Float)
@@ -137,9 +128,7 @@ module Barometer
       time.strftime(format).downcase
     end
     
-    def nil?
-      @hour == 0 && @min == 0 && @sec == 0
-    end
+    def nil?; @hour == 0 && @min == 0 && @sec == 0; end
     
   end
 end

@@ -48,6 +48,7 @@ module Barometer
     #
     
     # store millibars
+    #
     def mb=(mb)
       return if !mb || !(mb.is_a?(Integer) || mb.is_a?(Float))
       @millibars = mb.to_f
@@ -55,6 +56,7 @@ module Barometer
     end
     
     # store inches
+    #
     def in=(inches)
       return if !inches || !(inches.is_a?(Integer) || inches.is_a?(Float))
       @inches = inches.to_f
@@ -62,12 +64,14 @@ module Barometer
     end
     
     # return the stored millibars or convert from inches
+    #
     def mb(as_integer=true)
       mb = (@millibars || Data::Pressure.in_to_mb(@inches))
       mb ? (as_integer ? mb.to_i : (100*mb).round/100.0) : nil
     end
     
     # return the stored inches or convert from millibars
+    #
     def in(as_integer=true)
       inches = (@inches || Data::Pressure.mb_to_in(@millibars))
       inches ? (as_integer ? inches.to_i : (100*inches).round/100.0) : nil
@@ -86,27 +90,32 @@ module Barometer
     #
     
     # will just return the value (no units)
+    #
     def to_i(metric=nil)
       (metric || (metric.nil? && self.metric?)) ? self.mb : self.in
     end
     
     # will just return the value (no units) with more precision
+    #
     def to_f(metric=nil)
       (metric || (metric.nil? && self.metric?)) ? self.mb(false) : self.in(false)
     end
     
     # will return the value with units
+    #
     def to_s(metric=nil)
       (metric || (metric.nil? && self.metric?)) ? "#{self.mb} #{METRIC_UNITS}" : "#{self.in} #{IMPERIAL_UNITS}"
     end
     
     # will just return the units (no value)
+    #
     def units(metric=nil)
       (metric || (metric.nil? && self.metric?)) ? METRIC_UNITS : IMPERIAL_UNITS
     end
     
     # when we set inches, it is possible the a non-equivalent value of
     # millibars remains.  if so, clear it.
+    #
     def update_millibars(inches)
       return unless @millibars
       difference = Data::Pressure.in_to_mb(inches.to_f) - @millibars
@@ -117,6 +126,7 @@ module Barometer
     
     # when we set millibars, it is possible the a non-equivalent value of
     # inches remains.  if so, clear it.
+    #
     def update_inches(mb)
       return unless @inches
       difference = Data::Pressure.mb_to_in(mb.to_f) - @inches

@@ -11,6 +11,7 @@ module Barometer
   # NOTE: this currently only supports the scale of
   #       kilometers (km) and miles (m).  There is currently
   #       no way to scale to smaller units (eg km -> m -> mm)
+  #
   class Data::Distance < Data::Units
     
     METRIC_UNITS = "km"
@@ -46,6 +47,7 @@ module Barometer
     #
     
     # store kilometers
+    #
     def km=(km)
       return if !km || !(km.is_a?(Integer) || km.is_a?(Float))
       @kilometers = km.to_f
@@ -53,6 +55,7 @@ module Barometer
     end
     
     # store miles
+    #
     def m=(m)
       return if !m || !(m.is_a?(Integer) || m.is_a?(Float))
       @miles = m.to_f
@@ -60,12 +63,14 @@ module Barometer
     end
     
     # return the stored kilometers or convert from miles
+    #
     def km(as_integer=true)
       km = (@kilometers || Data::Distance.m_to_km(@miles))
       km ? (as_integer ? km.to_i : (100*km).round/100.0) : nil
     end
     
     # return the stored miles or convert from kilometers
+    #
     def m(as_integer=true)
       m = (@miles || Data::Distance.km_to_m(@kilometers))
       m ? (as_integer ? m.to_i : (100*m).round/100.0) : nil
@@ -84,21 +89,25 @@ module Barometer
     #
     
     # will just return the value (no units)
+    #
     def to_i(metric=nil)
       (metric || (metric.nil? && self.metric?)) ? self.km : self.m
     end
     
     # will just return the value (no units) with more precision
+    #
     def to_f(metric=nil)
       (metric || (metric.nil? && self.metric?)) ? self.km(false) : self.m(false)
     end
     
     # will return the value with units
+    #
     def to_s(metric=nil)
       (metric || (metric.nil? && self.metric?)) ? "#{self.km} #{METRIC_UNITS}" : "#{self.m} #{IMPERIAL_UNITS}"
     end
     
     # will just return the units (no value)
+    #
     def units(metric=nil)
       (metric || (metric.nil? && self.metric?)) ? METRIC_UNITS : IMPERIAL_UNITS
     end
@@ -115,6 +124,7 @@ module Barometer
     
     # when we set kilometers, it is possible the a non-equivalent value of
     # miles remains.  if so, clear it.
+    #
     def update_miles(km)
       return unless @miles
       difference = Data::Distance.km_to_m(km.to_f) - @miles

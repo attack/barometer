@@ -13,6 +13,8 @@ module Barometer
     attr_reader :temperature, :dew_point, :heat_index, :wind_chill
     attr_reader :wind, :pressure, :visibility, :sun
     
+    # accessors (with input checking)
+    #
     def humidity=(humidity)
       raise ArgumentError unless
         (humidity.is_a?(Fixnum) || humidity.is_a?(Float))
@@ -69,20 +71,22 @@ module Barometer
       @sun = sun
     end
     
-def current_at=(current_at)
-  raise ArgumentError unless (current_at.is_a?(Data::LocalTime) || current_at.is_a?(Data::LocalDateTime))
-  @current_at = current_at
-end  
-def updated_at=(updated_at)
-raise ArgumentError unless (updated_at.is_a?(Data::LocalTime) || updated_at.is_a?(Data::LocalDateTime))
-@updated_at = updated_at
-end
+    def current_at=(current_at)
+      raise ArgumentError unless (current_at.is_a?(Data::LocalTime) || current_at.is_a?(Data::LocalDateTime))
+      @current_at = current_at
+    end 
+     
+    def updated_at=(updated_at)
+    raise ArgumentError unless (updated_at.is_a?(Data::LocalTime) || updated_at.is_a?(Data::LocalDateTime))
+    @updated_at = updated_at
+    end
     
     #
     # helpers
     #
     
     # creates "?" helpers for all attributes (which maps to nil?)
+    #
     def method_missing(method,*args)
       # if the method ends in ?, then strip it off and see if we
       # respond to the method without the ?

@@ -16,5 +16,10 @@ module Barometer
       [@latitude, @longitude].join(',')
     end
     
+    def to_s
+      [@name, @city, @state_name || @state_cocde,
+        @country || @country_code].compact.join(', ')
+    end
+    
   end
 end
