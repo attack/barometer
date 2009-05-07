@@ -1,10 +1,15 @@
 <h2><%= measurement.source.to_s.capitalize %></h2>
 <p>
   <ul>
+    <%= data("Measured At", measurement.measured_at) %>
     <%= data("Source", measurement.source) %>
-    <%= data("Time", measurement.time) %>
+    <%= data("Time Stamp", measurement.utc_time_stamp) %>
     <%= data("Metric", measurement.metric?) %>
     <%= data("Success", measurement.success?) %>
+  </ul>
+  <ul>- Modified Query -
+    <%= data("Query", measurement.query) %>
+    <%= data("Format", measurement.format) %>
   </ul>
 </p>
 
@@ -60,8 +65,8 @@
 <h3>Current</h3>
 <p>
   <ul>
-    <%= data("Time", measurement.current.time) %>
-    <%= data("Local Time", measurement.current.local_time) %>
+    <%= data("Measured At", measurement.current.current_at) %>
+    <%= data("Updated At", measurement.current.updated_at) %>
     <%= data("Humidity", measurement.current.humidity) %>
     <%= data("Icon", measurement.current.icon) %>
     <%= data("Condition", measurement.current.condition) %>

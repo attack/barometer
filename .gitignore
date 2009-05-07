@@ -5,3 +5,4 @@ rdoc
 pkg
 lib/attic
 coverage
+*.gem

@@ -3,14 +3,34 @@ require 'sinatra'
 require 'barometer'
 
 # load API keys
-keys = YAML.load_file(File.expand_path(File.join('~', '.barometer')))
-if keys["geocode_google"]
-  Barometer.google_geocode_key = keys["geocode_google"]
+@@config_file ||= File.expand_path(File.join('~', '.barometer'))
+keys = YAML.load_file(@@config_file)
+if keys["google"] && keys["google"]["geocode"]
+  Barometer.google_geocode_key = keys["google"]["geocode"]
 else
+  raise RunTimeError "no geocoding keys"
   exit
 end
 
 class Demometer < Sinatra::Default
+
+  def config_weather_dot_com
+    if File.exists?(@@config_file)
+    	keys = YAML.load_file(@@config_file)
+    	if keys["weather"] && keys["weather"]["partner"] && keys["weather"]["license"]
+    	  partner_key = keys["weather"]["partner"].to_s
+    	  license_key = keys["weather"]["license"].to_s
+      else
+        raise RunTimeError "no weather.com keys"
+        exit
+      end
+    else
+      File.open(@@config_file, 'w') {|f| f << "\nweather:\n  partner: PARTNER_KEY\n  license: LICENSE_KEY" }
+      raise RunTimeError "no weather.com keys"
+      exit
+    end
+    { :weather_dot_com => { :keys => { :partner => partner_key, :license => license_key } } }
+  end
 
   helpers do
     def data(title, value)
@@ -30,6 +50,13 @@ class Demometer < Sinatra::Default
     
     # determine sources
     Barometer.config = { 1 => params[:query][:source].collect{|s| s.to_sym } }
+    
+    # setup weather.com
+    if Barometer::Base.config && Barometer::Base.config[1] &&
+      Barometer::Base.config[1].include?(:weather_dot_com)
+      Barometer::Base.config[1].delete(:weather_dot_com)
+      Barometer::Base.config[1] << config_weather_dot_com
+    end
     
     if params[:query] && !params[:query][:q].empty?
       @barometer = Barometer.new(params[:query][:q])

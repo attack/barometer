@@ -8,9 +8,17 @@ information, or they can be used in a hierarchical configuration where lower
 preferred weather services are only used if previous services are
 unavailable.
 
+Barometer handles all conversions of the supplied query, so that the
+same query can be used for all (or most) services, even if they don't
+support the query directly.
+
+For example, Yahoo! only accepts US Zip Code or Weather.com ID.  With Barometer
+you can query Yahoo! with a simple location (ie: Paris) and it will return the
+weather.
+
 == version
 
-Version 0.4.0 is the current release of this gem.
+Version 0.5.0 is the current release of this gem.
 The gem is available from github (attack-barometer) or rubyforge (barometer).
 It is fully functional (for four weather service APIs).
 
@@ -163,37 +171,6 @@ weather results for USA (at least at the time of writing).  Therefore,
 Barometer would not use Yahoo, just Google and failover to use Wunderground
 (if needed).
 
-=== bootstrapping
-
-You can use weather service drivers directly.  Below is an example to use
-Wunderground, but since the driver interface is abstracted it will be the
-same for all supported services.
-
-  require 'barometer'
-  Barometer.google_geocode_key = "THE_GOOGLE_API_KEY"
-  
-  query = Barometer::Query.new("Paris")
-  weather = Barometer::Service.source(:wunderground).measure(query)
-  
-  puts weather.current.temperture
-  
-  # OR, even more raw
-  
-  measurement = Barometer::Measurement.new
-  weather = Barometer::Wunderground.measure_all(measurement, "Paris")
-  
-  puts weather.current.temperture
-  
-  
-NOTE: The disadvantage to using the drivers directly is that you lose the
-advantage of redundancy/failover added by the Module as a whole.
-
-NOTE: You still must create the Barometer::Query object with your query
-string instead of directly feeding the query string to the service (as in
-bootstrap example #1).  The Barometer::Query object has behavior required
-by the service that a regular String doesn't have. Using a driver directly
-WILL accept a String (as in bootstrap example #2).
-
 == searching
 
 After you have measured the data, Barometer provides several methods to help
@@ -319,14 +296,15 @@ there will be no answer.
 - create a Barometer instance
 - supply a query, there are very little restrictions on the format:
   - city, country, specific address (basically anything Google will geocode)
-  - US zip code (skips geocoding if weather service accepts this directly)
-  - postal code (skips geocoding if weather service accepts this directly)
-  - latitude and longitude (skips geocoding if weather service accepts this
+  - US zip code (skips conversion if weather service accepts this directly)
+  - postal code (skips conversion if weather service accepts this directly)
+  - latitude and longitude (skips conversion if weather service accepts this
     directly)
-  - TODO: international airport code (skips geocoding if weather service
+  - weather.com weather id (even if the service you are using doesn't use it)
+  - international airport code (skips conversion if weather service
     accepts this directly)
-- if geocoding required, geocode the query
-- determine which weather services will be queried (one or multiple)
+- determine which weather services will be queried (one or multiple)    
+- if query conversion required for specific weather service, convert the query
 - query the weather services
 - save the data
 - repeat weather service queries as needed

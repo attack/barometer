@@ -1,12 +1,10 @@
 == now
 
 - refactor: data-zone
-- web demo must pick up weather.com keys
-- Weather Service API key setting
+- add start_time, end_time, run_time to each measurement and to weather
 
 == soon
 
-- web demo must display night-measurements
 - make sure you can compare LocalTime to LocalDateTime in LocalTime class
 - ability to force timezone lookups (use geonames), then use this data
  to do conversions
@@ -24,7 +22,9 @@
 
 == bugs
 
-- none known
+- weather.com and yahoo won't return results for ICAO
+  might have to remove "international", "airport", "municipal" from geocode result
+  before finding weather_id
 
 == refactoring
 

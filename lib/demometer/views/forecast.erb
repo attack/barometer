@@ -18,4 +18,18 @@
     <%= data("Sun Set", forecast.sun.set) %>
     <% end %>
   </ul>
+  <% if forecast.night %>
+  <ul>- Night -
+    <%= data("Date", forecast.night.date) %>
+    <%= data("Date", forecast.night.icon) %>
+    <%= data("Date", forecast.night.condition) %>
+    <%= data("Date", forecast.night.pop) %>
+    <%= data("Date", forecast.night.humidity) %>
+    <% if forecast.night.wind %>
+    <%= data("Wind Speed", forecast.night.wind) %>
+    <%= data("Wind Direction", forecast.night.wind.direction) %>
+    <%= data("Wind Degrees", forecast.night.wind.degrees) %>
+    <% end %>
+  </ul>
+  <% end %>
 </p>

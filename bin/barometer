@@ -31,10 +31,10 @@
 #   -g, --geocode       Force Geocoding of query
 #   -m, --metric        measure in metric
 #   -i, --imperial      measure in imperial
-#   --no-wunderground   DONT use default wunderground as source
-#   --yahoo             use yahoo as source
-#   --google            use google as source
-#   --weather           use weather.com as source
+#   --wunderground      add wunderground as a source
+#   --yahoo             add yahoo as a source
+#   --google            add google as a source
+#   --weather           add weather.com as a source
 #   -p, --pop           pop threshold used to determine wet?
 #   -s, --wind          wind speed threshold used to determine windy?
 #   -a, --at            time/date used to determine when to calculate summary
@@ -53,7 +53,7 @@
 #   http://www.opensource.org/licenses/mit-license.php
 
 require 'rubygems'
-require 'lib/barometer'
+require 'barometer'
 
 require 'optparse' 
 require 'rdoc/usage'
@@ -64,7 +64,7 @@ require 'yaml'
 
 # file where API keys are stored
 KEY_FILE = File.expand_path(File.join('~', '.barometer'))
-BAROMETER_VERSION = '0.4.0'
+BAROMETER_VERSION = '0.5.0'
 
 class App
   
@@ -119,7 +119,6 @@ class App
       opt.on('-V', '--verbose')    { @options.verbose = true }
       opt.on('-a n', '--at n')     {|n| @options.at = Time.parse(n.to_s) }
       opt.on('-t n', '--timeout n') {|n| @options.timeout = n }
-      opt.on('-w', '--web')        { @options.web = true; ARGV.shift }
       opt.on('-g', '--geocode')    { @options.geocode = true }
       opt.on('-m', '--metric')     { @options.metric = true }
       opt.on('-i', '--imperial')   { @options.metric = false }
@@ -131,6 +130,7 @@ class App
       opt.on('-s n', '--wind n')   {|n| @options.metric ? @options.windy_m = n.to_f || 10 : @options.windy_i = n.to_f || 7 }
       
       # pass these onto vegas
+      opt.on('-w', '--web')        { @options.web = true; ARGV.shift }
       opt.on('-k', '--kill')       { @options.web = true }
       opt.on('-S', '--status')     { @options.web = true }
             
@@ -208,10 +208,10 @@ class App
       puts "  -g, --geocode       Force Geocoding of query"
       puts "  -m, --metric        measure in metric"
       puts "  -i, --imperial      measure in imperial"
-      puts "  --no-wunderground   DONT use default wunderground as source"
-      puts "  --yahoo             use yahoo as source"
-      puts "  --google            use google as source"
-      puts "  --weather           use weather.com as source"
+      puts "  --wunderground      add wunderground as a source"
+      puts "  --yahoo             add yahoo as a source"
+      puts "  --google            add google as a source"
+      puts "  --weather           add weather.com as a source"
       puts "  -p, --pop           pop threshold used to determine wet?"
       puts "  -s, --wind          wind speed threshold used to determine windy?"
       puts "  -a, --at            time/date used to determine when to calculate summary"
@@ -223,7 +223,7 @@ class App
     end
     
     def output_version
-      puts "#{File.basename(__FILE__)} version #{VERSION}"
+      puts "#{File.basename(__FILE__)} version #{BAROMETER_VERSION}"
     end
     
     def process_command
@@ -448,6 +448,7 @@ end
 
 def run_web_mode(query=nil)
   
+  require 'rubygems'
   require File.expand_path(File.dirname(__FILE__) + '/../lib/demometer/demometer.rb')
   require 'vegas'
   

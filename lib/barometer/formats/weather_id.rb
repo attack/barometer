@@ -10,8 +10,8 @@ module Barometer
   #
   class Query::Format::WeatherID < Query::Format
   
-    FIXES_FILE = File.expand_path(
-      File.join('lib', 'barometer', 'translations', 'weather_country_codes.yml'))
+    @@fixes_file = File.expand_path(
+      File.join(File.dirname(__FILE__), '..', 'translations', 'weather_country_codes.yml'))
     @@fixes = nil
     
     def self.format; :weather_id; end
@@ -99,7 +99,7 @@ module Barometer
     # correct these "mistakes"
     #
     def self._fix_country(country_code)
-      @@fixes ||= YAML.load_file(FIXES_FILE)
+      @@fixes ||= YAML.load_file(@@fixes_file)
       @@fixes[country_code.upcase.to_s] || country_code
     end
 

@@ -61,16 +61,22 @@
   <h3>Query</h3>
   <p>
     <ul>
+      <%= data("Query", @barometer.query.q) %>
       <%= data("Format", @barometer.query.format) %>
-      <% if @barometer.query.geo %>
+      <%= data("Country Code", @barometer.query.country_code) %>
+    </ul>  
+    <% if @barometer.query.geo %>
+    <ul> - Geo -
+      <%= data("Query", @barometer.query.geo.query) %>
+      <%= data("Address", @barometer.query.geo.address) %>
       <%= data("Locality", @barometer.query.geo.locality) %>
       <%= data("Region", @barometer.query.geo.region) %>
       <%= data("Country", @barometer.query.geo.country) %>
       <%= data("Country Code", @barometer.query.geo.country_code) %>
       <%= data("Latitude", @barometer.query.geo.latitude) %>
       <%= data("Longitude", @barometer.query.geo.longitude) %>
-      <% end %>
-    </ul>
+    </ul>  
+    <% end %>
   </p>
   <% end %>
 
