@@ -1,13 +1,14 @@
 module Barometer
   #
   # Format: Geocode
+  # (not to be confused with the WebService geocode)
   #
   # eg. 123 Elm St, Mystery, Alaska, USA
   #
   # This class is used to determine if a query is a
   # :geocode, how to convert to :geocode
   #
-  class Query::Geocode < Query::Format
+  class Query::Format::Geocode < Query::Format
 
     def self.format; :geocode; end
     def self.is?(query=nil); query.is_a?(String) ? true : false; end
@@ -20,13 +21,13 @@ module Barometer
     def self.to(original_query)
       raise ArgumentError unless is_a_query?(original_query)
       unless converts?(original_query)
-        return (original_query.format == format ? original_query : nil)
+        return (original_query.format == format ? original_query.dup : nil)
       end
       converted_query = Barometer::Query.new
     
       converted_query = (original_query.format == :weather_id ?
-        Barometer::Query::WeatherID.reverse(original_query) :
-        geocode(original_query))
+       Query::Format::WeatherID.reverse(original_query) :
+       geocode(original_query))
       converted_query
     end
 
@@ -36,7 +37,8 @@ module Barometer
       raise ArgumentError unless is_a_query?(original_query)
       converted_query = Barometer::Query.new
 
-      converted_query.geo = _geocode(original_query)
+      #converted_query.geo = _geocode(original_query)
+      converted_query.geo = WebService::Geocode.fetch(original_query)
       if converted_query.geo
         converted_query.country_code = converted_query.geo.country_code
         converted_query.q = converted_query.geo.to_s
@@ -45,27 +47,5 @@ module Barometer
       converted_query
     end
 
-    private
-
-    def self._has_geocode_key?
-      !Barometer.google_geocode_key.nil?
-    end
-
-    def self._geocode(query)
-      raise ArgumentError unless is_a_query?(query)
-      return nil unless _has_geocode_key?
-      location = Barometer::Query.get(
-        "http://maps.google.com/maps/geo",
-        :query => {
-          :gl => query.country_code, :key => Barometer.google_geocode_key,
-          :output => "xml", :q => query.q
-        },
-        :format => :xml, :timeout => Barometer.timeout
-      )
-      location = location['kml']['Response'] if location && location['kml']
-      location ? (geo = Data::Geo.new(location)) : nil
-    end
-    
   end
 end
-

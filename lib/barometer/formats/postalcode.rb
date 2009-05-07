@@ -7,7 +7,7 @@ module Barometer
   # This class is used to determine if a query is a
   # :postalcode and what the country_code is.
   #
-  class Query::Postalcode < Query::Format
+  class Query::Format::Postalcode < Query::Format
   
     def self.format; :postalcode; end
     def self.country_code(query=nil); "CA"; end

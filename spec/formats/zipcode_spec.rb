@@ -16,23 +16,23 @@ describe "Query::Zipcode" do
   describe "and class methods" do
     
     it "returns a format" do
-      Barometer::Query::Zipcode.format.should == :zipcode
+      Query::Format::Zipcode.format.should == :zipcode
     end
     
     it "returns a country" do
-      Barometer::Query::Zipcode.country_code.should == "US"
-      Barometer::Query::Zipcode.country_code("ignored").should == "US"
+      Query::Format::Zipcode.country_code.should == "US"
+      Query::Format::Zipcode.country_code("ignored").should == "US"
     end
     
     it "returns a regex" do
-      Barometer::Query::Zipcode.regex.should_not be_nil
-      Barometer::Query::Zipcode.regex.is_a?(Regexp).should be_true
+      Query::Format::Zipcode.regex.should_not be_nil
+      Query::Format::Zipcode.regex.is_a?(Regexp).should be_true
     end
     
     it "returns the convertable_formats" do
-      Barometer::Query::Zipcode.convertable_formats.should_not be_nil
-      Barometer::Query::Zipcode.convertable_formats.is_a?(Array).should be_true
-      Barometer::Query::Zipcode.convertable_formats.include?(:short_zipcode).should be_true
+      Query::Format::Zipcode.convertable_formats.should_not be_nil
+      Query::Format::Zipcode.convertable_formats.is_a?(Array).should be_true
+      Query::Format::Zipcode.convertable_formats.include?(:short_zipcode).should be_true
     end
     
     describe "is?," do
@@ -43,11 +43,11 @@ describe "Query::Zipcode" do
       end
       
       it "recognizes a valid format" do
-        Barometer::Query::Zipcode.is?(@valid).should be_true
+        Query::Format::Zipcode.is?(@valid).should be_true
       end
       
       it "recognizes non-valid format" do
-        Barometer::Query::Zipcode.is?(@invalid).should be_false
+        Query::Format::Zipcode.is?(@invalid).should be_false
       end
       
     end
@@ -55,22 +55,22 @@ describe "Query::Zipcode" do
     describe "when converting using 'to'," do
       
       it "requires a Barometer::Query object" do
-        lambda { Barometer::Query::Zipcode.to }.should raise_error(ArgumentError)
-        lambda { Barometer::Query::Zipcode.to("invalid") }.should raise_error(ArgumentError)
+        lambda { Query::Format::Zipcode.to }.should raise_error(ArgumentError)
+        lambda { Query::Format::Zipcode.to("invalid") }.should raise_error(ArgumentError)
         query = Barometer::Query.new(@zipcode)
         query.is_a?(Barometer::Query).should be_true
-        lambda { Barometer::Query::Zipcode.to(original_query) }.should_not raise_error(ArgumentError)
+        lambda { Query::Format::Zipcode.to(original_query) }.should_not raise_error(ArgumentError)
       end
       
       it "returns a Barometer::Query" do
         query = Barometer::Query.new(@short_zipcode)
-        Barometer::Query::Zipcode.to(query).is_a?(Barometer::Query).should be_true
+        Query::Format::Zipcode.to(query).is_a?(Barometer::Query).should be_true
       end
       
       it "converts from short_zipcode" do
         query = Barometer::Query.new(@short_zipcode)
         query.format.should == :short_zipcode
-        new_query = Barometer::Query::Zipcode.to(query)
+        new_query = Query::Format::Zipcode.to(query)
         new_query.q.should == @short_zipcode
         new_query.format.should == :zipcode
         new_query.country_code.should == "US"
@@ -81,27 +81,27 @@ describe "Query::Zipcode" do
         query = Barometer::Query.new(@zipcode)
         query.format = :zipcode
         query.format.should == :zipcode
-        Barometer::Query::Zipcode.to(query).should be_nil
+        Query::Format::Zipcode.to(query).should be_nil
         
         query = Barometer::Query.new(@weather_id)
         query.format.should == :weather_id
-        Barometer::Query::Zipcode.to(query).should be_nil
+        Query::Format::Zipcode.to(query).should be_nil
         
         query = Barometer::Query.new(@postal_code)
         query.format.should == :postalcode
-        Barometer::Query::Zipcode.to(query).should be_nil
+        Query::Format::Zipcode.to(query).should be_nil
         
         query = Barometer::Query.new(@coordinates)
         query.format.should == :coordinates
-        Barometer::Query::Zipcode.to(query).should be_nil
+        Query::Format::Zipcode.to(query).should be_nil
         
         query = Barometer::Query.new(@geocode)
         query.format.should == :geocode
-        Barometer::Query::Zipcode.to(query).should be_nil
+        Query::Format::Zipcode.to(query).should be_nil
         
         query = Barometer::Query.new(@icao)
         query.format.should == :icao
-        Barometer::Query::Zipcode.to(query).should be_nil
+        Query::Format::Zipcode.to(query).should be_nil
       end
       
     end

@@ -7,7 +7,7 @@ module Barometer
   # This class is used to determine if a query is a
   # :icao and what the country_code is.
   #
-  class Query::Icao < Query::Format
+  class Query::Format::Icao < Query::Format
   
     CODES_FILE = File.expand_path(
       File.join('lib', 'barometer', 'translations', 'icao_country_codes.yml'))

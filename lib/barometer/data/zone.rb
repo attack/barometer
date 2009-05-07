@@ -6,7 +6,8 @@ module Barometer
   # A simple Zone class
   # 
   # Used for building and converting timezone aware date and times
-  # Really, these are just wrappers for TZInfo conversions.
+  # Really, these are just wrappers for TZInfo conversions plus
+  # some extras.
   #
   class Data::Zone
     

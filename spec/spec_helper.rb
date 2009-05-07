@@ -59,13 +59,13 @@ end
     )
   )
   
-  FakeWeb.register_uri(:get, 
-    "#{geo_url}gl=&q=90210&output=xml&key=#{KEY}",
-    :string => File.read(File.join(File.dirname(__FILE__),  
-      'fixtures/geocode',
-      '90210.xml')
-    )
-  )
+  # FakeWeb.register_uri(:get, 
+  #   "#{geo_url}gl=&q=90210&output=xml&key=#{KEY}",
+  #   :string => File.read(File.join(File.dirname(__FILE__),  
+  #     'fixtures/geocode',
+  #     '90210.xml')
+  #   )
+  # )
   FakeWeb.register_uri(:get, 
     "#{geo_url}gl=&q=New%20York%2C%20NY&output=xml&key=#{KEY}",
     :string => File.read(File.join(File.dirname(__FILE__),  
@@ -89,7 +89,14 @@ end
     )
   )  
   FakeWeb.register_uri(:get, 
-    "#{geo_url}gl=&q=KSFO&output=xml&key=#{KEY}",
+    "#{geo_url}output=xml&q=T5B%204M9&gl=CA&key=#{KEY}",
+    :string => File.read(File.join(File.dirname(__FILE__), 
+      'fixtures/geocode',
+      'T5B4M9.xml')
+    )
+  )
+  FakeWeb.register_uri(:get, 
+    "#{geo_url}gl=US&q=KSFO&output=xml&key=#{KEY}",
     :string => File.read(File.join(File.dirname(__FILE__), 
       'fixtures/geocode',
       'ksfo.xml')
@@ -97,6 +104,13 @@ end
   )
   FakeWeb.register_uri(:get, 
     "#{geo_url}gl=&q=Atlanta%2C%20GA%2C%20US&output=xml&key=#{KEY}",
+    :string => File.read(File.join(File.dirname(__FILE__),  
+      'fixtures/geocode',
+      'atlanta.xml')
+    )
+  )
+  FakeWeb.register_uri(:get, 
+    "#{geo_url}output=xml&q=Atlanta%2C%20GA%2C%20US&gl=US&key=#{KEY}",
     :string => File.read(File.join(File.dirname(__FILE__),  
       'fixtures/geocode',
       'atlanta.xml')

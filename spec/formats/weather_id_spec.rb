@@ -22,29 +22,29 @@ describe "Query::WeatherID" do
     end
     
     it "returns a format" do
-      Barometer::Query::WeatherID.format.should == :weather_id
+      Query::Format::WeatherID.format.should == :weather_id
     end
     
     it "returns a country" do
-      Barometer::Query::WeatherID.country_code.should be_nil
-      Barometer::Query::WeatherID.country_code("i").should be_nil
-      Barometer::Query::WeatherID.country_code(@us_query).should == "US"
-      Barometer::Query::WeatherID.country_code(@ca_query).should == "CA"
-      Barometer::Query::WeatherID.country_code(@es_query).should == "ES"
+      Query::Format::WeatherID.country_code.should be_nil
+      Query::Format::WeatherID.country_code("i").should be_nil
+      Query::Format::WeatherID.country_code(@us_query).should == "US"
+      Query::Format::WeatherID.country_code(@ca_query).should == "CA"
+      Query::Format::WeatherID.country_code(@es_query).should == "ES"
     end
     
     it "returns a regex" do
-      Barometer::Query::WeatherID.regex.should_not be_nil
-      Barometer::Query::WeatherID.regex.is_a?(Regexp).should be_true
+      Query::Format::WeatherID.regex.should_not be_nil
+      Query::Format::WeatherID.regex.is_a?(Regexp).should be_true
     end
     
     it "returns the convertable_formats" do
-      Barometer::Query::WeatherID.convertable_formats.should_not be_nil
-      Barometer::Query::WeatherID.convertable_formats.is_a?(Array).should be_true
-      Barometer::Query::WeatherID.convertable_formats.include?(:short_zipcode).should be_true
-      Barometer::Query::WeatherID.convertable_formats.include?(:zipcode).should be_true
-      Barometer::Query::WeatherID.convertable_formats.include?(:coordinates).should be_true
-      Barometer::Query::WeatherID.convertable_formats.include?(:geocode).should be_true
+      Query::Format::WeatherID.convertable_formats.should_not be_nil
+      Query::Format::WeatherID.convertable_formats.is_a?(Array).should be_true
+      Query::Format::WeatherID.convertable_formats.include?(:short_zipcode).should be_true
+      Query::Format::WeatherID.convertable_formats.include?(:zipcode).should be_true
+      Query::Format::WeatherID.convertable_formats.include?(:coordinates).should be_true
+      Query::Format::WeatherID.convertable_formats.include?(:geocode).should be_true
     end
     
     describe "is?," do
@@ -55,11 +55,11 @@ describe "Query::WeatherID" do
       end
       
       it "recognizes a valid format" do
-        Barometer::Query::WeatherID.is?(@valid).should be_true
+        Query::Format::WeatherID.is?(@valid).should be_true
       end
       
       it "recognizes non-valid format" do
-        Barometer::Query::WeatherID.is?(@invalid).should be_false
+        Query::Format::WeatherID.is?(@invalid).should be_false
       end
       
     end
@@ -67,11 +67,11 @@ describe "Query::WeatherID" do
     describe "fixing country codes" do
       
       it "doesn't fix a correct code" do
-        Barometer::Query::WeatherID.send("_fix_country", "CA").should == "CA"
+        Query::Format::WeatherID.send("_fix_country", "CA").should == "CA"
       end
       
       it "fixes an incorrect code" do
-        Barometer::Query::WeatherID.send("_fix_country", "SP").should == "ES"
+        Query::Format::WeatherID.send("_fix_country", "SP").should == "ES"
       end
       
     end
@@ -79,21 +79,21 @@ describe "Query::WeatherID" do
     describe "when reversing lookup" do
       
       it "requires a Barometer::Query object" do
-        lambda { Barometer::Query::WeatherID.reverse }.should raise_error(ArgumentError)
-        lambda { Barometer::Query::WeatherID.reverse("invalid") }.should raise_error(ArgumentError)
+        lambda { Query::Format::WeatherID.reverse }.should raise_error(ArgumentError)
+        lambda { Query::Format::WeatherID.reverse("invalid") }.should raise_error(ArgumentError)
         query = Barometer::Query.new(@weather_id)
         query.is_a?(Barometer::Query).should be_true
-        lambda { Barometer::Query::WeatherID.reverse(original_query) }.should_not raise_error(ArgumentError)
+        lambda { Query::Format::WeatherID.reverse(original_query) }.should_not raise_error(ArgumentError)
       end
       
       it "returns a Barometer::Query" do
         query = Barometer::Query.new(@weather_id)
-        Barometer::Query::WeatherID.reverse(query).is_a?(Barometer::Query).should be_true
+        Query::Format::WeatherID.reverse(query).is_a?(Barometer::Query).should be_true
       end
       
       it "reverses a valid weather_id (US)" do
         query = Barometer::Query.new(@weather_id)
-        new_query = Barometer::Query::WeatherID.reverse(query)
+        new_query = Query::Format::WeatherID.reverse(query)
         new_query.q.should == "Atlanta, GA, US"
         new_query.country_code.should be_nil
         new_query.format.should == :geocode
@@ -102,7 +102,7 @@ describe "Query::WeatherID" do
       
       it "doesn't reverse an invalid weather_id" do
         query = Barometer::Query.new(@zipcode)
-        Barometer::Query::WeatherID.reverse(query).should be_nil
+        Query::Format::WeatherID.reverse(query).should be_nil
       end
       
     end
@@ -114,22 +114,22 @@ describe "Query::WeatherID" do
       end
       
       it "requires a Barometer::Query object" do
-        lambda { Barometer::Query::WeatherID.to }.should raise_error(ArgumentError)
-        lambda { Barometer::Query::WeatherID.to("invalid") }.should raise_error(ArgumentError)
+        lambda { Query::Format::WeatherID.to }.should raise_error(ArgumentError)
+        lambda { Query::Format::WeatherID.to("invalid") }.should raise_error(ArgumentError)
         query = Barometer::Query.new(@zipcode)
         query.is_a?(Barometer::Query).should be_true
-        lambda { Barometer::Query::WeatherID.to(original_query) }.should_not raise_error(ArgumentError)
+        lambda { Query::Format::WeatherID.to(original_query) }.should_not raise_error(ArgumentError)
       end
       
       it "returns a Barometer::Query" do
         query = Barometer::Query.new(@short_zipcode)
-        Barometer::Query::WeatherID.to(query).is_a?(Barometer::Query).should be_true
+        Query::Format::WeatherID.to(query).is_a?(Barometer::Query).should be_true
       end
       
       it "converts from short_zipcode" do
         query = Barometer::Query.new(@short_zipcode)
         query.format.should == :short_zipcode
-        new_query = Barometer::Query::WeatherID.to(query)
+        new_query = Query::Format::WeatherID.to(query)
         new_query.q.should == "USCA0090"
         new_query.country_code.should == "US"
         new_query.format.should == :weather_id
@@ -140,7 +140,7 @@ describe "Query::WeatherID" do
         query = Barometer::Query.new(@zipcode)
         query.format = :zipcode
         query.format.should == :zipcode
-        new_query = Barometer::Query::WeatherID.to(query)
+        new_query = Query::Format::WeatherID.to(query)
         new_query.q.should == "USCA0090"
         new_query.country_code.should == "US"
         new_query.format.should == :weather_id
@@ -150,7 +150,7 @@ describe "Query::WeatherID" do
       it "converts from coordinates" do
         query = Barometer::Query.new(@coordinates)
         query.format.should == :coordinates
-        new_query = Barometer::Query::WeatherID.to(query)
+        new_query = Query::Format::WeatherID.to(query)
         new_query.q.should == "USNY0996"
         new_query.country_code.should == "US"
         new_query.format.should == :weather_id
@@ -160,7 +160,7 @@ describe "Query::WeatherID" do
       it "converts from geocode" do
         query = Barometer::Query.new(@geocode)
         query.format.should == :geocode
-        new_query = Barometer::Query::WeatherID.to(query)
+        new_query = Query::Format::WeatherID.to(query)
         new_query.q.should == "USNY0996"
         new_query.country_code.should == "US"
         new_query.format.should == :weather_id
@@ -170,17 +170,17 @@ describe "Query::WeatherID" do
       it "returns nil for other formats" do
         query = Barometer::Query.new(@weather_id)
         query.format.should == :weather_id
-        new_query = Barometer::Query::WeatherID.to(query)
+        new_query = Query::Format::WeatherID.to(query)
         new_query.should be_nil
         
         query = Barometer::Query.new(@postal_code)
         query.format.should == :postalcode
-        new_query = Barometer::Query::WeatherID.to(query)
+        new_query = Query::Format::WeatherID.to(query)
         new_query.should be_nil
         
         query = Barometer::Query.new(@icao)
         query.format.should == :icao
-        new_query = Barometer::Query::WeatherID.to(query)
+        new_query = Query::Format::WeatherID.to(query)
         new_query.should be_nil
       end
 

@@ -8,7 +8,7 @@ module Barometer
   # :weather_id, how to convert to and from :weather_id
   # and what the country_code is.
   #
-  class Query::WeatherID < Query::Format
+  class Query::Format::WeatherID < Query::Format
   
     FIXES_FILE = File.expand_path(
       File.join('lib', 'barometer', 'translations', 'weather_country_codes.yml'))
@@ -35,8 +35,8 @@ module Barometer
 
       # convert original query to :geocode, as that is the only
       # format we can convert directly from to weather_id
-      converted_query = Barometer::Query::Geocode.to(original_query)
-      converted_query.q = _search(converted_query.q)
+      converted_query = Query::Format::Geocode.to(original_query)
+      converted_query.q = _search(converted_query)
       converted_query.format = format
       converted_query.country_code = country_code(converted_query.q)
       converted_query
@@ -48,8 +48,8 @@ module Barometer
       raise ArgumentError unless is_a_query?(original_query)
       return nil unless original_query.format == format
       converted_query = Barometer::Query.new
-      converted_query.q = _reverse(original_query.q)
-      converted_query.format = Barometer::Query::Geocode.format
+      converted_query.q = _reverse(original_query)
+      converted_query.format = Query::Format::Geocode.format
       converted_query
     end
     
@@ -60,7 +60,8 @@ module Barometer
     #
     def self._search(query=nil)
       return nil unless query
-      response = Barometer::WeatherDotCom.search(query)
+      raise ArgumentError unless is_a_query?(query)
+      response = WebService::WeatherID.fetch(query)
       _parse_weather_id(response)
     end
     
@@ -69,7 +70,8 @@ module Barometer
     #
     def self._reverse(query=nil)
       return nil unless query
-      response = Barometer::Yahoo.fetch(query)
+      raise ArgumentError unless is_a_query?(query)
+      response = WebService::WeatherID.reverse(query)
       _parse_geocode(response)
     end
     
@@ -84,9 +86,8 @@ module Barometer
     # parse the geo_data
     #
     def self._parse_geocode(text)
-      return nil unless text && text["yweather:location"]
-      loc = text["yweather:location"]
-      output = [loc["city"], loc["region"], _fix_country(loc["country"])]
+      return nil unless text
+      output = [text["city"], text["region"], _fix_country(text["country"])]
       output.delete("")
       output.compact.join(', ')
     end

@@ -8,7 +8,7 @@ module Barometer
   # :zip_code, how to convert to a :zip_code
   # and what the country_code is.
   #
-  class Query::Zipcode < Query::Format
+  class Query::Format::Zipcode < Query::Format
   
     def self.format; :zipcode; end
     def self.country_code(query=nil); "US"; end
