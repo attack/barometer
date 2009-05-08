@@ -11,7 +11,7 @@ module Barometer
     def self.fetch(query)
       return nil unless query
       raise ArgumentError unless _is_a_query?(query)
-      response = self.get(
+      self.get(
         "http://xoap.weather.com/search/search",
         :query => { :where => query.q }, :format => :plain,
         :timeout => Barometer.timeout

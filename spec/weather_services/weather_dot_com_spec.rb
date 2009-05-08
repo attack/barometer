@@ -12,11 +12,15 @@ describe "WeatherDotCom" do
   describe "the class methods" do
     
     it "defines accepted_formats" do
-      WeatherService::WeatherDotCom.accepted_formats.should == @accepted_formats
+      WeatherService::WeatherDotCom._accepted_formats.should == @accepted_formats
+    end
+    
+    it "defines source_name" do
+      WeatherService::WeatherDotCom._source_name.should == :weather_dot_com
     end
     
     it "defines get_all" do
-      WeatherService::WeatherDotCom.respond_to?("fetch").should be_true
+      WeatherService::WeatherDotCom.respond_to?("_fetch").should be_true
     end
     
   end
@@ -24,16 +28,16 @@ describe "WeatherDotCom" do
   describe "building the current data" do
     
     it "defines the build method" do
-      WeatherService::WeatherDotCom.respond_to?("build_current").should be_true
+      WeatherService::WeatherDotCom.respond_to?("_build_current").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::WeatherDotCom.build_current }.should raise_error(ArgumentError)
-      lambda { WeatherService::WeatherDotCom.build_current({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::WeatherDotCom._build_current }.should raise_error(ArgumentError)
+      lambda { WeatherService::WeatherDotCom._build_current({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Data::CurrentMeasurement object" do
-      current = WeatherService::WeatherDotCom.build_current({})
+      current = WeatherService::WeatherDotCom._build_current({})
       current.is_a?(Data::CurrentMeasurement).should be_true
     end
     
@@ -42,16 +46,16 @@ describe "WeatherDotCom" do
   describe "building the forecast data" do
     
     it "defines the build method" do
-      WeatherService::WeatherDotCom.respond_to?("build_forecast").should be_true
+      WeatherService::WeatherDotCom.respond_to?("_build_forecast").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::WeatherDotCom.build_forecast }.should raise_error(ArgumentError)
-      lambda { WeatherService::WeatherDotCom.build_forecast({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::WeatherDotCom._build_forecast }.should raise_error(ArgumentError)
+      lambda { WeatherService::WeatherDotCom._build_forecast({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Array object" do
-      current = WeatherService::WeatherDotCom.build_forecast({})
+      current = WeatherService::WeatherDotCom._build_forecast({})
       current.is_a?(Array).should be_true
     end
     
@@ -60,22 +64,22 @@ describe "WeatherDotCom" do
   describe "building the location data" do
     
     it "defines the build method" do
-      WeatherService::WeatherDotCom.respond_to?("build_location").should be_true
+      WeatherService::WeatherDotCom.respond_to?("_build_location").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::WeatherDotCom.build_location }.should raise_error(ArgumentError)
-      lambda { WeatherService::WeatherDotCom.build_location({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::WeatherDotCom._build_location }.should raise_error(ArgumentError)
+      lambda { WeatherService::WeatherDotCom._build_location({}) }.should_not raise_error(ArgumentError)
     end
     
     it "requires Barometer::Geo input" do
       geo = Data::Geo.new({})
-      lambda { WeatherService::WeatherDotCom.build_location({}, {}) }.should raise_error(ArgumentError)
-      lambda { WeatherService::WeatherDotCom.build_location({}, geo) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::WeatherDotCom._build_location({}, {}) }.should raise_error(ArgumentError)
+      lambda { WeatherService::WeatherDotCom._build_location({}, geo) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::Location object" do
-      location = WeatherService::WeatherDotCom.build_location({})
+      location = WeatherService::WeatherDotCom._build_location({})
       location.is_a?(Data::Location).should be_true
     end
     
@@ -84,16 +88,16 @@ describe "WeatherDotCom" do
   describe "building the sun data" do
     
     it "defines the build method" do
-      WeatherService::WeatherDotCom.respond_to?("build_sun").should be_true
+      WeatherService::WeatherDotCom.respond_to?("_build_sun").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::WeatherDotCom.build_sun }.should raise_error(ArgumentError)
-      lambda { WeatherService::WeatherDotCom.build_sun({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::WeatherDotCom._build_sun }.should raise_error(ArgumentError)
+      lambda { WeatherService::WeatherDotCom._build_sun({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::Sun object" do
-      sun = WeatherService::WeatherDotCom.build_sun({})
+      sun = WeatherService::WeatherDotCom._build_sun({})
       sun.is_a?(Data::Sun).should be_true
     end
     
@@ -124,8 +128,8 @@ describe "WeatherDotCom" do
       
       it "requires a Barometer::Measurement object" do
         lambda { WeatherService::WeatherDotCom._measure(nil, @query) }.should raise_error(ArgumentError)
-        lambda { WeatherService::WeatherDotCom._measure("invlaid", @query) }.should raise_error(ArgumentError)
-  
+        lambda { WeatherService::WeatherDotCom._measure("invalid", @query) }.should raise_error(ArgumentError)
+
         lambda { WeatherService::WeatherDotCom._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
       end
   
@@ -141,8 +145,6 @@ describe "WeatherDotCom" do
         result.is_a?(Data::Measurement).should be_true
         result.current.is_a?(Data::CurrentMeasurement).should be_true
         result.forecast.is_a?(Array).should be_true
-        
-        result.source.should == :weather_dot_com
       end
       
     end
@@ -164,13 +166,13 @@ describe "WeatherDotCom" do
       it "returns true if matching icon code" do
         @measurement.current.icon = "4"
         @measurement.current.icon?.should be_true
-        WeatherService::WeatherDotCom.currently_wet_by_icon?(@measurement.current).should be_true
+        WeatherService::WeatherDotCom._currently_wet_by_icon?(@measurement.current).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.current.icon = "32"
         @measurement.current.icon?.should be_true
-        WeatherService::WeatherDotCom.currently_wet_by_icon?(@measurement.current).should be_false
+        WeatherService::WeatherDotCom._currently_wet_by_icon?(@measurement.current).should be_false
       end
       
     end
@@ -186,13 +188,13 @@ describe "WeatherDotCom" do
       it "returns true if matching icon code" do
         @measurement.forecast.first.icon = "4"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::WeatherDotCom.forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
+        WeatherService::WeatherDotCom._forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.forecast.first.icon = "32"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::WeatherDotCom.forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
+        WeatherService::WeatherDotCom._forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
       end
       
     end
@@ -206,13 +208,13 @@ describe "WeatherDotCom" do
       it "returns true if matching icon code" do
         @measurement.current.icon = "32"
         @measurement.current.icon?.should be_true
-        WeatherService::WeatherDotCom.currently_sunny_by_icon?(@measurement.current).should be_true
+        WeatherService::WeatherDotCom._currently_sunny_by_icon?(@measurement.current).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.current.icon = "4"
         @measurement.current.icon?.should be_true
-        WeatherService::WeatherDotCom.currently_sunny_by_icon?(@measurement.current).should be_false
+        WeatherService::WeatherDotCom._currently_sunny_by_icon?(@measurement.current).should be_false
       end
       
     end
@@ -228,13 +230,13 @@ describe "WeatherDotCom" do
       it "returns true if matching icon code" do
         @measurement.forecast.first.icon = "32"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::WeatherDotCom.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
+        WeatherService::WeatherDotCom._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.forecast.first.icon = "4"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::WeatherDotCom.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
+        WeatherService::WeatherDotCom._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
       end
       
     end

@@ -47,30 +47,64 @@ describe "WeatherServices" do
     
     before(:each) do
       @service = Barometer::WeatherService.new
+      @measurement = Data::Measurement.new
+      @query = Barometer::Query.new("test")
+    end
+    
+    it "defaults _meets_requirements?" do
+      Barometer::WeatherService.send("_meets_requirements?").should be_true
+    end
+
+    it "stubs _source_name" do
+      lambda { Barometer::WeatherService.send("_source_name") }.should raise_error(NotImplementedError)
+    end
+
+    it "stubs _accepted_formats" do
+      lambda { Barometer::WeatherService.send("_accepted_formats") }.should raise_error(NotImplementedError)
     end
     
     it "stubs _measure" do
-      lambda { Barometer::WeatherService._measure }.should raise_error(NotImplementedError)
+      Barometer::WeatherService._measure(@measurement,@query,true).is_a?(Data::Measurement).should be_true
     end
     
-    it "stubs accepted_formats" do
-      lambda { Barometer::WeatherService.accepted_formats }.should raise_error(NotImplementedError)
+    it "stubs _extra_processing" do
+      Barometer::WeatherService._extra_processing.should be_nil
     end
     
-    it "defaults meets_requirements?" do
-      Barometer::WeatherService.meets_requirements?.should be_true
+    it "stubs _fetch" do
+      Barometer::WeatherService._fetch.should be_nil
     end
     
-    it "defaults supports_country?" do
-      Barometer::WeatherService.supports_country?.should be_true
+    it "stubs _build_current" do
+      Barometer::WeatherService._build_current.should be_nil
     end
     
-    it "defaults requires_keys?" do
-      Barometer::WeatherService.requires_keys?.should be_false
+    it "stubs _build_forecast" do
+      Barometer::WeatherService._build_forecast.should be_nil
     end
     
-    it "defaults has_keys?" do
-      lambda { Barometer::WeatherService.has_keys? }.should raise_error(NotImplementedError)
+    it "stubs _build_location" do
+      Barometer::WeatherService._build_location.should be_nil
+    end
+    
+    it "stubs _build_sun" do
+      Barometer::WeatherService._build_sun.should be_nil
+    end
+    
+    it "stubs _build_links" do
+      Barometer::WeatherService._build_links.should == {}
+    end
+    
+    it "defaults _supports_country?" do
+      Barometer::WeatherService._supports_country?.should be_true
+    end
+    
+    it "defaults _requires_keys?" do
+      Barometer::WeatherService._requires_keys?.should be_false
+    end
+    
+    it "defaults _has_keys?" do
+      lambda { Barometer::WeatherService._has_keys? }.should raise_error(NotImplementedError)
     end
     
   end
@@ -137,7 +171,7 @@ describe "WeatherServices" do
       end
 
       it "stubs forecasted_windy?" do
-        Barometer::WeatherService.forecasted_windy?(@measurement,nil,nil).should be_nil
+        Barometer::WeatherService._forecasted_windy?(@measurement,nil,nil).should be_nil
       end
       
       describe "and is current" do
@@ -154,14 +188,14 @@ describe "WeatherServices" do
         
         it "returns true if currently_windy?" do
           module Barometer; class WeatherService
-            def self.currently_windy?(a=nil,b=nil); true; end
+            def self._currently_windy?(a=nil,b=nil); true; end
           end; end
           Barometer::WeatherService.windy?(@measurement).should be_true
         end
 
         it "returns false if !currently_windy?" do
           module Barometer; class WeatherService
-            def self.currently_windy?(a=nil,b=nil); false; end
+            def self._currently_windy?(a=nil,b=nil); false; end
           end; end
           Barometer::WeatherService.windy?(@measurement).should be_false
         end
@@ -182,14 +216,14 @@ describe "WeatherServices" do
         
         it "returns true if forecasted_windy?" do
           module Barometer; class WeatherService
-            def self.forecasted_windy?(a=nil,b=nil,c=nil); true; end
+            def self._forecasted_windy?(a=nil,b=nil,c=nil); true; end
           end; end
           Barometer::WeatherService.windy?(@measurement).should be_true
         end
 
         it "returns false if !forecasted_windy?" do
           module Barometer; class WeatherService
-            def self.forecasted_windy?(a=nil,b=nil,c=nil); false; end
+            def self._forecasted_windy?(a=nil,b=nil,c=nil); false; end
           end; end
           Barometer::WeatherService.windy?(@measurement).should be_false
         end
@@ -210,24 +244,24 @@ describe "WeatherServices" do
       end
 
       it "requires a measurement object" do
-        lambda { Barometer::WeatherService.currently_windy? }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.currently_windy?("a") }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.currently_windy?(@measurement) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_windy? }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_windy?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_windy?(@measurement) }.should_not raise_error(ArgumentError)
       end
 
       it "requires threshold as a number" do
-        lambda { Barometer::WeatherService.currently_windy?(@measurement,"a") }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.currently_windy?(@measurement,1) }.should_not raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.currently_windy?(@measurement,1.1) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_windy?(@measurement,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_windy?(@measurement,1) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_windy?(@measurement,1.1) }.should_not raise_error(ArgumentError)
       end
 
       it "returns nil when value unavailable" do
         measurement = Data::Measurement.new
-        Barometer::WeatherService.currently_windy?(measurement,@threshold).should be_nil
+        Barometer::WeatherService._currently_windy?(measurement,@threshold).should be_nil
         measurement.current = Data::CurrentMeasurement.new
-        Barometer::WeatherService.currently_windy?(measurement,@threshold).should be_nil
+        Barometer::WeatherService._currently_windy?(measurement,@threshold).should be_nil
         measurement.current.wind = Data::Speed.new
-        Barometer::WeatherService.currently_windy?(measurement,@threshold).should be_nil
+        Barometer::WeatherService._currently_windy?(measurement,@threshold).should be_nil
       end
 
       describe "when metric" do
@@ -243,12 +277,12 @@ describe "WeatherServices" do
         # measurement.current.wind.kph.to_f
         it "returns true when wind speed (kph) above threshold" do
           @measurement.current.wind.kph = @threshold + 1
-          Barometer::WeatherService.currently_windy?(@measurement,@threshold).should be_true
+          Barometer::WeatherService._currently_windy?(@measurement,@threshold).should be_true
         end
 
         it "returns false when wind speed (kph) below threshold" do
           @measurement.current.wind.kph = @threshold - 1
-          Barometer::WeatherService.currently_windy?(@measurement,@threshold).should be_false
+          Barometer::WeatherService._currently_windy?(@measurement,@threshold).should be_false
         end
 
       end
@@ -265,12 +299,12 @@ describe "WeatherServices" do
 
         it "returns true when wind speed (mph) above threshold" do
           @measurement.current.wind.mph = @threshold - 1
-          Barometer::WeatherService.currently_windy?(@measurement,@threshold).should be_false
+          Barometer::WeatherService._currently_windy?(@measurement,@threshold).should be_false
         end
 
         it "returns false when wind speed (mph) below threshold" do
           @measurement.current.wind.mph = @threshold - 1
-          Barometer::WeatherService.currently_windy?(@measurement,@threshold).should be_false
+          Barometer::WeatherService._currently_windy?(@measurement,@threshold).should be_false
         end
 
       end
@@ -310,14 +344,14 @@ describe "WeatherServices" do
         
         it "returns true if currently_wet?" do
           module Barometer; class WeatherService
-            def self.currently_wet?(a=nil,b=nil); true; end
+            def self._currently_wet?(a=nil,b=nil); true; end
           end; end
           Barometer::WeatherService.wet?(@measurement).should be_true
         end
 
         it "returns false if !currently_wet?" do
           module Barometer; class WeatherService
-            def self.currently_wet?(a=nil,b=nil); false; end
+            def self._currently_wet?(a=nil,b=nil); false; end
           end; end
           Barometer::WeatherService.wet?(@measurement).should be_false
         end
@@ -338,14 +372,14 @@ describe "WeatherServices" do
         
         it "returns true if forecasted_wet?" do
           module Barometer; class WeatherService
-            def self.forecasted_wet?(a=nil,b=nil,c=nil); true; end
+            def self._forecasted_wet?(a=nil,b=nil,c=nil); true; end
           end; end
           Barometer::WeatherService.wet?(@measurement).should be_true
         end
 
         it "returns false if !forecasted_wet?" do
           module Barometer; class WeatherService
-            def self.forecasted_wet?(a=nil,b=nil,c=nil); false; end
+            def self._forecasted_wet?(a=nil,b=nil,c=nil); false; end
           end; end
           Barometer::WeatherService.wet?(@measurement).should be_false
         end
@@ -367,24 +401,24 @@ describe "WeatherServices" do
       end
     
       it "requires a measurement object" do
-        lambda { Barometer::WeatherService.currently_wet? }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.currently_wet?("a") }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.currently_wet?(@measurement) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_wet? }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_wet?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_wet?(@measurement) }.should_not raise_error(ArgumentError)
       end
     
       it "requires threshold as a number" do
-        lambda { Barometer::WeatherService.currently_wet?(@measurement,"a") }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.currently_wet?(@measurement,1) }.should_not raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.currently_wet?(@measurement,1.1) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_wet?(@measurement,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_wet?(@measurement,1) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_wet?(@measurement,1.1) }.should_not raise_error(ArgumentError)
       end
     
       it "returns nil when value unavailable" do
         measurement = Data::Measurement.new
-        Barometer::WeatherService.currently_wet?(measurement,@threshold).should be_nil
+        Barometer::WeatherService._currently_wet?(measurement,@threshold).should be_nil
         measurement.current = Data::CurrentMeasurement.new
-        Barometer::WeatherService.currently_wet?(measurement,@threshold).should be_nil
+        Barometer::WeatherService._currently_wet?(measurement,@threshold).should be_nil
         measurement.current.wind = Data::Speed.new
-        Barometer::WeatherService.currently_wet?(measurement,@threshold).should be_nil
+        Barometer::WeatherService._currently_wet?(measurement,@threshold).should be_nil
       end
       
       describe "currently_wet_by_icon?" do
@@ -394,33 +428,33 @@ describe "WeatherServices" do
         end
 
         it "requires a Barometer::Measurement object" do
-          lambda { Barometer::WeatherService.currently_wet_by_icon?(nil) }.should raise_error(ArgumentError)
-          lambda { Barometer::WeatherService.currently_wet_by_icon?("invlaid") }.should raise_error(ArgumentError)
+          lambda { Barometer::WeatherService._currently_wet_by_icon?(nil) }.should raise_error(ArgumentError)
+          lambda { Barometer::WeatherService._currently_wet_by_icon?("invlaid") }.should raise_error(ArgumentError)
 
-          lambda { Barometer::WeatherService.currently_wet_by_icon?(@measurement.current) }.should_not raise_error(ArgumentError)
+          lambda { Barometer::WeatherService._currently_wet_by_icon?(@measurement.current) }.should_not raise_error(ArgumentError)
         end
 
         it "returns nil if no icon" do
           @measurement.current.icon?.should be_false
-          Barometer::WeatherService.currently_wet_by_icon?(@measurement.current).should be_nil
+          Barometer::WeatherService._currently_wet_by_icon?(@measurement.current).should be_nil
         end
 
         it "returns true if matching icon code" do
-          module Barometer; class WeatherService; def self.wet_icon_codes
+          module Barometer; class WeatherService; def self._wet_icon_codes
             ["rain"]
           end; end; end
           @measurement.current.icon = "rain"
           @measurement.current.icon?.should be_true
-          Barometer::WeatherService.currently_wet_by_icon?(@measurement.current).should be_true
+          Barometer::WeatherService._currently_wet_by_icon?(@measurement.current).should be_true
         end
 
         it "returns false if NO matching icon code" do
-          module Barometer; class WeatherService; def self.wet_icon_codes
+          module Barometer; class WeatherService; def self._wet_icon_codes
             ["rain"]
           end; end; end
           @measurement.current.icon = "sunny"
           @measurement.current.icon?.should be_true
-          Barometer::WeatherService.currently_wet_by_icon?(@measurement.current).should be_false
+          Barometer::WeatherService._currently_wet_by_icon?(@measurement.current).should be_false
         end
 
       end
@@ -441,13 +475,13 @@ describe "WeatherServices" do
           it "returns true when temperature < dew_point" do
             @measurement.current.temperature.c = @temperature
             @measurement.current.dew_point.c = @temperature + 1
-            Barometer::WeatherService.currently_wet_by_dewpoint?(@measurement).should be_true
+            Barometer::WeatherService._currently_wet_by_dewpoint?(@measurement).should be_true
           end
         
           it "returns false when temperature > dew_point" do
             @measurement.current.temperature.c = @temperature
             @measurement.current.dew_point.c = @temperature - 1
-            Barometer::WeatherService.currently_wet_by_dewpoint?(@measurement).should be_false
+            Barometer::WeatherService._currently_wet_by_dewpoint?(@measurement).should be_false
           end
           
         end
@@ -466,13 +500,13 @@ describe "WeatherServices" do
           it "returns true when temperature < dew_point" do
             @measurement.current.temperature.f = @temperature
             @measurement.current.dew_point.f = @temperature + 1
-            Barometer::WeatherService.currently_wet_by_dewpoint?(@measurement).should be_true
+            Barometer::WeatherService._currently_wet_by_dewpoint?(@measurement).should be_true
           end
 
           it "returns false when temperature > dew_point" do
             @measurement.current.temperature.f = @temperature
             @measurement.current.dew_point.f = @temperature - 1
-            Barometer::WeatherService.currently_wet_by_dewpoint?(@measurement).should be_false
+            Barometer::WeatherService._currently_wet_by_dewpoint?(@measurement).should be_false
           end
 
         end
@@ -488,14 +522,14 @@ describe "WeatherServices" do
         
         it "returns true when humidity >= 99%" do
           @measurement.current.humidity = 99
-          Barometer::WeatherService.currently_wet_by_humidity?(@measurement.current).should be_true
+          Barometer::WeatherService._currently_wet_by_humidity?(@measurement.current).should be_true
           @measurement.current.humidity = 100
-          Barometer::WeatherService.currently_wet_by_humidity?(@measurement.current).should be_true
+          Barometer::WeatherService._currently_wet_by_humidity?(@measurement.current).should be_true
         end
       
         it "returns false when humidity < 99%" do
           @measurement.current.humidity = 98
-          Barometer::WeatherService.currently_wet_by_humidity?(@measurement.current).should be_false
+          Barometer::WeatherService._currently_wet_by_humidity?(@measurement.current).should be_false
         end
         
       end
@@ -511,12 +545,12 @@ describe "WeatherServices" do
         
         it "returns true when pop (%) above threshold" do
           @measurement.forecast.first.pop = @threshold + 1
-          Barometer::WeatherService.currently_wet_by_pop?(@measurement, @threshold).should be_true
+          Barometer::WeatherService._currently_wet_by_pop?(@measurement, @threshold).should be_true
         end
 
         it "returns false when pop (%) below threshold" do
           @measurement.forecast.first.pop = @threshold - 1
-          Barometer::WeatherService.currently_wet_by_pop?(@measurement, @threshold).should be_false
+          Barometer::WeatherService._currently_wet_by_pop?(@measurement, @threshold).should be_false
         end
         
       end
@@ -536,27 +570,27 @@ describe "WeatherServices" do
       end
     
       it "requires a measurement object" do
-        lambda { Barometer::WeatherService.forecasted_wet? }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.forecasted_wet?("a") }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.forecasted_wet?(@measurement) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._forecasted_wet? }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._forecasted_wet?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._forecasted_wet?(@measurement) }.should_not raise_error(ArgumentError)
       end
 
       it "requires threshold as a number" do
-        lambda { Barometer::WeatherService.forecasted_wet?(@measurement,"a") }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.forecasted_wet?(@measurement,1) }.should_not raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.forecasted_wet?(@measurement,1.1) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._forecasted_wet?(@measurement,"a") }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._forecasted_wet?(@measurement,1) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._forecasted_wet?(@measurement,1.1) }.should_not raise_error(ArgumentError)
       end
 
       it "requires utc_time as a Data::LocalTime object" do
         #lambda { Barometer::WeatherService.forecasted_wet?(@measurement,1,"string") }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.forecasted_wet?(@measurement,1,@now) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._forecasted_wet?(@measurement,1,@now) }.should_not raise_error(ArgumentError)
       end
 
       it "returns nil when value unavailable" do
         measurement = Data::Measurement.new
-        Barometer::WeatherService.forecasted_wet?(measurement,@threshold).should be_nil
+        Barometer::WeatherService._forecasted_wet?(measurement,@threshold).should be_nil
         measurement.forecast = [Data::ForecastMeasurement.new]
-        Barometer::WeatherService.forecasted_wet?(measurement,@threshold).should be_nil
+        Barometer::WeatherService._forecasted_wet?(measurement,@threshold).should be_nil
       end
       
       describe "forecasted_wet_by_icon?" do
@@ -568,33 +602,33 @@ describe "WeatherServices" do
         end
 
         it "requires a Barometer::Measurement object" do
-          lambda { Barometer::WeatherService.forecasted_wet_by_icon?(nil) }.should raise_error(ArgumentError)
-          lambda { Barometer::WeatherService.forecasted_wet_by_icon?("invlaid") }.should raise_error(ArgumentError)
+          lambda { Barometer::WeatherService._forecasted_wet_by_icon?(nil) }.should raise_error(ArgumentError)
+          lambda { Barometer::WeatherService._forecasted_wet_by_icon?("invlaid") }.should raise_error(ArgumentError)
 
-          lambda { Barometer::WeatherService.forecasted_wet_by_icon?(@measurement.forecast.first) }.should_not raise_error(ArgumentError)
+          lambda { Barometer::WeatherService._forecasted_wet_by_icon?(@measurement.forecast.first) }.should_not raise_error(ArgumentError)
         end
 
         it "returns nil if no icon" do
           @measurement.forecast.first.icon?.should be_false
-          Barometer::WeatherService.forecasted_wet_by_icon?(@measurement.forecast.first).should be_nil
+          Barometer::WeatherService._forecasted_wet_by_icon?(@measurement.forecast.first).should be_nil
         end
 
         it "returns true if matching icon code" do
-          module Barometer; class WeatherService; def self.wet_icon_codes
+          module Barometer; class WeatherService; def self._wet_icon_codes
             ["rain"]
           end; end; end
           @measurement.forecast.first.icon = "rain"
           @measurement.forecast.first.icon?.should be_true
-          Barometer::WeatherService.forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
+          Barometer::WeatherService._forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
         end
 
         it "returns false if NO matching icon code" do
-          module Barometer; class WeatherService; def self.wet_icon_codes
+          module Barometer; class WeatherService; def self._wet_icon_codes
             ["rain"]
           end; end; end
           @measurement.forecast.first.icon = "sunny"
           @measurement.forecast.first.icon?.should be_true
-          Barometer::WeatherService.forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
+          Barometer::WeatherService._forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
         end
 
         after(:each) do
@@ -616,12 +650,12 @@ describe "WeatherServices" do
         
         it "returns true when pop (%) above threshold" do
           @measurement.forecast.first.pop = @threshold + 1
-          Barometer::WeatherService.forecasted_wet_by_pop?(@measurement.forecast.first, @threshold).should be_true
+          Barometer::WeatherService._forecasted_wet_by_pop?(@measurement.forecast.first, @threshold).should be_true
         end
 
         it "returns false when pop (%) below threshold" do
           @measurement.forecast.first.pop = @threshold - 1
-          Barometer::WeatherService.forecasted_wet_by_pop?(@measurement.forecast.first, @threshold).should be_false
+          Barometer::WeatherService._forecasted_wet_by_pop?(@measurement.forecast.first, @threshold).should be_false
         end
         
       end
@@ -655,14 +689,14 @@ describe "WeatherServices" do
         
         it "returns true if currently_day?" do
           module Barometer; class WeatherService
-            def self.currently_day?(a=nil); true; end
+            def self._currently_day?(a=nil); true; end
           end; end
           Barometer::WeatherService.day?(@measurement).should be_true
         end
 
         it "returns false if !currently_day?" do
           module Barometer; class WeatherService
-            def self.currently_day?(a=nil); false; end
+            def self._currently_day?(a=nil); false; end
           end; end
           Barometer::WeatherService.day?(@measurement).should be_false
         end
@@ -683,14 +717,14 @@ describe "WeatherServices" do
         
         it "returns true if forecasted_day?" do
           module Barometer; class WeatherService
-            def self.forecasted_day?(a=nil,b=nil); true; end
+            def self._forecasted_day?(a=nil,b=nil); true; end
           end; end
           Barometer::WeatherService.day?(@measurement).should be_true
         end
 
         it "returns false if !forecasted_day?" do
           module Barometer; class WeatherService
-            def self.forecasted_day?(a=nil,b=nil); false; end
+            def self._forecasted_day?(a=nil,b=nil); false; end
           end; end
           Barometer::WeatherService.day?(@measurement).should be_false
         end
@@ -710,14 +744,14 @@ describe "WeatherServices" do
       end
 
       it "requires a measurement object" do
-        lambda { Barometer::WeatherService.currently_day? }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.currently_day?("a") }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.currently_day?(@measurement) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_day? }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_day?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_day?(@measurement) }.should_not raise_error(ArgumentError)
       end
       
       it "returns nil when value unavailable" do
         measurement = Data::Measurement.new
-        Barometer::WeatherService.currently_day?(measurement).should be_nil
+        Barometer::WeatherService._currently_day?(measurement).should be_nil
       end
       
       describe "and currently_after_sunrise?" do
@@ -732,21 +766,21 @@ describe "WeatherServices" do
         it "returns true when now is past sun_rise" do
           @measurement.sun = Data::Sun.new(@past)
           @measurement.current_at.should be_nil
-          Barometer::WeatherService.currently_after_sunrise?(@measurement).should be_nil
+          Barometer::WeatherService._currently_after_sunrise?(@measurement).should be_nil
           
           @measurement.current_at = @now
           @measurement.current_at.should_not be_nil
-          Barometer::WeatherService.currently_after_sunrise?(@measurement).should be_true
+          Barometer::WeatherService._currently_after_sunrise?(@measurement).should be_true
         end
 
         it "returns false when now if before sun_rise" do
           @measurement.sun = Data::Sun.new(@future)
           @measurement.current_at.should be_nil
-          Barometer::WeatherService.currently_after_sunrise?(@measurement).should be_nil
+          Barometer::WeatherService._currently_after_sunrise?(@measurement).should be_nil
           
           @measurement.current_at = @now
           @measurement.current_at.should_not be_nil
-          Barometer::WeatherService.currently_after_sunrise?(@measurement).should be_false
+          Barometer::WeatherService._currently_after_sunrise?(@measurement).should be_false
         end
         
       end
@@ -763,21 +797,21 @@ describe "WeatherServices" do
         it "returns true when now is before sun_set" do
           @measurement.sun = Data::Sun.new(nil,@future)
           @measurement.current_at.should be_nil
-          Barometer::WeatherService.currently_before_sunset?(@measurement).should be_nil
+          Barometer::WeatherService._currently_before_sunset?(@measurement).should be_nil
           
           @measurement.current_at = @now
           @measurement.current_at.should_not be_nil
-          Barometer::WeatherService.currently_before_sunset?(@measurement).should be_true
+          Barometer::WeatherService._currently_before_sunset?(@measurement).should be_true
         end
 
         it "returns false when now if after sun_set" do
           @measurement.sun = Data::Sun.new(nil,@past)
           @measurement.current_at.should be_nil
-          Barometer::WeatherService.currently_before_sunset?(@measurement).should be_nil
+          Barometer::WeatherService._currently_before_sunset?(@measurement).should be_nil
           
           @measurement.current_at = @now
           @measurement.current_at.should_not be_nil
-          Barometer::WeatherService.currently_before_sunset?(@measurement).should be_false
+          Barometer::WeatherService._currently_before_sunset?(@measurement).should be_false
         end
         
       end
@@ -795,19 +829,19 @@ describe "WeatherServices" do
       end
 
       it "requires a measurement object" do
-        lambda { Barometer::WeatherService.forecasted_day? }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.forecasted_day?("a") }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.forecasted_day?(@measurement) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._forecasted_day? }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._forecasted_day?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._forecasted_day?(@measurement) }.should_not raise_error(ArgumentError)
       end
       
       it "requires time as a Data::LocalTime object" do
         #lambda { Barometer::WeatherService.forecasted_day?(@measurement,"a") }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.forecasted_day?(@measurement,@now) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._forecasted_day?(@measurement,@now) }.should_not raise_error(ArgumentError)
       end
 
       it "returns nil when value unavailable" do
         measurement = Data::Measurement.new
-        Barometer::WeatherService.forecasted_day?(measurement).should be_nil
+        Barometer::WeatherService._forecasted_day?(measurement).should be_nil
       end
       
       describe "and forecasted_after_sunrise?" do
@@ -821,12 +855,12 @@ describe "WeatherServices" do
         
         it "returns true when now is past sun_rise" do
           @measurement.sun = Data::Sun.new(@past)
-          Barometer::WeatherService.forecasted_after_sunrise?(@measurement, @now).should be_true
+          Barometer::WeatherService._forecasted_after_sunrise?(@measurement, @now).should be_true
         end
       
         it "returns false when now if before sun_rise" do
           @measurement.sun = Data::Sun.new(@future)
-          Barometer::WeatherService.forecasted_after_sunrise?(@measurement, @now).should be_false
+          Barometer::WeatherService._forecasted_after_sunrise?(@measurement, @now).should be_false
         end
         
       end
@@ -842,12 +876,12 @@ describe "WeatherServices" do
         
         it "returns true when now is before sun_set" do
           @measurement.sun = Data::Sun.new(nil,@future)
-          Barometer::WeatherService.forecasted_before_sunset?(@measurement,@now).should be_true
+          Barometer::WeatherService._forecasted_before_sunset?(@measurement,@now).should be_true
         end
       
         it "returns false when now if after sun_set" do
           @measurement.sun = Data::Sun.new(nil,@past)
-          Barometer::WeatherService.forecasted_before_sunset?(@measurement,@now).should be_false
+          Barometer::WeatherService._forecasted_before_sunset?(@measurement,@now).should be_false
         end
         
       end
@@ -896,14 +930,14 @@ describe "WeatherServices" do
         
         it "returns true if currently_sunny?" do
           module Barometer; class WeatherService
-            def self.currently_sunny?(a=nil); true; end
+            def self._currently_sunny?(a=nil); true; end
           end; end
           Barometer::WeatherService.sunny?(@measurement).should be_true
         end
 
         it "returns false if !currently_sunny?" do
           module Barometer; class WeatherService
-            def self.currently_sunny?(a=nil); false; end
+            def self._currently_sunny?(a=nil); false; end
           end; end
           Barometer::WeatherService.sunny?(@measurement).should be_false
         end
@@ -924,14 +958,14 @@ describe "WeatherServices" do
         
         it "returns true if forecasted_sunny?" do
           module Barometer; class WeatherService
-            def self.forecasted_sunny?(a=nil,b=nil); true; end
+            def self._forecasted_sunny?(a=nil,b=nil); true; end
           end; end
           Barometer::WeatherService.sunny?(@measurement).should be_true
         end
 
         it "returns false if !forecasted_wet?" do
           module Barometer; class WeatherService
-            def self.forecasted_sunny?(a=nil,b=nil); false; end
+            def self._forecasted_sunny?(a=nil,b=nil); false; end
           end; end
           Barometer::WeatherService.sunny?(@measurement).should be_false
         end
@@ -951,31 +985,31 @@ describe "WeatherServices" do
       end
     
       it "requires a measurement object" do
-        lambda { Barometer::WeatherService.currently_sunny? }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.currently_sunny?("a") }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.currently_sunny?(@measurement) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_sunny? }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_sunny?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._currently_sunny?(@measurement) }.should_not raise_error(ArgumentError)
       end
     
       it "returns nil when value unavailable" do
         measurement = Data::Measurement.new
-        Barometer::WeatherService.currently_sunny?(measurement).should be_nil
+        Barometer::WeatherService._currently_sunny?(measurement).should be_nil
         measurement.current = Data::CurrentMeasurement.new
-        Barometer::WeatherService.currently_sunny?(measurement).should be_nil
+        Barometer::WeatherService._currently_sunny?(measurement).should be_nil
       end
       
       it "returns false if night time" do
         @measurement.current = Data::CurrentMeasurement.new
-        module Barometer; class WeatherService; def self.currently_day?(a=nil)
+        module Barometer; class WeatherService; def self._currently_day?(a=nil)
           true
         end; end; end
-        module Barometer; class WeatherService; def self.currently_sunny_by_icon?(a=nil)
+        module Barometer; class WeatherService; def self._currently_sunny_by_icon?(a=nil)
           true
         end; end; end
-        Barometer::WeatherService.currently_sunny?(@measurement).should be_true
-        module Barometer; class WeatherService; def self.currently_day?(a=nil)
+        Barometer::WeatherService._currently_sunny?(@measurement).should be_true
+        module Barometer; class WeatherService; def self._currently_day?(a=nil)
           false
         end; end; end
-        Barometer::WeatherService.currently_sunny?(@measurement).should be_false
+        Barometer::WeatherService._currently_sunny?(@measurement).should be_false
       end
 
       describe "currently_sunny_by_icon?" do
@@ -985,33 +1019,33 @@ describe "WeatherServices" do
         end
 
         it "requires a Barometer::Measurement object" do
-          lambda { Barometer::WeatherService.currently_sunny_by_icon?(nil) }.should raise_error(ArgumentError)
-          lambda { Barometer::WeatherService.currently_sunny_by_icon?("invlaid") }.should raise_error(ArgumentError)
+          lambda { Barometer::WeatherService._currently_sunny_by_icon?(nil) }.should raise_error(ArgumentError)
+          lambda { Barometer::WeatherService._currently_sunny_by_icon?("invlaid") }.should raise_error(ArgumentError)
 
-          lambda { Barometer::WeatherService.currently_sunny_by_icon?(@measurement.current) }.should_not raise_error(ArgumentError)
+          lambda { Barometer::WeatherService._currently_sunny_by_icon?(@measurement.current) }.should_not raise_error(ArgumentError)
         end
 
         it "returns nil if no icon" do
           @measurement.current.icon?.should be_false
-          Barometer::WeatherService.currently_sunny_by_icon?(@measurement.current).should be_nil
+          Barometer::WeatherService._currently_sunny_by_icon?(@measurement.current).should be_nil
         end
 
         it "returns true if matching icon code" do
-          module Barometer; class WeatherService; def self.sunny_icon_codes
+          module Barometer; class WeatherService; def self._sunny_icon_codes
             ["sunny"]
           end; end; end
           @measurement.current.icon = "sunny"
           @measurement.current.icon?.should be_true
-          Barometer::WeatherService.currently_sunny_by_icon?(@measurement.current).should be_true
+          Barometer::WeatherService._currently_sunny_by_icon?(@measurement.current).should be_true
         end
 
         it "returns false if NO matching icon code" do
-          module Barometer; class WeatherService; def self.sunny_icon_codes
+          module Barometer; class WeatherService; def self._sunny_icon_codes
             ["sunny"]
           end; end; end
           @measurement.current.icon = "rain"
           @measurement.current.icon?.should be_true
-          Barometer::WeatherService.currently_sunny_by_icon?(@measurement.current).should be_false
+          Barometer::WeatherService._currently_sunny_by_icon?(@measurement.current).should be_false
         end
 
       end
@@ -1029,22 +1063,22 @@ describe "WeatherServices" do
       end
     
       it "requires a measurement object" do
-        lambda { Barometer::WeatherService.forecasted_sunny? }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.forecasted_sunny?("a") }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.forecasted_sunny?(@measurement) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._forecasted_sunny? }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._forecasted_sunny?("a") }.should raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._forecasted_sunny?(@measurement) }.should_not raise_error(ArgumentError)
       end
 
       it "requires utc_time as a Data::LocalTime object" do
         #lambda { Barometer::WeatherService.forecasted_sunny?(@measurement,"string") }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.forecasted_sunny?(@measurement,@now) }.should_not raise_error(ArgumentError)
+        lambda { Barometer::WeatherService._forecasted_sunny?(@measurement,@now) }.should_not raise_error(ArgumentError)
       end
 
       it "returns nil when value unavailable" do
         measurement = Data::Measurement.new
-        Barometer::WeatherService.forecasted_sunny?(measurement).should be_nil
+        Barometer::WeatherService._forecasted_sunny?(measurement).should be_nil
         measurement.forecast = [Data::ForecastMeasurement.new]
         measurement.forecast.size.should == 1
-        Barometer::WeatherService.forecasted_sunny?(measurement).should be_nil
+        Barometer::WeatherService._forecasted_sunny?(measurement).should be_nil
       end
 
       it "returns false if night time" do
@@ -1052,17 +1086,17 @@ describe "WeatherServices" do
         @measurement.forecast.size.should == 1
         target_date = Date.today
         @measurement.forecast[0].date = target_date
-        module Barometer; class WeatherService; def self.forecasted_day?(a=nil, b=nil)
+        module Barometer; class WeatherService; def self._forecasted_day?(a=nil, b=nil)
           true
         end; end; end
-        module Barometer; class WeatherService; def self.forecasted_sunny_by_icon?(a=nil, b=nil)
+        module Barometer; class WeatherService; def self._forecasted_sunny_by_icon?(a=nil, b=nil)
           true
         end; end; end
-        Barometer::WeatherService.forecasted_sunny?(@measurement, target_date).should be_true
-        module Barometer; class WeatherService; def self.forecasted_day?(a=nil, b=nil)
+        Barometer::WeatherService._forecasted_sunny?(@measurement, target_date).should be_true
+        module Barometer; class WeatherService; def self._forecasted_day?(a=nil, b=nil)
           false
         end; end; end
-        Barometer::WeatherService.forecasted_sunny?(@measurement).should be_false
+        Barometer::WeatherService._forecasted_sunny?(@measurement).should be_false
       end
       
       describe "forecasted_sunny_by_icon?" do
@@ -1074,33 +1108,33 @@ describe "WeatherServices" do
         end
 
         it "requires a Barometer::Measurement object" do
-          lambda { Barometer::WeatherService.forecasted_sunny_by_icon?(nil) }.should raise_error(ArgumentError)
-          lambda { Barometer::WeatherService.forecasted_sunny_by_icon?("invlaid") }.should raise_error(ArgumentError)
+          lambda { Barometer::WeatherService._forecasted_sunny_by_icon?(nil) }.should raise_error(ArgumentError)
+          lambda { Barometer::WeatherService._forecasted_sunny_by_icon?("invlaid") }.should raise_error(ArgumentError)
 
-          lambda { Barometer::WeatherService.forecasted_sunny_by_icon?(@measurement.forecast.first) }.should_not raise_error(ArgumentError)
+          lambda { Barometer::WeatherService._forecasted_sunny_by_icon?(@measurement.forecast.first) }.should_not raise_error(ArgumentError)
         end
 
         it "returns nil if no icon" do
           @measurement.forecast.first.icon?.should be_false
-          Barometer::WeatherService.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_nil
+          Barometer::WeatherService._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_nil
         end
 
         it "returns true if matching icon code" do
-          module Barometer; class WeatherService; def self.sunny_icon_codes
+          module Barometer; class WeatherService; def self._sunny_icon_codes
             ["sunny"]
           end; end; end
           @measurement.forecast.first.icon = "sunny"
           @measurement.forecast.first.icon?.should be_true
-          Barometer::WeatherService.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
+          Barometer::WeatherService._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
         end
 
         it "returns false if NO matching icon code" do
-          module Barometer; class WeatherService; def self.sunny_icon_codes
+          module Barometer; class WeatherService; def self._sunny_icon_codes
             ["sunny"]
           end; end; end
           @measurement.forecast.first.icon = "rain"
           @measurement.forecast.first.icon?.should be_true
-          Barometer::WeatherService.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
+          Barometer::WeatherService._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
         end
 
         after(:each) do

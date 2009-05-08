@@ -11,11 +11,15 @@ describe "Yahoo" do
   describe "the class methods" do
     
     it "defines accepted_formats" do
-      WeatherService::Yahoo.accepted_formats.should == @accepted_formats
+      WeatherService::Yahoo._accepted_formats.should == @accepted_formats
+    end
+    
+    it "defines source_name" do
+      WeatherService::Yahoo._source_name.should == :yahoo
     end
     
     it "defines get_all" do
-      WeatherService::Yahoo.respond_to?("fetch").should be_true
+      WeatherService::Yahoo.respond_to?("_fetch").should be_true
     end
     
   end
@@ -23,16 +27,16 @@ describe "Yahoo" do
   describe "building the current data" do
     
     it "defines the build method" do
-      WeatherService::Yahoo.respond_to?("build_current").should be_true
+      WeatherService::Yahoo.respond_to?("_build_current").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::Yahoo.build_current }.should raise_error(ArgumentError)
-      lambda { WeatherService::Yahoo.build_current({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Yahoo._build_current }.should raise_error(ArgumentError)
+      lambda { WeatherService::Yahoo._build_current({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::CurrentMeasurement object" do
-      current = WeatherService::Yahoo.build_current({})
+      current = WeatherService::Yahoo._build_current({})
       current.is_a?(Data::CurrentMeasurement).should be_true
     end
     
@@ -41,16 +45,16 @@ describe "Yahoo" do
   describe "building the forecast data" do
     
     it "defines the build method" do
-      WeatherService::Yahoo.respond_to?("build_forecast").should be_true
+      WeatherService::Yahoo.respond_to?("_build_forecast").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::Yahoo.build_forecast }.should raise_error(ArgumentError)
-      lambda { WeatherService::Yahoo.build_forecast({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Yahoo._build_forecast }.should raise_error(ArgumentError)
+      lambda { WeatherService::Yahoo._build_forecast({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Array object" do
-      current = WeatherService::Yahoo.build_forecast({})
+      current = WeatherService::Yahoo._build_forecast({})
       current.is_a?(Array).should be_true
     end
     
@@ -59,22 +63,22 @@ describe "Yahoo" do
   describe "building the location data" do
     
     it "defines the build method" do
-      WeatherService::Yahoo.respond_to?("build_location").should be_true
+      WeatherService::Yahoo.respond_to?("_build_location").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::Yahoo.build_location }.should raise_error(ArgumentError)
-      lambda { WeatherService::Yahoo.build_location({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Yahoo._build_location }.should raise_error(ArgumentError)
+      lambda { WeatherService::Yahoo._build_location({}) }.should_not raise_error(ArgumentError)
     end
     
     it "requires Barometer::Geo input" do
       geo = Data::Geo.new({})
-      lambda { WeatherService::Yahoo.build_location({}, {}) }.should raise_error(ArgumentError)
-      lambda { WeatherService::Yahoo.build_location({}, geo) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Yahoo._build_location({}, {}) }.should raise_error(ArgumentError)
+      lambda { WeatherService::Yahoo._build_location({}, geo) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::Location object" do
-      location = WeatherService::Yahoo.build_location({})
+      location = WeatherService::Yahoo._build_location({})
       location.is_a?(Data::Location).should be_true
     end
     
@@ -120,8 +124,6 @@ describe "Yahoo" do
         result.is_a?(Data::Measurement).should be_true
         result.current.is_a?(Data::CurrentMeasurement).should be_true
         result.forecast.is_a?(Array).should be_true
-        
-        result.source.should == :yahoo
       end
       
     end
@@ -143,13 +145,13 @@ describe "Yahoo" do
       it "returns true if matching icon code" do
         @measurement.current.icon = "4"
         @measurement.current.icon?.should be_true
-        WeatherService::Yahoo.currently_wet_by_icon?(@measurement.current).should be_true
+        WeatherService::Yahoo._currently_wet_by_icon?(@measurement.current).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.current.icon = "32"
         @measurement.current.icon?.should be_true
-        WeatherService::Yahoo.currently_wet_by_icon?(@measurement.current).should be_false
+        WeatherService::Yahoo._currently_wet_by_icon?(@measurement.current).should be_false
       end
       
     end
@@ -165,13 +167,13 @@ describe "Yahoo" do
       it "returns true if matching icon code" do
         @measurement.forecast.first.icon = "4"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::Yahoo.forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
+        WeatherService::Yahoo._forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.forecast.first.icon = "32"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::Yahoo.forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
+        WeatherService::Yahoo._forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
       end
       
     end
@@ -185,13 +187,13 @@ describe "Yahoo" do
       it "returns true if matching icon code" do
         @measurement.current.icon = "32"
         @measurement.current.icon?.should be_true
-        WeatherService::Yahoo.currently_sunny_by_icon?(@measurement.current).should be_true
+        WeatherService::Yahoo._currently_sunny_by_icon?(@measurement.current).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.current.icon = "4"
         @measurement.current.icon?.should be_true
-        WeatherService::Yahoo.currently_sunny_by_icon?(@measurement.current).should be_false
+        WeatherService::Yahoo._currently_sunny_by_icon?(@measurement.current).should be_false
       end
       
     end
@@ -207,13 +209,13 @@ describe "Yahoo" do
       it "returns true if matching icon code" do
         @measurement.forecast.first.icon = "32"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::Yahoo.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
+        WeatherService::Yahoo._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.forecast.first.icon = "4"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::Yahoo.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
+        WeatherService::Yahoo._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
       end
       
     end

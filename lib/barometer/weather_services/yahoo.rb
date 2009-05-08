@@ -45,60 +45,51 @@ module Barometer
   #
   class WeatherService::Yahoo < WeatherService
     
-    def self.source_name; :yahoo; end
-    def self.accepted_formats; [:zipcode, :weather_id]; end
+    # PRIVATE
+    # If class methods could be private, the remaining methods would be.
+    #
     
-    # these are the icon codes that indicate "wet", used by wet? function
-    def self.wet_icon_codes
+    def self._source_name; :yahoo; end
+    def self._accepted_formats; [:zipcode, :weather_id]; end
+    
+    def self._wet_icon_codes
       codes = [1] + (3..18).to_a + [35] + (37..43).to_a + (45..47).to_a
       codes.collect {|c| c.to_s}
     end
-    def self.sunny_icon_codes
+    def self._sunny_icon_codes
       codes = (29..34).to_a + [36]
       codes.collect {|c| c.to_s}
     end
-
-    def self._measure(measurement, query, metric=true)
-      raise ArgumentError unless measurement.is_a?(Data::Measurement)
-      raise ArgumentError unless query.is_a?(Barometer::Query)
-      measurement.source = self.source_name
-      
-      begin
-        result = self.fetch(query.q, metric)
-      rescue Timeout::Error => e
-        return measurement
-      end
-      
-      measurement.current = self.build_current(result, metric)
-      measurement.forecast = self.build_forecast(result, metric)
-      measurement.location = self.build_location(result, query.geo)
-      
-      if result["title"] && result["link"]
-        measurement.links[result["title"]] = result["link"]
-      end
-      
-      sun = nil
-      if measurement.current
-        sun = self.build_sun(result)
-        measurement.current.sun = sun
-      end
-      # use todays sun data for all future days
-      if measurement.forecast && sun
-        measurement.forecast.each do |forecast|
-          forecast.sun = sun
-        end
-      end
-      
-      local_time = self.build_local_time(result)
-      if local_time
-        measurement.measured_at = local_time
-        measurement.current.current_at = local_time
-      end
-      
-      measurement
-    end
+  
+   def self._extra_processing(measurement, result, metric=true)
+     #raise ArgumentError unless measurement.is_a?(Data::Measurement)
+     #raise ArgumentError unless query.is_a?(Barometer::Query)
+     
+     # use todays sun data for all future days
+     if measurement.forecast && measurement.current.sun
+       measurement.forecast.each do |forecast|
+         forecast.sun = measurement.current.sun
+       end
+     end
+     
+     local_time = self._build_local_time(result)
+     if local_time
+       measurement.measured_at = local_time
+       measurement.current.current_at = local_time
+     end
+   
+     measurement
+   end
     
-def self.build_local_time(data)
+def self._build_links(data)
+  links = {}
+  if data["title"] && data["link"]
+    links[data["title"]] = data["link"]
+  end
+  links
+end
+    
+def self._build_local_time(data)
   if data
     if data['item']
       # what time is it now?
@@ -139,7 +130,7 @@ def self.build_local_time(data)
   end
 end
     
-    def self.build_current(data, metric=true)
+    def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       current = Data::CurrentMeasurement.new
       if data
@@ -171,7 +162,7 @@ end
       current
     end
     
-    def self.build_forecast(data, metric=true)
+    def self._build_forecast(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       forecasts = []
       
@@ -193,7 +184,7 @@ end
       forecasts
     end
     
-    def self.build_location(data, geo=nil)
+    def self._build_location(data, geo=nil)
       raise ArgumentError unless data.is_a?(Hash)
       raise ArgumentError unless (geo.nil? || geo.is_a?(Data::Geo))
       location = Data::Location.new
@@ -219,7 +210,7 @@ end
       location
     end
     
-    def self.build_sun(data)
+    def self._build_sun(data)
       raise ArgumentError unless data.is_a?(Hash)
       sun = nil
       if data && data['yweather:astronomy'] && data['item']
@@ -231,7 +222,7 @@ end
     end
 
     # use HTTParty to get the current weather
-    def self.fetch(query, metric=true)
+    def self._fetch(query, metric=true)
       self.get(
         "http://weather.yahooapis.com/forecastrss",
         :query => {:p => query, :u => (metric ? 'c' : 'f')},

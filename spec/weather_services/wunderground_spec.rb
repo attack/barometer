@@ -11,15 +11,19 @@ describe "Wunderground" do
   describe "the class methods" do
     
     it "defines accepted_formats" do
-      WeatherService::Wunderground.accepted_formats.should == @accepted_formats
+      WeatherService::Wunderground._accepted_formats.should == @accepted_formats
     end
     
-    it "defines get_current" do
-      WeatherService::Wunderground.respond_to?("get_current").should be_true
+    it "defines source_name" do
+      WeatherService::Wunderground._source_name.should == :wunderground
     end
     
-    it "defines get_forecast" do
-      WeatherService::Wunderground.respond_to?("get_forecast").should be_true
+    it "defines fetch_current" do
+      WeatherService::Wunderground.respond_to?("_fetch_current").should be_true
+    end
+    
+    it "defines fetch_forecast" do
+      WeatherService::Wunderground.respond_to?("_fetch_forecast").should be_true
     end
     
   end
@@ -27,17 +31,17 @@ describe "Wunderground" do
   describe "building the current data" do
     
     it "defines the build method" do
-      WeatherService::Wunderground.respond_to?("build_current").should be_true
+      WeatherService::Wunderground.respond_to?("_build_current").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::Wunderground.build_current }.should raise_error(ArgumentError)
-      WeatherService::Wunderground.build_current({})
-      lambda { WeatherService::Wunderground.build_current({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_current }.should raise_error(ArgumentError)
+      WeatherService::Wunderground._build_current({})
+      lambda { WeatherService::Wunderground._build_current({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::CurrentMeasurement object" do
-      current = WeatherService::Wunderground.build_current({})
+      current = WeatherService::Wunderground._build_current({})
       current.is_a?(Data::CurrentMeasurement).should be_true
     end
     
@@ -46,16 +50,16 @@ describe "Wunderground" do
   describe "building the forecast data" do
     
     it "defines the build method" do
-      WeatherService::Wunderground.respond_to?("build_forecast").should be_true
+      WeatherService::Wunderground.respond_to?("_build_forecast").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::Wunderground.build_forecast }.should raise_error(ArgumentError)
-      lambda { WeatherService::Wunderground.build_forecast({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_forecast }.should raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_forecast({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Array object" do
-      current = WeatherService::Wunderground.build_forecast({})
+      current = WeatherService::Wunderground._build_forecast({})
       current.is_a?(Array).should be_true
     end
     
@@ -64,16 +68,16 @@ describe "Wunderground" do
   describe "building the station data" do
     
     it "defines the build method" do
-      WeatherService::Wunderground.respond_to?("build_station").should be_true
+      WeatherService::Wunderground.respond_to?("_build_station").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::Wunderground.build_station }.should raise_error(ArgumentError)
-      lambda { WeatherService::Wunderground.build_station({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_station }.should raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_station({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::Location object" do
-      station = WeatherService::Wunderground.build_station({})
+      station = WeatherService::Wunderground._build_station({})
       station.is_a?(Data::Location).should be_true
     end
     
@@ -82,16 +86,16 @@ describe "Wunderground" do
   describe "building the location data" do
     
     it "defines the build method" do
-      WeatherService::Wunderground.respond_to?("build_location").should be_true
+      WeatherService::Wunderground.respond_to?("_build_location").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::Wunderground.build_location }.should raise_error(ArgumentError)
-      lambda { WeatherService::Wunderground.build_location({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_location }.should raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_location({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::Location object" do
-      location = WeatherService::Wunderground.build_location({})
+      location = WeatherService::Wunderground._build_location({})
       location.is_a?(Data::Location).should be_true
     end
     
@@ -100,12 +104,12 @@ describe "Wunderground" do
   describe "building the timezone" do
     
     it "defines the build method" do
-      WeatherService::Wunderground.respond_to?("build_timezone").should be_true
+      WeatherService::Wunderground.respond_to?("_build_timezone").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::Wunderground.build_timezone }.should raise_error(ArgumentError)
-      lambda { WeatherService::Wunderground.build_timezone({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_timezone }.should raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_timezone({}) }.should_not raise_error(ArgumentError)
     end
     
   end
@@ -117,22 +121,22 @@ describe "Wunderground" do
     end
 
     it "defines the build method" do
-      WeatherService::Wunderground.respond_to?("build_sun").should be_true
+      WeatherService::Wunderground.respond_to?("_build_sun").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::Wunderground.build_sun }.should raise_error(ArgumentError)
-      lambda { WeatherService::Wunderground.build_sun({},@zone) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_sun }.should raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_sun({},@zone) }.should_not raise_error(ArgumentError)
     end
     
     it "requires Barometer::Zone input" do
-      lambda { WeatherService::Wunderground.build_sun({}) }.should raise_error(ArgumentError)
-      lambda { WeatherService::Wunderground.build_sun({}, "invalid") }.should raise_error(ArgumentError)
-      lambda { WeatherService::Wunderground.build_sun({},@zone) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_sun({}) }.should raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_sun({}, "invalid") }.should raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_sun({},@zone) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::Sun object" do
-      sun = WeatherService::Wunderground.build_sun({},@zone)
+      sun = WeatherService::Wunderground._build_sun({},@zone)
       sun.is_a?(Data::Sun).should be_true
     end
     
@@ -185,8 +189,6 @@ describe "Wunderground" do
         result.is_a?(Data::Measurement).should be_true
         result.current.is_a?(Data::CurrentMeasurement).should be_true
         result.forecast.is_a?(Array).should be_true
-        
-        result.source.should == :wunderground
       end
       
     end
@@ -208,13 +210,13 @@ describe "Wunderground" do
       it "returns true if matching icon code" do
         @measurement.current.icon = "rain"
         @measurement.current.icon?.should be_true
-        WeatherService::Wunderground.currently_wet_by_icon?(@measurement.current).should be_true
+        WeatherService::Wunderground._currently_wet_by_icon?(@measurement.current).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.current.icon = "sunny"
         @measurement.current.icon?.should be_true
-        WeatherService::Wunderground.currently_wet_by_icon?(@measurement.current).should be_false
+        WeatherService::Wunderground._currently_wet_by_icon?(@measurement.current).should be_false
       end
       
     end
@@ -230,13 +232,13 @@ describe "Wunderground" do
       it "returns true if matching icon code" do
         @measurement.forecast.first.icon = "rain"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::Wunderground.forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
+        WeatherService::Wunderground._forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.forecast.first.icon = "sunny"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::Wunderground.forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
+        WeatherService::Wunderground._forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
       end
       
     end
@@ -250,13 +252,13 @@ describe "Wunderground" do
       it "returns true if matching icon code" do
         @measurement.current.icon = "sunny"
         @measurement.current.icon?.should be_true
-        WeatherService::Wunderground.currently_sunny_by_icon?(@measurement.current).should be_true
+        WeatherService::Wunderground._currently_sunny_by_icon?(@measurement.current).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.current.icon = "rain"
         @measurement.current.icon?.should be_true
-        WeatherService::Wunderground.currently_sunny_by_icon?(@measurement.current).should be_false
+        WeatherService::Wunderground._currently_sunny_by_icon?(@measurement.current).should be_false
       end
       
     end
@@ -272,13 +274,13 @@ describe "Wunderground" do
       it "returns true if matching icon code" do
         @measurement.forecast.first.icon = "sunny"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::Wunderground.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
+        WeatherService::Wunderground._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.forecast.first.icon = "rain"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::Wunderground.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
+        WeatherService::Wunderground._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
       end
       
     end

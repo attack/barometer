@@ -43,9 +43,6 @@ module Barometer
     @@partner_key = nil
     @@license_key = nil
 
-    def self.source_name; :weather_dot_com; end
-    def self.accepted_formats; [:short_zipcode, :weather_id]; end
-
     def self.keys=(keys)
       raise ArgumentError unless keys.is_a?(Hash)
       keys.each do |key, value|
@@ -54,47 +51,45 @@ module Barometer
       end
     end
 
-    def self.has_keys?; !@@partner_key.nil? && !@@license_key.nil?; end
-    def self.requires_keys?; true; end
+    # PRIVATE
+    # If class methods could be private, the remaining methods would be.
+    #
 
-    def self.wet_icon_codes
+    def self._source_name; :weather_dot_com; end
+    def self._accepted_formats; [:short_zipcode, :weather_id]; end
+
+    def self._has_keys?; !@@partner_key.nil? && !@@license_key.nil?; end
+    def self._requires_keys?; true; end
+
+    def self._wet_icon_codes
       codes = (0..18).to_a + [35] + (37..43).to_a + (45..47).to_a
       codes.collect {|c| c.to_s}
     end
-    def self.sunny_icon_codes
+    def self._sunny_icon_codes
       codes = [19, 22, 28, 30, 32, 34, 36]
       codes.collect {|c| c.to_s}
     end
-
-    def self._measure(measurement, query, metric=true)
-      raise ArgumentError unless measurement.is_a?(Data::Measurement)
-      raise ArgumentError unless query.is_a?(Barometer::Query)
-      measurement.source = self.source_name
-      
-      begin
-        result = self.fetch(query.q, metric)
-      rescue Timeout::Error => e
-        return measurement
-      end
     
-      measurement.current = self.build_current(result, metric)
-      measurement.forecast = self.build_forecast(result, metric)
-      measurement.location = self.build_location(result, query.geo)
-      measurement.current.sun = self.build_sun(result)
-      
-      # add links
-      if result && result['lnks'] && result['lnks']['link']
-        result['lnks']['link'].each do |link_hash|
-          measurement.links[link_hash['t']] = link_hash['l']
-        end
-      end
+    def self._extra_processing(measurement, result, metric=true)
+      #raise ArgumentError unless measurement.is_a?(Data::Measurement)
+      #raise ArgumentError unless query.is_a?(Barometer::Query)
       
       # set local time of measurement
-      local_time = self.build_local_time(result)
+      local_time = self._build_local_time(result)
       measurement.measured_at = local_time
       measurement.current.current_at = local_time
-
+    
       measurement
+    end
+
+    def self._build_links(data)
+      links = {}
+      if data && data['lnks'] && data['lnks']['link']
+        data['lnks']['link'].each do |link_hash|
+          links[link_hash['t']] = link_hash['l']
+        end
+      end
+      links
     end
     
     # WARNING
@@ -105,11 +100,11 @@ module Barometer
     #
     # regardless of the above, this method will trust the data given to it
     #
-    def self.build_local_time(data)
+    def self._build_local_time(data)
       (data && data['loc']) ? Data::LocalTime.parse(data['loc']['tm']) : nil
     end
     
-    def self.build_current(data, metric=true)
+    def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       current = Data::CurrentMeasurement.new
       if data
@@ -141,7 +136,7 @@ module Barometer
       current
     end
     
-    def self.build_forecast(data, metric=true)
+    def self._build_forecast(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       forecasts = []
     
@@ -202,7 +197,7 @@ module Barometer
       forecasts
     end
 
-    def self.build_location(data, geo=nil)
+    def self._build_location(data, geo=nil)
       raise ArgumentError unless data.is_a?(Hash)
       raise ArgumentError unless (geo.nil? || geo.is_a?(Data::Geo))
       location = Data::Location.new
@@ -224,7 +219,7 @@ module Barometer
       location
     end
     
-    def self.build_sun(data)
+    def self._build_sun(data)
       raise ArgumentError unless data.is_a?(Hash)
       sun = nil
       if data
@@ -239,7 +234,7 @@ module Barometer
 
     # use HTTParty to get the current weather
     #
-    def self.fetch(query, metric=true)
+    def self._fetch(query, metric=true)
       self.get(
         "http://xoap.weather.com/weather/local/#{query}",
         :query => { :par => @@partner_key, :key => @@license_key,

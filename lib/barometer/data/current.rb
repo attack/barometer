@@ -67,7 +67,7 @@ module Barometer
     end
     
     def sun=(sun)
-      raise ArgumentError unless sun.is_a?(Data::Sun)
+      raise ArgumentError unless (sun.is_a?(Data::Sun) || sun.nil?)
       @sun = sun
     end
     
@@ -77,8 +77,8 @@ module Barometer
     end 
      
     def updated_at=(updated_at)
-    raise ArgumentError unless (updated_at.is_a?(Data::LocalTime) || updated_at.is_a?(Data::LocalDateTime))
-    @updated_at = updated_at
+      raise ArgumentError unless (updated_at.is_a?(Data::LocalTime) || updated_at.is_a?(Data::LocalDateTime))
+      @updated_at = updated_at
     end
     
     #

@@ -46,42 +46,48 @@ module Barometer
   #
   class WeatherService::Wunderground < WeatherService
     
-    def self.source_name; :wunderground; end
-    def self.accepted_formats
+    # PRIVATE
+    # If class methods could be private, the remaining methods would be.
+    #
+    
+    def self._source_name; :wunderground; end
+    def self._accepted_formats
       [:zipcode, :postalcode, :icao, :coordinates, :geocode]
     end
     
     # these are the icon codes that indicate "wet", used by wet? function
-    def self.wet_icon_codes
+    def self._wet_icon_codes
       %w(flurries rain sleet snow tstorms nt_flurries nt_rain nt_sleet nt_snow nt_tstorms chancerain chancetstorms)
     end
     # these are the icon codes that indicate "sun", used by sunny? function
-    def self.sunny_icon_codes
+    def self._sunny_icon_codes
       %w(clear mostlysunny partlysunny sunny partlycloudy)
     end
 
+    # completely re-define the generic _measure, as in this
+    # case we must make two queries to get all the weather data
+    #
     def self._measure(measurement, query, metric=true)
       raise ArgumentError unless measurement.is_a?(Data::Measurement)
       raise ArgumentError unless query.is_a?(Barometer::Query)
-      measurement.source = self.source_name
       
       begin
-        current_result = self.get_current(query.q)
-        measurement.current = self.build_current(current_result, metric)
+        current_result = self._fetch_current(query.q)
+        measurement.current = self._build_current(current_result, metric)
       rescue Timeout::Error => e
         return measurement
       end
       
       begin
-        forecast_result = self.get_forecast(query.q)
-        measurement.forecast = self.build_forecast(forecast_result, metric)
+        forecast_result = self._fetch_forecast(query.q)
+        measurement.forecast = self._build_forecast(forecast_result, metric)
       rescue Timeout::Error => e
         return measurement
       end
       
-      measurement.location = self.build_location(current_result)
-      measurement.station = self.build_station(current_result)
-      measurement.timezone = self.build_timezone(forecast_result)
+      measurement.location = self._build_location(current_result)
+      measurement.station = self._build_station(current_result)
+      measurement.timezone = self._build_timezone(forecast_result)
       
       if current_result["credit"] && current_result["credit_URL"]
         measurement.links[current_result["credit"]] = current_result["credit_URL"]
@@ -89,7 +95,7 @@ module Barometer
       
       sun = nil
       if measurement.current
-         sun = self.build_sun(forecast_result, measurement.timezone)
+         sun = self._build_sun(forecast_result, measurement.timezone)
          measurement.current.sun = sun
       end
       # use todays sun data for all future days
@@ -108,7 +114,7 @@ module Barometer
       measurement
     end
     
-    def self.build_current(data, metric=true)
+    def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       
       current = Data::CurrentMeasurement.new
@@ -142,7 +148,7 @@ module Barometer
       current
     end
     
-    def self.build_forecast(data, metric=true)
+    def self._build_forecast(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       forecasts = []
       # go through each forecast and create an instance
@@ -167,7 +173,7 @@ module Barometer
       forecasts
     end
 
-    def self.build_location(data)
+    def self._build_location(data)
       raise ArgumentError unless data.is_a?(Hash)
       location = Data::Location.new
       if data['display_location']
@@ -183,7 +189,7 @@ module Barometer
       location
     end
     
-    def self.build_station(data)
+    def self._build_station(data)
       raise ArgumentError unless data.is_a?(Hash)
       station = Data::Location.new
       station.id = data['station_id']
@@ -200,7 +206,7 @@ module Barometer
       station
     end
     
-    def self.build_timezone(data)
+    def self._build_timezone(data)
       raise ArgumentError unless data.is_a?(Hash)
       timezone = nil
       if data && data['simpleforecast'] &&
@@ -214,7 +220,7 @@ module Barometer
       timezone || Data::Zone.new(nil)
     end
     
-    def self.build_sun(data, timezone)
+    def self._build_sun(data, timezone)
       raise ArgumentError unless data.is_a?(Hash)
       raise ArgumentError unless timezone.is_a?(Data::Zone)
       sun = nil
@@ -243,7 +249,7 @@ module Barometer
     end
     
     # use HTTParty to get the current weather
-    def self.get_current(query)
+    def self._fetch_current(query)
       return unless query
       self.get(
        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml",
@@ -254,7 +260,7 @@ module Barometer
     end
     
     # use HTTParty to get the forecasted weather
-    def self.get_forecast(query)
+    def self._fetch_forecast(query)
       return unless query
       self.get(
         "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml",

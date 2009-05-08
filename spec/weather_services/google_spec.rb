@@ -11,7 +11,11 @@ describe "Google" do
   describe "the class methods" do
     
     it "defines accepted_formats" do
-      WeatherService::Google.accepted_formats.should == @accepted_formats
+      WeatherService::Google._accepted_formats.should == @accepted_formats
+    end
+    
+    it "defines source_name" do
+      WeatherService::Google._source_name.should == :google
     end
     
     # it "defines base_uri" do
@@ -19,7 +23,7 @@ describe "Google" do
     # end
     
     it "defines get_all" do
-      WeatherService::Google.respond_to?("get_all").should be_true
+      WeatherService::Google.respond_to?("_fetch").should be_true
     end
     
   end
@@ -27,16 +31,16 @@ describe "Google" do
   describe "building the current data" do
     
     it "defines the build method" do
-      WeatherService::Google.respond_to?("build_current").should be_true
+      WeatherService::Google.respond_to?("_build_current").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::Google.build_current }.should raise_error(ArgumentError)
-      lambda { WeatherService::Google.build_current({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Google._build_current }.should raise_error(ArgumentError)
+      lambda { WeatherService::Google._build_current({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::CurrentMeasurement object" do
-      current = WeatherService::Google.build_current({})
+      current = WeatherService::Google._build_current({})
       current.is_a?(Data::CurrentMeasurement).should be_true
     end
     
@@ -45,16 +49,16 @@ describe "Google" do
   describe "building the forecast data" do
     
     it "defines the build method" do
-      WeatherService::Google.respond_to?("build_forecast").should be_true
+      WeatherService::Google.respond_to?("_build_forecast").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::Google.build_forecast }.should raise_error(ArgumentError)
-      lambda { WeatherService::Google.build_forecast({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Google._build_forecast }.should raise_error(ArgumentError)
+      lambda { WeatherService::Google._build_forecast({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Array object" do
-      current = WeatherService::Google.build_forecast({})
+      current = WeatherService::Google._build_forecast({})
       current.is_a?(Array).should be_true
     end
     
@@ -63,18 +67,18 @@ describe "Google" do
   describe "building the location data" do
     
     it "defines the build method" do
-      WeatherService::Google.respond_to?("build_location").should be_true
+      WeatherService::Google.respond_to?("_build_location").should be_true
     end
     
     it "requires Barometer::Geo input" do
       geo = Data::Geo.new({})
-      lambda { WeatherService::Google.build_location({}) }.should raise_error(ArgumentError)
-      lambda { WeatherService::Google.build_location(geo) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Google._build_location(nil,{}) }.should raise_error(ArgumentError)
+      lambda { WeatherService::Google._build_location(nil,geo) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::Location object" do
       geo = Data::Geo.new({})
-      location = WeatherService::Google.build_location(geo)
+      location = WeatherService::Google._build_location(nil,geo)
       location.is_a?(Data::Location).should be_true
     end
     
@@ -116,8 +120,8 @@ describe "Google" do
       
       it "requires a Barometer::Measurement object" do
         lambda { Barometer::WeatherService::Google._measure(nil, @query) }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService::Google._measure("invlaid", @query) }.should raise_error(ArgumentError)
-  
+        lambda { Barometer::WeatherService::Google._measure("invalid", @query) }.should raise_error(ArgumentError)
+
         lambda { Barometer::WeatherService::Google._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
       end
   
@@ -133,8 +137,6 @@ describe "Google" do
         result.is_a?(Data::Measurement).should be_true
         result.current.is_a?(Data::CurrentMeasurement).should be_true
         result.forecast.is_a?(Array).should be_true
-        
-        result.source.should == :google
       end
       
     end
@@ -156,13 +158,13 @@ describe "Google" do
       it "returns true if matching icon code" do
         @measurement.current.icon = "rain"
         @measurement.current.icon?.should be_true
-        WeatherService::Google.currently_wet_by_icon?(@measurement.current).should be_true
+        WeatherService::Google._currently_wet_by_icon?(@measurement.current).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.current.icon = "sunny"
         @measurement.current.icon?.should be_true
-        WeatherService::Google.currently_wet_by_icon?(@measurement.current).should be_false
+        WeatherService::Google._currently_wet_by_icon?(@measurement.current).should be_false
       end
       
     end
@@ -178,13 +180,13 @@ describe "Google" do
       it "returns true if matching icon code" do
         @measurement.forecast.first.icon = "rain"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::Google.forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
+        WeatherService::Google._forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.forecast.first.icon = "sunny"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::Google.forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
+        WeatherService::Google._forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
       end
       
     end
@@ -198,13 +200,13 @@ describe "Google" do
       it "returns true if matching icon code" do
         @measurement.current.icon = "sunny"
         @measurement.current.icon?.should be_true
-        WeatherService::Google.currently_sunny_by_icon?(@measurement.current).should be_true
+        WeatherService::Google._currently_sunny_by_icon?(@measurement.current).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.current.icon = "rain"
         @measurement.current.icon?.should be_true
-        WeatherService::Google.currently_sunny_by_icon?(@measurement.current).should be_false
+        WeatherService::Google._currently_sunny_by_icon?(@measurement.current).should be_false
       end
       
     end
@@ -220,13 +222,13 @@ describe "Google" do
       it "returns true if matching icon code" do
         @measurement.forecast.first.icon = "sunny"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::Google.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
+        WeatherService::Google._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
       end
       
       it "returns false if NO matching icon code" do
         @measurement.forecast.first.icon = "rain"
         @measurement.forecast.first.icon?.should be_true
-        WeatherService::Google.forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
+        WeatherService::Google._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
       end
       
     end

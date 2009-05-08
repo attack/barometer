@@ -35,34 +35,21 @@ module Barometer
   #
   class WeatherService::Google < WeatherService
     
-    def self.source_name; :google; end
-    def self.accepted_formats; [:zipcode, :postalcode, :geocode]; end
+    # PRIVATE
+    # If class methods could be private, the remaining methods would be.
+    #
     
-    def self.wet_icon_codes
+    def self._source_name; :google; end
+    def self._accepted_formats; [:zipcode, :postalcode, :geocode]; end
+    
+    def self._wet_icon_codes
       %w(rain chance_of_rain chance_of_storm thunderstorm mist)
     end
-    def self.sunny_icon_codes
+    def self._sunny_icon_codes
       %w(sunny mostly_sunny partly_cloudy)
     end
-    
-    def self._measure(measurement, query, metric=true)
-      raise ArgumentError unless measurement.is_a?(Data::Measurement)
-      raise ArgumentError unless query.is_a?(Barometer::Query)
-      measurement.source = self.source_name
-      
-      begin
-        result = self.get_all(query.q, metric)
-      rescue Timeout::Error => e
-        return measurement
-      end
-      
-      measurement.current = self.build_current(result, metric)
-      measurement.forecast = self.build_forecast(result, metric)
-      measurement.location = self.build_location(query.geo)
-      measurement
-    end
 
-    def self.build_current(data, metric=true)
+    def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       current = Data::CurrentMeasurement.new
 
@@ -96,7 +83,7 @@ module Barometer
       current
     end
     
-    def self.build_forecast(data, metric=true)
+    def self._build_forecast(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
 
       forecasts = []
@@ -130,7 +117,7 @@ module Barometer
       forecasts
     end
     
-    def self.build_location(geo=nil)
+    def self._build_location(result=nil, geo=nil)
       raise ArgumentError unless (geo.nil? || geo.is_a?(Data::Geo))
       location = Data::Location.new
       if geo
@@ -145,7 +132,7 @@ module Barometer
     end
     
     # use HTTParty to get the current weather
-    def self.get_all(query, metric=true)
+    def self._fetch(query, metric=true)
       self.get(
         "http://google.com/ig/api",
         :query => {:weather => query, :hl => (metric ? "en-GB" : "en-US")},
