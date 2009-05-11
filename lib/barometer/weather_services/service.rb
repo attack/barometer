@@ -121,38 +121,80 @@ module Barometer
       raise ArgumentError unless query.is_a?(Barometer::Query)
   
       begin
-        result = self._fetch(query.q, metric)
+        result = _fetch(query.q, metric)
       rescue Timeout::Error => e
         return measurement
       end
   
       if result
-        measurement.current = self._build_current(result, metric)
-        measurement.forecast = self._build_forecast(result, metric)
-        measurement.location = self._build_location(result, query.geo)
-        measurement.links = self._build_links(result)
-  
-        measurement.current.sun = self._build_sun(result) if measurement.current
-  
-        # if we have geo data, incl. long & lat
-        # and if enhanced time enabled, then get timezone data
-        # otherwise do nothing
-  
-        measurement = self._extra_processing(measurement, result, metric)
+        measurement.current = _build_current(_current_result(result), metric)
+        measurement.forecast = _build_forecast(_forecast_result(result), metric)
+        measurement.location = _build_location(_location_result(result), query.geo)
+        measurement.station = _build_station(_station_result(result))
+        measurement.links = _build_links(_links_result(result))
+        measurement.current.sun = _build_sun(_sun_result(result)) if measurement.current
+        measurement.timezone = _timezone(_timezone_result(result), measurement.location)
+        if local_time = _local_time(_time_result(result), measurement)
+           measurement.measured_at = local_time
+           measurement.current.current_at = local_time
+        end
+        measurement = _build_extra(measurement, result, metric)
       end
   
       measurement
     end
+    
+    def self._current_result(data=nil); data; end
+    def self._forecast_result(data=nil); data; end
+    def self._location_result(data=nil); data; end
+    def self._station_result(data=nil); data; end
+    def self._links_result(data=nil); data; end
+    def self._sun_result(data=nil); data; end
+    def self._timezone_result(data=nil); data; end
+    def self._time_result(data=nil); data; end
 
     # data processing stubs
     #
-    def self._extra_processing(measurement=nil, result=nil, metric=true); measurement; end
     def self._fetch(query=nil, metric=true); nil; end
     def self._build_current(result=nil, metric=true); nil; end
     def self._build_forecast(result=nil, metric=true); nil; end
     def self._build_location(result=nil, geo=nil); nil; end
-    def self._build_sun(result=nil); nil; end
+    def self._build_station(result=nil); Data::Location.new; end
     def self._build_links(result=nil); {}; end
+    def self._build_sun(result=nil); Data::Sun.new; end
+    def self._build_timezone(result=nil); nil; end
+    def self._build_extra(measurement=nil, result=nil, metric=true); measurement; end
+    
+    # timezone parsing stubs.  there are so many because there are several
+    # possible situations
+    
+    # given the result set, return the full_timezone ... if not available
+    # return nil
+    def self._parse_full_timezone(result=nil); nil; end
+    def self._parse_local_time(result=nil); nil; end
+    
+    # either get the timezone based on coords, or build it from the data
+    #
+    def self._timezone(result=nil, location=nil)
+      if full_timezone = _parse_full_timezone(result)
+        full_timezone
+      elsif Barometer.enhance_timezone && location &&
+            location.latitude && location.longitude
+        WebService::Timezone.fetch(location.latitude, location.longitude)
+      else
+        _build_timezone(result)
+      end
+    end
+    
+    # return the current local time (as Data::LocalTime)
+    #
+    def self._local_time(result, measurement=nil)
+      _parse_local_time(result) || _build_local_time(measurement)
+    end
+    
+    def self._build_local_time(measurement)
+      (measurement && measurement.timezone) ? Data::LocalTime.parse(measurement.timezone.now) : nil
+    end
 
     # STUB: define this method to check for the existance of API keys,
     #       this method is NOT needed if requires_keys? returns false

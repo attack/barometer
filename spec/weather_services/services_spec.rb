@@ -67,8 +67,8 @@ describe "WeatherServices" do
       Barometer::WeatherService._measure(@measurement,@query,true).is_a?(Data::Measurement).should be_true
     end
     
-    it "stubs _extra_processing" do
-      Barometer::WeatherService._extra_processing.should be_nil
+    it "stubs _build_extra" do
+      Barometer::WeatherService._build_extra.should be_nil
     end
     
     it "stubs _fetch" do

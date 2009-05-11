@@ -69,17 +69,22 @@ module Barometer
       codes = [19, 22, 28, 30, 32, 34, 36]
       codes.collect {|c| c.to_s}
     end
+
+    # first try to match the zone code, otherwise use the zone offset
+    #
+    def self._build_timezone(data)
+      if data
+        if data['cc'] && data['cc']['lsup'] &&
+           (zone_match = data['cc']['lsup'].match(/ ([A-Z]{1,4})$/))
+          Data::Zone.new(zone_match[1])
+        elsif data['loc'] && data['loc']['zone']
+          Data::Zone.new(data['loc']['zone'].to_f)
+        end
+      end
+    end
     
-    def self._extra_processing(measurement, result, metric=true)
-      #raise ArgumentError unless measurement.is_a?(Data::Measurement)
-      #raise ArgumentError unless query.is_a?(Barometer::Query)
-      
-      # set local time of measurement
-      local_time = self._build_local_time(result)
-      measurement.measured_at = local_time
-      measurement.current.current_at = local_time
-    
-      measurement
+    def self._parse_local_time(data)
+      (data && data['loc']) ? Data::LocalTime.parse(data['loc']['tm']) : nil
     end
 
     def self._build_links(data)
@@ -100,9 +105,6 @@ module Barometer
     #
     # regardless of the above, this method will trust the data given to it
     #
-    def self._build_local_time(data)
-      (data && data['loc']) ? Data::LocalTime.parse(data['loc']['tm']) : nil
-    end
     
     def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)

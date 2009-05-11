@@ -115,7 +115,7 @@ describe "Yahoo" do
       it "requires a Barometer::Query query" do
         lambda { WeatherService::Yahoo._measure }.should raise_error(ArgumentError)
         lambda { WeatherService::Yahoo._measure(@measurement, 1) }.should raise_error(ArgumentError)
-        
+
         lambda { WeatherService::Yahoo._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
       end
       

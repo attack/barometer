@@ -125,6 +125,7 @@ module Barometer
     end
     
     def timezone=(timezone)
+      return unless timezone
       raise ArgumentError unless timezone.is_a?(Data::Zone)
       @timezone = timezone
     end

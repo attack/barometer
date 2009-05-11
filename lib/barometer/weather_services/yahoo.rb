@@ -61,7 +61,7 @@ module Barometer
       codes.collect {|c| c.to_s}
     end
   
-   def self._extra_processing(measurement, result, metric=true)
+   def self._build_extra(measurement, result, metric=true)
      #raise ArgumentError unless measurement.is_a?(Data::Measurement)
      #raise ArgumentError unless query.is_a?(Barometer::Query)
      
@@ -71,64 +71,23 @@ module Barometer
          forecast.sun = measurement.current.sun
        end
      end
-     
-     local_time = self._build_local_time(result)
-     if local_time
-       measurement.measured_at = local_time
-       measurement.current.current_at = local_time
-     end
-   
      measurement
    end
-    
-def self._build_links(data)
-  links = {}
-  if data["title"] && data["link"]
-    links[data["title"]] = data["link"]
-  end
-  links
-end
-    
-def self._build_local_time(data)
-  if data
-    if data['item']
-      # what time is it now?
-      now_utc = Time.now.utc
-      
-      # get published date
-      pub_date = data['item']['pubDate']
-      
-      # get the TIME ZONE CODE
-      zone_match = pub_date.match(/ ([A-Z]*)$/) if pub_date
-      
-      if zone_match
-        zone = zone_match[1] 
-        
-        # try converting pub_date to utc
-#        pub_date_utc = Data::Zone.code_to_utc(Time.parse(pub_date), zone) if zone
-     
-        # how far back was this?
- #       data_age_in_seconds = now_utc - pub_date_utc
-      
-        # is this older then 2 hours
-#        if (data_age_in_seconds < 0) || (data_age_in_seconds > (60 * 60 * 2))
-          # we may have converted the time wrong.
-          # if pub_date in the future, then?
-          # if pub_date too far back, then?
-        
-          # for now do nothing ... don't set measured_time
-#          return nil
-#        else
-          # everything seems fine
-          # convert now to the local time 
-          offset = Data::Zone.zone_to_offset(zone)
-          return Data::LocalTime.parse(now_utc + offset)
-#        end
+   
+    def self._build_timezone(data)
+      if data && data['item'] && data['item']['pubDate']
+        zone_match = data['item']['pubDate'].match(/ ([A-Z]*)$/)
+        Data::Zone.new(zone_match[1]) if zone_match
       end
-      nil
     end
-  end
-end
+    
+    def self._build_links(data)
+      links = {}
+      if data["title"] && data["link"]
+        links[data["title"]] = data["link"]
+      end
+      links
+    end
     
     def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
@@ -220,7 +179,7 @@ end
       end
       sun || Data::Sun.new
     end
-
+    
     # use HTTParty to get the current weather
     def self._fetch(query, metric=true)
       self.get(

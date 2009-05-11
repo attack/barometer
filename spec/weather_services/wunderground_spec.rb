@@ -104,39 +104,34 @@ describe "Wunderground" do
   describe "building the timezone" do
     
     it "defines the build method" do
-      WeatherService::Wunderground.respond_to?("_build_timezone").should be_true
+      WeatherService::Wunderground.respond_to?("_parse_full_timezone").should be_true
     end
     
     it "requires Hash input" do
-      lambda { WeatherService::Wunderground._build_timezone }.should raise_error(ArgumentError)
-      lambda { WeatherService::Wunderground._build_timezone({}) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._parse_full_timezone }.should raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._parse_full_timezone({}) }.should_not raise_error(ArgumentError)
     end
     
   end
   
   describe "building the sun data" do
        
-    before(:each) do
-      @zone = Data::Zone.new("Europe/Paris")
-    end
-
     it "defines the build method" do
       WeatherService::Wunderground.respond_to?("_build_sun").should be_true
     end
     
     it "requires Hash input" do
       lambda { WeatherService::Wunderground._build_sun }.should raise_error(ArgumentError)
-      lambda { WeatherService::Wunderground._build_sun({},@zone) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_sun({}) }.should_not raise_error(ArgumentError)
     end
     
     it "requires Barometer::Zone input" do
-      lambda { WeatherService::Wunderground._build_sun({}) }.should raise_error(ArgumentError)
       lambda { WeatherService::Wunderground._build_sun({}, "invalid") }.should raise_error(ArgumentError)
-      lambda { WeatherService::Wunderground._build_sun({},@zone) }.should_not raise_error(ArgumentError)
+      lambda { WeatherService::Wunderground._build_sun({}) }.should_not raise_error(ArgumentError)
     end
     
     it "returns Barometer::Sun object" do
-      sun = WeatherService::Wunderground._build_sun({},@zone)
+      sun = WeatherService::Wunderground._build_sun({})
       sun.is_a?(Data::Sun).should be_true
     end
     
@@ -314,7 +309,8 @@ describe "Wunderground" do
       result = WeatherService::Wunderground._measure(@measurement, @query)
       
       # build timezone
-      @measurement.timezone.timezone.should == "America/Edmonton"
+      @measurement.timezone.zone_full.should == "America/Edmonton"
+      @measurement.timezone.current.should == "America/Edmonton"
       
       # time = Time.local(2009, 4, 23, 18, 00, 0)
       # rise = Time.local(time.year, time.month, time.day, 6, 23)

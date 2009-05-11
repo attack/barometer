@@ -2,12 +2,11 @@
 
 - refactor: data-zone
 - add start_time, end_time, run_time to each measurement and to weather
+- move the "currently_sunny" type methods from service to measurement?
 
 == soon
 
 - make sure you can compare LocalTime to LocalDateTime in LocalTime class
-- ability to force timezone lookups (use geonames), then use this data
- to do conversions
 - style the demo app
 - more drivers
 - expand icao country_code hash
@@ -21,10 +20,6 @@
 - weather.com simple_questions improve answers (use extra data)
 
 == bugs
-
-- weather.com and yahoo won't return results for ICAO
-  might have to remove "international", "airport", "municipal" from geocode result
-  before finding weather_id
 
 == refactoring
 

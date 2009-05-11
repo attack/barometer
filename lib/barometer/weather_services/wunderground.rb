@@ -64,56 +64,40 @@ module Barometer
       %w(clear mostlysunny partlysunny sunny partlycloudy)
     end
 
-    # completely re-define the generic _measure, as in this
-    # case we must make two queries to get all the weather data
-    #
-    def self._measure(measurement, query, metric=true)
-      raise ArgumentError unless measurement.is_a?(Data::Measurement)
-      raise ArgumentError unless query.is_a?(Barometer::Query)
-      
-      begin
-        current_result = self._fetch_current(query.q)
-        measurement.current = self._build_current(current_result, metric)
-      rescue Timeout::Error => e
-        return measurement
-      end
-      
-      begin
-        forecast_result = self._fetch_forecast(query.q)
-        measurement.forecast = self._build_forecast(forecast_result, metric)
-      rescue Timeout::Error => e
-        return measurement
-      end
-      
-      measurement.location = self._build_location(current_result)
-      measurement.station = self._build_station(current_result)
-      measurement.timezone = self._build_timezone(forecast_result)
-      
-      if current_result["credit"] && current_result["credit_URL"]
-        measurement.links[current_result["credit"]] = current_result["credit_URL"]
-      end
-      
-      sun = nil
-      if measurement.current
-         sun = self._build_sun(forecast_result, measurement.timezone)
-         measurement.current.sun = sun
-      end
+    def self._build_extra(measurement, result, metric=true)
+      #raise ArgumentError unless measurement.is_a?(Data::Measurement)
+      #raise ArgumentError unless query.is_a?(Barometer::Query)
+
       # use todays sun data for all future days
-      if measurement.forecast && sun
+      if measurement.forecast && measurement.current.sun
         measurement.forecast.each do |forecast|
-          forecast.sun = sun
+          forecast.sun = measurement.current.sun
         end
       end
       
-      local_time = measurement.timezone ? Data::LocalTime.parse(
-        measurement.timezone.utc_to_local(Time.now.utc)
-      ) : nil
-      measurement.measured_at = local_time
-      measurement.current.current_at = local_time
-      
       measurement
     end
+
+    def self._parse_full_timezone(data)
+      raise ArgumentError unless data.is_a?(Hash)
+      if data && data['simpleforecast'] &&
+         data['simpleforecast']['forecastday'] &&
+         data['simpleforecast']['forecastday'].first &&
+         data['simpleforecast']['forecastday'].first['date']
+        Data::Zone.new(
+          data['simpleforecast']['forecastday'].first['date']['tz_long']
+        )
+      end
+    end
     
+    def self._build_links(data)
+      links = {}
+      if data["credit"] && data["credit_URL"]
+        links[data["credit"]] = data["credit_URL"]
+      end
+      links
+    end
+
     def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       
@@ -172,8 +156,8 @@ module Barometer
       end
       forecasts
     end
-
-    def self._build_location(data)
+    
+    def self._build_location(data, geo=nil)
       raise ArgumentError unless data.is_a?(Hash)
       location = Data::Location.new
       if data['display_location']
@@ -206,49 +190,38 @@ module Barometer
       station
     end
     
-    def self._build_timezone(data)
+    def self._build_sun(data)
       raise ArgumentError unless data.is_a?(Hash)
-      timezone = nil
-      if data && data['simpleforecast'] &&
-         data['simpleforecast']['forecastday'] &&
-         data['simpleforecast']['forecastday'].first &&
-         data['simpleforecast']['forecastday'].first['date']
-        timezone = Data::Zone.new(
-          data['simpleforecast']['forecastday'].first['date']['tz_long']
-        )
-      end
-      timezone || Data::Zone.new(nil)
-    end
-    
-    def self._build_sun(data, timezone)
-      raise ArgumentError unless data.is_a?(Hash)
-      raise ArgumentError unless timezone.is_a?(Data::Zone)
       sun = nil
       if data
         if data['moon_phase']
-          if data['moon_phase']['sunrise']
-            rise = Data::LocalTime.new(
-              data['moon_phase']['sunrise']['hour'].to_i,
-              data['moon_phase']['sunrise']['minute'].to_i
-            )
-          end
-          if data['moon_phase']['sunset']
-            set = Data::LocalTime.new(
-              data['moon_phase']['sunset']['hour'].to_i,
-              data['moon_phase']['sunset']['minute'].to_i
-            )
-          end
-        
-          sun = Data::Sun.new(
-            rise,
-            set
-          )
+          rise = Data::LocalTime.new(
+            data['moon_phase']['sunrise']['hour'].to_i,
+            data['moon_phase']['sunrise']['minute'].to_i
+          ) if data['moon_phase']['sunrise']
+          set = Data::LocalTime.new(
+            data['moon_phase']['sunset']['hour'].to_i,
+            data['moon_phase']['sunset']['minute'].to_i
+          ) if data['moon_phase']['sunset']
+          sun = Data::Sun.new(rise,set)
         end
       end
       sun || Data::Sun.new
     end
     
+    # override default _fetch behavior
+    # this service requires TWO seperate http requests (one for current
+    # and one for forecasted weather) ... combine the results
+    #
+    def self._fetch(query, metric=true)
+      result = []
+      result << _fetch_current(query)
+      result << _fetch_forecast(query)
+      result
+    end
+    
     # use HTTParty to get the current weather
+    #
     def self._fetch_current(query)
       return unless query
       self.get(
@@ -260,6 +233,7 @@ module Barometer
     end
     
     # use HTTParty to get the forecasted weather
+    #
     def self._fetch_forecast(query)
       return unless query
       self.get(
@@ -269,6 +243,17 @@ module Barometer
         :timeout => Barometer.timeout
       )['forecast']
     end
+    
+    # since we have two sets of data, override these calls to choose the
+    # right set of data
+    #
+    def self._current_result(data); data[0]; end
+    def self._forecast_result(data=nil); data[1]; end
+    def self._location_result(data=nil); data[0]; end
+    def self._station_result(data=nil); data[0]; end
+    def self._links_result(data=nil); data[0]; end
+    def self._sun_result(data=nil); data[1]; end
+    def self._timezone_result(data=nil); data[1]; end
     
   end
 end
