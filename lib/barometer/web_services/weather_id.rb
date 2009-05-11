@@ -11,9 +11,10 @@ module Barometer
     def self.fetch(query)
       return nil unless query
       raise ArgumentError unless _is_a_query?(query)
+      
       self.get(
         "http://xoap.weather.com/search/search",
-        :query => { :where => query.q }, :format => :plain,
+        :query => { :where => _adjust_query(query.q) }, :format => :plain,
         :timeout => Barometer.timeout
       )
     end
@@ -29,6 +30,18 @@ module Barometer
         :format => :xml,
         :timeout => Barometer.timeout
       )['rss']['channel']["yweather:location"]
+    end
+    
+    # filter out words that weather.com has trouble geo-locating
+    # mostly these are icao related
+    #
+    def self._adjust_query(query)
+      output = query.dup
+      words_to_remove = %w(international airport municipal)
+      words_to_remove.each do |word|
+        output.gsub!(/#{word}/i, "")
+      end
+      output
     end
 
   end

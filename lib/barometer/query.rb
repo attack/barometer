@@ -96,6 +96,7 @@ module Barometer
         else
           geo_query = Query::Format::Coordinates.to(converted_query)
           @geo = geo_query.geo if (geo_query && geo_query.geo)
+          converted_query.geo = @geo.dup
         end
       end
       

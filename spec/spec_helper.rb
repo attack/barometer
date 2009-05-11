@@ -39,7 +39,6 @@ else
   exit
 end
 
-
   #
   # for geocoding
   #
@@ -145,6 +144,13 @@ end
     :string => File.read(File.join(File.dirname(__FILE__), 
       'fixtures/formats/weather_id',
       '90210.xml')
+    )
+  )
+  FakeWeb.register_uri(:get, 
+    "http://xoap.weather.com:80/search/search?where=San%20Francisco%20%2C%20USA",
+    :string => File.read(File.join(File.dirname(__FILE__), 
+      'fixtures/formats/weather_id',
+      'ksfo.xml')
     )
   )
   #

@@ -17,7 +17,7 @@ module Barometer
     def self.format; :weather_id; end
     def self.regex; /(^[A-Za-z]{4}[0-9]{4}$)/; end
     def self.convertable_formats
-      [:short_zipcode, :zipcode, :coordinates, :geocode]
+      [:short_zipcode, :zipcode, :coordinates, :icao, :geocode]
     end
       
     # the first two letters of the :weather_id is the country_code

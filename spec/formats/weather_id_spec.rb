@@ -167,6 +167,16 @@ describe "Query::WeatherID" do
         new_query.geo.should be_nil
       end
 
+      it "converts from icao" do
+        query = Barometer::Query.new(@icao)
+        query.format.should == :icao
+        new_query = Query::Format::WeatherID.to(query)
+        new_query.q.should == "USCA0987"
+        new_query.country_code.should == "US"
+        new_query.format.should == :weather_id
+        new_query.geo.should_not be_nil
+      end
+
       it "returns nil for other formats" do
         query = Barometer::Query.new(@weather_id)
         query.format.should == :weather_id
@@ -175,11 +185,6 @@ describe "Query::WeatherID" do
         
         query = Barometer::Query.new(@postal_code)
         query.format.should == :postalcode
-        new_query = Query::Format::WeatherID.to(query)
-        new_query.should be_nil
-        
-        query = Barometer::Query.new(@icao)
-        query.format.should == :icao
         new_query = Query::Format::WeatherID.to(query)
         new_query.should be_nil
       end

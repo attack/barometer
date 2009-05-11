@@ -23,6 +23,7 @@ describe "Query" do
     @coordinates_to_weather_id = "USNY0996"
     @icao_to_coordinates = "37.615223,-122.389979"
     @icao_to_geocode = "San Francisco Airport, USA"
+    @icao_to_weather_id = "USCA0987"
     
     Barometer.google_geocode_key = nil
     #Barometer.skip_graticule = true
@@ -371,10 +372,11 @@ describe "Query" do
           query.should be_nil
         end
         
-        it "skips converting to weather_id" do
+        it "converts to weather_id" do
           acceptable_formats = [:weather_id]
           query = @query.convert!(acceptable_formats)
-          query.should be_nil
+          query.q.should == @icao_to_weather_id
+          query.country_code.should == "US"
         end
         
         it "skips converting to zipcode" do
