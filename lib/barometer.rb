@@ -9,6 +9,12 @@ require 'barometer/formats'
  
 module Barometer
   
+  @@debug_mode = false
+  def self.debug; @@debug_mode; end;
+  def self.debug=(value); @@debug_mode = value; end;
+  def self.debug!; @@debug_mode = true; end;
+  def self.debug?; @@debug_mode; end;
+  
   @@google_geocode_key = nil
   def self.google_geocode_key; @@google_geocode_key; end;
   def self.google_geocode_key=(key); @@google_geocode_key = key; end;

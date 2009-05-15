@@ -51,6 +51,7 @@ module Barometer
       end
     end
 
+    #########################################################################
     # PRIVATE
     # If class methods could be private, the remaining methods would be.
     #
@@ -96,19 +97,10 @@ module Barometer
       end
       links
     end
-    
-    # WARNING
-    # this is a best guess method.  the data provided for time conversions
-    # leaves a lot to be desired.  some time zones, offsets, local times are
-    # out to lunch.  eg. Tahiti (all times seem to be 30 min off), but there
-    # is no way to determine this
-    #
-    # regardless of the above, this method will trust the data given to it
-    #
-    
+
     def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
-      current = Data::CurrentMeasurement.new
+      current = Measurement::Current.new
       if data
         if data['cc']
           current.updated_at = Data::LocalDateTime.parse(data['cc']['lsup'])
@@ -140,12 +132,12 @@ module Barometer
     
     def self._build_forecast(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
-      forecasts = []
+      forecasts = Measurement::ForecastArray.new
     
       if data && data['dayf'] && data['dayf']['day']
         local_date = data['dayf']['lsup']
         data['dayf']['day'].each do |forecast|
-          forecast_measurement = Data::ForecastMeasurement.new
+          forecast_measurement = Measurement::Forecast.new
           forecast_measurement.date = Date.parse(forecast['dt'])
           
           forecast_measurement.high = Data::Temperature.new(metric)
@@ -177,7 +169,7 @@ module Barometer
                 
               elsif part['p'] == 'n'  
                 # add this to the NightMeasurement
-                forecast_measurement.night = Data::NightMeasurement.new
+                forecast_measurement.night = Measurement::ForecastNight.new
                 forecast_measurement.night.condition = part['t']
                 forecast_measurement.night.icon = part['icon']
                 forecast_measurement.night.pop = part['ppcp'].to_i
@@ -237,6 +229,7 @@ module Barometer
     # use HTTParty to get the current weather
     #
     def self._fetch(query, metric=true)
+      puts "fetch weather.com: #{query}" if Barometer::debug?
       self.get(
         "http://xoap.weather.com/weather/local/#{query}",
         :query => { :par => @@partner_key, :key => @@license_key,

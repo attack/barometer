@@ -39,9 +39,9 @@ describe "Google" do
       lambda { WeatherService::Google._build_current({}) }.should_not raise_error(ArgumentError)
     end
     
-    it "returns Barometer::CurrentMeasurement object" do
+    it "returns Measurement::Current object" do
       current = WeatherService::Google._build_current({})
-      current.is_a?(Data::CurrentMeasurement).should be_true
+      current.is_a?(Measurement::Current).should be_true
     end
     
   end
@@ -59,7 +59,7 @@ describe "Google" do
     
     it "returns Array object" do
       current = WeatherService::Google._build_forecast({})
-      current.is_a?(Array).should be_true
+      current.is_a?(Measurement::ForecastArray).should be_true
     end
     
   end
@@ -101,7 +101,7 @@ describe "Google" do
   
     before(:each) do
       @query = Barometer::Query.new("Calgary,AB")
-      @measurement = Data::Measurement.new
+      @measurement = Barometer::Measurement.new
       
       FakeWeb.register_uri(:get, 
         "http://google.com/ig/api?weather=#{CGI.escape(@query.q)}&hl=en-GB",
@@ -134,105 +134,13 @@ describe "Google" do
       
       it "returns a Barometer::Measurement object" do
         result = Barometer::WeatherService::Google._measure(@measurement, @query)
-        result.is_a?(Data::Measurement).should be_true
-        result.current.is_a?(Data::CurrentMeasurement).should be_true
-        result.forecast.is_a?(Array).should be_true
+        result.is_a?(Barometer::Measurement).should be_true
+        result.current.is_a?(Measurement::Current).should be_true
+        result.forecast.is_a?(Measurement::ForecastArray).should be_true
       end
       
     end
   
-  end
-  
-  describe "when answering the simple questions," do
-    
-    before(:each) do
-      @measurement = Data::Measurement.new
-    end
-    
-    describe "currently_wet_by_icon?" do
-      
-      before(:each) do
-        @measurement.current = Data::CurrentMeasurement.new
-      end
-    
-      it "returns true if matching icon code" do
-        @measurement.current.icon = "rain"
-        @measurement.current.icon?.should be_true
-        WeatherService::Google._currently_wet_by_icon?(@measurement.current).should be_true
-      end
-      
-      it "returns false if NO matching icon code" do
-        @measurement.current.icon = "sunny"
-        @measurement.current.icon?.should be_true
-        WeatherService::Google._currently_wet_by_icon?(@measurement.current).should be_false
-      end
-      
-    end
-    
-    describe "forecasted_wet_by_icon?" do
-      
-      before(:each) do
-        @measurement.forecast = [Data::ForecastMeasurement.new]
-        @measurement.forecast.first.date = Date.today
-        @measurement.forecast.size.should == 1
-      end
-    
-      it "returns true if matching icon code" do
-        @measurement.forecast.first.icon = "rain"
-        @measurement.forecast.first.icon?.should be_true
-        WeatherService::Google._forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
-      end
-      
-      it "returns false if NO matching icon code" do
-        @measurement.forecast.first.icon = "sunny"
-        @measurement.forecast.first.icon?.should be_true
-        WeatherService::Google._forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
-      end
-      
-    end
-    
-    describe "currently_sunny_by_icon?" do
-      
-      before(:each) do
-        @measurement.current = Data::CurrentMeasurement.new
-      end
-
-      it "returns true if matching icon code" do
-        @measurement.current.icon = "sunny"
-        @measurement.current.icon?.should be_true
-        WeatherService::Google._currently_sunny_by_icon?(@measurement.current).should be_true
-      end
-      
-      it "returns false if NO matching icon code" do
-        @measurement.current.icon = "rain"
-        @measurement.current.icon?.should be_true
-        WeatherService::Google._currently_sunny_by_icon?(@measurement.current).should be_false
-      end
-      
-    end
-    
-    describe "forecasted_sunny_by_icon?" do
-      
-      before(:each) do
-        @measurement.forecast = [Data::ForecastMeasurement.new]
-        @measurement.forecast.first.date = Date.today
-        @measurement.forecast.size.should == 1
-      end
-
-      it "returns true if matching icon code" do
-        @measurement.forecast.first.icon = "sunny"
-        @measurement.forecast.first.icon?.should be_true
-        WeatherService::Google._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
-      end
-      
-      it "returns false if NO matching icon code" do
-        @measurement.forecast.first.icon = "rain"
-        @measurement.forecast.first.icon?.should be_true
-        WeatherService::Google._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
-      end
-      
-    end
-    
   end
   
   # describe "overall data correctness" do

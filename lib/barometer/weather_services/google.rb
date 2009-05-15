@@ -35,6 +35,7 @@ module Barometer
   #
   class WeatherService::Google < WeatherService
     
+    #########################################################################
     # PRIVATE
     # If class methods could be private, the remaining methods would be.
     #
@@ -51,14 +52,8 @@ module Barometer
 
     def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
-      current = Data::CurrentMeasurement.new
+      current = Measurement::Current.new
 
-      # google gives utc time, no way to convert to local
-      #if data && data['forecast_information'] &&
-      #   data['forecast_information']['current_date_time']
-      #  current.updated_at = Data::LocalDateTime.parse(data['forecast_information']['current_date_time']['data'])
-      #end
-      
       if data['current_conditions']
         data = data['current_conditions']
         if data['icon']
@@ -86,7 +81,7 @@ module Barometer
     def self._build_forecast(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
 
-      forecasts = []
+      forecasts = Measurement::ForecastArray.new
       return forecasts unless data && data['forecast_information'] &&
                               data['forecast_information']['forecast_date']
       start_date = Date.parse(data['forecast_information']['forecast_date']['data'])
@@ -95,7 +90,7 @@ module Barometer
       # go through each forecast and create an instance
       d = 0
       data.each do |forecast|
-        forecast_measurement = Data::ForecastMeasurement.new
+        forecast_measurement = Measurement::Forecast.new
         if forecast['icon']
           icon_match = forecast['icon']['data'].match(/.*\/([A-Za-z_]*)\.png/)
           forecast_measurement.icon = icon_match[1] if icon_match
@@ -133,6 +128,7 @@ module Barometer
     
     # use HTTParty to get the current weather
     def self._fetch(query, metric=true)
+      puts "fetch google: #{query}" if Barometer::debug?
       self.get(
         "http://google.com/ig/api",
         :query => {:weather => query, :hl => (metric ? "en-GB" : "en-US")},

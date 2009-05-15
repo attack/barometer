@@ -38,16 +38,16 @@ describe "Weather" do
     
     before(:each) do
       module Barometer
-        class Data::Measurement
+        class Barometer::Measurement
           attr_accessor :success
         end
       end
       @weather = Barometer::Weather.new
-      @wunderground = Data::Measurement.new(:wunderground)
+      @wunderground = Barometer::Measurement.new(:wunderground)
       @wunderground.success = true
-      @yahoo = Data::Measurement.new(:yahoo)
+      @yahoo = Barometer::Measurement.new(:yahoo)
       @yahoo.success = true
-      @google = Data::Measurement.new(:google)
+      @google = Barometer::Measurement.new(:google)
       @weather.measurements << @wunderground
       @weather.measurements << @yahoo
       @weather.measurements << @google
@@ -82,13 +82,13 @@ describe "Weather" do
     
     before(:each) do
       @weather = Barometer::Weather.new
-      @wunderground = Data::Measurement.new(:wunderground)
-      @wunderground.current = Data::CurrentMeasurement.new
+      @wunderground = Barometer::Measurement.new(:wunderground)
+      @wunderground.current = Measurement::Current.new
       @wunderground.success = true
-      @yahoo = Data::Measurement.new(:yahoo)
-      @yahoo.current = Data::CurrentMeasurement.new
+      @yahoo = Barometer::Measurement.new(:yahoo)
+      @yahoo.current = Measurement::Current.new
       @yahoo.success = true
-      @google = Data::Measurement.new(:google)
+      @google = Barometer::Measurement.new(:google)
       @weather.measurements << @wunderground
       @weather.measurements << @yahoo
       @weather.measurements << @google
@@ -278,15 +278,15 @@ describe "Weather" do
     
     describe "windy?" do
       
-      it "requires threshold as a number" do
-        lambda { @weather.windy?("a") }.should raise_error(ArgumentError)
-        lambda { @weather.windy?(1) }.should_not raise_error(ArgumentError)
-        lambda { @weather.windy?(1.1) }.should_not raise_error(ArgumentError)
-      end
+      # it "requires time as a Data::LocalTime object" do
+      #   #lambda { @weather.windy?(1,"a") }.should raise_error(ArgumentError)
+      #   lambda { @weather.windy?(1,@now) }.should_not raise_error(ArgumentError)
+      # end
       
-      it "requires time as a Data::LocalTime object" do
-        #lambda { @weather.windy?(1,"a") }.should raise_error(ArgumentError)
-        lambda { @weather.windy?(1,@now) }.should_not raise_error(ArgumentError)
+      it "requires threshold as a number" do
+        lambda { @weather.windy?(@now,"a") }.should raise_error(ArgumentError)
+        lambda { @weather.windy?(@now,1) }.should_not raise_error(ArgumentError)
+        lambda { @weather.windy?(@now,1.1) }.should_not raise_error(ArgumentError)
       end
       
       it "returns nil when no measurements" do
@@ -295,20 +295,20 @@ describe "Weather" do
       end
       
       it "returns true if a measurement returns true" do
-        wunderground = Data::Measurement.new(:wunderground)
+        wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Data::Measurement
+        module Barometer; class Barometer::Measurement
             def windy?(a=nil,b=nil); true; end
         end; end
         @weather.windy?.should be_true
       end
 
       it "returns false if a measurement returns false" do
-        wunderground = Data::Measurement.new(:wunderground)
+        wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Data::Measurement
+        module Barometer; class Barometer::Measurement
             def windy?(a=nil,b=nil); false; end
         end; end
         @weather.windy?.should be_false
@@ -319,15 +319,15 @@ describe "Weather" do
     describe "wet?" do
       
       it "requires threshold as a number" do
-        lambda { @weather.wet?("a") }.should raise_error(ArgumentError)
-        lambda { @weather.wet?(1) }.should_not raise_error(ArgumentError)
-        lambda { @weather.wet?(1.1) }.should_not raise_error(ArgumentError)
+        lambda { @weather.wet?(@now,"a") }.should raise_error(ArgumentError)
+        lambda { @weather.wet?(@now,1) }.should_not raise_error(ArgumentError)
+        lambda { @weather.wet?(@now,1.1) }.should_not raise_error(ArgumentError)
       end
       
-      it "requires time as a Data::LocalTime object" do
-        #lambda { @weather.wet?(1,"a") }.should raise_error(ArgumentError)
-        lambda { @weather.wet?(1,@now) }.should_not raise_error(ArgumentError)
-      end
+      # it "requires time as a Data::LocalTime object" do
+      #   #lambda { @weather.wet?(1,"a") }.should raise_error(ArgumentError)
+      #   lambda { @weather.wet?(1,@now) }.should_not raise_error(ArgumentError)
+      # end
       
       it "returns nil when no measurements" do
         @weather.measurements.should be_empty
@@ -335,20 +335,20 @@ describe "Weather" do
       end
       
       it "returns true if a measurement returns true" do
-        wunderground = Data::Measurement.new(:wunderground)
+        wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Data::Measurement
+        module Barometer; class Barometer::Measurement
             def wet?(a=nil,b=nil); true; end
         end; end
         @weather.wet?.should be_true
       end
 
       it "returns false if a measurement returns false" do
-        wunderground = Data::Measurement.new(:wunderground)
+        wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Data::Measurement
+        module Barometer; class Barometer::Measurement
             def wet?(a=nil,b=nil); false; end
         end; end
         @weather.wet?.should be_false
@@ -375,10 +375,10 @@ describe "Weather" do
       end
       
       it "returns true if a measurement returns true (night is opposite)" do
-        wunderground = Data::Measurement.new(:wunderground)
+        wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Data::Measurement
+        module Barometer; class Barometer::Measurement
             def day?(a=nil); true; end
         end; end
         @weather.day?.should be_true
@@ -386,10 +386,10 @@ describe "Weather" do
       end
 
       it "returns false if a measurement returns false (night is opposite)" do
-        wunderground = Data::Measurement.new(:wunderground)
+        wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Data::Measurement
+        module Barometer; class Barometer::Measurement
             def day?(a=nil); false; end
         end; end
         @weather.day?.should be_false
@@ -411,40 +411,40 @@ describe "Weather" do
       end
       
       it "returns true if a measurement returns true" do
-        wunderground = Data::Measurement.new(:wunderground)
+        wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Data::Measurement
+        module Barometer; class Barometer::Measurement
             def day?(a=nil); true; end
         end; end
-        module Barometer; class Data::Measurement
+        module Barometer; class Barometer::Measurement
             def sunny?(a=nil,b=nil); true; end
         end; end
         @weather.sunny?.should be_true
       end
 
       it "returns false if a measurement returns false" do
-        wunderground = Data::Measurement.new(:wunderground)
+        wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Data::Measurement
+        module Barometer; class Barometer::Measurement
             def day?(a=nil); true; end
         end; end
-        module Barometer; class Data::Measurement
+        module Barometer; class Barometer::Measurement
             def sunny?(a=nil,b=nil); false; end
         end; end
         @weather.sunny?.should be_false
       end
       
       it "returns false if night time" do
-        wunderground = Data::Measurement.new(:wunderground)
+        wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Data::Measurement
+        module Barometer; class Barometer::Measurement
             def sunny?(a=nil,b=nil); true; end
         end; end
         @weather.sunny?.should be_true
-        module Barometer; class Data::Measurement
+        module Barometer; class Barometer::Measurement
             def day?(a=nil); false; end
         end; end
         @weather.sunny?.should be_false

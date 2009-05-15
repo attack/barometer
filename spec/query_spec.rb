@@ -136,6 +136,14 @@ describe "Query" do
       @query.geo.should be_nil
     end
     
+    it "responds to timezone" do
+      @query.timezone.should be_nil
+    end
+    
+    it "responds to conversions" do
+      @query.conversions.should be_nil
+    end
+    
   end
   
   describe "when returning the query to a Weather API" do

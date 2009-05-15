@@ -1,8 +1,6 @@
 == now
 
 - refactor: data-zone
-- add start_time, end_time, run_time to each measurement and to weather
-- move the "currently_sunny" type methods from service to measurement?
 
 == soon
 
@@ -18,6 +16,10 @@
 - add uv info to current
 - add moon info to current
 - weather.com simple_questions improve answers (use extra data)
+
+- be smart, never make duplicate queries
+  - if you are including wunderground, do it first and use the timezone info
+    and the geocoding
 
 == bugs
 

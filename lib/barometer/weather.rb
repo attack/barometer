@@ -8,6 +8,7 @@ module Barometer
   class Weather
     
     attr_accessor :measurements
+    attr_accessor :start_at, :end_at
     
     def initialize; @measurements = []; end
     
@@ -139,7 +140,7 @@ module Barometer
     # pass the question on to each successful measurement until we get an answer
     #
     
-    def windy?(threshold=10, time_string=nil)
+    def windy?(time_string=nil, threshold=10)
       local_datetime = Data::LocalDateTime.parse(time_string)
       raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
       raise ArgumentError unless (local_datetime.nil? || local_datetime.is_a?(Data::LocalDateTime))
@@ -147,14 +148,14 @@ module Barometer
       is_windy = nil
       @measurements.each do |measurement|
         if measurement.success?
-          is_windy = measurement.windy?(threshold, local_datetime)
+          is_windy = measurement.windy?(local_datetime, threshold)
           return is_windy if !is_windy.nil?
         end
       end
       is_windy
     end
 
-    def wet?(threshold=50, time_string=nil)
+    def wet?(time_string=nil, threshold=50)
       local_datetime = Data::LocalDateTime.parse(time_string)
       raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
       raise ArgumentError unless (local_datetime.nil? || local_datetime.is_a?(Data::LocalDateTime))
@@ -162,7 +163,7 @@ module Barometer
       is_wet = nil
       @measurements.each do |measurement|
         if measurement.success?
-          is_wet = measurement.wet?(threshold, local_datetime)
+          is_wet = measurement.wet?(local_datetime, threshold)
           return is_wet if !is_wet.nil?
         end
       end

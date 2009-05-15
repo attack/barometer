@@ -36,9 +36,9 @@ describe "WeatherDotCom" do
       lambda { WeatherService::WeatherDotCom._build_current({}) }.should_not raise_error(ArgumentError)
     end
     
-    it "returns Data::CurrentMeasurement object" do
+    it "returns Measurement::Current object" do
       current = WeatherService::WeatherDotCom._build_current({})
-      current.is_a?(Data::CurrentMeasurement).should be_true
+      current.is_a?(Measurement::Current).should be_true
     end
     
   end
@@ -107,7 +107,7 @@ describe "WeatherDotCom" do
 
     before(:each) do
       @query = Barometer::Query.new("90210")
-      @measurement = Data::Measurement.new
+      @measurement = Barometer::Measurement.new
       
       url = "http://xoap.weather.com:80/weather/local/"
   
@@ -142,112 +142,20 @@ describe "WeatherDotCom" do
       
       it "returns a Barometer::Measurement object" do
         result = WeatherService::WeatherDotCom._measure(@measurement, @query)
-        result.is_a?(Data::Measurement).should be_true
-        result.current.is_a?(Data::CurrentMeasurement).should be_true
-        result.forecast.is_a?(Array).should be_true
+        result.is_a?(Barometer::Measurement).should be_true
+        result.current.is_a?(Measurement::Current).should be_true
+        result.forecast.is_a?(Measurement::ForecastArray).should be_true
       end
       
     end
 
   end
   
-  describe "when answering the simple questions," do
-    
-    before(:each) do
-      @measurement = Data::Measurement.new
-    end
-    
-    describe "currently_wet_by_icon?" do
-      
-      before(:each) do
-        @measurement.current = Data::CurrentMeasurement.new
-      end
-  
-      it "returns true if matching icon code" do
-        @measurement.current.icon = "4"
-        @measurement.current.icon?.should be_true
-        WeatherService::WeatherDotCom._currently_wet_by_icon?(@measurement.current).should be_true
-      end
-      
-      it "returns false if NO matching icon code" do
-        @measurement.current.icon = "32"
-        @measurement.current.icon?.should be_true
-        WeatherService::WeatherDotCom._currently_wet_by_icon?(@measurement.current).should be_false
-      end
-      
-    end
-    
-    describe "forecasted_wet_by_icon?" do
-      
-      before(:each) do
-        @measurement.forecast = [Data::ForecastMeasurement.new]
-        @measurement.forecast.first.date = Date.today
-        @measurement.forecast.size.should == 1
-      end
-      
-      it "returns true if matching icon code" do
-        @measurement.forecast.first.icon = "4"
-        @measurement.forecast.first.icon?.should be_true
-        WeatherService::WeatherDotCom._forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
-      end
-      
-      it "returns false if NO matching icon code" do
-        @measurement.forecast.first.icon = "32"
-        @measurement.forecast.first.icon?.should be_true
-        WeatherService::WeatherDotCom._forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
-      end
-      
-    end
-    
-    describe "currently_sunny_by_icon?" do
-      
-      before(:each) do
-        @measurement.current = Data::CurrentMeasurement.new
-      end
-      
-      it "returns true if matching icon code" do
-        @measurement.current.icon = "32"
-        @measurement.current.icon?.should be_true
-        WeatherService::WeatherDotCom._currently_sunny_by_icon?(@measurement.current).should be_true
-      end
-      
-      it "returns false if NO matching icon code" do
-        @measurement.current.icon = "4"
-        @measurement.current.icon?.should be_true
-        WeatherService::WeatherDotCom._currently_sunny_by_icon?(@measurement.current).should be_false
-      end
-      
-    end
-    
-    describe "forecasted_sunny_by_icon?" do
-      
-      before(:each) do
-        @measurement.forecast = [Data::ForecastMeasurement.new]
-        @measurement.forecast.first.date = Date.today
-        @measurement.forecast.size.should == 1
-      end
-      
-      it "returns true if matching icon code" do
-        @measurement.forecast.first.icon = "32"
-        @measurement.forecast.first.icon?.should be_true
-        WeatherService::WeatherDotCom._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
-      end
-      
-      it "returns false if NO matching icon code" do
-        @measurement.forecast.first.icon = "4"
-        @measurement.forecast.first.icon?.should be_true
-        WeatherService::WeatherDotCom._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
-      end
-      
-    end
-    
-  end
-  
   describe "overall data correctness" do
     
     before(:each) do
       @query = Barometer::Query.new("90210")
-      @measurement = Data::Measurement.new
+      @measurement = Barometer::Measurement.new
       
       url = "http://xoap.weather.com:80/weather/local/"
   

@@ -37,7 +37,7 @@ describe "Yahoo" do
     
     it "returns Barometer::CurrentMeasurement object" do
       current = WeatherService::Yahoo._build_current({})
-      current.is_a?(Data::CurrentMeasurement).should be_true
+      current.is_a?(Measurement::Current).should be_true
     end
     
   end
@@ -88,7 +88,7 @@ describe "Yahoo" do
   
     before(:each) do
       @query = Barometer::Query.new("90210")
-      @measurement = Data::Measurement.new
+      @measurement = Barometer::Measurement.new
       
       FakeWeb.register_uri(:get, 
         "http://weather.yahooapis.com:80/forecastrss?u=c&p=#{CGI.escape(@query.q)}",
@@ -121,8 +121,8 @@ describe "Yahoo" do
       
       it "returns a Barometer::Measurement object" do
         result = WeatherService::Yahoo._measure(@measurement, @query)
-        result.is_a?(Data::Measurement).should be_true
-        result.current.is_a?(Data::CurrentMeasurement).should be_true
+        result.is_a?(Barometer::Measurement).should be_true
+        result.current.is_a?(Measurement::Current).should be_true
         result.forecast.is_a?(Array).should be_true
       end
       
@@ -130,103 +130,11 @@ describe "Yahoo" do
   
   end
   
-  describe "when answering the simple questions," do
-    
-    before(:each) do
-      @measurement = Data::Measurement.new
-    end
-    
-    describe "currently_wet_by_icon?" do
-      
-      before(:each) do
-        @measurement.current = Data::CurrentMeasurement.new
-      end
-
-      it "returns true if matching icon code" do
-        @measurement.current.icon = "4"
-        @measurement.current.icon?.should be_true
-        WeatherService::Yahoo._currently_wet_by_icon?(@measurement.current).should be_true
-      end
-      
-      it "returns false if NO matching icon code" do
-        @measurement.current.icon = "32"
-        @measurement.current.icon?.should be_true
-        WeatherService::Yahoo._currently_wet_by_icon?(@measurement.current).should be_false
-      end
-      
-    end
-    
-    describe "forecasted_wet_by_icon?" do
-      
-      before(:each) do
-        @measurement.forecast = [Data::ForecastMeasurement.new]
-        @measurement.forecast.first.date = Date.today
-        @measurement.forecast.size.should == 1
-      end
-
-      it "returns true if matching icon code" do
-        @measurement.forecast.first.icon = "4"
-        @measurement.forecast.first.icon?.should be_true
-        WeatherService::Yahoo._forecasted_wet_by_icon?(@measurement.forecast.first).should be_true
-      end
-      
-      it "returns false if NO matching icon code" do
-        @measurement.forecast.first.icon = "32"
-        @measurement.forecast.first.icon?.should be_true
-        WeatherService::Yahoo._forecasted_wet_by_icon?(@measurement.forecast.first).should be_false
-      end
-      
-    end
-    
-    describe "currently_sunny_by_icon?" do
-      
-      before(:each) do
-        @measurement.current = Data::CurrentMeasurement.new
-      end
-
-      it "returns true if matching icon code" do
-        @measurement.current.icon = "32"
-        @measurement.current.icon?.should be_true
-        WeatherService::Yahoo._currently_sunny_by_icon?(@measurement.current).should be_true
-      end
-      
-      it "returns false if NO matching icon code" do
-        @measurement.current.icon = "4"
-        @measurement.current.icon?.should be_true
-        WeatherService::Yahoo._currently_sunny_by_icon?(@measurement.current).should be_false
-      end
-      
-    end
-    
-    describe "forecasted_sunny_by_icon?" do
-      
-      before(:each) do
-        @measurement.forecast = [Data::ForecastMeasurement.new]
-        @measurement.forecast.first.date = Date.today
-        @measurement.forecast.size.should == 1
-      end
-
-      it "returns true if matching icon code" do
-        @measurement.forecast.first.icon = "32"
-        @measurement.forecast.first.icon?.should be_true
-        WeatherService::Yahoo._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_true
-      end
-      
-      it "returns false if NO matching icon code" do
-        @measurement.forecast.first.icon = "4"
-        @measurement.forecast.first.icon?.should be_true
-        WeatherService::Yahoo._forecasted_sunny_by_icon?(@measurement.forecast.first).should be_false
-      end
-      
-    end
-    
-  end
-  
   describe "overall data correctness" do
     
     before(:each) do
       @query = Barometer::Query.new("90210")
-      @measurement = Data::Measurement.new
+      @measurement = Barometer::Measurement.new
 
       FakeWeb.register_uri(:get, 
         "http://weather.yahooapis.com:80/forecastrss?u=c&p=#{CGI.escape(@query.q)}",

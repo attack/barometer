@@ -18,6 +18,16 @@ module Barometer
     def nil?
       (@rise || @set) ? false : true
     end
+   
+    def after_rise?(time)
+      raise ArgumentError unless time.is_a?(Data::LocalTime)
+      time >= @rise
+    end
     
+    def before_set?(time)
+      raise ArgumentError unless time.is_a?(Data::LocalTime)
+      time <= @set
+    end
+   
   end
 end

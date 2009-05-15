@@ -8,6 +8,7 @@ module Barometer
     
     def self.fetch(query)
       raise ArgumentError unless _is_a_query?(query)
+      puts "geocoding: #{query.q}" if Barometer::debug?
       return nil unless _has_geocode_key?
       location = self.get(
         "http://maps.google.com/maps/geo",

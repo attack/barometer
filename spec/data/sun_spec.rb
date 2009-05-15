@@ -46,4 +46,57 @@ describe "Data::Sun" do
     
   end
   
+  describe "comparisons" do
+    
+    before(:each) do
+      now = Time.local(2009,5,5,11,40,00)
+      @mid_time = Data::LocalTime.new.parse(now)
+      @early_time = Data::LocalTime.new.parse(now - (60*60*8))
+      @late_time = Data::LocalTime.new.parse(now + (60*60*8))
+    end
+    
+    describe "after_rise?" do
+      
+      it "requires a LocalTime object" do
+        sun = Data::Sun.new(@early_time,@late_time)
+        lambda { sun.after_rise? }.should raise_error(ArgumentError)
+        lambda { sun.after_rise?("invalid") }.should raise_error(ArgumentError)
+        lambda { sun.after_rise?(@mid_time) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "returns true when after sun rise" do
+        sun = Data::Sun.new(@early_time,@late_time)
+        sun.after_rise?(@mid_time).should be_true
+      end
+      
+      it "returns false when before sun rise" do
+        sun = Data::Sun.new(@mid_time,@late_time)
+        sun.after_rise?(@early_time).should be_false
+      end
+      
+    end
+    
+    describe "before_set?" do
+      
+      it "requires a LocalTime object" do
+        sun = Data::Sun.new(@early_time,@late_time)
+        lambda { sun.before_set? }.should raise_error(ArgumentError)
+        lambda { sun.before_set?("invalid") }.should raise_error(ArgumentError)
+        lambda { sun.before_set?(@mid_time) }.should_not raise_error(ArgumentError)
+      end
+      
+      it "returns true when before sun set" do
+        sun = Data::Sun.new(@early_time,@late_time)
+        sun.before_set?(@mid_time).should be_true
+      end
+      
+      it "returns false when before sun set" do
+        sun = Data::Sun.new(@early_time,@mid_time)
+        sun.before_set?(@late_time).should be_false
+      end
+      
+    end
+    
+  end
+  
 end

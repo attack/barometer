@@ -22,6 +22,7 @@ module Barometer
     #
     def measure(metric=nil)
       return nil unless @query
+      @weather.start_at = Time.now.utc
 
       level = 1
       until self.success?
@@ -32,6 +33,8 @@ module Barometer
         end
         level += 1
       end
+      
+      @weather.end_at = Time.now.utc
       @weather
     end
     

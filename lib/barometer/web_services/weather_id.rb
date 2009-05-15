@@ -9,6 +9,7 @@ module Barometer
     # get the weather_id for a given query
     #
     def self.fetch(query)
+      puts "fetch weather_id: #{query.q}" if Barometer::debug?
       return nil unless query
       raise ArgumentError unless _is_a_query?(query)
       
@@ -22,6 +23,7 @@ module Barometer
     # get the location_date (geocode) for a given weather_id
     #
     def self.reverse(query)
+      puts "reverse weather_id: #{query.q}" if Barometer::debug?
       return nil unless query
       raise ArgumentError unless _is_a_query?(query)
       self.get(

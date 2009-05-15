@@ -31,10 +31,10 @@ module Barometer
     def self.to(original_query)
       raise ArgumentError unless is_a_query?(original_query)
       return nil unless converts?(original_query)
-      converted_query = Barometer::Query.new
 
       # convert original query to :geocode, as that is the only
       # format we can convert directly from to weather_id
+      converted_query = Barometer::Query.new
       converted_query = Query::Format::Geocode.to(original_query)
       converted_query.q = _search(converted_query)
       converted_query.format = format

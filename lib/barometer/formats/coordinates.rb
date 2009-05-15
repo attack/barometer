@@ -26,7 +26,10 @@ module Barometer
       #
       pre_query = nil
       if original_query.format == :weather_id
-        pre_query = Query::Format::WeatherID.reverse(original_query)
+        unless pre_query = original_query.get_conversion(Query::Format::Geocode.format)
+          pre_query = Query::Format::WeatherID.reverse(original_query)
+          original_query.post_conversion(pre_query)
+        end
       end
       
       # convert & adjust

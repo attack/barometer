@@ -22,8 +22,8 @@ module Barometer
     #
     def self.regex; /^[A-Za-z]{3,4}$/; end
     
-    # # in some cases the first letter can designate the country
-    # #
+    # in some cases the first letter can designate the country
+    #
     def self.country_code(query=nil)
       return unless query && query.is_a?(String)
       $:.unshift(File.dirname(__FILE__))

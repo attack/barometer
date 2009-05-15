@@ -46,6 +46,7 @@ module Barometer
   #
   class WeatherService::Wunderground < WeatherService
     
+    #########################################################################
     # PRIVATE
     # If class methods could be private, the remaining methods would be.
     #
@@ -101,7 +102,7 @@ module Barometer
     def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       
-      current = Data::CurrentMeasurement.new
+      current = Measurement::Current.new
       current.updated_at = Data::LocalDateTime.parse(data['observation_time']) if data['observation_time']
       current.humidity = data['relative_humidity'].to_i
       current.icon = data['icon'] if data['icon']
@@ -134,13 +135,13 @@ module Barometer
     
     def self._build_forecast(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
-      forecasts = []
+      forecasts = Measurement::ForecastArray.new
       # go through each forecast and create an instance
       if data && data['simpleforecast'] &&
          data['simpleforecast']['forecastday']
          
         data['simpleforecast']['forecastday'].each do |forecast|
-          forecast_measurement = Data::ForecastMeasurement.new
+          forecast_measurement = Measurement::Forecast.new
           forecast_measurement.icon = forecast['icon']
           forecast_measurement.date = Date.parse(forecast['date']['pretty'])
           forecast_measurement.pop = forecast['pop'].to_i
@@ -223,6 +224,7 @@ module Barometer
     # use HTTParty to get the current weather
     #
     def self._fetch_current(query)
+      puts "fetch wunderground current: #{query}" if Barometer::debug?
       return unless query
       self.get(
        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml",
@@ -235,6 +237,7 @@ module Barometer
     # use HTTParty to get the forecasted weather
     #
     def self._fetch_forecast(query)
+      puts "fetch wunderground forecast: #{query}" if Barometer::debug?
       return unless query
       self.get(
         "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml",

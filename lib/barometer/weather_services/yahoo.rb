@@ -45,6 +45,7 @@ module Barometer
   #
   class WeatherService::Yahoo < WeatherService
     
+    #########################################################################
     # PRIVATE
     # If class methods could be private, the remaining methods would be.
     #
@@ -91,7 +92,7 @@ module Barometer
     
     def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
-      current = Data::CurrentMeasurement.new
+      current = Measurement::Current.new(metric)
       if data
         if data['item'] && data['item']['yweather:condition']
           condition_result = data['item']['yweather:condition']
@@ -123,13 +124,13 @@ module Barometer
     
     def self._build_forecast(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
-      forecasts = []
+      forecasts = Measurement::ForecastArray.new
       
       if data && data['item'] && data['item']['yweather:forecast']
          forecast_result = data['item']['yweather:forecast']
          
         forecast_result.each do |forecast|
-          forecast_measurement = Data::ForecastMeasurement.new
+          forecast_measurement = Measurement::Forecast.new
           forecast_measurement.icon = forecast['code']
           forecast_measurement.date = Date.parse(forecast['date'])
           forecast_measurement.condition = forecast['text']
@@ -182,6 +183,7 @@ module Barometer
     
     # use HTTParty to get the current weather
     def self._fetch(query, metric=true)
+      puts "fetch yahoo: #{query}" if Barometer::debug?
       self.get(
         "http://weather.yahooapis.com/forecastrss",
         :query => {:p => query, :u => (metric ? 'c' : 'f')},

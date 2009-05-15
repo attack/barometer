@@ -30,12 +30,14 @@ module Barometer
       :geocode => "Geocode"
     }
     
-    attr_accessor :format, :q, :country_code, :geo
+    attr_accessor :format, :q, :country_code
+    attr_accessor :geo, :timezone, :conversions
     
     def initialize(query=nil)
       return unless query
       @q = query
       self.analyze!
+      @conversions = {}
     end
 
     # analyze the saved query to determine the format.
@@ -61,10 +63,16 @@ module Barometer
       raise ArgumentError unless (preferred_formats && preferred_formats.size > 0)
       
       # why convert if we are already there?
+      # (except in the case that the serivce excepts coordinates and we have a
+      # a geocode ... the google geocode results are superior)
+      #
       skip_conversion = false
-      if preferred_formats.include?(@format.to_sym)
-        skip_conversion = true
-        converted_query = self.dup
+      unless (@format.to_sym == Query::Format::Geocode.format) &&
+             preferred_formats.include?(Query::Format::Coordinates.format)
+        if preferred_formats.include?(@format.to_sym)
+          skip_conversion = true
+          converted_query = self.dup
+        end
       end
       
       unless skip_conversion
@@ -78,11 +86,14 @@ module Barometer
             converted_query = Barometer::Query.new(@q)
           end
           unless converted
-            converted_query =  Query::Format.const_get(klass.to_s).to(self)
+            unless converted_query = get_conversion(preferred_format)
+              converted_query =  Query::Format.const_get(klass.to_s).to(self)
+            end  
             converted = true if converted_query
           end
           if converted
             converted_query.country_code ||= Query::Format.const_get(klass.to_s).country_code(converted_query.q)
+            post_conversion(converted_query)
             break
           end
         end
@@ -94,14 +105,52 @@ module Barometer
         if converted_query && converted_query.geo
           @geo = converted_query.geo
         else
+          puts "enhance geocode: #{converted_query.q}" if Barometer::debug?
           geo_query = Query::Format::Coordinates.to(converted_query)
           @geo = geo_query.geo if (geo_query && geo_query.geo)
           converted_query.geo = @geo.dup
         end
       end
       
+      # enhance timezone?, unless we already did
+      #
+      if Barometer.enhance_timezone && !@timezone
+        if converted_query && converted_query.timezone
+          @geo = converted_query.timezone
+        elsif @geo && @geo.latitude && @geo.longitude
+          puts "enhance timezone: #{@geo.latitude}, #{@geo.longitude}" if Barometer::debug?
+          @timezone = WebService::Timezone.fetch(@geo.latitude,@geo.longitude)
+          converted_query.timezone = @timezone.dup
+        end
+      end
+      
       converted_query
     end
+    
+# save the important parts of the conversion ... by saving conversion we
+# can avoid doing the same conversion multiple times
+#
+def post_conversion(converted_query)
+  return unless (converted_query && converted_query.q && converted_query.format)
+  @conversions = {} unless @conversions
+  return if @conversions.has_key?(converted_query.format.to_sym)
+  puts "store: #{self.format} -> #{converted_query.format.to_sym} = #{self.q} -> #{converted_query.q}" if Barometer::debug?
+  @conversions[converted_query.format.to_sym] = converted_query.q
+end
+
+def get_conversion(format)
+  return nil unless format && @conversions
+  puts "found: #{self.format} -> #{format.to_sym} = #{self.q} -> #{@conversions[format.to_sym]}" if Barometer::debug? && @conversions.has_key?(format.to_sym)
+  # re-constuct converted query
+  if q = @conversions[format.to_sym]
+    converted_query = self.dup
+    converted_query.q = q
+    converted_query.format = format
+    converted_query
+  else
+    nil
+  end
+end
     
   end
 end  

@@ -29,7 +29,7 @@
 #   -V, --verbose       Verbose output
 #   -t, --timeout       seconds until service queries will timeout
 #   -g, --geocode       Force Geocoding of query
-#   -e, --timezone      Enhance Timezone
+#   -z, --timezone      Enhance Timezone
 #   -m, --metric        measure in metric
 #   -i, --imperial      measure in imperial
 #   --wunderground      add wunderground as a source
@@ -122,7 +122,7 @@ class App
       opt.on('-a n', '--at n')     {|n| @options.at = Time.parse(n.to_s) }
       opt.on('-t n', '--timeout n') {|n| @options.timeout = n }
       opt.on('-g', '--geocode')    { @options.geocode = true }
-      opt.on('-e', '--timezone')   { @options.timezone = true }
+      opt.on('-z', '--timezone')   { @options.timezone = true }
       opt.on('-m', '--metric')     { @options.metric = true }
       opt.on('-i', '--imperial')   { @options.metric = false }
       opt.on('--wunderground')     { @options.sources << :wunderground; @options.default = false }
@@ -210,6 +210,7 @@ class App
       puts "  -V, --verbose       Verbose output"
       puts "  -t, --timeout       seconds until service queries will timeout"
       puts "  -g, --geocode       Force Geocoding of query"
+      puts "  -z, --timezone      Force timezone query"
       puts "  -m, --metric        measure in metric"
       puts "  -i, --imperial      measure in imperial"
       puts "  --wunderground      add wunderground as a source"
@@ -236,7 +237,14 @@ class App
       else
         barometer = Barometer.new(@arguments.join(" "))
         begin
+          if @options.verbose
+            Barometer::debug!
+            div(char="*")
+            puts "DEBUG LOG"
+            blank
+          end
           barometer.measure(@options.metric) if barometer
+          blank if @options.verbose
           pretty_output(barometer) if barometer.weather
         rescue Barometer::OutOfSources
           puts
@@ -296,8 +304,8 @@ def pretty_summary(s)
   section("SUMMARY#{ " (@ #{@options.at})" if @options.at }") do
     pretty_hash({
       "day?" => s.day?(@options.at), "sunny?" => s.sunny?(@options.at),
-      "windy?" => s.windy?(@options.metric ? @options.windy_m : @options.windy_i, @options.at),
-      "wet?" => s.wet?(@options.pop,@options.at) })
+      "windy?" => s.windy?(@options.at, @options.metric ? @options.windy_m : @options.windy_i),
+      "wet?" => s.wet?(@options.at, @options.pop) })
   end
 end
 
@@ -406,7 +414,8 @@ def pretty_measurement(m)
     pretty_hash({
       "Measured At" => m.measured_at,
       "Source" => m.source, "Time Stamp" => m.utc_time_stamp,
-      "Metric" => m.metric?, "Success" => m.success? })
+      "Metric" => m.metric?, "Success" => m.success?,
+      "Service Time" => "#{(m.end_at - m.start_at)} s" })
   end
   section("MODIFIED QUERY", 2) do
     pretty_hash({ "Query" => m.query, "Format" => m.format })
@@ -428,10 +437,11 @@ def pretty_measurements(w)
   end
 end
 
-def pretty_info
+def pretty_info(w)
   title("INFO", 1)
   value("GitHub", "http://github.com/attack/barometer")
   value("Barometer Version", BAROMETER_VERSION)
+  value("Total Time", "#{(w.end_at - w.start_at)} s")
 end
 
 def pretty_output(barometer)
@@ -446,7 +456,7 @@ def pretty_output(barometer)
     pretty_summary(weather)
     pretty_query(barometer.query)
     pretty_measurements(weather)
-    pretty_info
+    pretty_info(weather)
     div("-")
   end
 end
