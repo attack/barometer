@@ -10,25 +10,22 @@ unavailable.
 
 Barometer handles all conversions of the supplied query, so that the
 same query can be used for all (or most) services, even if they don't
-support the query directly.
-
-For example, Yahoo! only accepts US Zip Code or Weather.com ID.  With Barometer
-you can query Yahoo! with a simple location (ie: Paris) and it will return the
-weather.
+support the query directly. See the "Query" section for more information on
+this.
 
 == version
 
-Version 0.5.0 is the current release of this gem.
+Version 0.6.0 is the current release of this gem.
 The gem is available from github (attack-barometer) or rubyforge (barometer).
-It is fully functional (for four weather service APIs).
+It is fully functional (for five weather service APIs).
 
 == status
 
 Currently this project is in development and will only work for a few weather
-services (wunderground, google, yahoo, weather.com).
+services (wunderground, google, yahoo, weather.com, weather_bug).
 
 Features to be added next:
-- even more weather service drivers (noaa, weatherbug)
+- even more weather service drivers (noaa)
 - icon support
 
 = dependencies
@@ -59,6 +56,11 @@ eg. weather.com
     partner: YOUR_PARTNER_KEY
     license: YOUR_LICENSE_KEY
 
+eg. weatherbug.com
+
+  weather_bug:
+    code: YOUR_API_CODE
+
 == HTTParty
 
 Why? HTTParty was created and designed specifically for consuming web services.
@@ -73,6 +75,45 @@ Why? Barometer deals with time information for locations all over the world.
 This information doesn't mean that much if it can't be converted to times 
 that don't correspond to the applicable timezone.
 Tzinfo handles this time zone manipulation.
+
+= queries
+
+The query handling is one of the most beneficial and powerful features of
+Barometer.  Every weather service accepts a different set of possible
+queries, so it usually the case that the same query can only be used
+for a couple weather services.
+
+Barometer will allow the use of all query formats for all services
+(mostly).  It does this by first determining the original query format,
+then converting the query to a compatible format for each specific
+weather service.
+
+For example, Yahoo! only accepts US Zip Code or Weather.com ID.  With Barometer
+you can query Yahoo! with a simple location (ie: Paris) or even an Airport
+code (ICAO) and it will return the weather as expected.
+
+== acceptable formats
+
+- zipcode
+- icao (international airport code)
+- coordinates (latitude and longitude)
+- postal code
+- weather.com ID
+- location name (ie address, city, state, landmark, etc.)
+
+* if the query is of the formats zipcode or postal code it may not
+  support conversion to other formats.
+  
+== conversion caching
+
+Barometer has internal conversion caching.  No conversion will be
+repeated during a measurement, thus limiting the number of web queries
+needed.
+
+Example: If you configure Barometer to use both Yahoo and Weather.com,
+then use a query like "denver", this will require a conversion from
+"denver" to its weather.com weather_id.  This conversion is needed for
+both web services but will only happen once and be cached.
 
 = usage
 
@@ -99,6 +140,7 @@ The available sources are:
   Yahoo! Weather (:yahoo)
   Google Weather (:google)
   Weather.com (:weather_dot_com)
+  WeatherBug.com (:weather_bug)
   
 == source configuration
 

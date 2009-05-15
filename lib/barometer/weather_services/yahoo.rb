@@ -183,10 +183,11 @@ module Barometer
     
     # use HTTParty to get the current weather
     def self._fetch(query, metric=true)
-      puts "fetch yahoo: #{query}" if Barometer::debug?
+      return unless query
+      puts "fetch yahoo: #{query.q}" if Barometer::debug?
       self.get(
         "http://weather.yahooapis.com/forecastrss",
-        :query => {:p => query, :u => (metric ? 'c' : 'f')},
+        :query => {:p => query.q, :u => (metric ? 'c' : 'f')},
         :format => :xml,
         :timeout => Barometer.timeout
       )['rss']['channel']

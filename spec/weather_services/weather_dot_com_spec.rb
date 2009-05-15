@@ -5,8 +5,6 @@ describe "WeatherDotCom" do
   
   before(:each) do
     @accepted_formats = [:short_zipcode, :weather_id]
-    #Barometer.config = { 1 => { :weather => { :keys => { :partner => WEATHER_PARTNER_KEY, :license => WEATHER_LICENSE_KEY }}}}
-    WeatherService::WeatherDotCom.keys = { :partner => WEATHER_PARTNER_KEY, :license => WEATHER_LICENSE_KEY }
   end
   
   describe "the class methods" do
@@ -21,6 +19,18 @@ describe "WeatherDotCom" do
     
     it "defines get_all" do
       WeatherService::WeatherDotCom.respond_to?("_fetch").should be_true
+    end
+    
+    it "defines _requires_keys?" do
+      WeatherService::WeatherDotCom.respond_to?("_requires_keys?").should be_true
+      WeatherService::WeatherDotCom._requires_keys?.should be_true
+    end
+    
+    it "defines _has_keys?" do
+      WeatherService::WeatherDotCom.respond_to?("_has_keys?").should be_true
+      WeatherService::WeatherDotCom._has_keys?.should be_false
+      WeatherService::WeatherDotCom.keys = { :partner => WEATHER_PARTNER_KEY, :license => WEATHER_LICENSE_KEY }
+      WeatherService::WeatherDotCom._has_keys?.should be_true
     end
     
   end

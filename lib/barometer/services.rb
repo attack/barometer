@@ -7,6 +7,7 @@ require 'weather_services/wunderground'
 require 'weather_services/google'
 require 'weather_services/yahoo'
 require 'weather_services/weather_dot_com'
+require 'weather_services/weather_bug'
 
 #
 # web services (non weather)

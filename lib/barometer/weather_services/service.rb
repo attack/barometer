@@ -139,7 +139,7 @@ module Barometer
       raise ArgumentError unless query.is_a?(Barometer::Query)
   
       begin
-        result = _fetch(query.q, metric)
+        result = _fetch(query, metric)
       rescue Timeout::Error => e
         return measurement
       end

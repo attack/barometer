@@ -128,10 +128,11 @@ module Barometer
     
     # use HTTParty to get the current weather
     def self._fetch(query, metric=true)
-      puts "fetch google: #{query}" if Barometer::debug?
+      return unless query
+      puts "fetch google: #{query.q}" if Barometer::debug?
       self.get(
         "http://google.com/ig/api",
-        :query => {:weather => query, :hl => (metric ? "en-GB" : "en-US")},
+        :query => {:weather => query.q, :hl => (metric ? "en-GB" : "en-US")},
         :format => :xml,
         :timeout => Barometer.timeout
       )['xml_api_reply']['weather']

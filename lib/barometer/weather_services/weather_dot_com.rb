@@ -229,9 +229,10 @@ module Barometer
     # use HTTParty to get the current weather
     #
     def self._fetch(query, metric=true)
-      puts "fetch weather.com: #{query}" if Barometer::debug?
+      return unless query
+      puts "fetch weather.com: #{query.q}" if Barometer::debug?
       self.get(
-        "http://xoap.weather.com/weather/local/#{query}",
+        "http://xoap.weather.com/weather/local/#{query.q}",
         :query => { :par => @@partner_key, :key => @@license_key,
           :prod => "xoap", :link => "xoap", :cc => "*",
           :dayf => "5", :unit => (metric ? 'm' : 's')

@@ -224,11 +224,11 @@ module Barometer
     # use HTTParty to get the current weather
     #
     def self._fetch_current(query)
-      puts "fetch wunderground current: #{query}" if Barometer::debug?
       return unless query
+      puts "fetch wunderground current: #{query.q}" if Barometer::debug?
       self.get(
        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml",
-       :query => {:query => query},
+       :query => {:query => query.q},
        :format => :xml,
        :timeout => Barometer.timeout
        )['current_observation']
@@ -237,11 +237,11 @@ module Barometer
     # use HTTParty to get the forecasted weather
     #
     def self._fetch_forecast(query)
-      puts "fetch wunderground forecast: #{query}" if Barometer::debug?
       return unless query
+      puts "fetch wunderground forecast: #{query.q}" if Barometer::debug?
       self.get(
         "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml",
-        :query => {:query => query},
+        :query => {:query => query.q},
         :format => :xml,
         :timeout => Barometer.timeout
       )['forecast']

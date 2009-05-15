@@ -32,6 +32,9 @@ if File.exists?(KEY_FILE)
   	WEATHER_PARTNER_KEY = keys["weather"]["partner"]
   	WEATHER_LICENSE_KEY = keys["weather"]["license"]
 	end
+  if keys["weather_bug"]
+  	WEATHERBUG_CODE = keys["weather_bug"]["code"]
+	end
     
 else
   File.open(KEY_FILE, 'w') {|f| f << "google: geocode: YOUR_KEY_KERE" }
@@ -161,6 +164,24 @@ end
     :string => File.read(File.join(File.dirname(__FILE__), 
       'fixtures/formats/weather_id', 
       'from_USGA0028.xml')
+    )
+  )
+  
+  #
+  # For wunderground weather
+  #
+  FakeWeb.register_uri(:get, 
+    "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=51.055149%2C-114.062438",
+    :string => File.read(File.join(File.dirname(__FILE__), 
+      'fixtures/services/wunderground',
+      'current_calgary_ab.xml')
+    )
+  )  
+  FakeWeb.register_uri(:get, 
+    "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=51.055149%2C-114.062438",
+    :string => File.read(File.join(File.dirname(__FILE__), 
+      'fixtures/services/wunderground',
+      'forecast_calgary_ab.xml')
     )
   )
 

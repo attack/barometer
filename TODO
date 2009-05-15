@@ -1,6 +1,6 @@
 == now
 
-- refactor: data-zone
+- ??
 
 == soon
 
@@ -9,17 +9,23 @@
 - more drivers
 - expand icao country_code hash
 - expand weather_id country_code hash
+- refactor: data-zone
 
 == future
 
 - Rdoc compatible documentation
 - add uv info to current
 - add moon info to current
+- add elevation info to current (station and location)
 - weather.com simple_questions improve answers (use extra data)
+- methods to use service_specific icons/images
 
 - be smart, never make duplicate queries
-  - if you are including wunderground, do it first and use the timezone info
-    and the geocoding
+  - ie. if you are including wunderground, do it first and use the timezone info
+    
+- conversion and weather fetching queries should have hooks to allow
+  for configurable caching via memcache, then web service calls can 
+  be cached across multiple measurement instances.
 
 == bugs
 
