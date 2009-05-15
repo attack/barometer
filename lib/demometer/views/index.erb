@@ -18,6 +18,7 @@
       <input type="checkbox" name="query[source]" value="yahoo" /> Yahoo
       <input type="checkbox" name="query[source]" value="google" /> Google
       <input type="checkbox" name="query[source]" value="weather_dot_com" /> Weather.com
+      <input type="checkbox" name="query[source]" value="weather_bug" /> Weather Bug
     <br/>
     Force Geocode? :
       <input id="query_geocode" name="query[geocode]" type="checkbox" value="1" checked="checked" />
@@ -81,6 +82,7 @@
   <% end %>
 
   <% @weather.measurements.each do |measurement| %>
+    <hr/>
     <%= erb(:measurement, :locals => { :measurement => measurement }, :layout => false) %>
   <% end %>
   

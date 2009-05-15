@@ -6,6 +6,7 @@
     <%= data("Time Stamp", measurement.utc_time_stamp) %>
     <%= data("Metric", measurement.metric?) %>
     <%= data("Success", measurement.success?) %>
+    <%= data("Service Time", "#{(measurement.end_at - measurement.start_at)} s") %>
   </ul>
   <ul>- Modified Query -
     <%= data("Query", measurement.query) %>
@@ -54,9 +55,11 @@
 <h3>Timezone</h3>
 <p>
   <ul>
-    <%= data("Long", measurement.timezone.timezone) %>
+    <%= data("Long", measurement.timezone.full) %>
     <%= data("Code", measurement.timezone.code) %>
     <%= data("DST?", measurement.timezone.dst?) %>
+    <%= data("Now", measurement.timezone.now(true)) %>
+    <%= data("Today", measurement.timezone.today) %>
   </ul>
 </p>
 <% end %>

@@ -9,35 +9,45 @@ information, or they can be used in a hierarchical configuration where
 lower preferred weather services are only used if previous services are
 unavailable.
 </p>
+<p>
+Barometer handles all conversions of the supplied query, so that the same
+query can be used for all (or most) services, even if they don&#8217;t
+support the query directly. See the &quot;Query&quot; section for more
+information on this.
+</p>
 <h2>version</h2>
 <p>
-Version 0.3.3 is the current release of this gem. The gem is available from
+Version 0.6.0 is the current release of this gem. The gem is available from
 github (attack-barometer) or rubyforge (barometer). It is fully functional
-(for three weather service APIs).
+(for five weather service APIs).
 </p>
 <h2>status</h2>
-
 <p>
 Currently this project is in development and will only work for a few
-weather services (wunderground, google, yahoo).
+weather services (wunderground, google, yahoo, weather.com, weather_bug).
 </p>
 <p>
 Features to be added next:
 </p>
 <ul>
-<li>even more weather service drivers (noaa, weather.com, weatherbug)
+<li>even more weather service drivers (noaa)
+
+</li>
+<li>icon support
 
 </li>
 </ul>
 <h1>dependencies</h1>
-<h3>Google API key</h3>
+<h2>Google API key</h2>
 <p>
 In most cases you will need to have a free google geocode api key. Get one
 here: <a href="http://code.google.com/apis/maps/signup.html">code.google.com/apis/maps/signup.html</a>
-
-Then put it in the file &#8217;~/.barometer&#8217; by adding the line:
-geocode_google: YOUR_KEY_HERE
+Then put it in the file &#8217;~/.barometer&#8217; by adding the lines:
 </p>
+<pre>
+  google:
+    geocode: YOUR_KEY_HERE
+</pre>
 <p>
 You will need this for:
 </p>
@@ -54,8 +64,26 @@ doesn&#8217;t require any geocoding)
 
 </li>
 </ul>
-
-<h3>HTTParty</h3>
+<h3>other keys</h3>
+<p>
+The same file can hold all your weather service API keys.
+</p>
+<p>
+eg. weather.com
+</p>
+<pre>
+  weather:
+    partner: YOUR_PARTNER_KEY
+    license: YOUR_LICENSE_KEY
+</pre>
+<p>
+eg. weatherbug.com
+</p>
+<pre>
+  weather_bug:
+    code: YOUR_API_CODE
+</pre>
+<h2>HTTParty</h2>
 <p>
 Why? HTTParty was created and designed specifically for consuming web
 services. I choose to use this over using the Net::HTTP library directly to
@@ -64,41 +92,67 @@ allow for faster development of this project.
 <p>
 HTTParty is also extended to include configurable Timeout support.
 </p>
-<h3>tzinfo</h3>
+<h2>tzinfo</h2>
 <p>
 Why? Barometer deals with time information for locations all over the
 world. This information doesn&#8217;t mean that much if it can&#8217;t be
 converted to times that don&#8217;t correspond to the applicable timezone.
 Tzinfo handles this time zone manipulation.
 </p>
-<h3>graticule (very soft dependency)</h3>
+<h1>queries</h1>
+<p>
+The query handling is one of the most beneficial and powerful features of
+Barometer. Every weather service accepts a different set of possible
+queries, so it usually the case that the same query can only be used for a
+couple weather services.
+</p>
+<p>
+Barometer will allow the use of all query formats for all services
+(mostly). It does this by first determining the original query format, then
+converting the query to a compatible format for each specific weather
+service.
+</p>
+<p>
+For example, Yahoo! only accepts US Zip Code or Weather.com ID. With
+Barometer you can query Yahoo! with a simple location (ie: Paris) or even
+an Airport code (ICAO) and it will return the weather as expected.
+</p>
+<h2>acceptable formats</h2>
+<ul>
+<li>zipcode
 
-<p>
-Why? Barometer returns the weather for a given location. Most weather
-service APIs are somewhat restricted on the query format they receive. To
-bridge this gap and allow for maximum flexibility on the
-&#8216;barometer&#8217; query format, the query will be geo-coded using the
-Google geocoding service, if required. Graticule can provide this geocoding
-interface.
-</p>
-<p>
-Using Graticule requires a free Google API key for geocoding. It is
-possible to use barometer without geocoding, though your query format will
-be limited to that of the weather service API.
-</p>
-<p>
-ALTERNATE: If you supply a Google API key but don&#8217;t install the
-Graticule gem, HTTParty will be used instead to provide the same geocoding.
-Basically Graticule is only used if it exists.
-</p>
-<p>
-NOTE: you can force Barometer not to use Graticule, even if you have it
-installed using the following:
-</p>
-<pre>
+</li>
+<li>icao (international airport code)
 
-  Barometer.skip_graticule = true
-</pre>
+</li>
+<li>coordinates (latitude and longitude)
+
+</li>
+<li>postal code
+
+</li>
+<li>weather.com ID
+
+</li>
+<li>location name (ie address, city, state, landmark, etc.)
+
+</li>
+<li>if the query is of the formats zipcode or postal code it may not support
+conversion to other formats.
+
+</li>
+</ul>
+<h2>conversion caching</h2>
+<p>
+Barometer has internal conversion caching. No conversion will be repeated
+during a measurement, thus limiting the number of web queries needed.
+</p>
+<p>
+Example: If you configure Barometer to use both Yahoo and Weather.com, then
+use a query like &quot;denver&quot;, this will require a conversion from
+&quot;denver&quot; to its weather.com weather_id. This conversion is needed
+for both web services but will only happen once and be cached.
+</p>
 <h1>usage</h1>
 <p>
 You can use barometer right out of the box, as it is configured to use one
@@ -117,7 +171,17 @@ with geo-coding.
   weather = barometer.measure
 
   puts weather.current.temperture
-
+</pre>
+<h2>sources</h2>
+<p>
+The available sources are:
+</p>
+<pre>
+  Wunderground.com (:wunderground) [default]
+  Yahoo! Weather (:yahoo)
+  Google Weather (:google)
+  Weather.com (:weather_dot_com)
+  WeatherBug.com (:weather_bug)
 </pre>
 <h2>source configuration</h2>
 <p>
@@ -133,7 +197,6 @@ Weather services in parallel
 </pre>
 <p>
 Weather services in primary/failover
-
 </p>
 <pre>
   Barometer.config = { 1 =&gt; [:yahoo], 2 =&gt; :wunderground }
@@ -144,7 +207,12 @@ a weight value, this weight is respected when calculating averages.
 </p>
 <pre>
   Barometer.config = { 1 =&gt; [{:wunderground =&gt; {:weight =&gt; 2}}, :google] }
-
+</pre>
+<p>
+Weather services, one with keys.
+</p>
+<pre>
+  Barometer.config = { 1 =&gt; [:yahoo, {:weather_dot_com =&gt; {:keys =&gt; {:partner =&gt; PARTNER_KEY, :license =&gt; LICENSE_KEY } }}] }
 </pre>
 <h3>multiple weather API, with hierarchy</h3>
 <pre>
@@ -159,7 +227,6 @@ a weight value, this weight is respected when calculating averages.
 
   puts weather.current.temperture
 </pre>
-
 <h2>command line</h2>
 <p>
 You can use barometer from the command line.
@@ -175,7 +242,6 @@ for more command line information.
   # barometer -h
 </pre>
 <h3>web demo</h3>
-
 <p>
 There is a Sinatra application that demos the functionality of Barometer,
 and provides Barometer information. Start this local demo with:
@@ -187,7 +253,6 @@ and provides Barometer information. Start this local demo with:
 NOTE: This requires the gems &quot;sinatra&quot; and &quot;vegas&quot;.
 </p>
 <h3>fail</h3>
-
 <p>
 What would cause a weather service to fail? The most obvious is that the
 particular weather service in currently unavailable or not reachable. Other
@@ -202,41 +267,7 @@ supports weather results for USA (at least at the time of writing).
 Therefore, Barometer would not use Yahoo, just Google and failover to use
 Wunderground (if needed).
 </p>
-<h3>bootstrapping</h3>
-<p>
-You can use weather service drivers directly. Below is an example to use
-Wunderground, but since the driver interface is abstracted it will be the
-same for all supported services.
-</p>
-<pre>
-  require 'barometer'
-  Barometer.google_geocode_key = &quot;THE_GOOGLE_API_KEY&quot;
-
-  query = Barometer::Query.new(&quot;Paris&quot;)
-  weather = Barometer::Service.source(:wunderground).measure(query)
-
-  puts weather.current.temperture
-
-  # OR, even more raw
-
-  measurement = Barometer::Measurement.new
-  weather = Barometer::Wunderground.measure_all(measurement, &quot;Paris&quot;)
-
-  puts weather.current.temperture
-</pre>
-<p>
-NOTE: The disadvantage to using the drivers directly is that you lose the
-advantage of redundancy/failover added by the Module as a whole.
-</p>
-<p>
-NOTE: You still must create the Barometer::Query object with your query
-string instead of directly feeding the query string to the service (as in
-bootstrap example #1). The Barometer::Query object has behavior required by
-the service that a regular String doesn&#8217;t have. Using a driver
-directly WILL accept a String (as in bootstrap example #2).
-</p>
 <h2>searching</h2>
-
 <p>
 After you have measured the data, Barometer provides several methods to
 help you get the data you are after. All examples assume you already have
@@ -261,7 +292,6 @@ measured the data as shown in the above examples.
 
   puts weather.source(:wunderground).current.temperature.c
 </pre>
-
 <h3>by date</h3>
 <pre>
   # note, the date is the date of the locations weather, not the date of the
@@ -283,7 +313,6 @@ measured the data as shown in the above examples.
   puts weather.source(:wunderground).for(time).low.f
 </pre>
 <h2>averages</h2>
-
 <p>
 If you consume more then one weather service, Barometer can provide
 averages for the values (currently only for the &#8216;current&#8217;
@@ -300,7 +329,6 @@ values and not the forecasted values).
   weather = barometer.measure
 
   puts weather.temperture
-
 </pre>
 <p>
 This will calculate the average temperature as given by :yahoo and
@@ -318,7 +346,6 @@ After you have measured the data, Barometer provides several &quot;simple
 answer&quot; methods to help you get answers to some basic questions. All
 examples assume you already have measured the data as shown in the above
 examples.
-
 </p>
 <p>
 All of these questions are ultimately specific to the weather source(s) you
@@ -345,7 +372,6 @@ there will be no answer.
   weather.wet?(50)
 </pre>
 <h3>is it sunny?</h3>
-
 <pre>
   # 1st parameter is the utc_time for which you want to know the answer,
   #   this defaults to the current time
@@ -367,7 +393,6 @@ there will be no answer.
   weather.night?
 </pre>
 <h1>design</h1>
-
 <ul>
 <li>create a Barometer instance
 
@@ -378,27 +403,31 @@ there will be no answer.
 <li>city, country, specific address (basically anything Google will geocode)
 
 </li>
-<li>US zip code (skips geocoding if weather service accepts this directly)
+<li>US zip code (skips conversion if weather service accepts this directly)
 
 </li>
-<li>postal code (skips geocoding if weather service accepts this directly)
+<li>postal code (skips conversion if weather service accepts this directly)
 
 </li>
-<li>latitude and longitude (skips geocoding if weather service accepts this
+<li>latitude and longitude (skips conversion if weather service accepts this
 directly)
 
 </li>
-<li>TODO: international airport code (skips geocoding if weather service
-accepts this directly)
+<li>weather.com weather id (even if the service you are using doesn&#8217;t use
+it)
+
+</li>
+<li>international airport code (skips conversion if weather service accepts
+this directly)
 
 </li>
 </ul>
 </li>
-
-<li>if geocoding required, geocode the query
+<li>determine which weather services will be queried (one or multiple)
 
 </li>
-<li>determine which weather services will be queried (one or multiple)
+<li>if query conversion required for specific weather service, convert the
+query
 
 </li>
 <li>query the weather services
@@ -417,7 +446,6 @@ Barometer attempts to be a common API to any weather service API. I have
 included several weather service &#8216;drivers&#8217;, but I know there
 are many more available. Please use the provided ones as examples to create
 more.
-
 </p>
 <h2>copyright</h2>
 <p>

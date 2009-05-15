@@ -4,8 +4,7 @@
 
 == soon
 
-- make sure you can compare LocalTime to LocalDateTime in LocalTime class
-- style the demo app
+- style the demo app results
 - more drivers
 - expand icao country_code hash
 - expand weather_id country_code hash
@@ -19,6 +18,7 @@
 - add elevation info to current (station and location)
 - weather.com simple_questions improve answers (use extra data)
 - methods to use service_specific icons/images
+- make sure you can compare LocalTime to LocalDateTime in LocalTime class
 
 - be smart, never make duplicate queries
   - ie. if you are including wunderground, do it first and use the timezone info

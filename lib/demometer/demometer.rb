@@ -32,6 +32,23 @@ class Demometer < Sinatra::Default
     { :weather_dot_com => { :keys => { :partner => partner_key, :license => license_key } } }
   end
 
+  def config_weather_bug
+    if File.exists?(@@config_file)
+    	keys = YAML.load_file(@@config_file)
+    	if keys["weather_bug"] && keys["weather_bug"]["code"]
+    	  code = keys["weather_bug"]["code"].to_s
+      else
+        raise RunTimeError "no weatherbug.com keys"
+        exit
+      end
+    else
+      File.open(@@config_file, 'w') {|f| f << "\weather_bug:\n  code: API_CODE" }
+      raise RunTimeError "no weatherbug.com keys"
+      exit
+    end
+    { :weather_bug => { :keys => { :code => code } } }
+  end
+
   helpers do
     def data(title, value)
       return if value.nil?
@@ -58,6 +75,13 @@ class Demometer < Sinatra::Default
       Barometer::Base.config[1] << config_weather_dot_com
     end
     
+    # setup weatherbug.com
+    if Barometer::Base.config && Barometer::Base.config[1] &&
+      Barometer::Base.config[1].include?(:weather_bug)
+      Barometer::Base.config[1].delete(:weather_bug)
+      Barometer::Base.config[1] << config_weather_bug
+    end
+    
     if params[:query] && !params[:query][:q].empty?
       @barometer = Barometer.new(params[:query][:q])
       @weather = @barometer.measure(metric)
@@ -71,6 +95,10 @@ class Demometer < Sinatra::Default
   
   get '/readme.html' do
     erb :readme
+  end
+  
+  get '/about.html' do
+    erb :about
   end
 
 end
