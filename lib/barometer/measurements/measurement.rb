@@ -12,7 +12,7 @@ module Barometer
   # - time_zone information (for the location in question)
   # - weather station information (for the station that gave collected the data)
   #
-  class Data::Measurement
+  class Measurement
     
     attr_reader :source, :weight
     attr_reader :measured_at, :utc_time_stamp
@@ -20,6 +20,7 @@ module Barometer
     attr_reader :timezone, :station, :location, :links
     attr_reader :success
     attr_accessor :metric, :query, :format
+    attr_accessor :start_at, :end_at
     
     def initialize(source=nil, metric=true)
       @source = source
@@ -39,6 +40,7 @@ module Barometer
     def metric?; @metric; end
     def metric!; @metric=true; end
     def imperial!; @metric=false; end
+    def now; timezone ? timezone.now : nil; end
     
     #
     # this will tell us if the measurement is still current ... if it is still
@@ -58,7 +60,7 @@ module Barometer
         self.current.current_at : self.measured_at)
       
       local_time = (local_time.nil? ? current_at : Data::LocalTime.parse(local_time))
-      return false unless local_time
+      return true unless local_time
       raise ArgumentError unless local_time.is_a?(Data::LocalTime)
       
       hours_still_current = 4
@@ -70,32 +72,12 @@ module Barometer
     # Returns a forecast for a day given by a Date, DateTime,
     # Time, or a string that can be parsed to a date
     #
-    # credit: http://github.com/jdpace/weatherman/
-    #
     def for(date=nil)
       date = @timezone.today unless date || !@timezone
       date ||= Date.today
       return nil unless (@forecast && @forecast.size > 0)
       
-      # Format date into a Date class
-      date = case date.class.name
-      when 'Date'
-        date
-      when 'Data::LocalDateTime'
-        date.to_d
-      when 'String'
-        Date.parse(date)
-      when 'Time'
-        Date.new(date.year, date.month, date.day)
-      when 'DateTime'
-        Date.new(date.year, date.month, date.day)
-      end
-      
-      day = nil
-      @forecast.each do |f|
-        day = f if date == f.date
-      end
-      return day
+      @forecast.for(date)
     end
     
     #
@@ -113,14 +95,14 @@ module Barometer
     end
     
     def current=(current)
-      raise ArgumentError unless current.is_a?(Data::CurrentMeasurement)
+      raise ArgumentError unless current.is_a?(Measurement::Current)
       @current = current
       self.stamp!
       self.success!
     end
     
     def forecast=(forecast)
-      raise ArgumentError unless forecast.is_a?(Array)
+      raise ArgumentError unless forecast.is_a?(Measurement::ForecastArray)
       @forecast = forecast
     end
     
@@ -157,34 +139,63 @@ module Barometer
     
     #
     # simple questions
-    # pass questions to the source
     #
     
-    def windy?(threshold=10, time_string=nil)
-      local_datetime = Data::LocalDateTime.parse(time_string) if time_string
-      raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
-      raise ArgumentError unless (local_datetime.is_a?(Data::LocalDateTime) || local_datetime.nil?)
-      Barometer::WeatherService.source(@source).windy?(self, threshold, local_datetime)
-    end
-    
-    def wet?(threshold=50, time_string=nil)
-      local_datetime = Data::LocalDateTime.parse(time_string) if time_string
-      raise ArgumentError unless (threshold.is_a?(Fixnum) || threshold.is_a?(Float))
-      raise ArgumentError unless (local_datetime.is_a?(Data::LocalDateTime) || local_datetime.nil?)
-      Barometer::WeatherService.source(@source).wet?(self, threshold, local_datetime)
+    def windy?(time_string=nil, threshold=10)
+      time_string ||= (measured_at || now)
+      local_time = Data::LocalTime.parse(time_string)
+      
+      if current?(local_time)
+        return nil unless current
+        current.windy?(threshold)
+      else
+        return nil unless forecast && (future = forecast[local_time])
+        future.windy?(threshold)
+      end
     end
     
     def day?(time_string=nil)
-      local_datetime = Data::LocalDateTime.parse(time_string) if time_string
-      raise ArgumentError unless (local_datetime.is_a?(Data::LocalDateTime) || local_datetime.nil?)
-      Barometer::WeatherService.source(@source).day?(self, local_datetime)
+      time_string ||= (measured_at || now)
+      local_time = Data::LocalTime.parse(time_string)
+      
+      if current?(local_time)
+        return nil unless current
+        current.day?(local_time)
+      else
+        return nil unless forecast && (future = forecast[local_time])
+        future.day?(local_time)
+      end
     end
     
     def sunny?(time_string=nil)
-      local_datetime = Data::LocalDateTime.parse(time_string) if time_string
-      raise ArgumentError unless (local_datetime.is_a?(Data::LocalDateTime) || local_datetime.nil?)
-      return false if self.day?(local_datetime) == false
-      Barometer::WeatherService.source(@source).sunny?(self, local_datetime)
+      time_string ||= (measured_at || now)
+      local_time = Data::LocalTime.parse(time_string)
+      sunny_icons = Barometer::WeatherService.source(@source)._sunny_icon_codes
+      
+      is_day = day?(local_time)
+      return is_day unless is_day
+      
+      if current?(local_time)
+        return nil unless current
+        current.sunny?(local_time, sunny_icons)
+      else
+        return nil unless forecast && (future = forecast[local_time])
+        future.sunny?(local_time, sunny_icons)
+      end
+    end
+    
+    def wet?(time_string=nil, pop_threshold=50, humidity_threshold=99)
+      time_string ||= (measured_at || now)
+      local_time = Data::LocalTime.parse(time_string)
+      wet_icons = Barometer::WeatherService.source(@source)._wet_icon_codes
+      
+      if current?(local_time)
+        return nil unless current
+        current.wet?(wet_icons, humidity_threshold)
+      else
+        return nil unless forecast && (future = forecast[local_time])
+        future.wet?(wet_icons, pop_threshold, humidity_threshold)
+      end
     end
     
   end

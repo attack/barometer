@@ -6,31 +6,14 @@ module Barometer
   # This is basically a data holding class for the current weather
   # conditions.
   #
-  class Data::CurrentMeasurement
+  class Measurement::Current < Measurement::Common
     
     attr_reader :current_at, :updated_at
-    attr_reader :humidity, :icon, :condition
     attr_reader :temperature, :dew_point, :heat_index, :wind_chill
-    attr_reader :wind, :pressure, :visibility, :sun
+    attr_reader :pressure, :visibility
     
     # accessors (with input checking)
     #
-    def humidity=(humidity)
-      raise ArgumentError unless
-        (humidity.is_a?(Fixnum) || humidity.is_a?(Float))
-      @humidity = humidity
-    end
-    
-    def icon=(icon)
-      raise ArgumentError unless icon.is_a?(String)
-      @icon = icon
-    end
-    
-    def condition=(condition)
-      raise ArgumentError unless condition.is_a?(String)
-      @condition = condition
-    end
-    
     def temperature=(temperature)
       raise ArgumentError unless temperature.is_a?(Data::Temperature)
       @temperature = temperature
@@ -51,11 +34,6 @@ module Barometer
       @wind_chill = wind_chill
     end
     
-    def wind=(wind)
-      raise ArgumentError unless wind.is_a?(Data::Speed)
-      @wind = wind
-    end
-    
     def pressure=(pressure)
       raise ArgumentError unless pressure.is_a?(Data::Pressure)
       @pressure = pressure
@@ -64,11 +42,6 @@ module Barometer
     def visibility=(visibility)
       raise ArgumentError unless visibility.is_a?(Data::Distance)
       @visibility = visibility
-    end
-    
-    def sun=(sun)
-      raise ArgumentError unless (sun.is_a?(Data::Sun) || sun.nil?)
-      @sun = sun
     end
     
     def current_at=(current_at)
@@ -82,19 +55,21 @@ module Barometer
     end
     
     #
-    # helpers
+    # answer simple questions
     #
     
-    # creates "?" helpers for all attributes (which maps to nil?)
-    #
-    def method_missing(method,*args)
-      # if the method ends in ?, then strip it off and see if we
-      # respond to the method without the ?
-      if (call_method = method.to_s.chomp!("?")) && respond_to?(call_method)
-        return send(call_method).nil? ? false : true
-      else
-        super(method,*args)
-      end
+    def wet?(wet_icons=nil, humidity_threshold=99)
+      result = nil
+      result ||= super(wet_icons, humidity_threshold) if (icon? || humidity?)
+      result ||= _wet_by_dewpoint? if (dew_point? && temperature?)
+      result
+    end
+    
+    private
+    
+    def _wet_by_dewpoint?
+      return nil unless dew_point? && temperature?
+      temperature.to_f(metric?) <=  dew_point.to_f(metric?)
     end
     
   end

@@ -5,7 +5,7 @@ describe "Measurement" do
   describe "when initialized" do
     
     before(:each) do
-      @measurement = Data::Measurement.new
+      @measurement = Barometer::Measurement.new
     end
     
     it "responds to source" do
@@ -14,7 +14,7 @@ describe "Measurement" do
     
     it "stores the source" do
       source = :wunderground
-      measurement = Data::Measurement.new(source)
+      measurement = Barometer::Measurement.new(source)
       measurement.source.should_not be_nil
       measurement.source.should == source
     end
@@ -48,7 +48,7 @@ describe "Measurement" do
     end
     
     it "responds to current?" do
-      @measurement.current?.should be_false
+      @measurement.current?.should be_true
     end
     
     it "responds to metric" do
@@ -76,7 +76,7 @@ describe "Measurement" do
   describe "when writing data" do
     
     before(:each) do
-      @measurement = Data::Measurement.new
+      @measurement = Barometer::Measurement.new
     end
     
     it "only accepts Symbol for source" do
@@ -101,21 +101,21 @@ describe "Measurement" do
     
     it "only accepts Data::CurrentMeasurement for current" do
       invalid_data = "invalid"
-      invalid_data.class.should_not == Data::CurrentMeasurement
+      invalid_data.class.should_not == Measurement::Current
       lambda { @measurement.current = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Data::CurrentMeasurement.new
-      valid_data.class.should == Data::CurrentMeasurement
+      valid_data = Measurement::Current.new
+      valid_data.class.should == Measurement::Current
       lambda { @measurement.current = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Array for forecast" do
+    it "only accepts Data::ForecastArray for forecast" do
       invalid_data = 1
-      invalid_data.class.should_not == Array
+      invalid_data.class.should_not == Measurement::ForecastArray
       lambda { @measurement.forecast = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = []
-      valid_data.class.should == Array
+      valid_data = Measurement::ForecastArray.new
+      valid_data.class.should == Measurement::ForecastArray
       lambda { @measurement.forecast = valid_data }.should_not raise_error(ArgumentError)
     end
     
@@ -184,7 +184,7 @@ describe "Measurement" do
   describe "and the helpers" do
     
     before(:each) do
-      @measurement = Data::Measurement.new
+      @measurement = Barometer::Measurement.new
     end
     
     it "changes state to successful (if successful)" do
@@ -194,7 +194,7 @@ describe "Measurement" do
       @measurement.current.should be_nil
       @measurement.success.should be_false
       
-      @measurement.current = Data::CurrentMeasurement.new
+      @measurement.current = Measurement::Current.new
       @measurement.current.temperature = Data::Temperature.new
       @measurement.current.temperature.c = 10
       @measurement.utc_time_stamp.should_not be_nil
@@ -203,7 +203,7 @@ describe "Measurement" do
     end
     
     it "returns successful state" do
-      @measurement.current = Data::CurrentMeasurement.new
+      @measurement.current = Measurement::Current.new
       @measurement.current.temperature = Data::Temperature.new
       @measurement.current.temperature.c = 10
       @measurement.success!
@@ -224,11 +224,11 @@ describe "Measurement" do
     
     it "indicates if current" do
       @measurement.current.should be_nil
-      @measurement.current?.should be_false
+      @measurement.current?.should be_true
       
-      @measurement.current = Data::CurrentMeasurement.new
+      @measurement.current = Measurement::Current.new
       @measurement.current.current_at.should be_nil
-      @measurement.current?.should be_false
+      @measurement.current?.should be_true
         
       @measurement.current.current_at = Data::LocalTime.new(9,0,0)
       @measurement.current?.should be_true
@@ -255,7 +255,7 @@ describe "Measurement" do
     describe "changing units" do
 
       before(:each) do
-        @measurement = Data::Measurement.new
+        @measurement = Barometer::Measurement.new
       end
 
       it "indicates if metric?" do
@@ -286,13 +286,13 @@ describe "Measurement" do
   describe "when searching forecasts using 'for'" do
     
     before(:each) do
-      @measurement = Data::Measurement.new
+      @measurement = Barometer::Measurement.new
       
       # create a measurement object with a forecast array that includes
       # dates for 4 consecutive days starting with tommorrow
-      @measurement.forecast = []
+      @measurement.forecast = Measurement::ForecastArray.new
       1.upto(4) do |i|
-        forecast_measurement = Data::ForecastMeasurement.new
+        forecast_measurement = Measurement::Forecast.new
         forecast_measurement.date = Date.parse((Time.now + (i * 60 * 60 * 24)).to_s)
         @measurement.forecast << forecast_measurement
       end
@@ -302,7 +302,7 @@ describe "Measurement" do
     end
     
     it "returns nil when there are no forecasts" do
-      @measurement.forecast = []
+      @measurement.forecast = Measurement::ForecastArray.new
       @measurement.forecast.size.should == 0
       @measurement.for.should be_nil
     end
@@ -347,85 +347,70 @@ describe "Measurement" do
   describe "when answering the simple questions," do
     
     before(:each) do
-      @measurement = Data::Measurement.new(:wunderground)
+      @measurement = Barometer::Measurement.new(:wunderground)
+      @measurement.current = Measurement::Current.new
       @now = Data::LocalDateTime.parse("2009-05-01 2:05 pm")
     end
     
+    # def windy?(time_string=nil, threshold=10)
+    #   local_time = Data::LocalTime.parse(time_string)
+    #   if current?(local_time)
+    #     return nil unless current
+    #     current.windy?(threshold)
+    #   else
+    #     return nil unless forecast && (future = forecast[local_time])
+    #     future.windy?(threshold)
+    #   end
+    # end
+    
     describe "windy?" do
       
-      it "requires threshold as a number" do
-        lambda { @measurement.windy?("a") }.should raise_error(ArgumentError)
-        lambda { @measurement.windy?(1) }.should_not raise_error(ArgumentError)
-        lambda { @measurement.windy?(1.1) }.should_not raise_error(ArgumentError)
-      end
-      
-      it "requires time as a Time object" do
-        #lambda { @measurement.windy?(1,false) }.should raise_error(ArgumentError)
-        lambda { @measurement.windy?(1,@now) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns true if a source returns true" do
-        module Barometer; class WeatherService
-          def self.windy?(a=nil,b=nil,c=nil); true; end
+      it "returns true if a current_measurement returns true" do
+        module Barometer; class Measurement::Current < Measurement::Common
+          def windy?(a=nil); true; end
         end; end
         @measurement.windy?.should be_true
       end
 
-      it "returns false if a measurement returns false" do
-        module Barometer; class WeatherService
-          def self.windy?(a=nil,b=nil,c=nil); false; end
+      it "returns false if a current_measurement returns false" do
+        module Barometer; class Measurement::Current < Measurement::Common
+          def windy?(a=nil); false; end
         end; end
         @measurement.windy?.should be_false
       end
       
     end
     
-    describe "wet?" do
-      
-      it "requires threshold as a number" do
-        lambda { @measurement.wet?("a") }.should raise_error(ArgumentError)
-        lambda { @measurement.wet?(1) }.should_not raise_error(ArgumentError)
-        lambda { @measurement.wet?(1.1) }.should_not raise_error(ArgumentError)
-      end
-      
-      it "requires time as a Time object" do
-        #lambda { @measurement.wet?(1,"a") }.should raise_error(ArgumentError)
-        lambda { @measurement.wet?(1,@now) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns true if a source returns true" do
-        module Barometer; class WeatherService
-          def self.wet?(a=nil,b=nil,c=nil); true; end
-        end; end
-        @measurement.wet?.should be_true
-      end
-
-      it "returns false if a measurement returns false" do
-        module Barometer; class WeatherService
-          def self.wet?(a=nil,b=nil,c=nil); false; end
-        end; end
-        @measurement.wet?.should be_false
-      end
-      
-    end
-    
+     describe "wet?" do
+       
+       it "returns true if the current_measurement returns true" do
+         module Barometer; class Measurement::Current < Measurement::Common
+           def wet?(a=nil,b=nil,c=nil); true; end
+         end; end
+         @measurement.wet?.should be_true
+       end
+     
+       it "returns false if the current_measurement returns false" do
+         module Barometer; class Measurement::Current < Measurement::Common
+           def wet?(a=nil,b=nil,c=nil); false; end
+         end; end
+         @measurement.wet?.should be_false
+       end
+       
+     end
+     
     describe "day?" do
-      
-      it "requires time as a Time object" do
-        #lambda { @measurement.day?("a") }.should raise_error(ArgumentError)
-        lambda { @measurement.day?(@now) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns true if a source returns true" do
-        module Barometer; class WeatherService
-          def self.day?(a=nil,b=nil); true; end
+    
+      it "returns true if the current_measurement returns true" do
+        module Barometer; class Measurement::Current < Measurement::Common
+          def day?(a=nil); true; end
         end; end
         @measurement.day?.should be_true
       end
-
-      it "returns false if a measurement returns false" do
-        module Barometer; class WeatherService
-          def self.day?(a=nil,b=nil); false; end
+    
+      it "returns false if the current_measurement returns false" do
+        module Barometer; class Measurement::Current < Measurement::Common
+          def day?(a=nil); false; end
         end; end
         @measurement.day?.should be_false
       end
@@ -434,45 +419,39 @@ describe "Measurement" do
     
     describe "sunny?" do
       
-      it "requires time as a Time object" do
-        #lambda { @measurement.sunny?("a") }.should raise_error(ArgumentError)
-        lambda { @measurement.sunny?(@now) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns true if a source returns true" do
-        module Barometer; class WeatherService
-          def self.day?(a=nil,b=nil); true; end
+      it "returns true if the current_measurement returns true and day" do
+        module Barometer; class Measurement::Current < Measurement::Common
+          def day?(a=nil); true; end
         end; end
-        module Barometer; class WeatherService
-          def self.sunny?(a=nil,b=nil); true; end
+        module Barometer; class Measurement::Current < Measurement::Common
+          def sunny?(a=nil,b=nil); true; end
         end; end
+        @measurement.day?.should be_true
         @measurement.sunny?.should be_true
       end
-
-      it "returns false if a measurement returns false" do
-        module Barometer; class WeatherService
-          def self.day?(a=nil,b=nil); true; end
+    
+      it "returns false if the current_measurement returns false and day" do
+        module Barometer; class Measurement::Current < Measurement::Common
+          def day?(a=nil); true; end
         end; end
-        module Barometer; class WeatherService
-          def self.sunny?(a=nil,b=nil); false; end
+        module Barometer; class Measurement::Current < Measurement::Common
+          def sunny?(a=nil,b=nil); false; end
         end; end
+        @measurement.day?.should be_true
         @measurement.sunny?.should be_false
       end
       
       it "returns false if night time" do
-        module Barometer; class WeatherService
-          def self.day?(a=nil,b=nil); true; end
+        module Barometer; class Measurement::Current < Measurement::Common
+          def day?(a=nil); false; end
         end; end
-        module Barometer; class WeatherService
-          def self.sunny?(a=nil,b=nil); true; end
+        module Barometer; class Measurement::Current < Measurement::Common
+          def sunny?(a=nil,b=nil); true; end
         end; end
-        @measurement.sunny?.should be_true
-        module Barometer; class WeatherService
-          def self.day?(a=nil,b=nil); false; end
-        end; end
+        @measurement.day?.should be_false
         @measurement.sunny?.should be_false
       end
-
+    
     end
     
   end

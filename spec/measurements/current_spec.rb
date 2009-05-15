@@ -5,19 +5,7 @@ describe "Current Measurement" do
   describe "when initialized" do
     
     before(:each) do
-      @current = Data::CurrentMeasurement.new
-    end
-    
-    it "responds to humidity" do
-      @current.humidity.should be_nil
-    end
-    
-    it "responds to icon" do
-      @current.icon.should be_nil
-    end
-    
-    it "responds to condition" do
-      @current.condition.should be_nil
+      @current = Measurement::Current.new
     end
     
     it "responds to temperature" do
@@ -36,20 +24,12 @@ describe "Current Measurement" do
       @current.wind_chill.should be_nil
     end
     
-    it "responds to wind" do
-      @current.wind.should be_nil
-    end
-    
     it "responds to pressure" do
       @current.pressure.should be_nil
     end
     
     it "responds to visibility" do
       @current.pressure.should be_nil
-    end
-    
-    it "responds to sun" do
-      @current.sun.should be_nil
     end
     
     it "responds to current_at" do
@@ -65,42 +45,7 @@ describe "Current Measurement" do
   describe "when writing data" do
     
     before(:each) do
-      @current = Data::CurrentMeasurement.new
-    end
-    
-    it "only accepts Fixnum or Float for humidity" do
-      invalid_data = "invalid"
-      invalid_data.class.should_not == Fixnum
-      invalid_data.class.should_not == Float
-      lambda { @current.humidity = invalid_data }.should raise_error(ArgumentError)
-      
-      valid_data = 1.to_i
-      valid_data.class.should == Fixnum
-      lambda { @current.humidity = valid_data }.should_not raise_error(ArgumentError)
-      
-      valid_data = 1.0.to_f
-      valid_data.class.should == Float
-      lambda { @current.humidity = valid_data }.should_not raise_error(ArgumentError)
-    end
-    
-    it "only accepts String for icon" do
-      invalid_data = 1
-      invalid_data.class.should_not == String
-      lambda { @current.icon = invalid_data }.should raise_error(ArgumentError)
-      
-      valid_data = "valid"
-      valid_data.class.should == String
-      lambda { @current.icon = valid_data }.should_not raise_error(ArgumentError)
-    end
-    
-    it "only accepts String for condition" do
-      invalid_data = 1
-      invalid_data.class.should_not == String
-      lambda { @current.condition = invalid_data }.should raise_error(ArgumentError)
-      
-      valid_data = "valid"
-      valid_data.class.should == String
-      lambda { @current.condition = valid_data }.should_not raise_error(ArgumentError)
+      @current = Measurement::Current.new
     end
     
     it "only accepts Data::Temperature for temperature" do
@@ -143,16 +88,6 @@ describe "Current Measurement" do
       lambda { @current.wind_chill = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Data::Speed for wind" do
-      invalid_data = 1
-      invalid_data.class.should_not == Data::Speed
-      lambda { @current.wind = invalid_data }.should raise_error(ArgumentError)
-      
-      valid_data = Data::Speed.new
-      valid_data.class.should == Data::Speed
-      lambda { @current.wind = valid_data }.should_not raise_error(ArgumentError)
-    end
-    
     it "only accepts Data::Pressure for pressure" do
       invalid_data = 1
       invalid_data.class.should_not == Data::Pressure
@@ -171,16 +106,6 @@ describe "Current Measurement" do
       valid_data = Data::Distance.new
       valid_data.class.should == Data::Distance
       lambda { @current.visibility = valid_data }.should_not raise_error(ArgumentError)
-    end
-    
-    it "only accepts Data::Sun for sun" do
-      invalid_data = 1
-      invalid_data.class.should_not == Data::Sun
-      lambda { @current.sun = invalid_data }.should raise_error(ArgumentError)
-      
-      valid_data = Data::Sun.new
-      valid_data.class.should == Data::Sun
-      lambda { @current.sun = valid_data }.should_not raise_error(ArgumentError)
     end
     
     it "only accepts Data::LocalTime || Data::LocalDateTime current_at" do
@@ -215,35 +140,47 @@ describe "Current Measurement" do
     
   end
   
-  describe "method missing" do
+  describe "answer simple questions, like" do
     
     before(:each) do
-      @current = Data::CurrentMeasurement.new
+      @current = Measurement::Current.new
+      @current.temperature = Data::Temperature.new
+      @current.temperature << 5
+      @dew_point = Data::Temperature.new
+      @dew_point << 10
     end
     
-    it "responds to method + ?" do
-      valid_method = "humidity"
-      @current.respond_to?(valid_method).should be_true
-      lambda { @current.send(valid_method + "?") }.should_not raise_error(NoMethodError)
-    end
-    
-    it "ignores non_method + ?" do
-      invalid_method = "humid"
-      @current.respond_to?(invalid_method).should be_false
-      lambda { @current.send(invalid_method + "?") }.should raise_error(NoMethodError)
-    end
-    
-    it "returns true if set" do
-      @current.humidity = 10
-      @current.humidity.should_not be_nil
-      @current.humidity?.should be_true
-    end
-    
-    it "returns false if not set" do
-      @current.humidity.should be_nil
-      @current.humidity?.should be_false
+    describe "wet?" do
+      
+      describe "wet_by_dewpoint?" do
+        
+        it "returns nil when no dewpoint" do
+          @current.dew_point?.should be_false
+          @current.send("_wet_by_dewpoint?").should be_nil
+          @current.wet?.should be_nil
+          @current.dew_point = @dew_point
+          @current.dew_point?.should be_true
+          @current.send("_wet_by_dewpoint?").should_not be_nil
+          @current.wet?.should_not be_nil
+        end
+
+        it "return true when current dewpoint over temperature" do
+          @current.dew_point = @dew_point
+          @current.send("_wet_by_dewpoint?").should be_true
+          @current.wet?.should be_true
+        end
+
+        it "return false when current dewpoint under temperature" do
+          @current.temperature << 15
+          @current.dew_point = @dew_point
+          @current.send("_wet_by_dewpoint?").should be_false
+          @current.wet?.should be_false
+        end
+
+      end
+      
     end
     
   end
-  
+
 end
