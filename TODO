@@ -1,23 +1,18 @@
 == now
 
-- ??
+- noaa driver
 
 == soon
 
 - style the demo app results
-- more drivers
-- expand icao country_code hash
-- expand weather_id country_code hash
 - refactor: data-zone
+- methods to use service_specific icons/images
 
 == future
 
 - Rdoc compatible documentation
-- add uv info to current
-- add moon info to current
-- add elevation info to current (station and location)
+- add uv, moon, elevation info to current
 - weather.com simple_questions improve answers (use extra data)
-- methods to use service_specific icons/images
 - make sure you can compare LocalTime to LocalDateTime in LocalTime class
 
 - be smart, never make duplicate queries
