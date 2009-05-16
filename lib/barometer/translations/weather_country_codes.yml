@@ -6,279 +6,195 @@
 # http://www.unc.edu/~rowlett/units/codes/country.htm
 #
 
-# AF : AF
-# Aland Islands : AX
-# AL : AL
 AG : DZ
-# American Samoa USAS : AS
 AN : AD
-# AO : AO
 AV : AI
 AY : AQ
 AC : AG
-# AR : AR
-# AM : AM
 AA : AW
-### Ascension Island SH : AC
+### Ascension Island SH : AC (iana code, not iso code)
 AS : AU
 AU : AT
 AJ : AZ
 
 BF : BS
 BA : BH
-# BB : BB
 BG : BD
 BO : BY
-# BE : BE
 BH : BZ
 BN : BJ
 BD : BM
-# BT : BT
 BC : BW
 BL : BO
 BK : BA
-# Bouvet Island : BV
-# BR : BR
-# British Indian Ocean Territory : IO
 BX : BN
 BU : BG
 UV : BF
 BY : BI
+VI : VG
 
-# Cambodia : KH
-# Cameroon : CM
-# Canada : CA
-# Cape Verde : CV
-# Cayman Islands : KY
-# Central African Republic : CF
-# Chad : TD
+CB : KH
+CJ : KY
+CT : CF
+CD : TD
 CI : CL
 CH : CN
-# Christmas Island : CX
-# Cocos (Keeling) Islands : CC
-# Colombia : CO
-# Comoros : KM
-# Congo : CG
-# Congo, Democratic Republic : CD
-# Cook Islands : CK
+KT : CX
+CN : KM
+CF : CG
+CG : CD
+CW : CK
 CS : CR
-# Cote D'Ivoire (Ivory Coast) : CI
-# Croatia (Hrvatska) : HR
-# Cuba : CU
-# Cyprus : CY
-# Czech Republic : CZ
-# Czechoslovakia (former) : CS
+IV : CI
+EZ : CZ
 
-# Denmark : DK
-# Djibouti : DJ
-# Dominica : DM
-# Dominican Republic : DO
+DA : DK
+DJ : DJ
+DO : DM
+DR : DO
 
-# East Timor : TL
-# Ecuador : EC
-# Egypt : EG
-# El Salvador : SV
-# Equatorial Guinea : GQ
-# Eritrea : ER
-# Estonia : EE
-# Ethiopia : ET
+ES : SV
+EK : GQ
+EN : EE
 
-# Falkland Islands (Malvinas) : FK
-# Faroe Islands : FO
-# Fiji : FJ
-# Finland : FI
-# France : FR
-# France, Metropolitan : FX
-# French Guiana : GF
-# French Polynesia : PF
-# French Southern Territories : TF
-# F.Y.R.O.M. (Macedonia) : MK
+FP : PF
 
-# Gabon : GA
-# Gambia : GM
-# Georgia : GE
+GB : GA
+GA : GM
+GG : GE
 GM : DE
-# Ghana : GH
-# Gibraltar : GI
-# Great Britain (UK) : GB
-# Greece : GR
-# Greenland : GL
-# Grenada : GD
-# Guadeloupe : GP
-# Guam : GU
-# Guatemala : GT
-# Guinea : GN
-# Guinea:Bissau : GW
-# Guyana : GY
+GJ : GD
+GV : GN
+PU : GW
 
-# Haiti : HT
-# Heard and McDonald Islands : HM
+HA : HT
 HO : HN
-# Hong Kong : HK
-# Hungary : HU
 
-# Iceland : IS
-# India : IN
-# Indonesia : ID
-# Iran : IR
-# Iraq : IQ
+IC : IS
+IZ : IQ
 EI : IE
 IS : IL
-# Isle of Man : IM
-# Italy : IT
 
-# Jersey : JE
-# Jamaica : JM
 JA : JP
-# Jordan : JO
 
-# Kazakhstan : KZ
-# Kenya : KE
-# Kiribati : KI
-# Korea (North) : KP
-# Korea (South) : KR
-# Kuwait : KW
-# Kyrgyzstan : KG
+KR : KI
+KN : KP
+KS : KR
+KU : KW
 
-# Laos : LA
-# Latvia : LV
-# Lebanon : LB
-# Liechtenstein : LI
-# Liberia : LR
-# Libya : LY
-# Lesotho : LS
-# Lithuania : LT
-# Luxembourg : LU
+LG : LV
+LE : LB
+LS : LI
+LI : LR
+LT : LS
+LH : LT
 
+MA : MG
+MI : MW
+MB : MQ
+MP : MU
+MF : YT
+MN : MC
+# Montenegro (YI) : ME
+MO : MA
+BM : MM
+MG : MN
+
+WA : NA
+NT : AN
+NU: NI
+NG : NE
+NI : NG
+
+WE : PS
+PM : PA
+PP : PG
+PA : PY
+RP : PH
+PO : PT
+
+RS : RU
+
+SX : GS
+SC : KN
+ST : LC
+TP : ST
+SG : SN
+# Serbia (YI) : RS
+SE : SC
+SN : SG
+LO : SK
+BP : SB
+SF : ZA
+SP : ES
+CE: LK
+SU : SD
+NS : SR
+WZ : SZ
+SW : SE
+SZ : CH
+
+TI : TJ
+TO : TG
+TN : TO
+TD : TT
+TS : TN
+TU : TR
+TX : TM
+TK : TC
+
+UP : UA
+UK : GB
+
+NH : VU
+VM: VN
+
+WI : EH
+
+YM : YE
+
+ZA : ZM
+ZI : ZW
+
+# Aland Islands : AX
+# Bouvet Island : BV
+# British Indian Ocean Territory : IO
+# Cocos (Keeling) Islands : CC
+# East Timor : TL
+# Faroe Islands : FO
+# France, Metropolitan : FX
+# French Southern Territories : TF
+# Great Britain (UK) : GB
+# Heard and McDonald Islands : HM
+# Hong Kong : HK
+# Jersey : JE
 # Macau : MO
-# Madagascar : MG
-# Malawi : MW
-# Malaysia : MY
-# Maldives : MV
-# Mali : ML
-# Malta : MT
-# Marshall Islands : MH
-# Martinique : MQ
-# Mauritania : MR
-# Mauritius : MU
-# Mayotte : YT
-# Mexico : MX
-# Micronesia : FM
-# Moldova : MD
-# Monaco : MC
-# Montenegro : ME
 # Montserrat : MS
-# Morocco : MA
-# Mozambique : MZ
-# Myanmar : MM
-
-# Namibia : NA
-# Nauru : NR
-# Nepal : NP
-# Netherlands : NL
-# Netherlands Antilles : AN
 # Neutral Zone : NT
-# New Caledonia : NC
-# New Zealand (Aotearoa) : NZ
-# Nicaragua : NI
-# Niger : NE
-# Nigeria : NG
 # Niue : NU
 # Norfolk Island : NF
-# Northern Mariana Islands : MP
-# Norway : NO
-
 # Oman : OM
-
-# Pakistan : PK
-# Palau : PW
-# Palestinian Territory, Occupied : PS
-# Panama : PA
-# Papua New Guinea : PG
-# Paraguay : PY
-# Peru : PE
-# Philippines : PH
 # Pitcairn : PN
-# Poland : PL
-PO : PT
-# Puerto Rico : PR
-
-# Qatar : QA
-
-# Reunion : RE
-# Romania : RO
-# Russian Federation : RU
-# Rwanda : RW
-
-# S. Georgia and S. Sandwich Isls. : GS
-# Saint Kitts and Nevis : KN
-# Saint Lucia : LC
 # Saint Vincent & the Grenadines : VC
 # Samoa : WS
-# San Marino : SM
-# Sao Tome and Principe : ST
-# Saudi Arabia : SA
-# Senegal : SN
-# Serbia : RS
-# Seychelles : SC
-# Sierra Leone : SL
-SN : SG
-# Slovenia : SI
-# Slovak Republic : SK
-# Solomon Islands : SB
-# Somalia : SO
-# South Africa : ZA
-# S. Georgia and S. Sandwich Isls. : GS
-SP : ES
-# Sri Lanka : LK
 # St. Helena : SH
 # St. Pierre and Miquelon : PM
-# Sudan : SD
-# Suriname : SR
 # Svalbard & Jan Mayen Islands : SJ
-# Swaziland : SZ
-# Sweden : SE
-# Switzerland : CH
-# Syria : SY
-
-# Taiwan : TW
-# Tajikistan : TJ
-# Tanzania : TZ
-# Thailand : TH
-# Togo : TG
 # Tokelau : TK
-# Tonga : TO
-# Trinidad and Tobago : TT
-# Tunisia : TN
-# Turkey : TR
-# Turkmenistan : TM
-# Turks and Caicos Islands : TC
-# Tuvalu : TV
-
-# Uganda : UG
-# Ukraine : UA
-# United Arab Emirates : AE
-# United Kingdom : GB (or UK?)
-# United States : US
 # US Minor Outlying Islands : UM
-# Uruguay : UY
 # USSR (former) : SU
-# Uzbekistan : UZ
-
-# Vanuatu : VU
 # Vatican City State (Holy See) : VA
-# Venezuela : VE
-# Viet Nam : VN
-# British Virgin Islands : VG
-# Virgin Islands (U.S.) : VI
-
 # Wallis and Futuna Islands : WF
-# Western Sahara : EH
-
-# Yemen : YE
 # Yugoslavia (former) : YU
-
-# Zambia : ZM
 # (ZR : Zaire) : See CD Congo, Democratic Republic
-# Zimbabwe : ZW
 
+# four letter codes
+### USWQ : ??? Wake Island
+### Virgin Islands (U.S.) USVI : VI
+### Puerto Rico USPR : PR
+### Northern Mariana Islands USMP : MP
+### Micronesia USFM : FM
+### Marshall Islands USMH : MH
+### American Samoa USAS : AS
+### Palau USPW : PW
+### Guam USGU : GU
