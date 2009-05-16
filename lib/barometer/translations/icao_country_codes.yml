@@ -1,9 +1,282 @@
 # first term - icao code
 # second term - standard country_code
 #
+# http://en.wikipedia.org/wiki/International_Civil_Aviation_Organization_airport_code
+# http://www.theodora.com/country_digraphs.html
+# http://www.unc.edu/~rowlett/units/codes/country.htm
+#
 one_letter:
     C : CA
     K : US
+    U : RU
+    Y : AU
+    Z : CN
     
 two_letter:
+    # A - Western South Pacific
+    AG : SB
+    AN : NR
+    AY : PG
+    
+    # B - Iceland/Greenland and Kosovo
+    BG : GL
+    BI : IS
+    #BK : Kosovo (also LY Serbia (RS) because of disputes)
+    
+    # D - West Africa
+    # DA : Algeria
+    # DB : Benin
+    # DF : Burkina Faso
+    # DG : Ghana
+    # DI : Côte d'Ivoire
+    # DN : Nigeria
+    # DR : Niger
+    # DT : Tunisia
+    # DX : Togolese Republic
+    
+    # E - Northern Europe
+    EB : BE
+    ED : DE
+    EE : EE
+    EF : FI
+    EG : GB # or is this UK?
+    EH : NL
+    EI : IE
+    EK : DK
+    EL : LU
+    EN : NO
+    EP : PL
+    ES : SE
     ET : DE
+    EV : LV
+    EY : LT
+    
+    # F - Southern Africa
+    # FA : South Africa
+    # FB : Botswana
+    # FC : Republic of the Congo
+    # FD : Swaziland
+    # FE : Central African Republic
+    # FG : Equatorial Guinea
+    # FH : Ascension Island
+    # FI : Mauritius
+    # FJ : British Indian Ocean Territory
+    # FK : Cameroon
+    # FL : Zambia
+    # FM : Comoros, Madagascar, Mayotte, Réunion
+    # FN : Angola
+    # FO : Gabon
+    # FP : São Tomé and Príncipe
+    # FQ : Mozambique
+    # FS : Seychelles
+    # FT : Chad
+    # FV : Zimbabwe
+    # FW : Malawi
+    # FX : Lesotho
+    # FY : Namibia
+    # FZ : Democratic Republic of the Congo
+    
+    # G - Northwestern Africa
+    # GA : Mali
+    # GB : The Gambia
+    # GC : Canary Islands (Spain)
+    # GE : Ceuta and Melilla (Spain)
+    # GF : Sierra Leone
+    # GG : Guinea-Bissau
+    # GL : Liberia
+    # GM : Morocco
+    # GO : Senegal
+    # GQ : Mauritania
+    # GS : Western Sahara
+    # GU : Guinea
+    # GV : Cape Verde
+    
+    # H - Northeastern Africa
+    # HA : Ethiopia
+    # HB : Burundi
+    # HC : Somalia
+    # HD : Djibouti (also HF)
+    # HE : Egypt
+    # HF : Djibouti (also HD)
+    # HH : Eritrea
+    # HK : Kenya
+    # HL : Libya
+    # HR : Rwanda
+    # HS : Sudan
+    # HT : Tanzania
+    # HU : Uganda
+    
+    # L - Southern Europe,Israel and Turkey
+    LA : AL
+    LB : BG
+    LC : CY
+    LD : HR
+    LE : ES
+    LF : FR
+    LG : GR
+    LH : HU
+    LI : IT
+    LJ : SI
+    LK : CZ
+    LL : IL
+    LM : MT
+    LN : MC
+    LO : AT
+    LP : PT
+    LQ : BA
+    LR : RO
+    LS : CH
+    LT : TR
+    LU : MD
+    LV : PS
+    LW : MK
+    LX : GI
+    #LY : Serbia (RS) and Montenegro (ME)
+    LZ : SK
+    
+    # M - Central America and Mexico
+    # MB : Turks and Caicos Islands
+    # MD : Dominican Republic
+    # MG : Guatemala
+    # MH : Honduras
+    # MK : Jamaica
+    # MM : Mexico
+    # MN : Nicaragua
+    # MP : Panama
+    # MR : Costa Rica
+    # MS : El Salvador
+    # MT : Haiti
+    # MU : Cuba
+    # MW : Cayman Islands
+    # MY : Bahamas
+    # MZ : Belize
+    
+    # N - South Pacific
+    # NC : Cook Islands
+    # NF : Fiji, Tonga
+    # NG : Kiribati (Gilbert Islands), Tuvalu
+    # NI : Niue
+    # NL : Wallis and Futuna
+    # NS : Samoa, American Samoa
+    # NT : French Polynesia
+    # NV : Vanuatu
+    # NW : New Caledonia
+    # NZ : New Zealand, Antarctica
+    
+    # O - Southwest Asia (excluding Israel and Turkey), Afghanistan and Pakistan
+    # OA : Afghanistan
+    # OB : Bahrain
+    # OE : Saudi Arabia
+    # OI : Iran
+    # OJ : Jordan and the West Bank
+    # OK : Kuwait
+    # OL : Lebanon
+    # OM : United Arab Emirates
+    # OO : Oman
+    # OP : Pakistan
+    # OR : Iraq
+    # OS : Syria
+    # OT : Qatar
+    # OY : Yemen
+    
+    # P - Eastern North Pacific
+    # PA : Alaska only
+    # PB : Baker Island
+    # PC : Kiribati (Canton Airfield, Phoenix Islands)
+    # PF : Fort Yukon, Alaska
+    # PG : Guam, Northern Marianas
+    # PH : Hawaiʻi only
+    # PJ : Johnston Atoll
+    # PK : Marshall Islands
+    # PL : Kiribati (Line Islands)
+    # PM : Midway Island
+    # PO : Oliktok Point, Alaska
+    # PP : Point Lay, Alaska
+    # PT : Federated States of Micronesia, Palau
+    # PW : Wake Island
+    
+    # R - Western North Pacific
+    RC : TW
+    RJ : JP
+    RK : KR
+    RO : JP
+    RP : PH
+    
+    # S - South America
+    # SA : Argentina
+    # SB : Brazil (also SD, SN, SS and SW)
+    # SC : Chile
+    # SD : Brazil (also SB, SN, SS and SW)
+    # SE : Ecuador
+    # SF : Falkland Islands
+    # SG : Paraguay
+    # SK : Colombia
+    # SL : Bolivia
+    # SM : Suriname
+    # SN : Brazil (also SB, SD, SS and SW)
+    # SO : French Guiana
+    # SP : Peru
+    # SS : Brazil (also SB, SD, SN and SW)
+    # SU : Uruguay
+    # SV : Venezuela
+    # SW : Brazil (also SB, SD, SN and SS)
+    # SY : Guyana
+    
+    # T - Caribbean
+    # TA : Antigua and Barbuda
+    # TB : Barbados
+    # TD : Dominica
+    # TF : Guadeloupe
+    # TG : Grenada
+    # TI : U.S. Virgin Islands
+    # TJ : Puerto Rico
+    # TK : Saint Kitts and Nevis
+    # TL : Saint Lucia
+    # TN : Netherlands Antilles, Aruba
+    # TQ : Anguilla
+    # TR : Montserrat
+    # TT : Trinidad and Tobago
+    # TU : British Virgin Islands
+    # TV : Saint Vincent and the Grenadines
+    # TX : Bermuda
+    
+    # U - Russia and former Soviet States
+    UA : KZ
+    UB : AZ
+    UD : AM
+    UG : GE
+    UK : UA
+    UM : BY
+    #UT    Tajikistan (TJ), Turkmenistan (TM), Uzbekistan (UZ)
+    
+    # V - South Asia (except Afghanistan and Pakistan) and mainland Southeast Asia
+    # VA : India (West Zone, Mumbai Center)
+    # VC : Sri Lanka
+    # VD : Cambodia
+    # VE : India (East Zone, Kolkata Center)
+    # VG : Bangladesh
+    # VH : Hong Kong, China
+    # VI : India (North Zone, Delhi Center)
+    # VL : Laos
+    # VM : Macau, China
+    # VN : Nepal
+    # VO : India (South Zone, Chennai Center)
+    # VQ : Bhutan
+    # VR : Maldives
+    # VT : Thailand
+    # VV : Vietnam
+    # VY : Myanmar
+    
+    # W - Maritime Southeast Asia (except the Philippines)
+    # WA : Indonesia (also WI, WQ and WR)
+    # WB : Malaysia (also WM), Brunei
+    # WI : Indonesia (also WA, WQ and WR)
+    # WM : Malaysia (also WB)
+    WP : TL
+    # WQ : Indonesia (also WA, WI and WR)
+    # WR : Indonesia (also WA, WI and WQ)
+    # WS : Singapore
+    
+    # Z - China, Mongolia and North Korea
+    ZK : KP
+    ZM : MN

@@ -1,17 +1,284 @@
-# first term - weather.com non-standard country_code
-# second term - standard country_code
+# first term : weather.com non:standard country_code
+# second term : standard country_code
 #
+# http://ca.weather.yahoo.com/regional/INTL1.html?More%20World%20Cities
+# http://www.theodora.com/country_digraphs.html
+# http://www.unc.edu/~rowlett/units/codes/country.htm
+#
+
+# AF : AF
+# Aland Islands : AX
+# AL : AL
+AG : DZ
+# American Samoa USAS : AS
+AN : AD
+# AO : AO
+AV : AI
+AY : AQ
+AC : AG
+# AR : AR
+# AM : AM
+AA : AW
+### Ascension Island SH : AC
 AS : AU
+AU : AT
+AJ : AZ
+
 BF : BS
-CS : CR
-CH : CN
+BA : BH
+# BB : BB
+BG : BD
+BO : BY
+# BE : BE
+BH : BZ
+BN : BJ
+BD : BM
+# BT : BT
+BC : BW
+BL : BO
+BK : BA
+# Bouvet Island : BV
+# BR : BR
+# British Indian Ocean Territory : IO
+BX : BN
+BU : BG
+UV : BF
+BY : BI
+
+# Cambodia : KH
+# Cameroon : CM
+# Canada : CA
+# Cape Verde : CV
+# Cayman Islands : KY
+# Central African Republic : CF
+# Chad : TD
 CI : CL
-EI : IE
+CH : CN
+# Christmas Island : CX
+# Cocos (Keeling) Islands : CC
+# Colombia : CO
+# Comoros : KM
+# Congo : CG
+# Congo, Democratic Republic : CD
+# Cook Islands : CK
+CS : CR
+# Cote D'Ivoire (Ivory Coast) : CI
+# Croatia (Hrvatska) : HR
+# Cuba : CU
+# Cyprus : CY
+# Czech Republic : CZ
+# Czechoslovakia (former) : CS
+
+# Denmark : DK
+# Djibouti : DJ
+# Dominica : DM
+# Dominican Republic : DO
+
+# East Timor : TL
+# Ecuador : EC
+# Egypt : EG
+# El Salvador : SV
+# Equatorial Guinea : GQ
+# Eritrea : ER
+# Estonia : EE
+# Ethiopia : ET
+
+# Falkland Islands (Malvinas) : FK
+# Faroe Islands : FO
+# Fiji : FJ
+# Finland : FI
+# France : FR
+# France, Metropolitan : FX
+# French Guiana : GF
+# French Polynesia : PF
+# French Southern Territories : TF
+# F.Y.R.O.M. (Macedonia) : MK
+
+# Gabon : GA
+# Gambia : GM
+# Georgia : GE
 GM : DE
+# Ghana : GH
+# Gibraltar : GI
+# Great Britain (UK) : GB
+# Greece : GR
+# Greenland : GL
+# Grenada : GD
+# Guadeloupe : GP
+# Guam : GU
+# Guatemala : GT
+# Guinea : GN
+# Guinea:Bissau : GW
+# Guyana : GY
+
+# Haiti : HT
+# Heard and McDonald Islands : HM
 HO : HN
+# Hong Kong : HK
+# Hungary : HU
+
+# Iceland : IS
+# India : IN
+# Indonesia : ID
+# Iran : IR
+# Iraq : IQ
+EI : IE
 IS : IL
+# Isle of Man : IM
+# Italy : IT
+
+# Jersey : JE
+# Jamaica : JM
 JA : JP
+# Jordan : JO
+
+# Kazakhstan : KZ
+# Kenya : KE
+# Kiribati : KI
+# Korea (North) : KP
+# Korea (South) : KR
+# Kuwait : KW
+# Kyrgyzstan : KG
+
+# Laos : LA
+# Latvia : LV
+# Lebanon : LB
+# Liechtenstein : LI
+# Liberia : LR
+# Libya : LY
+# Lesotho : LS
+# Lithuania : LT
+# Luxembourg : LU
+
+# Macau : MO
+# Madagascar : MG
+# Malawi : MW
+# Malaysia : MY
+# Maldives : MV
+# Mali : ML
+# Malta : MT
+# Marshall Islands : MH
+# Martinique : MQ
+# Mauritania : MR
+# Mauritius : MU
+# Mayotte : YT
+# Mexico : MX
+# Micronesia : FM
+# Moldova : MD
+# Monaco : MC
+# Montenegro : ME
+# Montserrat : MS
+# Morocco : MA
+# Mozambique : MZ
+# Myanmar : MM
+
+# Namibia : NA
+# Nauru : NR
+# Nepal : NP
+# Netherlands : NL
+# Netherlands Antilles : AN
+# Neutral Zone : NT
+# New Caledonia : NC
+# New Zealand (Aotearoa) : NZ
+# Nicaragua : NI
+# Niger : NE
+# Nigeria : NG
+# Niue : NU
+# Norfolk Island : NF
+# Northern Mariana Islands : MP
+# Norway : NO
+
+# Oman : OM
+
+# Pakistan : PK
+# Palau : PW
+# Palestinian Territory, Occupied : PS
+# Panama : PA
+# Papua New Guinea : PG
+# Paraguay : PY
+# Peru : PE
+# Philippines : PH
+# Pitcairn : PN
+# Poland : PL
 PO : PT
-SP : ES
+# Puerto Rico : PR
+
+# Qatar : QA
+
+# Reunion : RE
+# Romania : RO
+# Russian Federation : RU
+# Rwanda : RW
+
+# S. Georgia and S. Sandwich Isls. : GS
+# Saint Kitts and Nevis : KN
+# Saint Lucia : LC
+# Saint Vincent & the Grenadines : VC
+# Samoa : WS
+# San Marino : SM
+# Sao Tome and Principe : ST
+# Saudi Arabia : SA
+# Senegal : SN
+# Serbia : RS
+# Seychelles : SC
+# Sierra Leone : SL
 SN : SG
+# Slovenia : SI
+# Slovak Republic : SK
+# Solomon Islands : SB
+# Somalia : SO
+# South Africa : ZA
+# S. Georgia and S. Sandwich Isls. : GS
+SP : ES
+# Sri Lanka : LK
+# St. Helena : SH
+# St. Pierre and Miquelon : PM
+# Sudan : SD
+# Suriname : SR
+# Svalbard & Jan Mayen Islands : SJ
+# Swaziland : SZ
+# Sweden : SE
+# Switzerland : CH
+# Syria : SY
+
+# Taiwan : TW
+# Tajikistan : TJ
+# Tanzania : TZ
+# Thailand : TH
+# Togo : TG
+# Tokelau : TK
+# Tonga : TO
+# Trinidad and Tobago : TT
+# Tunisia : TN
+# Turkey : TR
+# Turkmenistan : TM
+# Turks and Caicos Islands : TC
+# Tuvalu : TV
+
+# Uganda : UG
+# Ukraine : UA
+# United Arab Emirates : AE
+# United Kingdom : GB (or UK?)
+# United States : US
+# US Minor Outlying Islands : UM
+# Uruguay : UY
+# USSR (former) : SU
+# Uzbekistan : UZ
+
+# Vanuatu : VU
+# Vatican City State (Holy See) : VA
+# Venezuela : VE
+# Viet Nam : VN
+# British Virgin Islands : VG
+# Virgin Islands (U.S.) : VI
+
+# Wallis and Futuna Islands : WF
+# Western Sahara : EH
+
+# Yemen : YE
+# Yugoslavia (former) : YU
+
+# Zambia : ZM
+# (ZR : Zaire) : See CD Congo, Democratic Republic
+# Zimbabwe : ZW
 
