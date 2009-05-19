@@ -1,11 +1,10 @@
 /*
-	Copyright: Blake Mizerany, www.sinatrarb.com
-	Permission Pending
+	Inspired By: Blake Mizerany, www.sinatrarb.com
 */
 
 body {
   color:#000;
-  font-family:'lucida grande', 'lucida sans unicade', sans-serif;
+  font-family:"Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Helvetica, Arial, sans-serif;
   font-size:100%;
   line-height:1.3;
   background-color:#fff;
@@ -17,21 +16,14 @@ body {
 #head {
   text-align:center;
 }
-#head img {
-  vertical-align:middle;
-  margin:-10px 0 0 -82px;
-  padding:0 15px 0 0;
-  border:0;
-}
 #head h1 {
   color:#000;
-  font-family:'georgia', 'bitstream vera serif', serif;
   font-size:4em;
   font-weight:normal;
   letter-spacing:-3px;
   line-height:1;
   margin:0;
-  padding:20px 0 8px 0;
+  padding:20px 0 15px 0;
 }
 #head h1 a, #head h1 a:link, #head h1 a:visited, #head h1 a:hover {
   color:#100;
@@ -39,8 +31,6 @@ body {
 }
 #head ul {
   font-size:1.1em;
-  font-family:"lucida console", "monaco", "andale mono", "bitstream vera sans mono",
-    "consolas", monospace;
   font-weight:normal;
   text-transform:uppercase;
   letter-spacing:2px;
@@ -68,7 +58,7 @@ body {
   color:#333;
   font-size:1.1em;
   max-width:44em;
-  min-width:27em;
+  min-width:30em;
   margin:7px auto;
   border-top:2px solid #837d7c;
 }
@@ -83,7 +73,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 h1, h2 {
   color:#211d1f;
-  font-family:'georgia', 'bitstream vera serif', serif;
   font-weight:normal;
 }
 h1 a, h2 a { color:#222 }
@@ -163,9 +152,6 @@ hr {
 
 /* HOME */
 
-body#home {
-  background: #fff url(../images/legend.gif) no-repeat fixed right 130px;
-}
 #home #content {
   font-size:1.05em;
   margin:20px 0 0 0;
@@ -175,62 +161,6 @@ body#home {
 #home #head, #home #foot {
   display:none;
 }
-.pipe {
-  clear:both;
-  padding:50px 0;
-}
-.pipe p {
-  color:#000;
-  font-size:62px;
-  font-family:'georgia', 'bitstream vera serif', serif;
-  letter-spacing:-3px;
-  line-height:1;
-  text-align:right;
-  margin:0em 43% 0 0;
-  padding:0 60px 0 0;
-}
-.pipe pre {
-  float:right;
-  background:transparent;
-  font-size:28px;
-  margin:0;
-  padding:5px 0 0 0;
-  width:42%;
-  border-width:0;
-}
-.pipe pre code {
-  color:#666;
-  background:transparent;
-}
-.pipe.shell p {
-  font-size:56px;
-}
-.pipe.shell pre {
-  font-size:18px;
-}
-.pipe.nav p {
-  font-size:100px;
-  letter-spacing:-6px;
-}
-.pipe.nav pre {
-  font-size:36px;
-  padding-top:20px;
-  text-transform:uppercase;
-  letter-spacing:4px;
-  line-height:1.25;
-}
-.pipe.nav {
-  padding:25px 0 50px 0;
-}
-.pipe.nav a, .pipe.nav a:link, .pipe.nav a:visited {
-  color:#444;
-  text-decoration:none;
-}
-.pipe.nav a:hover {
-  color:#000;
-  text-decoration:underline;
-}
-
 form {
 	text-align: center;
 }
@@ -253,7 +183,6 @@ form .submit-input input {
 form .options-input {
 	position: relative;
 	margin: 0 7% 0 0;
-	float: left;
 	text-align: left;
 }
 

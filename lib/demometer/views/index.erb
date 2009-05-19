@@ -14,21 +14,20 @@
       <input id="query_metric" name="query[metric]" type="checkbox" value="1" checked="checked" />
     <br/>
     Source :
-      <input type="checkbox" name="query[source]" value="wunderground" checked="checked" /> Wunderground
-      <input type="checkbox" name="query[source]" value="yahoo" /> Yahoo
-      <input type="checkbox" name="query[source]" value="google" /> Google
-      <input type="checkbox" name="query[source]" value="weather_dot_com" /> Weather.com
-      <input type="checkbox" name="query[source]" value="weather_bug" /> Weather Bug
-    <br/>
+    <ul>
+      <li><input type="checkbox" name="query[source]" value="wunderground" checked="checked" /> Wunderground</li>
+      <li><input type="checkbox" name="query[source]" value="yahoo" /> Yahoo</li>
+      <li><input type="checkbox" name="query[source]" value="google" /> Google</li>
+      <li><input type="checkbox" name="query[source]" value="weather_dot_com" /> Weather.com</li>
+      <li><input type="checkbox" name="query[source]" value="weather_bug" /> Weather Bug</li>
+    </ul>
     Force Geocode? :
       <input id="query_geocode" name="query[geocode]" type="checkbox" value="1" checked="checked" />
   </div>
 </form>
 
-<p>&nbsp;</p>
-<br/>
-
 <% if params[:query] && !params[:query][:q].empty? %>
+<hr/>
 <h2>query: "<%= params[:query][:q] %>"</h2>
 <% end %>
 

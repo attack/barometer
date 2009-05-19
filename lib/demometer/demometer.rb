@@ -12,7 +12,7 @@ else
   exit
 end
 
-class Demometer < Sinatra::Default
+#class Demometer < Sinatra::Default
 
   def config_weather_dot_com
     if File.exists?(@@config_file)
@@ -101,4 +101,4 @@ class Demometer < Sinatra::Default
     erb :about
   end
 
-end
+#end

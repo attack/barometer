@@ -1,6 +1,6 @@
 == now
 
-- noaa driver
+- ???
 
 == soon
 
@@ -14,6 +14,7 @@
 - add uv, moon, elevation info to current
 - weather.com simple_questions improve answers (use extra data)
 - make sure you can compare LocalTime to LocalDateTime in LocalTime class
+- hamweather driver
 
 - be smart, never make duplicate queries
   - ie. if you are including wunderground, do it first and use the timezone info
