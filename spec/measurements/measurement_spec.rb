@@ -109,13 +109,13 @@ describe "Measurement" do
       lambda { @measurement.current = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Data::ForecastArray for forecast" do
+    it "only accepts Data::ResultArray for forecast" do
       invalid_data = 1
-      invalid_data.class.should_not == Measurement::ForecastArray
+      invalid_data.class.should_not == Measurement::ResultArray
       lambda { @measurement.forecast = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Measurement::ForecastArray.new
-      valid_data.class.should == Measurement::ForecastArray
+      valid_data = Measurement::ResultArray.new
+      valid_data.class.should == Measurement::ResultArray
       lambda { @measurement.forecast = valid_data }.should_not raise_error(ArgumentError)
     end
     
@@ -288,9 +288,9 @@ describe "Measurement" do
     before(:each) do
       @measurement = Barometer::Measurement.new
       
-      # create a measurement object with a forecast array that includes
+      # create a measurement object with a result array that includes
       # dates for 4 consecutive days starting with tommorrow
-      @measurement.forecast = Measurement::ForecastArray.new
+      @measurement.forecast = Measurement::ResultArray.new
       1.upto(4) do |i|
         forecast_measurement = Measurement::Forecast.new
         forecast_measurement.date = Date.parse((Time.now + (i * 60 * 60 * 24)).to_s)
@@ -302,7 +302,7 @@ describe "Measurement" do
     end
     
     it "returns nil when there are no forecasts" do
-      @measurement.forecast = Measurement::ForecastArray.new
+      @measurement.forecast = Measurement::ResultArray.new
       @measurement.forecast.size.should == 0
       @measurement.for.should be_nil
     end

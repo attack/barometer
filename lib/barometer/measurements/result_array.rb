@@ -1,10 +1,10 @@
 require 'date'
 module Barometer
   #
-  # Forecast Array
-  # an array that holds multiple forecasts
+  # Result Array
+  # an array that holds multiple results
   #
-  class Measurement::ForecastArray < Array
+  class Measurement::ResultArray < Array
     
     def <<(forecast)
       raise ArgumentError unless forecast.is_a?(Measurement::Forecast)
@@ -17,31 +17,32 @@ module Barometer
     
     #
     # Returns a forecast for a day given by a Date, DateTime,
-    # Time, or a string that can be parsed to a date
+    # Time, or a string that can be parsed to a Data::LocalDateTime
     #
     # credit: http://github.com/jdpace/weatherman/
     #
-    def for(date)
+    def for(datetime)
     
       return nil unless self.size > 0
       
       # Format date into a Date class
-      date = case date.class.name
+      datetime = case datetime.class.name
       when 'Date'
-        date
+        # if just given a date, assume a time that will be mid-day
+        Data::LocalDateTime.new(datetime.year,datetime.month,datetime.day,12,0,0)
       when 'Data::LocalDateTime'
-        date.to_d
+        datetime
       when 'String'
-        Date.parse(date)
+        Data::LocalDateTime.parse(datetime)
       when 'Time'
-        Date.new(date.year, date.month, date.day)
+        Data::LocalDateTime.parse(datetime)
       when 'DateTime'
-        Date.new(date.year, date.month, date.day)
+        Data::LocalDateTime.parse(datetime)
       end
       
       day = nil
       self.each do |f|
-        day = f if date == f.date
+        day = f if f.for_datetime?(datetime)
       end
       return day
     end

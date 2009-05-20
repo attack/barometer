@@ -101,8 +101,8 @@ module Barometer
       end
       raise ArgumentError unless the_other.is_a?(Data::LocalDateTime) || the_other.is_a?(Data::LocalTime)
       
-      if (other.is_a?(String) || other.is_a?(Time) || other.is_a?(DateTime)) &&
-        the_other.is_a?(Data::LocalDateTime)
+      if ((other.is_a?(String) || other.is_a?(Time) || other.is_a?(DateTime)) &&
+        the_other.is_a?(Data::LocalDateTime)) || other.is_a?(Data::LocalDateTime)
         # we are counting days + seconds
         if (_total_days <=> the_other._total_days) == 0
           return total_seconds <=> the_other.total_seconds

@@ -3,6 +3,7 @@ module Barometer
   # = Weather.com
   # www.weather.com
   #
+  # - usage restrictions: YES ... many !!!
   # - key required: YES (partnerid & licensekey)
   # - registration required: YES
   # - supported countries: US (by zipcode), International (by Weather Location ID)
@@ -27,16 +28,32 @@ module Barometer
   # - Weather Location ID (International)
   #
   # = Weather.com terms of use
-  # ???
+  # There are many conditions when using weather.com. Please read the EULA you
+  # received when you registered for your API keys.  In a nutshell (but not limited
+  # to), do the following:
+  # - display the weather.com links (all 5)
+  # - respect the data refresh rates
+  # - do not alter/delete content
+  # - display when weather was last updated
+  # - do not display data in combination with other 3rd party data (except NOAA or GOV)
+  # - do not reproduce, rent, lease, lend, distribute or re-market data
+  # - do not resell
+  # - do not use in combination with a service that charges a fee
+  # - do not use in a mobile application
+  # - use the images properly
+  # - do not display weather for more then 3 locations at a time
+  # - do not allow the data to be scraped (via robots, spiders, web crawlers, etc)
+  # - do not use the latitude and longitude information
   #
   # == notes
-  # - the Weather Location ID is a propreitary number (possibly shared with yahoo.com)
+  # - the Weather Location ID is a propreitary number (shared with yahoo.com)
   #
   # == TODO
   # - improve "forecasted_wet_by_icon?" to determine if day or night and use right code
   # - improve "forecasted_sunny_by_icon?" to determine if day or night and use right code
   # - improve "forcasted_wet_by_humidity?" to use forecasted values
   # - improve "forcasted_windy?" to use forecasted values
+  # - collect moon and uv information
   #
   class WeatherService::WeatherDotCom < WeatherService
     
@@ -132,60 +149,76 @@ module Barometer
     
     def self._build_forecast(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
-      forecasts = Measurement::ForecastArray.new
+      forecasts = Measurement::ResultArray.new
     
       if data && data['dayf'] && data['dayf']['day']
         local_date = data['dayf']['lsup']
         data['dayf']['day'].each do |forecast|
-          forecast_measurement = Measurement::Forecast.new
-          forecast_measurement.date = Date.parse(forecast['dt'])
+          day_measurement = Measurement::Forecast.new
+          night_measurement = Measurement::Forecast.new
           
-          forecast_measurement.high = Data::Temperature.new(metric)
-          forecast_measurement.high << forecast['hi']
-          forecast_measurement.low = Data::Temperature.new(metric)
-          forecast_measurement.low << forecast['low']
+          # as stated by weather.com "day = 7am-7pm"
+          # and "night = 7pm-7am"
+          date = Date.parse(forecast['dt'])
+          date_string = date.strftime("%b %d")
+          day_measurement.valid_start_date = Data::LocalDateTime.new(date.year,date.month,date.day,7,0,0)
+          day_measurement.valid_end_date = Data::LocalDateTime.new(date.year,date.month,date.day,18,59,59)
+          night_measurement.valid_start_date = Data::LocalDateTime.new(date.year,date.month,date.day,19,0,0)
+          night_measurement.valid_end_date = Data::LocalDateTime.new(date.year,date.month,date.day+1,6,59,59)
+          
+          high = Data::Temperature.new(metric)
+          high << forecast['hi']
+          low = Data::Temperature.new(metric)
+          low << forecast['low']
+          day_measurement.high = high
+          day_measurement.low = low
+          night_measurement.high = high
+          night_measurement.low = low
           
           # build sun
           rise_local_time = Data::LocalTime.parse(forecast['sunr'])
           set_local_time = Data::LocalTime.parse(forecast['suns'])
           sun = Data::Sun.new(rise_local_time, set_local_time)
-          forecast_measurement.sun = sun
+          day_measurement.sun = sun
+          night_measurement.sun = sun
           
           if forecast['part']
             forecast['part'].each do |part|
               if part['p'] == 'd'
-                # add this to the ForecastMeasurement
-                forecast_measurement.condition = part['t']
-                forecast_measurement.icon = part['icon']
-                forecast_measurement.pop = part['ppcp'].to_i
-                forecast_measurement.humidity = part['hmid'].to_i
+                # add this to the day
+                day_measurement.description = "#{date_string} - Day"
+                day_measurement.condition = part['t']
+                day_measurement.icon = part['icon']
+                day_measurement.pop = part['ppcp'].to_i
+                day_measurement.humidity = part['hmid'].to_i
                 
                 if part['wind']
-                  forecast_measurement.wind = Data::Speed.new(metric)
-                  forecast_measurement.wind << part['wind']['s']
-                  forecast_measurement.wind.degrees = part['wind']['d'].to_i
-                  forecast_measurement.wind.direction = part['wind']['t']
+                  day_measurement.wind = Data::Speed.new(metric)
+                  day_measurement.wind << part['wind']['s']
+                  day_measurement.wind.degrees = part['wind']['d'].to_i
+                  day_measurement.wind.direction = part['wind']['t']
                 end
                 
               elsif part['p'] == 'n'  
-                # add this to the NightMeasurement
-                forecast_measurement.night = Measurement::ForecastNight.new
-                forecast_measurement.night.condition = part['t']
-                forecast_measurement.night.icon = part['icon']
-                forecast_measurement.night.pop = part['ppcp'].to_i
-                forecast_measurement.night.humidity = part['hmid'].to_i
+                # add this to the night
+                night_measurement.description = "#{date_string} - Night"
+                night_measurement.condition = part['t']
+                night_measurement.icon = part['icon']
+                night_measurement.pop = part['ppcp'].to_i
+                night_measurement.humidity = part['hmid'].to_i
                 
                 if part['wind']
-                  forecast_measurement.night.wind = Data::Speed.new(metric)
-                  forecast_measurement.night.wind << part['wind']['s']
-                  forecast_measurement.night.wind.degrees = part['wind']['d'].to_i
-                  forecast_measurement.night.wind.direction = part['wind']['t']
+                  night_measurement.wind = Data::Speed.new(metric)
+                  night_measurement.wind << part['wind']['s']
+                  night_measurement.wind.degrees = part['wind']['d'].to_i
+                  night_measurement.wind.direction = part['wind']['t']
                 end
                 
               end
             end
           end
-          forecasts << forecast_measurement
+          forecasts << day_measurement
+          forecasts << night_measurement
         end
       end
       forecasts
@@ -244,9 +277,3 @@ module Barometer
     
   end
 end
-
-# FUTURE DATA TO SUPPORT?
-#    "cc"=>
-#     {"obst"=>"Santa Monica, CA",
-#      "uv"=>{"i"=>"0", "t"=>"Low"},
-#      "moon"=>{"icon"=>"9", "t"=>"Waxing Gibbous"}

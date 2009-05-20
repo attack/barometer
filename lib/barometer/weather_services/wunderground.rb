@@ -135,7 +135,7 @@ module Barometer
     
     def self._build_forecast(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
-      forecasts = Measurement::ForecastArray.new
+      forecasts = Measurement::ResultArray.new
       # go through each forecast and create an instance
       if data && data['simpleforecast'] &&
          data['simpleforecast']['forecastday']

@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe "Forecast Array" do
+describe "Result Array" do
   
   describe "instance methods" do
     
     before(:each) do
-      @array = Measurement::ForecastArray.new
+      @array = Measurement::ResultArray.new
     end
     
     describe "'<<'" do
@@ -37,7 +37,7 @@ describe "Forecast Array" do
       end
 
       it "returns nil when there are no forecasts" do
-        @array = Measurement::ForecastArray.new
+        @array = Measurement::ResultArray.new
         @array.size.should == 0
         @array.for(@tommorrow).should be_nil
       end
@@ -90,7 +90,7 @@ describe "Forecast Array" do
   describe "simple questions" do
     
     before(:each) do
-      @array = Measurement::ForecastArray.new
+      @array = Measurement::ResultArray.new
       #@early = Data::LocalTime("6:00 am")
       #@noon = Data::LocalTime("12:00 pm")
       #@late = Data::LocalTime("8:00 pm")

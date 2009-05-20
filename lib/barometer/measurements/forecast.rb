@@ -10,13 +10,28 @@ module Barometer
   class Measurement::Forecast < Measurement::Common
     
     attr_reader :date
-    attr_reader :low, :high, :pop, :night
+    attr_reader :low, :high, :pop
+    
+    attr_reader :valid_start_date, :valid_end_date
+    attr_accessor :description
     
     # accessors (with input checking)
     #
     def date=(date)
       raise ArgumentError unless date.is_a?(Date)
       @date = date
+      @valid_start_date = Data::LocalDateTime.new(date.year,date.month,date.day,0,0,0)
+      @valid_end_date = Data::LocalDateTime.new(date.year,date.month,date.day,23,59,59)
+    end
+    
+    def valid_start_date=(date)
+      raise ArgumentError unless date.is_a?(Data::LocalDateTime)
+      @valid_start_date = date
+    end
+    
+    def valid_end_date=(date)
+      raise ArgumentError unless date.is_a?(Data::LocalDateTime)
+      @valid_end_date = date
     end
     
     def high=(high)
@@ -34,9 +49,14 @@ module Barometer
       @pop = pop
     end
     
-    def night=(night)
-      raise ArgumentError unless night.is_a?(Measurement::ForecastNight)
-      @night = night
+    # def night=(night)
+    #   raise ArgumentError unless night.is_a?(Measurement::ForecastNight)
+    #   @night = night
+    # end
+    
+    def for_datetime?(datetime)
+      raise ArgumentError unless datetime.is_a?(Data::LocalDateTime)
+      datetime >= @valid_start_date && datetime <= @valid_end_date
     end
     
     #

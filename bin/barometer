@@ -403,22 +403,14 @@ def pretty_forecast(f)
   return unless f
   section("FOR: #{f.date}", 3) do
     pretty_hash({
-      "Date" => f.date, "Icon" => f.icon,
+      "Valid From" => f.valid_start_date.to_s(true), 
+      "Valid Until" => f.valid_end_date.to_s(true),
+      "Icon" => f.icon, "Description" => f.description,
       "Condition" => f.condition, "High" => f.high,
       "Low" => f.low, "POP" => f.pop, "Humidity" => f.humidity })
     pretty_hash({ "Wind" => f.wind, "Wind Direction" => f.wind.direction,
       "Wind Degrees" => f.wind.degrees }) if f.wind
     pretty_hash({ "Sun Rise" => f.sun.rise, "Sun Set" => f.sun.set }) if f.sun
-    if f.night
-      puts
-      title("NIGHT", 4)
-      pretty_hash({
-        "Date" => f.night.date, "Icon" => f.night.icon,
-        "Condition" => f.night.condition, "POP" => f.night.pop,
-        "Humidity" => f.night.humidity })
-      pretty_hash({ "Wind" => f.night.wind, "Wind Direction" => f.night.wind.direction,
-        "Wind Degrees" => f.night.wind.degrees }) if f.night.wind
-    end
   end
 end
 

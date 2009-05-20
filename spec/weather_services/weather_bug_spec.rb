@@ -182,7 +182,7 @@ describe "WeatherBug" do
         result = WeatherService::WeatherBug._measure(@measurement, @query)
         result.is_a?(Barometer::Measurement).should be_true
         result.current.is_a?(Measurement::Current).should be_true
-        result.forecast.is_a?(Measurement::ForecastArray).should be_true
+        result.forecast.is_a?(Measurement::ResultArray).should be_true
       end
       
     end

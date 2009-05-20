@@ -1,6 +1,7 @@
 == now
 
-- ???
+- forecast should have valid date range
+- make current and forecast the same
 
 == soon
 
@@ -37,3 +38,17 @@
     text =~ /^(\d\d\d\d)-(\d\d)-(\d\d)/
     Time.new($3,$2,$1)
   end
+  
+  
+== other weather sites
+
+=== intellicast
+http://www.intellicast.com/IcastRSS/Signup.aspx
+http://www.intellicast.com/content/
+http://www.nws.noaa.gov/mdl/synop/nam.php
+http://www.hamweather.net/hw3/hw3php/democss/hw3.php?config=&forecast=zandh&icao=PADQ
+http://www.arl.noaa.gov/READYcmet.php
+http://www.windguru.cz/int/index.php
+http://www.nco.ncep.noaa.gov/pmb/products/gfs/
+http://www.weatherdeveloper.com/2008/01/31/grib2-migration/
+http://www.cpc.noaa.gov/products/wesley/wgrib2/

@@ -154,7 +154,7 @@ describe "WeatherDotCom" do
         result = WeatherService::WeatherDotCom._measure(@measurement, @query)
         result.is_a?(Barometer::Measurement).should be_true
         result.current.is_a?(Measurement::Current).should be_true
-        result.forecast.is_a?(Measurement::ForecastArray).should be_true
+        result.forecast.is_a?(Measurement::ResultArray).should be_true
       end
       
     end
@@ -195,10 +195,6 @@ describe "WeatherDotCom" do
       @measurement.current.visibility.to_f.should == 16.1
       
       # build sun
-      # sun_rise = Barometer::Zone.merge("6:01 am", "5/4/09 12:51 AM PDT", -7)
-      # sun_set = Barometer::Zone.merge("7:40 pm", "5/4/09 12:51 AM PDT", -7)
-      # @measurement.current.sun.rise.should == sun_rise
-      # @measurement.current.sun.set.should == sun_set
       @measurement.current.sun.rise.to_s.should == "06:01 am"
       @measurement.current.sun.set.to_s.should == "07:40 pm"
 
@@ -208,9 +204,11 @@ describe "WeatherDotCom" do
       @measurement.location.longitude.to_f.should == -118.41
       
       # builds forecasts
-      @measurement.forecast.size.should == 5
+      @measurement.forecast.size.should == 10
 
-      @measurement.forecast[0].date.should == Date.parse("May 3")
+      # day
+      @measurement.forecast[0].valid_start_date.should == Date.parse("May 3 7:00 am")
+      @measurement.forecast[0].valid_end_date.should == Date.parse("May 3 6:59:59 pm")
       @measurement.forecast[0].condition.should == "Partly Cloudy"
       @measurement.forecast[0].icon.should == "30"
       @measurement.forecast[0].high.should be_nil
@@ -223,23 +221,22 @@ describe "WeatherDotCom" do
       @measurement.forecast[0].wind.degrees.to_i.should == 288
       @measurement.forecast[0].wind.direction.should == "WNW"
       
-      # sun_rise = Barometer::Zone.merge("6:02 am", "5/4/09 12:25 AM PDT", -7)
-      # sun_set = Barometer::Zone.merge("7:40 pm", "5/4/09 12:25 AM PDT", -7)
-      # @measurement.forecast[0].sun.rise.should == sun_rise
-      # @measurement.forecast[0].sun.set.should == sun_set
       @measurement.forecast[0].sun.rise.to_s.should == "06:02 am"
       @measurement.forecast[0].sun.set.to_s.should == "07:40 pm"
       
-      @measurement.forecast[0].night.should_not be_nil
-      @measurement.forecast[0].night.condition.should == "Partly Cloudy"
-      @measurement.forecast[0].night.icon.should == "29"
-      @measurement.forecast[0].night.pop.to_i.should == 10
-      @measurement.forecast[0].night.humidity.to_i.should == 71
+      # night
+      @measurement.forecast[1].should_not be_nil
+      @measurement.forecast[1].valid_start_date.should == Date.parse("May 3 7:00 pm")
+      @measurement.forecast[1].valid_end_date.should == Date.parse("May 4 6:59:59 am")
+      @measurement.forecast[1].condition.should == "Partly Cloudy"
+      @measurement.forecast[1].icon.should == "29"
+      @measurement.forecast[1].pop.to_i.should == 10
+      @measurement.forecast[1].humidity.to_i.should == 71
       
-      @measurement.forecast[0].night.wind.should_not be_nil
-      @measurement.forecast[0].night.wind.to_i.should == 14
-      @measurement.forecast[0].night.wind.degrees.to_i.should == 335
-      @measurement.forecast[0].night.wind.direction.should == "NNW"
+      @measurement.forecast[1].wind.should_not be_nil
+      @measurement.forecast[1].wind.to_i.should == 14
+      @measurement.forecast[1].wind.degrees.to_i.should == 335
+      @measurement.forecast[1].wind.direction.should == "NNW"
     end
     
   end

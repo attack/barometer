@@ -3,8 +3,8 @@ module Barometer
   # Measurement
   # a class that holds the response from a weather service
   #
-  # its main purpose is to hold all the data collected from a weather service
-  # as it is passed to the weather object
+  # its main purpose is to hold all the data collected from a single weather
+  # service as it is passed to the weather object
   #
   # this response includes
   # - current weather data (using the CurrentMeasurement class)
@@ -102,7 +102,7 @@ module Barometer
     end
     
     def forecast=(forecast)
-      raise ArgumentError unless forecast.is_a?(Measurement::ForecastArray)
+      raise ArgumentError unless forecast.is_a?(Measurement::ResultArray)
       @forecast = forecast
     end
     

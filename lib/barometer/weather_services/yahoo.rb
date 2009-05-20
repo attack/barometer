@@ -124,7 +124,7 @@ module Barometer
     
     def self._build_forecast(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
-      forecasts = Measurement::ForecastArray.new
+      forecasts = Measurement::ResultArray.new
       
       if data && data['item'] && data['item']['yweather:forecast']
          forecast_result = data['item']['yweather:forecast']
