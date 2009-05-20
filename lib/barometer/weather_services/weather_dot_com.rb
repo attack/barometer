@@ -117,7 +117,7 @@ module Barometer
 
     def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
-      current = Measurement::Current.new
+      current = Measurement::Result.new
       if data
         if data['cc']
           current.updated_at = Data::LocalDateTime.parse(data['cc']['lsup'])
@@ -154,8 +154,8 @@ module Barometer
       if data && data['dayf'] && data['dayf']['day']
         local_date = data['dayf']['lsup']
         data['dayf']['day'].each do |forecast|
-          day_measurement = Measurement::Forecast.new
-          night_measurement = Measurement::Forecast.new
+          day_measurement = Measurement::Result.new
+          night_measurement = Measurement::Result.new
           
           # as stated by weather.com "day = 7am-7pm"
           # and "night = 7pm-7am"

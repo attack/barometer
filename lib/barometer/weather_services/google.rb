@@ -52,7 +52,7 @@ module Barometer
 
     def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
-      current = Measurement::Current.new
+      current = Measurement::Result.new
 
       if data['current_conditions']
         data = data['current_conditions']
@@ -90,7 +90,7 @@ module Barometer
       # go through each forecast and create an instance
       d = 0
       data.each do |forecast|
-        forecast_measurement = Measurement::Forecast.new
+        forecast_measurement = Measurement::Result.new
         if forecast['icon']
           icon_match = forecast['icon']['data'].match(/.*\/([A-Za-z_]*)\.png/)
           forecast_measurement.icon = icon_match[1] if icon_match

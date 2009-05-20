@@ -134,7 +134,7 @@ describe "WeatherServices" do
     
     it "returns current and future" do
       measurement = @service.measure(@query)
-      measurement.current.is_a?(Measurement::Current).should be_true
+      measurement.current.is_a?(Measurement::Result).should be_true
       measurement.forecast.is_a?(Array).should be_true
     end
     

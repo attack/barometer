@@ -99,13 +99,13 @@ describe "Measurement" do
       lambda { @measurement.utc_time_stamp = valid_data }.should_not raise_error(ArgumentError)
     end
     
-    it "only accepts Data::CurrentMeasurement for current" do
+    it "only accepts Measurement::Result for current" do
       invalid_data = "invalid"
-      invalid_data.class.should_not == Measurement::Current
+      invalid_data.class.should_not == Measurement::Result
       lambda { @measurement.current = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Measurement::Current.new
-      valid_data.class.should == Measurement::Current
+      valid_data = Measurement::Result.new
+      valid_data.class.should == Measurement::Result
       lambda { @measurement.current = valid_data }.should_not raise_error(ArgumentError)
     end
     
@@ -194,7 +194,7 @@ describe "Measurement" do
       @measurement.current.should be_nil
       @measurement.success.should be_false
       
-      @measurement.current = Measurement::Current.new
+      @measurement.current = Measurement::Result.new
       @measurement.current.temperature = Data::Temperature.new
       @measurement.current.temperature.c = 10
       @measurement.utc_time_stamp.should_not be_nil
@@ -203,7 +203,7 @@ describe "Measurement" do
     end
     
     it "returns successful state" do
-      @measurement.current = Measurement::Current.new
+      @measurement.current = Measurement::Result.new
       @measurement.current.temperature = Data::Temperature.new
       @measurement.current.temperature.c = 10
       @measurement.success!
@@ -226,7 +226,7 @@ describe "Measurement" do
       @measurement.current.should be_nil
       @measurement.current?.should be_true
       
-      @measurement.current = Measurement::Current.new
+      @measurement.current = Measurement::Result.new
       @measurement.current.current_at.should be_nil
       @measurement.current?.should be_true
         
@@ -292,7 +292,7 @@ describe "Measurement" do
       # dates for 4 consecutive days starting with tommorrow
       @measurement.forecast = Measurement::ResultArray.new
       1.upto(4) do |i|
-        forecast_measurement = Measurement::Forecast.new
+        forecast_measurement = Measurement::Result.new
         forecast_measurement.date = Date.parse((Time.now + (i * 60 * 60 * 24)).to_s)
         @measurement.forecast << forecast_measurement
       end
@@ -348,7 +348,7 @@ describe "Measurement" do
     
     before(:each) do
       @measurement = Barometer::Measurement.new(:wunderground)
-      @measurement.current = Measurement::Current.new
+      @measurement.current = Measurement::Result.new
       @now = Data::LocalDateTime.parse("2009-05-01 2:05 pm")
     end
     
@@ -366,16 +366,12 @@ describe "Measurement" do
     describe "windy?" do
       
       it "returns true if a current_measurement returns true" do
-        module Barometer; class Measurement::Current < Measurement::Common
-          def windy?(a=nil); true; end
-        end; end
+        @measurement.current.stubs(:windy?).returns(true)
         @measurement.windy?.should be_true
       end
-
+      
       it "returns false if a current_measurement returns false" do
-        module Barometer; class Measurement::Current < Measurement::Common
-          def windy?(a=nil); false; end
-        end; end
+        @measurement.current.stubs(:windy?).returns(false)
         @measurement.windy?.should be_false
       end
       
@@ -384,16 +380,12 @@ describe "Measurement" do
      describe "wet?" do
        
        it "returns true if the current_measurement returns true" do
-         module Barometer; class Measurement::Current < Measurement::Common
-           def wet?(a=nil,b=nil,c=nil); true; end
-         end; end
+         @measurement.current.stubs(:wet?).returns(true)
          @measurement.wet?.should be_true
        end
      
        it "returns false if the current_measurement returns false" do
-         module Barometer; class Measurement::Current < Measurement::Common
-           def wet?(a=nil,b=nil,c=nil); false; end
-         end; end
+         @measurement.current.stubs(:wet?).returns(false)
          @measurement.wet?.should be_false
        end
        
@@ -402,16 +394,12 @@ describe "Measurement" do
     describe "day?" do
     
       it "returns true if the current_measurement returns true" do
-        module Barometer; class Measurement::Current < Measurement::Common
-          def day?(a=nil); true; end
-        end; end
+        @measurement.current.stubs(:day?).returns(true)
         @measurement.day?.should be_true
       end
     
       it "returns false if the current_measurement returns false" do
-        module Barometer; class Measurement::Current < Measurement::Common
-          def day?(a=nil); false; end
-        end; end
+        @measurement.current.stubs(:day?).returns(false)
         @measurement.day?.should be_false
       end
       
@@ -420,34 +408,22 @@ describe "Measurement" do
     describe "sunny?" do
       
       it "returns true if the current_measurement returns true and day" do
-        module Barometer; class Measurement::Current < Measurement::Common
-          def day?(a=nil); true; end
-        end; end
-        module Barometer; class Measurement::Current < Measurement::Common
-          def sunny?(a=nil,b=nil); true; end
-        end; end
+        @measurement.current.stubs(:day?).returns(true)
+        @measurement.current.stubs(:sunny?).returns(true)
         @measurement.day?.should be_true
         @measurement.sunny?.should be_true
       end
     
       it "returns false if the current_measurement returns false and day" do
-        module Barometer; class Measurement::Current < Measurement::Common
-          def day?(a=nil); true; end
-        end; end
-        module Barometer; class Measurement::Current < Measurement::Common
-          def sunny?(a=nil,b=nil); false; end
-        end; end
+        @measurement.current.stubs(:day?).returns(true)
+        @measurement.current.stubs(:sunny?).returns(false)
         @measurement.day?.should be_true
         @measurement.sunny?.should be_false
       end
       
       it "returns false if night time" do
-        module Barometer; class Measurement::Current < Measurement::Common
-          def day?(a=nil); false; end
-        end; end
-        module Barometer; class Measurement::Current < Measurement::Common
-          def sunny?(a=nil,b=nil); true; end
-        end; end
+        @measurement.current.stubs(:day?).returns(false)
+        @measurement.current.stubs(:sunny?).returns(true)
         @measurement.day?.should be_false
         @measurement.sunny?.should be_false
       end

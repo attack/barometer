@@ -42,7 +42,7 @@ describe "Wunderground" do
     
     it "returns Barometer::CurrentMeasurement object" do
       current = WeatherService::Wunderground._build_current({})
-      current.is_a?(Measurement::Current).should be_true
+      current.is_a?(Measurement::Result).should be_true
     end
     
   end
@@ -182,7 +182,7 @@ describe "Wunderground" do
       it "returns a Barometer::Measurement object" do
         result = WeatherService::Wunderground._measure(@measurement, @query)
         result.is_a?(Barometer::Measurement).should be_true
-        result.current.is_a?(Measurement::Current).should be_true
+        result.current.is_a?(Measurement::Result).should be_true
         result.forecast.is_a?(Array).should be_true
       end
       

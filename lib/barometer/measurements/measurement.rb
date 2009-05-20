@@ -31,8 +31,8 @@ module Barometer
     end
     
     def success!
-       current && current.temperature &&
-         !current.temperature.c.nil? && @success = true
+      current && current.temperature &&
+        !current.temperature.c.nil? && @success = true
     end
     
     def stamp!; @utc_time_stamp = Time.now.utc; end
@@ -95,7 +95,7 @@ module Barometer
     end
     
     def current=(current)
-      raise ArgumentError unless current.is_a?(Measurement::Current)
+      raise ArgumentError unless current.is_a?(Measurement::Result)
       @current = current
       self.stamp!
       self.success!

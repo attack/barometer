@@ -2,12 +2,14 @@ require 'date'
 module Barometer
   #
   # Result Array
-  # an array that holds multiple results
+  #
+  # an array that holds multiple results,
+  # with methods for insertion and searching
   #
   class Measurement::ResultArray < Array
     
     def <<(forecast)
-      raise ArgumentError unless forecast.is_a?(Measurement::Forecast)
+      raise ArgumentError unless forecast.is_a?(Measurement::Result)
       super(forecast)
     end
     

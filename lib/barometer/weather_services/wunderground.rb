@@ -102,7 +102,7 @@ module Barometer
     def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       
-      current = Measurement::Current.new
+      current = Measurement::Result.new
       current.updated_at = Data::LocalDateTime.parse(data['observation_time']) if data['observation_time']
       current.humidity = data['relative_humidity'].to_i
       current.icon = data['icon'] if data['icon']
@@ -141,7 +141,7 @@ module Barometer
          data['simpleforecast']['forecastday']
          
         data['simpleforecast']['forecastday'].each do |forecast|
-          forecast_measurement = Measurement::Forecast.new
+          forecast_measurement = Measurement::Result.new
           forecast_measurement.icon = forecast['icon']
           forecast_measurement.date = Date.parse(forecast['date']['pretty'])
           forecast_measurement.pop = forecast['pop'].to_i

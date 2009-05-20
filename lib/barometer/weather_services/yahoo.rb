@@ -92,7 +92,7 @@ module Barometer
     
     def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
-      current = Measurement::Current.new(metric)
+      current = Measurement::Result.new(metric)
       if data
         if data['item'] && data['item']['yweather:condition']
           condition_result = data['item']['yweather:condition']
@@ -130,7 +130,7 @@ module Barometer
          forecast_result = data['item']['yweather:forecast']
          
         forecast_result.each do |forecast|
-          forecast_measurement = Measurement::Forecast.new
+          forecast_measurement = Measurement::Result.new
           forecast_measurement.icon = forecast['code']
           forecast_measurement.date = Date.parse(forecast['date'])
           forecast_measurement.condition = forecast['text']

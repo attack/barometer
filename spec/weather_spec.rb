@@ -83,10 +83,10 @@ describe "Weather" do
     before(:each) do
       @weather = Barometer::Weather.new
       @wunderground = Barometer::Measurement.new(:wunderground)
-      @wunderground.current = Measurement::Current.new
+      @wunderground.current = Measurement::Result.new
       @wunderground.success = true
       @yahoo = Barometer::Measurement.new(:yahoo)
-      @yahoo.current = Measurement::Current.new
+      @yahoo.current = Measurement::Result.new
       @yahoo.success = true
       @google = Barometer::Measurement.new(:google)
       @weather.measurements << @wunderground
@@ -298,9 +298,7 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Barometer::Measurement
-            def windy?(a=nil,b=nil); true; end
-        end; end
+        Barometer::Measurement.any_instance.stubs(:windy?).returns(true)
         @weather.windy?.should be_true
       end
 
@@ -308,9 +306,7 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Barometer::Measurement
-            def windy?(a=nil,b=nil); false; end
-        end; end
+        Barometer::Measurement.any_instance.stubs(:windy?).returns(false)
         @weather.windy?.should be_false
       end
       
@@ -338,9 +334,7 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Barometer::Measurement
-            def wet?(a=nil,b=nil); true; end
-        end; end
+        Barometer::Measurement.any_instance.stubs(:wet?).returns(true)
         @weather.wet?.should be_true
       end
 
@@ -348,9 +342,7 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Barometer::Measurement
-            def wet?(a=nil,b=nil); false; end
-        end; end
+        Barometer::Measurement.any_instance.stubs(:wet?).returns(false)
         @weather.wet?.should be_false
       end
       
@@ -378,9 +370,7 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Barometer::Measurement
-            def day?(a=nil); true; end
-        end; end
+        Barometer::Measurement.any_instance.stubs(:day?).returns(true)
         @weather.day?.should be_true
         @weather.night?.should be_false
       end
@@ -389,9 +379,7 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Barometer::Measurement
-            def day?(a=nil); false; end
-        end; end
+        Barometer::Measurement.any_instance.stubs(:day?).returns(false)
         @weather.day?.should be_false
         @weather.night?.should be_true
       end
@@ -414,12 +402,8 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Barometer::Measurement
-            def day?(a=nil); true; end
-        end; end
-        module Barometer; class Barometer::Measurement
-            def sunny?(a=nil,b=nil); true; end
-        end; end
+        Barometer::Measurement.any_instance.stubs(:day?).returns(true)
+        Barometer::Measurement.any_instance.stubs(:sunny?).returns(true)
         @weather.sunny?.should be_true
       end
 
@@ -427,12 +411,8 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Barometer::Measurement
-            def day?(a=nil); true; end
-        end; end
-        module Barometer; class Barometer::Measurement
-            def sunny?(a=nil,b=nil); false; end
-        end; end
+        Barometer::Measurement.any_instance.stubs(:day?).returns(true)
+        Barometer::Measurement.any_instance.stubs(:sunny?).returns(false)
         @weather.sunny?.should be_false
       end
       
@@ -440,13 +420,8 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        module Barometer; class Barometer::Measurement
-            def sunny?(a=nil,b=nil); true; end
-        end; end
-        @weather.sunny?.should be_true
-        module Barometer; class Barometer::Measurement
-            def day?(a=nil); false; end
-        end; end
+        Barometer::Measurement.any_instance.stubs(:sunny?).returns(true)
+        Barometer::Measurement.any_instance.stubs(:day?).returns(false)
         @weather.sunny?.should be_false
       end
 

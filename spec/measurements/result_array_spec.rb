@@ -10,13 +10,13 @@ describe "Result Array" do
     
     describe "'<<'" do
     
-      it "requires ForecastMeasurement" do
+      it "requires Measurement::Result" do
         lambda { @array << "invalid" }.should raise_error(ArgumentError)
       end
       
       it "adds ForecastMeasurement" do
         @array.size.should == 0
-        forecast = Measurement::Forecast.new
+        forecast = Measurement::Result.new
         @array << forecast
         @array.size.should == 1
       end
@@ -27,7 +27,7 @@ describe "Result Array" do
 
       before(:each) do
         1.upto(4) do |i|
-          forecast_measurement = Measurement::Forecast.new
+          forecast_measurement = Measurement::Result.new
           forecast_measurement.date = Date.parse((Time.now + (i * 60 * 60 * 24)).to_s)
           @array << forecast_measurement
         end
@@ -99,7 +99,7 @@ describe "Result Array" do
       @sun_icons = %w(sunny)
       
       0.upto(1) do |i|
-        forecast_measurement = Measurement::Forecast.new
+        forecast_measurement = Measurement::Result.new
         forecast_measurement.date = Date.parse((@now + (i * 60 * 60 * 24)).to_s)
         wind = Data::Speed.new
         wind << (i * 5)

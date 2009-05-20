@@ -97,7 +97,7 @@ module Barometer
     def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
 
-      current = Measurement::Current.new
+      current = Measurement::Result.new
       # current.updated_at = Data::LocalDateTime.parse(data['observation_time']) if data['observation_time']
       current.humidity = data['aws:humidity'].to_i
       current.condition = data['aws:current_condition'] if data['aws:current_condition']
@@ -130,7 +130,7 @@ module Barometer
         start_date = Date.parse(data['date'])
         i = 0
         data["aws:forecast"].each do |forecast|
-          forecast_measurement = Measurement::Forecast.new
+          forecast_measurement = Measurement::Result.new
           icon_match = forecast['aws:image'].match(/cond(\d*)\.gif$/)
           forecast_measurement.icon = icon_match[1].to_i.to_s if icon_match
           forecast_measurement.date = start_date + i

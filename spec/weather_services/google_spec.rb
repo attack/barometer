@@ -41,7 +41,7 @@ describe "Google" do
     
     it "returns Measurement::Current object" do
       current = WeatherService::Google._build_current({})
-      current.is_a?(Measurement::Current).should be_true
+      current.is_a?(Measurement::Result).should be_true
     end
     
   end
@@ -135,7 +135,7 @@ describe "Google" do
       it "returns a Barometer::Measurement object" do
         result = Barometer::WeatherService::Google._measure(@measurement, @query)
         result.is_a?(Barometer::Measurement).should be_true
-        result.current.is_a?(Measurement::Current).should be_true
+        result.current.is_a?(Measurement::Result).should be_true
         result.forecast.is_a?(Measurement::ResultArray).should be_true
       end
       

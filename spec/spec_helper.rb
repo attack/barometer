@@ -1,12 +1,13 @@
 require 'rubygems'
 require 'spec'
+require 'mocha'
 require 'fakeweb'
 require 'cgi'
 require 'yaml'
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-require 'barometer'
+require 'lib/barometer'
 
 FakeWeb.allow_net_connect = false
 
