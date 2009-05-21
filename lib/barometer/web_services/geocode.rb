@@ -14,11 +14,11 @@ module Barometer
         "http://maps.google.com/maps/geo",
         :query => {
           :gl => query.country_code, :key => Barometer.google_geocode_key,
-          :output => "xml", :q => query.q
+          :output => "json", :q => query.q, :sensor => "false"
         },
-        :format => :xml, :timeout => Barometer.timeout
+        :format => :json, :timeout => Barometer.timeout
       )
-      location = location['kml']['Response'] if location && location['kml']
+      location = location['kml']['Response'] if (location && location['kml'])
       location ? (geo = Data::Geo.new(location)) : nil
     end
 

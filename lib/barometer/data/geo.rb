@@ -27,8 +27,13 @@ module Barometer
       placemark = placemark.first if placemark.is_a?(Array)
       
       if placemark && placemark["Point"] && placemark["Point"]["coordinates"]
-        @latitude = placemark["Point"]["coordinates"].split(',')[1].to_f
-        @longitude = placemark["Point"]["coordinates"].split(',')[0].to_f
+        if placemark["Point"]["coordinates"].is_a?(Array)
+          @latitude = placemark["Point"]["coordinates"][1].to_f
+          @longitude = placemark["Point"]["coordinates"][0].to_f
+        else
+          @latitude = placemark["Point"]["coordinates"].split(',')[1].to_f
+          @longitude = placemark["Point"]["coordinates"].split(',')[0].to_f
+        end
       end
       if placemark && placemark["AddressDetails"] && placemark["AddressDetails"]["Country"]
         if placemark["AddressDetails"]["Country"]["AdministrativeArea"]
