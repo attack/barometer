@@ -13,9 +13,9 @@
 
 - Rdoc compatible documentation
 - add uv, moon, elevation info to current
+- driver: noaa, intellicast
 - weather.com simple_questions improve answers (use extra data)
 - make sure you can compare LocalTime to LocalDateTime in LocalTime class
-- driver: noaa, intellicast
 
 - be smart, never make duplicate queries
   - ie. if you are including wunderground, do it first and use the timezone info
