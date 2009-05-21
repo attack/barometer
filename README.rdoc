@@ -25,7 +25,7 @@ Currently this project is in development and will only work for a few weather
 services (wunderground, google, yahoo, weather.com, weather_bug).
 
 Features to be added next:
-- even more weather service drivers (noaa)
+- even more weather service drivers (hamweather, noaa)
 - icon support
 
 = dependencies
