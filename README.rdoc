@@ -15,7 +15,7 @@ this.
 
 == version
 
-Version 0.6.3 is the current release of this gem.
+Version 0.6.4 is the current release of this gem.
 The gem is available from github (attack-barometer) or rubyforge (barometer).
 It is fully functional (for five weather service APIs).
 
@@ -80,7 +80,7 @@ Tzinfo handles this time zone manipulation.
 
 The query handling is one of the most beneficial and powerful features of
 Barometer.  Every weather service accepts a different set of possible
-queries, so it usually the case that the same query can only be used
+queries, so it usually is the case that the same query can only be used
 for a couple weather services.
 
 Barometer will allow the use of all query formats for all services
