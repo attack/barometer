@@ -1,0 +1,38 @@
+{
+  "name": "Calgary,AB",
+  "Status": {
+    "code": 200,
+    "request": "geocode"
+  },
+  "Placemark": [ {
+    "id": "p1",
+    "address": "Calgary, AB, Canada",
+    "AddressDetails": {
+   "Accuracy" : 4,
+   "Country" : {
+      "AdministrativeArea" : {
+         "AdministrativeAreaName" : "AB",
+         "SubAdministrativeArea" : {
+            "Locality" : {
+               "LocalityName" : "Calgary"
+            },
+            "SubAdministrativeAreaName" : "Division No. 6"
+         }
+      },
+      "CountryName" : "Canada",
+      "CountryNameCode" : "CA"
+   }
+},
+    "ExtendedData": {
+      "LatLonBox": {
+        "north": 51.1672307,
+        "south": 50.9427954,
+        "east": -113.8063192,
+        "west": -114.3185568
+      }
+    },
+    "Point": {
+      "coordinates": [ -114.0624380, 51.0551490, 0 ]
+    }
+  } ]
+}

@@ -1,0 +1,41 @@
+{
+  "name": "90210",
+  "Status": {
+    "code": 200,
+    "request": "geocode"
+  },
+  "Placemark": [ {
+    "id": "p1",
+    "address": "Beverly Hills, CA 90210, USA",
+    "AddressDetails": {
+   "Accuracy" : 5,
+   "Country" : {
+      "AdministrativeArea" : {
+         "AdministrativeAreaName" : "CA",
+         "SubAdministrativeArea" : {
+            "Locality" : {
+               "LocalityName" : "Beverly Hills",
+               "PostalCode" : {
+                  "PostalCodeNumber" : "90210"
+               }
+            },
+            "SubAdministrativeAreaName" : "Los Angeles"
+         }
+      },
+      "CountryName" : "USA",
+      "CountryNameCode" : "US"
+   }
+},
+    "ExtendedData": {
+      "LatLonBox": {
+        "north": 34.1320070,
+        "south": 34.0644090,
+        "east": -118.3809750,
+        "west": -118.4467140
+      }
+    },
+    "Point": {
+      "coordinates": [ -118.4104684, 34.1030032, 0 ]
+    }
+  } ]
+}

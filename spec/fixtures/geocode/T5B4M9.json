@@ -1,0 +1,35 @@
+{
+  "name": "T5B 4M9",
+  "Status": {
+    "code": 200,
+    "request": "geocode"
+  },
+  "Placemark": [ {
+    "id": "p1",
+    "address": "Alberta T5B 4M9, Canada",
+    "AddressDetails": {
+   "Accuracy" : 5,
+   "Country" : {
+      "AdministrativeArea" : {
+         "AdministrativeAreaName" : "AB",
+         "PostalCode" : {
+            "PostalCodeNumber" : "T5B 4M9"
+         }
+      },
+      "CountryName" : "Canada",
+      "CountryNameCode" : "CA"
+   }
+},
+    "ExtendedData": {
+      "LatLonBox": {
+        "north": 53.5735946,
+        "south": 53.5672994,
+        "east": -113.4529354,
+        "west": -113.4592306
+      }
+    },
+    "Point": {
+      "coordinates": [ -113.4560830, 53.5704470, 0 ]
+    }
+  } ]
+}

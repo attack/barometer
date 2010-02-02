@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe "WeatherServices" do
   
@@ -134,7 +134,7 @@ describe "WeatherServices" do
     
     it "returns current and future" do
       measurement = @service.measure(@query)
-      measurement.current.is_a?(Measurement::Result).should be_true
+      measurement.current.is_a?(Barometer::Measurement::Result).should be_true
       measurement.forecast.is_a?(Array).should be_true
     end
     

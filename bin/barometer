@@ -55,7 +55,8 @@
 #   http://www.opensource.org/licenses/mit-license.php
 
 require 'rubygems'
-require 'barometer'
+#require 'barometer'
+require '/Users/mark/work/fresh/gems/barometer/lib/barometer.rb'
 
 require 'optparse' 
 require 'rdoc/usage'

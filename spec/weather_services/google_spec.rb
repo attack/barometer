@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 include Barometer
 
 describe "Google" do
@@ -105,7 +105,7 @@ describe "Google" do
       
       FakeWeb.register_uri(:get, 
         "http://google.com/ig/api?weather=#{CGI.escape(@query.q)}&hl=en-GB",
-        :string => File.read(File.join(File.dirname(__FILE__), 
+        :body => File.read(File.join(File.dirname(__FILE__), 
           '../fixtures/services/google', 
           'calgary_ab.xml')
         )
@@ -152,14 +152,14 @@ describe "Google" do
   #     
   #     FakeWeb.register_uri(:get, 
   #       "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query.preferred)}",
-  #       :string => File.read(File.join(File.dirname(__FILE__), 
+  #       :body => File.read(File.join(File.dirname(__FILE__), 
   #         'fixtures', 
   #         'current_calgary_ab.xml')
   #       )
   #     )  
   #     FakeWeb.register_uri(:get, 
   #       "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query.preferred)}",
-  #       :string => File.read(File.join(File.dirname(__FILE__), 
+  #       :body => File.read(File.join(File.dirname(__FILE__), 
   #         'fixtures', 
   #         'forecast_calgary_ab.xml')
   #       )

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe "Query::Geocode" do
   
@@ -110,7 +110,7 @@ describe "Query::Geocode" do
         query = Barometer::Query.new(@icao)
         query.format.should == :icao
         new_query = Query::Format::Geocode.to(query)
-        new_query.q.should == "San Francisco Airport, USA"
+        new_query.q.should == "Millbrae, CA, USA"
         new_query.country_code.should == "US"
         new_query.format.should == :geocode
         new_query.geo.should_not be_nil

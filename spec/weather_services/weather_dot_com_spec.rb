@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 include Barometer
 
 describe "WeatherDotCom" do
@@ -123,7 +123,7 @@ describe "WeatherDotCom" do
   
       FakeWeb.register_uri(:get, 
          "#{url}90210?dayf=5&unit=m&link=xoap&par=#{WEATHER_PARTNER_KEY}&prod=xoap&key=#{WEATHER_LICENSE_KEY}&cc=*",
-         :string => File.read(File.join(File.dirname(__FILE__), 
+         :body => File.read(File.join(File.dirname(__FILE__), 
            '../fixtures/services/weather_dot_com', 
            '90210.xml')
          )
@@ -171,7 +171,7 @@ describe "WeatherDotCom" do
   
       FakeWeb.register_uri(:get, 
          "#{url}90210?dayf=5&unit=m&link=xoap&par=#{WEATHER_PARTNER_KEY}&prod=xoap&key=#{WEATHER_LICENSE_KEY}&cc=*",
-         :string => File.read(File.join(File.dirname(__FILE__), 
+         :body => File.read(File.join(File.dirname(__FILE__), 
            '../fixtures/services/weather_dot_com', 
            '90210.xml')
          )

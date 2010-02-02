@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe "Measurement" do
   
@@ -101,21 +101,21 @@ describe "Measurement" do
     
     it "only accepts Measurement::Result for current" do
       invalid_data = "invalid"
-      invalid_data.class.should_not == Measurement::Result
+      invalid_data.class.should_not == Barometer::Measurement::Result
       lambda { @measurement.current = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Measurement::Result.new
-      valid_data.class.should == Measurement::Result
+      valid_data = Barometer::Measurement::Result.new
+      valid_data.class.should == Barometer::Measurement::Result
       lambda { @measurement.current = valid_data }.should_not raise_error(ArgumentError)
     end
     
     it "only accepts Data::ResultArray for forecast" do
       invalid_data = 1
-      invalid_data.class.should_not == Measurement::ResultArray
+      invalid_data.class.should_not == Barometer::Measurement::ResultArray
       lambda { @measurement.forecast = invalid_data }.should raise_error(ArgumentError)
       
-      valid_data = Measurement::ResultArray.new
-      valid_data.class.should == Measurement::ResultArray
+      valid_data = Barometer::Measurement::ResultArray.new
+      valid_data.class.should == Barometer::Measurement::ResultArray
       lambda { @measurement.forecast = valid_data }.should_not raise_error(ArgumentError)
     end
     
@@ -194,7 +194,7 @@ describe "Measurement" do
       @measurement.current.should be_nil
       @measurement.success.should be_false
       
-      @measurement.current = Measurement::Result.new
+      @measurement.current = Barometer::Measurement::Result.new
       @measurement.current.temperature = Data::Temperature.new
       @measurement.current.temperature.c = 10
       @measurement.utc_time_stamp.should_not be_nil
@@ -203,7 +203,7 @@ describe "Measurement" do
     end
     
     it "returns successful state" do
-      @measurement.current = Measurement::Result.new
+      @measurement.current = Barometer::Measurement::Result.new
       @measurement.current.temperature = Data::Temperature.new
       @measurement.current.temperature.c = 10
       @measurement.success!
@@ -226,7 +226,7 @@ describe "Measurement" do
       @measurement.current.should be_nil
       @measurement.current?.should be_true
       
-      @measurement.current = Measurement::Result.new
+      @measurement.current = Barometer::Measurement::Result.new
       @measurement.current.current_at.should be_nil
       @measurement.current?.should be_true
         
@@ -290,9 +290,9 @@ describe "Measurement" do
       
       # create a measurement object with a result array that includes
       # dates for 4 consecutive days starting with tommorrow
-      @measurement.forecast = Measurement::ResultArray.new
+      @measurement.forecast = Barometer::Measurement::ResultArray.new
       1.upto(4) do |i|
-        forecast_measurement = Measurement::Result.new
+        forecast_measurement = Barometer::Measurement::Result.new
         forecast_measurement.date = Date.parse((Time.now + (i * 60 * 60 * 24)).to_s)
         @measurement.forecast << forecast_measurement
       end
@@ -302,7 +302,7 @@ describe "Measurement" do
     end
     
     it "returns nil when there are no forecasts" do
-      @measurement.forecast = Measurement::ResultArray.new
+      @measurement.forecast = Barometer::Measurement::ResultArray.new
       @measurement.forecast.size.should == 0
       @measurement.for.should be_nil
     end
@@ -348,7 +348,7 @@ describe "Measurement" do
     
     before(:each) do
       @measurement = Barometer::Measurement.new(:wunderground)
-      @measurement.current = Measurement::Result.new
+      @measurement.current = Barometer::Measurement::Result.new
       @now = Data::LocalDateTime.parse("2009-05-01 2:05 pm")
     end
     

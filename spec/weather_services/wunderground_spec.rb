@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 include Barometer
 
 describe "Wunderground" do
@@ -145,14 +145,14 @@ describe "Wunderground" do
       
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query.q)}",
-        :string => File.read(File.join(File.dirname(__FILE__), 
+        :body => File.read(File.join(File.dirname(__FILE__), 
           '../fixtures/services/wunderground',
           'current_calgary_ab.xml')
         )
       )  
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query.q)}",
-        :string => File.read(File.join(File.dirname(__FILE__), 
+        :body => File.read(File.join(File.dirname(__FILE__), 
           '../fixtures/services/wunderground',
           'forecast_calgary_ab.xml')
         )
@@ -198,14 +198,14 @@ describe "Wunderground" do
       
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query.q)}",
-        :string => File.read(File.join(File.dirname(__FILE__), 
+        :body => File.read(File.join(File.dirname(__FILE__), 
           '../fixtures/services/wunderground',
           'current_calgary_ab.xml')
         )
       )  
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query.q)}",
-        :string => File.read(File.join(File.dirname(__FILE__), 
+        :body => File.read(File.join(File.dirname(__FILE__), 
           '../fixtures/services/wunderground',
           'forecast_calgary_ab.xml')
         )

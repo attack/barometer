@@ -1,0 +1,38 @@
+{
+  "name": "New York, NY",
+  "Status": {
+    "code": 200,
+    "request": "geocode"
+  },
+  "Placemark": [ {
+    "id": "p1",
+    "address": "New York, NY, USA",
+    "AddressDetails": {
+   "Accuracy" : 4,
+   "Country" : {
+      "AdministrativeArea" : {
+         "AdministrativeAreaName" : "NY",
+         "SubAdministrativeArea" : {
+            "Locality" : {
+               "LocalityName" : "New York"
+            },
+            "SubAdministrativeAreaName" : "New York"
+         }
+      },
+      "CountryName" : "USA",
+      "CountryNameCode" : "US"
+   }
+},
+    "ExtendedData": {
+      "LatLonBox": {
+        "north": 40.8494506,
+        "south": 40.5788125,
+        "east": -73.7498541,
+        "west": -74.2620917
+      }
+    },
+    "Point": {
+      "coordinates": [ -74.0059729, 40.7142691, 0 ]
+    }
+  } ]
+}

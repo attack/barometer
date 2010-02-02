@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "Weather" do
   
@@ -83,10 +83,10 @@ describe "Weather" do
     before(:each) do
       @weather = Barometer::Weather.new
       @wunderground = Barometer::Measurement.new(:wunderground)
-      @wunderground.current = Measurement::Result.new
+      @wunderground.current = Barometer::Measurement::Result.new
       @wunderground.success = true
       @yahoo = Barometer::Measurement.new(:yahoo)
-      @yahoo.current = Measurement::Result.new
+      @yahoo.current = Barometer::Measurement::Result.new
       @yahoo.success = true
       @google = Barometer::Measurement.new(:google)
       @weather.measurements << @wunderground
@@ -298,7 +298,7 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        Barometer::Measurement.any_instance.stubs(:windy?).returns(true)
+        @weather.measurements.each { |m| m.stub!(:windy?).and_return(true) }
         @weather.windy?.should be_true
       end
 
@@ -306,7 +306,7 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        Barometer::Measurement.any_instance.stubs(:windy?).returns(false)
+        @weather.measurements.each { |m| m.stub!(:windy?).and_return(false) }
         @weather.windy?.should be_false
       end
       
@@ -334,7 +334,7 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        Barometer::Measurement.any_instance.stubs(:wet?).returns(true)
+        @weather.measurements.each { |m| m.stub!(:wet?).and_return(true) }
         @weather.wet?.should be_true
       end
 
@@ -342,7 +342,7 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        Barometer::Measurement.any_instance.stubs(:wet?).returns(false)
+        @weather.measurements.each { |m| m.stub!(:wet?).and_return(false) }
         @weather.wet?.should be_false
       end
       
@@ -370,7 +370,7 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        Barometer::Measurement.any_instance.stubs(:day?).returns(true)
+        @weather.measurements.each { |m| m.stub!(:day?).and_return(true) }
         @weather.day?.should be_true
         @weather.night?.should be_false
       end
@@ -379,7 +379,7 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        Barometer::Measurement.any_instance.stubs(:day?).returns(false)
+        @weather.measurements.each { |m| m.stub!(:day?).and_return(false) }
         @weather.day?.should be_false
         @weather.night?.should be_true
       end
@@ -402,8 +402,8 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        Barometer::Measurement.any_instance.stubs(:day?).returns(true)
-        Barometer::Measurement.any_instance.stubs(:sunny?).returns(true)
+        @weather.measurements.each { |m| m.stub!(:day?).and_return(true) }
+        @weather.measurements.each { |m| m.stub!(:sunny?).and_return(true) }
         @weather.sunny?.should be_true
       end
 
@@ -411,8 +411,8 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        Barometer::Measurement.any_instance.stubs(:day?).returns(true)
-        Barometer::Measurement.any_instance.stubs(:sunny?).returns(false)
+        @weather.measurements.each { |m| m.stub!(:day?).and_return(true) }
+        @weather.measurements.each { |m| m.stub!(:sunny?).and_return(false) }
         @weather.sunny?.should be_false
       end
       
@@ -420,8 +420,8 @@ describe "Weather" do
         wunderground = Barometer::Measurement.new(:wunderground)
         wunderground.success = true
         @weather.measurements << wunderground
-        Barometer::Measurement.any_instance.stubs(:sunny?).returns(true)
-        Barometer::Measurement.any_instance.stubs(:day?).returns(false)
+        @weather.measurements.each { |m| m.stub!(:sunny?).and_return(true) }
+        @weather.measurements.each { |m| m.stub!(:day?).and_return(false) }
         @weather.sunny?.should be_false
       end
 

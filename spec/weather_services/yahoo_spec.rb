@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 include Barometer
 
 describe "Yahoo" do
@@ -92,7 +92,7 @@ describe "Yahoo" do
       
       FakeWeb.register_uri(:get, 
         "http://weather.yahooapis.com:80/forecastrss?u=c&p=#{CGI.escape(@query.q)}",
-        :string => File.read(File.join(File.dirname(__FILE__),  
+        :body => File.read(File.join(File.dirname(__FILE__),  
           '../fixtures/services/yahoo',
           '90210.xml')
         )
@@ -138,7 +138,7 @@ describe "Yahoo" do
 
       FakeWeb.register_uri(:get, 
         "http://weather.yahooapis.com:80/forecastrss?u=c&p=#{CGI.escape(@query.q)}",
-        :string => File.read(File.join(File.dirname(__FILE__), 
+        :body => File.read(File.join(File.dirname(__FILE__), 
           '../fixtures/services/yahoo',
           '90210.xml')
         )

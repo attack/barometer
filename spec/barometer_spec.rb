@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "Barometer" do
   
@@ -99,23 +99,30 @@ describe "Barometer" do
       @time = Time.now
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(query_term)}",
-        :string => File.read(File.join(File.dirname(__FILE__), 
+        :body => File.read(File.join(File.dirname(__FILE__), 
           'fixtures/services/wunderground', 
           'current_calgary_ab.xml')
         )
       )
       FakeWeb.register_uri(:get, 
         "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(query_term)}",
-        :string => File.read(File.join(File.dirname(__FILE__), 
+        :body => File.read(File.join(File.dirname(__FILE__), 
           'fixtures/services/wunderground',
           'forecast_calgary_ab.xml')
         )
       )
+      # FakeWeb.register_uri(:get, 
+      #   "http://maps.google.com/maps/geo?gl=&key=#{@key}&q=Calgary%2CAB&sensor=false&output=xml",
+      #   :body => File.read(File.join(File.dirname(__FILE__), 
+      #     'fixtures/geocode',
+      #     'calgary_ab.xml')
+      #   )
+      # )
       FakeWeb.register_uri(:get, 
-        "http://maps.google.com:80/maps/geo?gl=&q=Calgary%2CAB&output=xml&key=#{@key}",
-        :string => File.read(File.join(File.dirname(__FILE__), 
+        "http://maps.google.com/maps/geo?gl=&key=#{@key}&q=Calgary%2CAB&sensor=false&output=json",
+        :body => File.read(File.join(File.dirname(__FILE__), 
           'fixtures/geocode',
-          'calgary_ab.xml')
+          'calgary_ab.json')
         )
       )
     end

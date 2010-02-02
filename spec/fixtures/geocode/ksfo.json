@@ -1,0 +1,42 @@
+{
+  "name": "KSFO",
+  "Status": {
+    "code": 200,
+    "request": "geocode"
+  },
+  "Placemark": [ {
+    "id": "p1",
+    "address": "San Francisco International Airport, Millbrae, CA 94030, USA",
+    "AddressDetails": {
+   "Accuracy" : 9,
+   "Country" : {
+      "AdministrativeArea" : {
+         "AdministrativeAreaName" : "CA",
+         "SubAdministrativeArea" : {
+            "Locality" : {
+               "AddressLine" : [ "San Francisco International Airport" ],
+               "LocalityName" : "Millbrae",
+               "PostalCode" : {
+                  "PostalCodeNumber" : "94030"
+               }
+            },
+            "SubAdministrativeAreaName" : "San Mateo"
+         }
+      },
+      "CountryName" : "USA",
+      "CountryNameCode" : "US"
+   }
+},
+    "ExtendedData": {
+      "LatLonBox": {
+        "north": 37.6392104,
+        "south": 37.6043769,
+        "east": -122.3549471,
+        "west": -122.4014108
+      }
+    },
+    "Point": {
+      "coordinates": [ -122.3899790, 37.6152230, 0 ]
+    }
+  } ]
+}

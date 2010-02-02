@@ -24,7 +24,7 @@ module Barometer
       
       @query = location["name"]
       placemark = location["Placemark"]
-      placemark = placemark.first if placemark.is_a?(Array)
+      placemark = find_most_accurate(placemark)
       
       if placemark && placemark["Point"] && placemark["Point"]["coordinates"]
         if placemark["Point"]["coordinates"].is_a?(Array)
@@ -61,6 +61,17 @@ module Barometer
       s = [@address, @locality, @region, @country || @country_code]
       s.delete("")
       s.compact.join(', ')
+    end
+    
+    # geocode may return multiple results, use the first one that has the best accuracy
+    #
+    def find_most_accurate(placemark)
+      return placemark unless placemark.is_a?(Array)
+      most_accurate = placemark.first
+      placemark.each do |p|
+        most_accurate = p if p && p["AddressDetails"] && p["AddressDetails"]["Accuracy"] && p["AddressDetails"]["Accuracy"].to_i < most_accurate["AddressDetails"]["Accuracy"].to_i
+      end
+      most_accurate
     end
 
   end

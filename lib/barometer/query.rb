@@ -104,7 +104,7 @@ module Barometer
       if Barometer.force_geocode && !@geo
         if converted_query && converted_query.geo
           @geo = converted_query.geo
-        else
+        elsif converted_query
           puts "enhance geocode: #{converted_query.q}" if Barometer::debug?
           geo_query = Query::Format::Coordinates.to(converted_query)
           @geo = geo_query.geo if (geo_query && geo_query.geo)

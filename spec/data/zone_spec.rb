@@ -1,4 +1,4 @@
-require 'spec_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe "Data::Zone" do
   
@@ -65,7 +65,7 @@ describe "Data::Zone" do
         zone.code.should be_nil
 
         zone = Data::Zone.new(@timezone)
-        zone.code.should == "CEST"
+        zone.code.should == "CET"
       end
 
       it "responds to dst?" do
