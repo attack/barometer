@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{barometer}
-  s.version = "0.6.4"
+  s.version = "0.6.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mark G"]
-  s.date = %q{2010-01-29}
+  s.date = %q{2010-02-02}
   s.default_executable = %q{barometer}
   s.description = %q{A multi API consuming weather forecasting superstar.}
   s.email = %q{barometer@attackcorp.com}
@@ -103,12 +103,19 @@ Gem::Specification.new do |s|
      "spec/fixtures/formats/weather_id/from_USGA0028.xml",
      "spec/fixtures/formats/weather_id/ksfo.xml",
      "spec/fixtures/formats/weather_id/new_york.xml",
+     "spec/fixtures/geocode/40_73.json",
      "spec/fixtures/geocode/40_73.xml",
+     "spec/fixtures/geocode/90210.json",
      "spec/fixtures/geocode/90210.xml",
+     "spec/fixtures/geocode/T5B4M9.json",
      "spec/fixtures/geocode/T5B4M9.xml",
+     "spec/fixtures/geocode/atlanta.json",
      "spec/fixtures/geocode/atlanta.xml",
+     "spec/fixtures/geocode/calgary_ab.json",
      "spec/fixtures/geocode/calgary_ab.xml",
+     "spec/fixtures/geocode/ksfo.json",
      "spec/fixtures/geocode/ksfo.xml",
+     "spec/fixtures/geocode/newyork_ny.json",
      "spec/fixtures/geocode/newyork_ny.xml",
      "spec/fixtures/services/google/calgary_ab.xml",
      "spec/fixtures/services/weather_bug/90210_current.xml",
