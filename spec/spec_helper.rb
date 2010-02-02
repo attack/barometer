@@ -8,8 +8,7 @@ require 'yaml'
 #$LOAD_PATH.unshift(File.dirname(__FILE__))
 #$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $:.unshift((File.join(File.dirname(__FILE__), '..', 'lib')))
-#require 'barometer'
-require '/Users/mark/work/fresh/gems/barometer/lib/barometer.rb'
+require 'barometer'
 
 FakeWeb.allow_net_connect = false
 
