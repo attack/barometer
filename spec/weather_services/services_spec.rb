@@ -31,7 +31,7 @@ describe "WeatherServices" do
       end
       
       it "returns the corresponding Service object" do
-        Barometer::WeatherService.source(:wunderground).should == WeatherService::Wunderground
+        Barometer::WeatherService.source(:wunderground).should == Barometer::WeatherService::Wunderground
         Barometer::WeatherService.source(:wunderground).superclass.should == Barometer::WeatherService
       end
       

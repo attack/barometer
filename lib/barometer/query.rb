@@ -81,13 +81,14 @@ module Barometer
         converted_query = Barometer::Query.new
         preferred_formats.each do |preferred_format|
           klass = FORMAT_MAP[preferred_format.to_sym]
+          # if we discover that the format we have is the preferred format, return it
           if preferred_format == @format
             converted = true
             converted_query = Barometer::Query.new(@q)
           end
           unless converted
             unless converted_query = get_conversion(preferred_format)
-              converted_query =  Query::Format.const_get(klass.to_s).to(self)
+              converted_query = Query::Format.const_get(klass.to_s).to(self)
             end  
             converted = true if converted_query
           end

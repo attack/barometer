@@ -40,7 +40,7 @@ module Barometer
       raise ArgumentError unless is_a_query?(original_query)
       
       converted_query = Barometer::Query.new
-      converted_query.geo = WebService::Geocode.fetch(original_query)
+      converted_query.geo = Barometer::WebService::Geocode.fetch(original_query)
       if converted_query.geo
         converted_query.country_code = converted_query.geo.country_code
         converted_query.q = converted_query.geo.to_s

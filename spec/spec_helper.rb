@@ -13,6 +13,7 @@ FakeWeb.allow_net_connect = false
   # Set random test keys
   #
   KEY = "ABC123"
+  Barometer.google_geocode_key = KEY
 	WEATHER_PARTNER_KEY = "1234"
 	WEATHER_LICENSE_KEY = "12345"
 	WEATHERBUG_CODE = "A9999"
@@ -69,6 +70,13 @@ FakeWeb.allow_net_connect = false
     :body => File.read(File.join(File.dirname(__FILE__),  
       'fixtures/geocode',
       'atlanta.xml')
+    )
+  )  
+  FakeWeb.register_uri(:get, 
+    "#{geo_url}gl=&key=#{KEY}&q=Calgary%2CAB&sensor=false&output=json",
+    :body => File.read(File.join(File.dirname(__FILE__), 
+      'fixtures/geocode',
+      'calgary_ab.json')
     )
   )
   #

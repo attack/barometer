@@ -23,6 +23,7 @@ describe "Barometer" do
     
     it "sets the Graticule Google geocoding API key" do
       Barometer.respond_to?("google_geocode_key").should be_true
+      Barometer.google_geocode_key = nil
       Barometer.google_geocode_key.should be_nil
       Barometer.google_geocode_key = @key
       Barometer.google_geocode_key.should == @key
@@ -118,13 +119,13 @@ describe "Barometer" do
       #     'calgary_ab.xml')
       #   )
       # )
-      FakeWeb.register_uri(:get, 
-        "http://maps.google.com/maps/geo?gl=&key=#{@key}&q=Calgary%2CAB&sensor=false&output=json",
-        :body => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures/geocode',
-          'calgary_ab.json')
-        )
-      )
+      # FakeWeb.register_uri(:get, 
+      #   "http://maps.google.com/maps/geo?gl=&key=#{@key}&q=Calgary%2CAB&sensor=false&output=json",
+      #   :body => File.read(File.join(File.dirname(__FILE__), 
+      #     'fixtures/geocode',
+      #     'calgary_ab.json')
+      #   )
+      # )
     end
     
     it "responds to measure" do
