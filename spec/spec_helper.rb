@@ -3,52 +3,19 @@ require 'spec'
 require 'mocha'
 require 'fakeweb'
 require 'cgi'
-require 'yaml'
 
-#$LOAD_PATH.unshift(File.dirname(__FILE__))
-#$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $:.unshift((File.join(File.dirname(__FILE__), '..', 'lib')))
 require 'barometer'
 
 FakeWeb.allow_net_connect = false
 
-KEY_FILE = File.expand_path(File.join('~', '.barometer'))
-
-def geocode_google_key_message
-  puts
-  puts "Please update the key_file '#{KEY_FILE}' with your google api key"
-  puts "example:"
-  puts "google: geocode: YOUR_KEY_HERE"
-  puts
-end
-
-if File.exists?(KEY_FILE)
-  begin
-	  keys = YAML.load_file(KEY_FILE)
-	rescue
-	  # since all api calls are prevented by fakeweb, you don't need a valid key to pass the tests,
-	  # just fake it
-	  keys = {"google"=>{"geocode"=>"GOOGLE_KEY"}, "weather"=>{"partner"=>"PARTNER_KEY", "license"=>"LICENSE_KEY"}, "weather_bug"=>{"code"=>"A9999"}}
-  end
-	if keys["google"]
-	  KEY = keys["google"]["geocode"]
-  else
-    geocode_google_key_message
-    exit
-  end
-  if keys["weather"]
-  	WEATHER_PARTNER_KEY = keys["weather"]["partner"]
-  	WEATHER_LICENSE_KEY = keys["weather"]["license"]
-	end
-  if keys["weather_bug"]
-  	WEATHERBUG_CODE = keys["weather_bug"]["code"]
-	end
-    
-else
-  File.open(KEY_FILE, 'w') {|f| f << "google: geocode: YOUR_KEY_HERE" }
-  geocode_google_key_message
-  exit
-end
+  #
+  # Set random test keys
+  #
+  KEY = "ABC123"
+	WEATHER_PARTNER_KEY = "1234"
+	WEATHER_LICENSE_KEY = "12345"
+	WEATHERBUG_CODE = "A9999"
 
   #
   # for geocoding
