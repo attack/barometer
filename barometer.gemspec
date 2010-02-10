@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{barometer}
-  s.version = "0.6.6"
+  s.version = "0.6.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Mark G"]
-  s.date = %q{2010-02-02}
+  s.date = %q{2010-02-10}
   s.default_executable = %q{barometer}
   s.description = %q{A multi API consuming weather forecasting superstar.}
   s.email = %q{barometer@attackcorp.com}
