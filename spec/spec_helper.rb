@@ -18,12 +18,18 @@ def geocode_google_key_message
   puts
   puts "Please update the key_file '#{KEY_FILE}' with your google api key"
   puts "example:"
-  puts "google: geocode: YOUR_KEY_KERE"
+  puts "google: geocode: YOUR_KEY_HERE"
   puts
 end
 
 if File.exists?(KEY_FILE)
-	keys = YAML.load_file(KEY_FILE)
+  begin
+	  keys = YAML.load_file(KEY_FILE)
+	rescue
+	  # since all api calls are prevented by fakeweb, you don't need a valid key to pass the tests,
+	  # just fake it
+	  keys = {"google"=>{"geocode"=>"GOOGLE_KEY"}, "weather"=>{"partner"=>"PARTNER_KEY", "license"=>"LICENSE_KEY"}, "weather_bug"=>{"code"=>"A9999"}}
+  end
 	if keys["google"]
 	  KEY = keys["google"]["geocode"]
   else
@@ -39,7 +45,7 @@ if File.exists?(KEY_FILE)
 	end
     
 else
-  File.open(KEY_FILE, 'w') {|f| f << "google: geocode: YOUR_KEY_KERE" }
+  File.open(KEY_FILE, 'w') {|f| f << "google: geocode: YOUR_KEY_HERE" }
   geocode_google_key_message
   exit
 end
