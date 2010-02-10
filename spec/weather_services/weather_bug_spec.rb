@@ -167,7 +167,7 @@ describe "WeatherBug" do
       it "requires a Barometer::Measurement object" do
         lambda { WeatherService::WeatherBug._measure(nil, @query) }.should raise_error(ArgumentError)
         lambda { WeatherService::WeatherBug._measure("invalid", @query) }.should raise_error(ArgumentError)
-  
+
         lambda { WeatherService::WeatherBug._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
       end
   

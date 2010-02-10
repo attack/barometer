@@ -37,16 +37,13 @@ describe "Weather" do
   describe "with measurements" do
     
     before(:each) do
-      module Barometer
-        class Barometer::Measurement
-          attr_accessor :success
-        end
-      end
       @weather = Barometer::Weather.new
       @wunderground = Barometer::Measurement.new(:wunderground)
-      @wunderground.success = true
+      @wunderground.stub!(:success).and_return(true)
+      @wunderground.stub!(:success?).and_return(true)
       @yahoo = Barometer::Measurement.new(:yahoo)
-      @yahoo.success = true
+      @yahoo.stub!(:success).and_return(true)
+      @yahoo.stub!(:success?).and_return(true)
       @google = Barometer::Measurement.new(:google)
       @weather.measurements << @wunderground
       @weather.measurements << @yahoo
@@ -84,10 +81,12 @@ describe "Weather" do
       @weather = Barometer::Weather.new
       @wunderground = Barometer::Measurement.new(:wunderground)
       @wunderground.current = Barometer::Measurement::Result.new
-      @wunderground.success = true
+      @wunderground.stub!(:success).and_return(true)
+      @wunderground.stub!(:success?).and_return(true)
       @yahoo = Barometer::Measurement.new(:yahoo)
       @yahoo.current = Barometer::Measurement::Result.new
-      @yahoo.success = true
+      @yahoo.stub!(:success).and_return(true)
+      @yahoo.stub!(:success?).and_return(true)
       @google = Barometer::Measurement.new(:google)
       @weather.measurements << @wunderground
       @weather.measurements << @yahoo
@@ -296,7 +295,8 @@ describe "Weather" do
       
       it "returns true if a measurement returns true" do
         wunderground = Barometer::Measurement.new(:wunderground)
-        wunderground.success = true
+        wunderground.stub!(:success).and_return(true)
+        wunderground.stub!(:success?).and_return(true)
         @weather.measurements << wunderground
         @weather.measurements.each { |m| m.stub!(:windy?).and_return(true) }
         @weather.windy?.should be_true
@@ -304,7 +304,8 @@ describe "Weather" do
 
       it "returns false if a measurement returns false" do
         wunderground = Barometer::Measurement.new(:wunderground)
-        wunderground.success = true
+        wunderground.stub!(:success).and_return(true)
+        wunderground.stub!(:success?).and_return(true)
         @weather.measurements << wunderground
         @weather.measurements.each { |m| m.stub!(:windy?).and_return(false) }
         @weather.windy?.should be_false
@@ -332,7 +333,8 @@ describe "Weather" do
       
       it "returns true if a measurement returns true" do
         wunderground = Barometer::Measurement.new(:wunderground)
-        wunderground.success = true
+        wunderground.stub!(:success).and_return(true)
+        wunderground.stub!(:success?).and_return(true)
         @weather.measurements << wunderground
         @weather.measurements.each { |m| m.stub!(:wet?).and_return(true) }
         @weather.wet?.should be_true
@@ -340,7 +342,8 @@ describe "Weather" do
 
       it "returns false if a measurement returns false" do
         wunderground = Barometer::Measurement.new(:wunderground)
-        wunderground.success = true
+        wunderground.stub!(:success).and_return(true)
+        wunderground.stub!(:success?).and_return(true)
         @weather.measurements << wunderground
         @weather.measurements.each { |m| m.stub!(:wet?).and_return(false) }
         @weather.wet?.should be_false
@@ -368,7 +371,8 @@ describe "Weather" do
       
       it "returns true if a measurement returns true (night is opposite)" do
         wunderground = Barometer::Measurement.new(:wunderground)
-        wunderground.success = true
+        wunderground.stub!(:success).and_return(true)
+        wunderground.stub!(:success?).and_return(true)
         @weather.measurements << wunderground
         @weather.measurements.each { |m| m.stub!(:day?).and_return(true) }
         @weather.day?.should be_true
@@ -377,7 +381,8 @@ describe "Weather" do
 
       it "returns false if a measurement returns false (night is opposite)" do
         wunderground = Barometer::Measurement.new(:wunderground)
-        wunderground.success = true
+        wunderground.stub!(:success).and_return(true)
+        wunderground.stub!(:success?).and_return(true)
         @weather.measurements << wunderground
         @weather.measurements.each { |m| m.stub!(:day?).and_return(false) }
         @weather.day?.should be_false
@@ -400,7 +405,8 @@ describe "Weather" do
       
       it "returns true if a measurement returns true" do
         wunderground = Barometer::Measurement.new(:wunderground)
-        wunderground.success = true
+        wunderground.stub!(:success).and_return(true)
+        wunderground.stub!(:success?).and_return(true)
         @weather.measurements << wunderground
         @weather.measurements.each { |m| m.stub!(:day?).and_return(true) }
         @weather.measurements.each { |m| m.stub!(:sunny?).and_return(true) }
@@ -409,7 +415,8 @@ describe "Weather" do
 
       it "returns false if a measurement returns false" do
         wunderground = Barometer::Measurement.new(:wunderground)
-        wunderground.success = true
+        wunderground.stub!(:success).and_return(true)
+        wunderground.stub!(:success?).and_return(true)
         @weather.measurements << wunderground
         @weather.measurements.each { |m| m.stub!(:day?).and_return(true) }
         @weather.measurements.each { |m| m.stub!(:sunny?).and_return(false) }
@@ -418,7 +425,8 @@ describe "Weather" do
       
       it "returns false if night time" do
         wunderground = Barometer::Measurement.new(:wunderground)
-        wunderground.success = true
+        wunderground.stub!(:success).and_return(true)
+        wunderground.stub!(:success?).and_return(true)
         @weather.measurements << wunderground
         @weather.measurements.each { |m| m.stub!(:sunny?).and_return(true) }
         @weather.measurements.each { |m| m.stub!(:day?).and_return(false) }

@@ -127,7 +127,7 @@ module Barometer
       forecasts = Measurement::ResultArray.new
       # go through each forecast and create an instance
       if data && data["aws:forecast"]
-        start_date = Date.parse(data['date'])
+        start_date = Date.strptime(data['date'], "%m/%d/%Y %H:%M:%S %p")
         i = 0
         data["aws:forecast"].each do |forecast|
           forecast_measurement = Measurement::Result.new

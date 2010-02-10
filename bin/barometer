@@ -58,7 +58,7 @@ require 'rubygems'
 require 'barometer'
 
 require 'optparse' 
-require 'rdoc/usage'
+#require 'rdoc/usage'
 require 'ostruct'
 require 'time'
 require 'date'
