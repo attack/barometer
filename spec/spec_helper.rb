@@ -9,6 +9,8 @@ require 'barometer'
 
 FakeWeb.allow_net_connect = false
 
+Barometer.debug!
+
   #
   # Set random test keys
   #

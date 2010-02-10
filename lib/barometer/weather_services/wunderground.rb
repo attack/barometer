@@ -239,14 +239,12 @@ module Barometer
     def self._fetch_forecast(query)
       return unless query
       puts "fetch wunderground forecast: #{query.q}" if Barometer::debug?
-      result = self.get(
+      self.get(
         "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml",
         :query => {:query => query.q},
         :format => :xml,
         :timeout => Barometer.timeout
-      )
-      puts result.inspect
-      result['forecast']
+      )['forecast']
     end
     
     # since we have two sets of data, override these calls to choose the

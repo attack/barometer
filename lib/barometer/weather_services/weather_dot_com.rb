@@ -264,7 +264,7 @@ module Barometer
     def self._fetch(query, metric=true)
       return unless query
       puts "fetch weather.com: #{query.q}" if Barometer::debug?
-      self.get(
+      result = self.get(
         "http://xoap.weather.com/weather/local/#{query.q}",
         :query => { :par => @@partner_key, :key => @@license_key,
           :prod => "xoap", :link => "xoap", :cc => "*",
@@ -272,7 +272,9 @@ module Barometer
         },
         :format => :xml,
         :timeout => Barometer.timeout
-      )['weather']
+      )
+      puts result.inspect
+      result['weather']
     end
     
   end
