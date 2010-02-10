@@ -51,14 +51,13 @@
 #   http://github.com/attack/barometer
 #
 # == Copyright
-#   Copyright (c) 2009 Mark G. Licensed under the MIT License:
+#   Copyright (c) 2009-2010 Mark G. Licensed under the MIT License:
 #   http://www.opensource.org/licenses/mit-license.php
 
 require 'rubygems'
 require 'barometer'
 
-require 'optparse' 
-#require 'rdoc/usage'
+require 'optparse'
 require 'ostruct'
 require 'time'
 require 'date'

@@ -357,6 +357,12 @@ Barometer attempts to be a common API to any weather service API.  I have includ
 several weather service 'drivers', but I know there are many more available.
 Please use the provided ones as examples to create more.
 
+= Links
+
+- repo: http://github.com/attack/barometer
+- rdoc: http://rdoc.info/projects/attack/barometer
+- metrics: http://getcaliper.com/caliper/project?repo=git%3A%2F%2Fgithub.com%2Fattack%2Fbarometer.git
+
 == copyright
 
-Copyright (c) 2009 Mark G. See LICENSE for details.
+Copyright (c) 2009-2010 Mark G. See LICENSE for details.
