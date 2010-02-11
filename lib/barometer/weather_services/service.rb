@@ -1,10 +1,6 @@
 require 'rubygems'
 require 'httparty'
 
-$:.unshift(File.dirname(__FILE__))
-# load some changes to Httparty
-require 'extensions/httparty'
-
 module Barometer
   #
   # Service Class
