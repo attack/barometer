@@ -214,22 +214,21 @@ module Barometer
     #
     def self._fetch(query, metric=true)
       result = []
-      puts "c1"
       result << _fetch_current(query,metric)
-      puts "c2"
       result << _fetch_forecast(query,metric)
-      puts "c3"
       result
     end
     
     # use HTTParty to get the current weather
     #
     def self._fetch_current(query, metric=true)
+      puts "a1"
       puts "fetch weatherbug current: #{query.q}" if Barometer::debug?
       
       q = ( query.format.to_sym == :short_zipcode ?
         { :zipCode => query.q } :
         { :lat => query.q.split(',')[0], :long => query.q.split(',')[1] })
+      puts "a2"
       
       # httparty and the xml builder it uses miss some information
       # 1st - get the raw response
@@ -243,23 +242,28 @@ module Barometer
         }.merge(q),
         :format => :plain,
         :timeout => Barometer.timeout
-      )
+      )  
+      puts "a3"
       
       # get icon
       icon_match = response.match(/cond(\d*)\.gif/)
       icon = icon_match[1] if icon_match
+    puts "a4"
       
       # get station zipcode
       zip_match = response.match(/zipcode=\"(\d*)\"/)
       zipcode = zip_match[1] if zip_match
+    puts "a5"
       
       # build xml
       output = Crack::XML.parse(response)
       output = output["aws:weather"]["aws:ob"]
+    puts "a6"
       
       # add missing data
       output["aws:icon"] = icon
       output["aws:station_zipcode"] = zipcode
+    puts "a7"
       
       output
     end
