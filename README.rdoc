@@ -362,6 +362,7 @@ Please use the provided ones as examples to create more.
 - repo: http://github.com/attack/barometer
 - rdoc: http://rdoc.info/projects/attack/barometer
 - metrics: http://getcaliper.com/caliper/project?repo=git%3A%2F%2Fgithub.com%2Fattack%2Fbarometer.git
+- ci status: http://runcoderun.com/attack/barometer
 
 == copyright
 
