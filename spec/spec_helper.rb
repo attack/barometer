@@ -8,6 +8,7 @@ $:.unshift((File.join(File.dirname(__FILE__), '..', 'lib')))
 require 'barometer'
 
 FakeWeb.allow_net_connect = false
+puts File.dirname(__FILE__)
 #Barometer.debug!
 
   #
@@ -132,17 +133,11 @@ FakeWeb.allow_net_connect = false
   #
   FakeWeb.register_uri(:get, 
     "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=51.055149%2C-114.062438",
-    :body => File.read(File.join(File.dirname(__FILE__), 
-      'fixtures/services/wunderground',
-      'current_calgary_ab.xml')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/services/wunderground/current_calgary_ab.xml')
   )  
   FakeWeb.register_uri(:get, 
     "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=51.055149%2C-114.062438",
-    :body => File.read(File.join(File.dirname(__FILE__), 
-      'fixtures/services/wunderground',
-      'forecast_calgary_ab.xml')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/services/wunderground/forecast_calgary_ab.xml')
   )
 
 Spec::Runner.configure do |config|
