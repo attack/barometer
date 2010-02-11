@@ -8,8 +8,7 @@ $:.unshift((File.join(File.dirname(__FILE__), '..', 'lib')))
 require 'barometer'
 
 FakeWeb.allow_net_connect = false
-
-Barometer.debug!
+#Barometer.debug!
 
   #
   # Set random test keys
@@ -26,11 +25,9 @@ Barometer.debug!
   geo_url = "http://maps.google.com/maps/geo?"
   FakeWeb.register_uri(:get, 
     "#{geo_url}gl=US&key=#{KEY}&sensor=false&q=90210&output=json",
-    :body => File.read(File.join(File.dirname(__FILE__),  
-      'fixtures/geocode',
-      '90210.json')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/90210.json')
   )
+  
   FakeWeb.register_uri(:get, 
     "#{geo_url}gl=&q=#{CGI.escape("40.756054,-73.986951")}&output=json&key=#{KEY}&sensor=false",
     :body => File.read(File.join(File.dirname(__FILE__),  
