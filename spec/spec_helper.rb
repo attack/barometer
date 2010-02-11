@@ -8,9 +8,6 @@ $:.unshift((File.join(File.dirname(__FILE__), '..', 'lib')))
 require 'barometer'
 
 FakeWeb.allow_net_connect = false
-puts "Testing Filesystem:"
-puts File.dirname(__FILE__)
-puts File.read(File.dirname(__FILE__) + '/fixtures/geocode/90210.json').to_s
 #Barometer.debug!
 
   #
@@ -33,101 +30,62 @@ puts File.read(File.dirname(__FILE__) + '/fixtures/geocode/90210.json').to_s
   
   FakeWeb.register_uri(:get, 
     "#{geo_url}gl=&q=#{CGI.escape("40.756054,-73.986951")}&output=json&key=#{KEY}&sensor=false",
-    :body => File.read(File.join(File.dirname(__FILE__),  
-      'fixtures/geocode',
-      '40_73.json')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/40_73.json')
   )
   
   FakeWeb.register_uri(:get, 
     "#{geo_url}gl=&q=New%20York%2C%20NY&output=json&key=#{KEY}&sensor=false",
-    :body => File.read(File.join(File.dirname(__FILE__),  
-      'fixtures/geocode',
-      'newyork_ny.json')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/newyork_ny.json')
   )
   FakeWeb.register_uri(:get, 
     "#{geo_url}gl=CA&key=#{KEY}&output=json&q=T5B%204M9&sensor=false",
-    :body => File.read(File.join(File.dirname(__FILE__),  
-      'fixtures/geocode',
-      'T5B4M9.json')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/T5B4M9.json')
   )
   FakeWeb.register_uri(:get, 
     "#{geo_url}gl=US&q=KSFO&output=json&key=#{KEY}&sensor=false",
-    :body => File.read(File.join(File.dirname(__FILE__), 
-      'fixtures/geocode',
-      'ksfo.json')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/ksfo.json')
   )
   FakeWeb.register_uri(:get, 
     "#{geo_url}gl=&q=Atlanta%2C%20GA%2C%20US&output=json&key=#{KEY}&sensor=false",
-    :body => File.read(File.join(File.dirname(__FILE__),  
-      'fixtures/geocode',
-      'atlanta.json')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/atlanta.json')
   )
   FakeWeb.register_uri(:get, 
     "#{geo_url}output=xml&q=Atlanta%2C%20GA%2C%20US&gl=US&key=#{KEY}",
-    :body => File.read(File.join(File.dirname(__FILE__),  
-      'fixtures/geocode',
-      'atlanta.xml')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/atlanta.xml')
   )  
   FakeWeb.register_uri(:get, 
     "#{geo_url}gl=&key=#{KEY}&q=Calgary%2CAB&sensor=false&output=json",
-    :body => File.read(File.join(File.dirname(__FILE__), 
-      'fixtures/geocode',
-      'calgary_ab.json')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/calgary_ab.json')
   )
   #
   # for weather.com searches
   #
   FakeWeb.register_uri(:get, 
     "http://xoap.weather.com:80/search/search?where=Beverly%20Hills%2C%20CA%2C%20USA",
-    :body => File.read(File.join(File.dirname(__FILE__), 
-      'fixtures/formats/weather_id', 
-      '90210.xml')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/formats/weather_id/90210.xml')
   )
   FakeWeb.register_uri(:get, 
     "http://xoap.weather.com:80/search/search?where=New%20York%2C%20NY",
-    :body => File.read(File.join(File.dirname(__FILE__), 
-      'fixtures/formats/weather_id',
-      'new_york.xml')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/formats/weather_id/new_york.xml')
   )
   FakeWeb.register_uri(:get, 
     "http://xoap.weather.com:80/search/search?where=New%20York%2C%20NY%2C%20USA",
-    :body => File.read(File.join(File.dirname(__FILE__), 
-      'fixtures/formats/weather_id',
-      'new_york.xml')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/formats/weather_id/new_york.xml')
   )
   FakeWeb.register_uri(:get, 
     "http://xoap.weather.com:80/search/search?where=90210",
-    :body => File.read(File.join(File.dirname(__FILE__), 
-      'fixtures/formats/weather_id',
-      '90210.xml')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/formats/weather_id/90210.xml')
   )
   FakeWeb.register_uri(:get, 
     "http://xoap.weather.com:80/search/search?where=Millbrae%2C%20CA%2C%20USA",
-    :body => File.read(File.join(File.dirname(__FILE__), 
-      'fixtures/formats/weather_id',
-      'ksfo.xml')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/formats/weather_id/ksfo.xml')
   )
   #
   # for yahoo.com searches
   #
   FakeWeb.register_uri(:get, 
     "http://weather.yahooapis.com:80/forecastrss?p=USGA0028",
-    :body => File.read(File.join(File.dirname(__FILE__), 
-      'fixtures/formats/weather_id', 
-      'from_USGA0028.xml')
-    )
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/formats/weather_id/from_USGA0028.xml')
   )
   
   #

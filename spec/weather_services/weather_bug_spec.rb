@@ -142,19 +142,13 @@ describe "WeatherBug" do
       url = "http://#{WEATHERBUG_CODE}.api.wxbug.net:80/getLiveWeatherRSS.aspx?"
       FakeWeb.register_uri(:get, 
         "#{url}ACode=#{WEATHERBUG_CODE}&OutputType=1&UnitType=1&zipCode=90210",
-        :body => File.read(File.join(File.dirname(__FILE__), 
-          '../fixtures/services/weather_bug', 
-          '90210_current.xml')
-        )
+        :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/weather_bug/90210_current.xml')
       )
       
       url2 = "http://#{WEATHERBUG_CODE}.api.wxbug.net:80/getForecastRSS.aspx?"
       FakeWeb.register_uri(:get, 
         "#{url2}ACode=#{WEATHERBUG_CODE}&OutputType=1&UnitType=1&zipCode=90210",
-        :body => File.read(File.join(File.dirname(__FILE__), 
-          '../fixtures/services/weather_bug', 
-          '90210_forecast.xml')
-        )
+        :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/weather_bug/90210_forecast.xml')
       )
     end
   
@@ -198,19 +192,13 @@ describe "WeatherBug" do
       url = "http://#{WEATHERBUG_CODE}.api.wxbug.net:80/getLiveWeatherRSS.aspx?"
       FakeWeb.register_uri(:get, 
         "#{url}ACode=#{WEATHERBUG_CODE}&OutputType=1&UnitType=1&zipCode=90210",
-        :body => File.read(File.join(File.dirname(__FILE__), 
-          '../fixtures/services/weather_bug', 
-          '90210_current.xml')
-        )
+        :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/weather_bug/90210_current.xml')
       )
       
       url2 = "http://#{WEATHERBUG_CODE}.api.wxbug.net:80/getForecastRSS.aspx?"
       FakeWeb.register_uri(:get, 
         "#{url2}ACode=#{WEATHERBUG_CODE}&OutputType=1&UnitType=1&zipCode=90210",
-        :body => File.read(File.join(File.dirname(__FILE__), 
-          '../fixtures/services/weather_bug', 
-          '90210_forecast.xml')
-        )
+        :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/weather_bug/90210_forecast.xml')
       )
     end
 

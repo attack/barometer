@@ -123,10 +123,7 @@ describe "WeatherDotCom" do
   
       FakeWeb.register_uri(:get, 
          "#{url}90210?dayf=5&unit=m&link=xoap&par=#{WEATHER_PARTNER_KEY}&prod=xoap&key=#{WEATHER_LICENSE_KEY}&cc=*",
-         :body => File.read(File.join(File.dirname(__FILE__), 
-           '../fixtures/services/weather_dot_com', 
-           '90210.xml')
-         )
+         :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/weather_dot_com/90210.xml')
        )  
     end
 
@@ -171,10 +168,7 @@ describe "WeatherDotCom" do
   
       FakeWeb.register_uri(:get, 
          "#{url}90210?dayf=5&unit=m&link=xoap&par=#{WEATHER_PARTNER_KEY}&prod=xoap&key=#{WEATHER_LICENSE_KEY}&cc=*",
-         :body => File.read(File.join(File.dirname(__FILE__), 
-           '../fixtures/services/weather_dot_com', 
-           '90210.xml')
-         )
+         :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/weather_dot_com/90210.xml')
        )
     end
     

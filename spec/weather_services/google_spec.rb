@@ -105,10 +105,7 @@ describe "Google" do
       
       FakeWeb.register_uri(:get, 
         "http://google.com/ig/api?weather=#{CGI.escape(@query.q)}&hl=en-GB",
-        :body => File.read(File.join(File.dirname(__FILE__), 
-          '../fixtures/services/google', 
-          'calgary_ab.xml')
-        )
+        :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/google/calgary_ab.xml')
       )  
     end
     
