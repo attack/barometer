@@ -214,8 +214,11 @@ module Barometer
     #
     def self._fetch(query, metric=true)
       result = []
+      puts "c1"
       result << _fetch_current(query,metric)
+      puts "c2"
       result << _fetch_forecast(query,metric)
+      puts "c3"
       result
     end
     

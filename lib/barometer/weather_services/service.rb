@@ -34,16 +34,26 @@ module Barometer
     #
     def self.measure(query, metric=true)
       raise ArgumentError unless query.is_a?(Barometer::Query)
-      
+
+      puts "a1"
       measurement = Barometer::Measurement.new(self._source_name, metric)
+      puts "a2"
       measurement.start_at = Time.now.utc
+      puts "a3"
       if self._meets_requirements?(query)
+      puts "a4"
         converted_query = query.convert!(self._accepted_formats)
+        puts "a5"
         if converted_query
+        puts "a6"
           measurement.source = self._source_name
+          puts "a7"
           measurement.query = converted_query.q
+          puts "a8"
           measurement.format = converted_query.format
+          puts "a9"
           measurement = self._measure(measurement, converted_query, metric)
+          puts "a10"
         end
       end
       measurement.end_at = Time.now.utc
@@ -135,28 +145,42 @@ module Barometer
     # doesn't fit into "generic" (ie wunderground)
     #
     def self._measure(measurement, query, metric=true)
+      puts "b1"
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
+      puts "b2"
       raise ArgumentError unless query.is_a?(Barometer::Query)
+      puts "b3"
   
       begin
         result = _fetch(query, metric)
       rescue Timeout::Error => e
         return measurement
       end
+        puts "b4"
   
       if result
         measurement.current = _build_current(_current_result(result), metric)
+        puts "b5"
         measurement.forecast = _build_forecast(_forecast_result(result), metric)
+        puts "b6"
         measurement.location = _build_location(_location_result(result), query.geo)
+        puts "b7"
         measurement.station = _build_station(_station_result(result))
+        puts "b8"
         measurement.links = _build_links(_links_result(result))
+        puts "b9"
         measurement.current.sun = _build_sun(_sun_result(result)) if measurement.current
+        puts "b10"
         measurement.timezone = _timezone(_timezone_result(result), query, measurement.location)
+        puts "b11"
         if local_time = _local_time(_time_result(result), measurement)
            measurement.measured_at = local_time
+           puts "b12"
            measurement.current.current_at = local_time
         end
+           puts "b13"
         measurement = _build_extra(measurement, result, metric)
+           puts "b14"
       end
   
       measurement
