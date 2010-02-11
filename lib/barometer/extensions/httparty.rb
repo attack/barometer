@@ -4,9 +4,12 @@
 module HTTParty
   class Request
     
+    puts "here"
+    
     private
     
       def http
+        puts "here"
         http = Net::HTTP.new(uri.host, uri.port, options[:http_proxyaddr], options[:http_proxyport])
         http.use_ssl = (uri.port == 443)
         http.verify_mode = OpenSSL::SSL::VERIFY_NONE
