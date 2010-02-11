@@ -8,7 +8,9 @@ $:.unshift((File.join(File.dirname(__FILE__), '..', 'lib')))
 require 'barometer'
 
 FakeWeb.allow_net_connect = false
+puts "Testing Filesystem:"
 puts File.dirname(__FILE__)
+puts File.read(File.dirname(__FILE__) + '/fixtures/geocode/90210.json').to_s
 #Barometer.debug!
 
   #
