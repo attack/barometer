@@ -89,11 +89,6 @@ describe "Yahoo" do
     before(:each) do
       @query = Barometer::Query.new("90210")
       @measurement = Barometer::Measurement.new
-      
-      FakeWeb.register_uri(:get, 
-        "http://weather.yahooapis.com:80/forecastrss?u=c&p=#{CGI.escape(@query.q)}",
-        :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/yahoo/90210.xml')
-      )  
     end
     
     describe "all" do
@@ -132,11 +127,6 @@ describe "Yahoo" do
     before(:each) do
       @query = Barometer::Query.new("90210")
       @measurement = Barometer::Measurement.new
-
-      FakeWeb.register_uri(:get, 
-        "http://weather.yahooapis.com:80/forecastrss?u=c&p=#{CGI.escape(@query.q)}",
-        :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/yahoo/90210.xml')
-      )  
     end
 
     # TODO: complete this

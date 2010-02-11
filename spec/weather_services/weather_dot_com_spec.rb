@@ -118,13 +118,6 @@ describe "WeatherDotCom" do
     before(:each) do
       @query = Barometer::Query.new("90210")
       @measurement = Barometer::Measurement.new
-      
-      url = "http://xoap.weather.com:80/weather/local/"
-  
-      FakeWeb.register_uri(:get, 
-         "#{url}90210?dayf=5&unit=m&link=xoap&par=#{WEATHER_PARTNER_KEY}&prod=xoap&key=#{WEATHER_LICENSE_KEY}&cc=*",
-         :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/weather_dot_com/90210.xml')
-       )  
     end
 
     describe "all" do
@@ -163,13 +156,6 @@ describe "WeatherDotCom" do
     before(:each) do
       @query = Barometer::Query.new("90210")
       @measurement = Barometer::Measurement.new
-      
-      url = "http://xoap.weather.com:80/weather/local/"
-  
-      FakeWeb.register_uri(:get, 
-         "#{url}90210?dayf=5&unit=m&link=xoap&par=#{WEATHER_PARTNER_KEY}&prod=xoap&key=#{WEATHER_LICENSE_KEY}&cc=*",
-         :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/weather_dot_com/90210.xml')
-       )
     end
     
     it "should correctly build the data" do

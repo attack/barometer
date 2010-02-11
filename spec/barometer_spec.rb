@@ -98,34 +98,6 @@ describe "Barometer" do
       query_term = "Calgary,AB"
       @barometer = Barometer::Base.new(query_term)
       @time = Time.now
-      FakeWeb.register_uri(:get, 
-        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(query_term)}",
-        :body => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures/services/wunderground', 
-          'current_calgary_ab.xml')
-        )
-      )
-      FakeWeb.register_uri(:get, 
-        "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(query_term)}",
-        :body => File.read(File.join(File.dirname(__FILE__), 
-          'fixtures/services/wunderground',
-          'forecast_calgary_ab.xml')
-        )
-      )
-      # FakeWeb.register_uri(:get, 
-      #   "http://maps.google.com/maps/geo?gl=&key=#{@key}&q=Calgary%2CAB&sensor=false&output=xml",
-      #   :body => File.read(File.join(File.dirname(__FILE__), 
-      #     'fixtures/geocode',
-      #     'calgary_ab.xml')
-      #   )
-      # )
-      # FakeWeb.register_uri(:get, 
-      #   "http://maps.google.com/maps/geo?gl=&key=#{@key}&q=Calgary%2CAB&sensor=false&output=json",
-      #   :body => File.read(File.join(File.dirname(__FILE__), 
-      #     'fixtures/geocode',
-      #     'calgary_ab.json')
-      #   )
-      # )
     end
     
     it "responds to measure" do

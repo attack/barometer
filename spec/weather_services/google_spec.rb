@@ -102,11 +102,6 @@ describe "Google" do
     before(:each) do
       @query = Barometer::Query.new("Calgary,AB")
       @measurement = Barometer::Measurement.new
-      
-      FakeWeb.register_uri(:get, 
-        "http://google.com/ig/api?weather=#{CGI.escape(@query.q)}&hl=en-GB",
-        :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/google/calgary_ab.xml')
-      )  
     end
     
     describe "all" do

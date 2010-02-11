@@ -142,15 +142,6 @@ describe "Wunderground" do
     before(:each) do
       @query = Barometer::Query.new("Calgary,AB")
       @measurement = Barometer::Measurement.new
-      
-      FakeWeb.register_uri(:get, 
-        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query.q)}",
-        :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/wunderground/current_calgary_ab.xml')
-      )  
-      FakeWeb.register_uri(:get, 
-        "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query.q)}",
-        :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/wunderground/forecast_calgary_ab.xml')
-      )
     end
     
     describe "all" do
@@ -189,15 +180,6 @@ describe "Wunderground" do
     before(:each) do
       @query = Barometer::Query.new("Calgary,AB")
       @measurement = Barometer::Measurement.new
-      
-      FakeWeb.register_uri(:get, 
-        "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=#{CGI.escape(@query.q)}",
-        :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/wunderground/current_calgary_ab.xml')
-      )  
-      FakeWeb.register_uri(:get, 
-        "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape(@query.q)}",
-        :body => File.read(File.dirname(__FILE__) + '/../fixtures/services/wunderground/forecast_calgary_ab.xml')
-      )
     end
 
    # TODO: complete this
