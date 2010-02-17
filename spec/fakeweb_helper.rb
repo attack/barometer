@@ -146,6 +146,7 @@ if ENV["RUN_CODE_RUN"]
       {:string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/the_hills.xml')},
       {:string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/the_hills.xml')},
       {:string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/the_hills.xml')},
+      {:string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/the_hills.xml')},
       {:string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/T5B4M9.xml')},  
       {:string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/coords.xml')},
       {:string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/new_york.xml')},
