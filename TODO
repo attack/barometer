@@ -4,6 +4,9 @@
 - driver: hamweather
 - driver: meter
 - improve code based on metrics
+- ability to use Placemaker for geocoding (instead of Google)
+- use Geomojo to convert coords to woe_id (when no yahoo key)
+- remove use of HTTParty, use Net:HTTP and Nokogiri instead
 
 == soon
 

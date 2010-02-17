@@ -153,6 +153,22 @@ describe "Query::Coordinates" do
 
     end
     
+    describe "parsing" do
+      
+      it "returns the latitude" do
+        Barometer::Query::Format::Coordinates.parse_latitude(@coordinates).should == "40.756054"
+      end
+      
+      it "returns the longitude" do
+        Barometer::Query::Format::Coordinates.parse_longitude(@coordinates).should == "-73.986951"
+      end
+      
+      it "returns nil when unknown" do
+        Barometer::Query::Format::Coordinates.parse_longitude(@short_zipcode).should be_nil
+      end
+      
+    end
+    
   end
   
 end

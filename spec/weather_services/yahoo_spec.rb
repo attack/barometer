@@ -4,7 +4,7 @@ include Barometer
 describe "Yahoo" do
   
   before(:each) do
-    @accepted_formats = [:zipcode, :weather_id]
+    @accepted_formats = [:zipcode, :weather_id, :woe_id]
     #@base_uri = "http://google.com"
   end
   

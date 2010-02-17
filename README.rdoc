@@ -15,16 +15,20 @@ this.
 
 == version
 
-Version 0.6.7 is the current release of this gem.
-The gem is available from github (attack-barometer) or rubyforge (barometer).
+Version 0.6.8 is the current release of this gem. The gem is available from
+gemcutter (barometer: http://gemcutter.org/gems/barometer).
+Older version are available through rubyforge (barometer) and github
+(attack-barometer).
 It is fully functional (for five weather service APIs).
 
 == status
 
-Currently this project is in development and will only work for a few weather
-services (wunderground, google, yahoo, weather.com, weather_bug).
+Currently this project has completed initial development and will work for a
+few weather services (wunderground, google, yahoo, weather.com, weather_bug).
+Barometer has been tested on both Ruby 1.8.7 and 1.9.1.
 
-Features to be added next:
+Features to be added in the future:
+- better command line output
 - even more weather service drivers (hamweather)
 - icon support
 
@@ -60,6 +64,11 @@ eg. weatherbug.com
 
   weather_bug:
     code: YOUR_API_CODE
+    
+eg. Yahoo! Placemaker
+
+  yahoo:
+    app_id: YOUR_APP_ID
 
 == HTTParty
 
@@ -67,7 +76,7 @@ Why? HTTParty was created and designed specifically for consuming web services.
 I choose to use this over using the Net::HTTP library directly to allow for
 faster development of this project.
 
-HTTParty is also extended to include configurable Timeout support.
+It is possible that I will use Net::HTTP in the future.
 
 == tzinfo
 
@@ -100,6 +109,7 @@ code (ICAO) and it will return the weather as expected.
 - postal code
 - weather.com ID
 - location name (ie address, city, state, landmark, etc.)
+- woeid (where on earth id, by Yahoo!)
 
 * if the query is of the formats zipcode or postal code it may not
   support conversion to other formats.

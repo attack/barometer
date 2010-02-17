@@ -17,7 +17,11 @@ module Barometer
   
   @@google_geocode_key = nil
   def self.google_geocode_key; @@google_geocode_key; end;
-  def self.google_geocode_key=(key); @@google_geocode_key = key; end;
+  def self.google_geocode_key=(google_key); @@google_geocode_key = google_key; end;
+  
+  @@yahoo_placemaker_app_id = nil
+  def self.yahoo_placemaker_app_id; @@yahoo_placemaker_app_id; end;
+  def self.yahoo_placemaker_app_id=(yahoo_key); @@yahoo_placemaker_app_id = yahoo_key; end;
   
   # sometimes a query is used as is and never gets geocoded (ie zipcode)
   # often, it is useful to have queries geocoded to know where in the

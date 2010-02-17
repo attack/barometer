@@ -13,7 +13,7 @@ module Barometer
     def self.format; :geocode; end
     def self.is?(query=nil); query.is_a?(String) ? true : false; end
     def self.convertable_formats
-      [:short_zipcode, :zipcode, :coordinates, :weather_id, :icao]
+      [:short_zipcode, :zipcode, :coordinates, :weather_id, :icao, :woe_id]
     end
 
     # convert to this format, X -> :geocode
@@ -26,9 +26,16 @@ module Barometer
       
       unless converted_query = original_query.get_conversion(format)
         converted_query = Barometer::Query.new
-        converted_query = (original_query.format == :weather_id ?
-         Query::Format::WeatherID.reverse(original_query) :
-         geocode(original_query))
+        
+        converted_query = case original_query.format
+        when :weather_id
+          Query::Format::WeatherID.reverse(original_query)
+        when :woe_id
+          Query::Format::WoeID.reverse(original_query)
+        else
+          geocode(original_query)
+        end
+        
         original_query.post_conversion(converted_query) if converted_query
       end
       converted_query

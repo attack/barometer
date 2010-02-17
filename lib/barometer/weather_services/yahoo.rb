@@ -27,6 +27,7 @@ module Barometer
   # where query can be:
   # - zipcode (US)
   # - Yahoo! Location ID [actually weather.com id] (International)
+  # - Yahoo! 'Where on Earth ID [WOEID] (International)
   #
   # = Yahoo! terms of use
   # The feeds are provided free of charge for use by individuals and non-profit
@@ -42,6 +43,11 @@ module Barometer
   #
   # == notes
   # - the Yahoo! Location ID is a propreitary number (shared with weather.com)
+  # - the Yahoo! WOEID is only used by Yahoo!, and is a 32-bit number. Unfortunately
+  #   this number confilcts with US Zipcodes (ie the zipcode=90210 and the
+  #   WOEID=90210 cannot be destinguished and do not mean the same thing).  To
+  #   solve this, any 5 digit number will be dtected as a ZIPCODE.  To have a 
+  #   5 digit query be detected as a WOEID, prepend it with a 'w' (ie: w90210).
   #
   class WeatherService::Yahoo < WeatherService
     
@@ -51,8 +57,8 @@ module Barometer
     #
     
     def self._source_name; :yahoo; end
-    def self._accepted_formats; [:zipcode, :weather_id]; end
-    
+    def self._accepted_formats; [:zipcode, :weather_id, :woe_id]; end
+
     def self._wet_icon_codes
       codes = [1] + (3..18).to_a + [35] + (37..43).to_a + (45..47).to_a
       codes.collect {|c| c.to_s}
@@ -185,9 +191,14 @@ module Barometer
     def self._fetch(query, metric=true)
       return unless query
       puts "fetch yahoo: #{query.q}" if Barometer::debug?
+      options = {
+        :p => query.format == :woe_id ? nil : query.q,
+        :w => query.format == :woe_id ? query.q : nil,
+        :u => (metric ? 'c' : 'f')
+      }.delete_if {|k,v| v.nil? }
       self.get(
         "http://weather.yahooapis.com/forecastrss",
-        :query => {:p => query.q, :u => (metric ? 'c' : 'f')},
+        :query => options,
         :format => :xml,
         :timeout => Barometer.timeout
       )['rss']['channel']

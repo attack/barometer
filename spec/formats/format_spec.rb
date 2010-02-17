@@ -68,6 +68,15 @@ describe "Query::Format" do
       Barometer::Query::Format.convertable_formats.should == []
     end
     
+    it "stubs convert_query" do
+      Barometer::Query::Format.respond_to?(:convert_query).should be_true
+    end
+    
+    it "normally does nothing when converting a query" do
+      text = "this is a query"
+      Barometer::Query::Format.convert_query(text).should == text
+    end
+    
   end
   
 end

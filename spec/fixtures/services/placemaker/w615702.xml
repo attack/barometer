@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<rss xmlns:yweather="http://xml.weather.yahoo.com/ns/rss/1.0" xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#" version="2.0">
+  <channel>
+    <title>Yahoo! Weather - Paris, FR</title>
+    <link>http://us.rd.yahoo.com/dailynews/rss/weather/Paris__FR/*http://weather.yahoo.com/forecast/FRXX0076_f.html</link>
+    <description>Yahoo! Weather for Paris, FR</description>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 17 Feb 2010 9:00 am CET</lastBuildDate>
+    <ttl>60</ttl>
+    <yweather:location city="Paris" region="" country="France"/>
+    <yweather:units temperature="F" distance="mi" pressure="in" speed="mph"/>
+    <yweather:wind chill="34" direction="0" speed="3"/>
+    <yweather:atmosphere humidity="93" visibility="2.17" pressure="29.23" rising="0"/>
+    <yweather:astronomy sunrise="7:55 am" sunset="6:14 pm"/>
+    <image>
+      <title>Yahoo! Weather</title>
+      <width>142</width>
+      <height>18</height>
+      <link>http://weather.yahoo.com</link>
+      <url>http://l.yimg.com/a/i/us/nws/th/main_142b.gif</url>
+    </image>
+    <item>
+      <title>Conditions for Paris, FR at 9:00 am CET</title>
+      <geo:lat>48.86</geo:lat>
+      <geo:long>2.34</geo:long>
+      <link>http://us.rd.yahoo.com/dailynews/rss/weather/Paris__FR/*http://weather.yahoo.com/forecast/FRXX0076_f.html</link>
+      <pubDate>Wed, 17 Feb 2010 9:00 am CET</pubDate>
+      <yweather:condition text="Light Rain" code="11" temp="34" date="Wed, 17 Feb 2010 9:00 am CET"/>
+      <description><![CDATA[
+<img src="http://l.yimg.com/a/i/us/we/52/11.gif"/><br />
+<b>Current Conditions:</b><br />
+Light Rain, 34 F<BR />
+<BR /><b>Forecast:</b><BR />
+Wed - Rain/Snow. High: 39 Low: 35<br />
+Thu - AM Fog/PM Clouds. High: 43 Low: 36<br />
+<br />
+<a href="http://us.rd.yahoo.com/dailynews/rss/weather/Paris__FR/*http://weather.yahoo.com/forecast/FRXX0076_f.html">Full Forecast at Yahoo! Weather</a><BR/><BR/>
+(provided by <a href="http://www.weather.com" >The Weather Channel</a>)<br/>
+]]></description>
+      <yweather:forecast day="Wed" date="17 Feb 2010" low="35" high="39" text="Rain/Snow" code="5"/>
+      <yweather:forecast day="Thu" date="18 Feb 2010" low="36" high="43" text="AM Fog/PM Clouds" code="20"/>
+      <guid isPermaLink="false">FRXX0076_2010_02_17_9_00_CET</guid>
+    </item>
+  </channel>
+</rss>
+<!-- api4.weather.ac4.yahoo.com uncompressed/chunked Wed Feb 17 00:36:01 PST 2010 -->

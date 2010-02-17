@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<contentlocation xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns="http://wherein.yahooapis.com/v1/schema" xml:lang="en">
+  <processingTime>0.000986</processingTime>
+  <version> build 091119</version>
+  <documentLength>7</documentLength>
+  <document>
+    <administrativeScope>
+      <woeId>8676</woeId>
+      <type>Town</type>
+      <name><![CDATA[Edmonton, Alberta, CA]]></name>
+      <centroid>
+        <latitude>53.5462</latitude>
+        <longitude>-113.49</longitude>
+      </centroid>
+    </administrativeScope>
+    <geographicScope>
+      <woeId>24354344</woeId>
+      <type>Zip</type>
+      <name><![CDATA[T5B 4M9, Edmonton, Alberta, CA]]></name>
+      <centroid>
+        <latitude>53.5705</latitude>
+        <longitude>-113.458</longitude>
+      </centroid>
+    </geographicScope>
+    <extents>
+      <center>
+        <latitude>53.5705</latitude>
+        <longitude>-113.458</longitude>
+      </center>
+      <southWest>
+        <latitude>53.5695</latitude>
+        <longitude>-113.46</longitude>
+      </southWest>
+      <northEast>
+        <latitude>53.5715</latitude>
+        <longitude>-113.456</longitude>
+      </northEast>
+    </extents>
+    <placeDetails>
+      <place>
+        <woeId>24354344</woeId>
+        <type>Zip</type>
+        <name><![CDATA[T5B 4M9, Edmonton, Alberta, CA]]></name>
+        <centroid>
+          <latitude>53.5705</latitude>
+          <longitude>-113.458</longitude>
+        </centroid>
+      </place>
+      <matchType>0</matchType>
+      <weight>1</weight>
+      <confidence>7</confidence>
+    </placeDetails>
+    <referenceList>
+      <reference>
+        <woeIds>24354344</woeIds>
+        <start>0</start>
+        <end>7</end>
+        <isPlaintextMarker>1</isPlaintextMarker>
+        <text><![CDATA[T5B 4M9]]></text>
+        <type>plaintext</type>
+        <xpath><![CDATA[]]></xpath>
+      </reference>
+    </referenceList>
+  </document>
+</contentlocation>

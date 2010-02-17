@@ -21,16 +21,17 @@ module Barometer
     # This array defines the order to check a query for the format
     #
     FORMATS = %w(
-      ShortZipcode Zipcode Postalcode WeatherID Coordinates Icao Geocode
+      ShortZipcode Zipcode Postalcode WeatherID Coordinates Icao WoeID Geocode
     )
     FORMAT_MAP = {
       :short_zipcode => "ShortZipcode", :zipcode => "Zipcode",
       :postalcode => "Postalcode", :weather_id => "WeatherID",
       :coordinates => "Coordinates", :icao => "Icao",
-      :geocode => "Geocode"
+      :woe_id => "WoeID", :geocode => "Geocode"
     }
     
-    attr_accessor :format, :q, :country_code
+    attr_writer :q
+    attr_accessor :format, :country_code
     attr_accessor :geo, :timezone, :conversions
     
     def initialize(query=nil)
@@ -38,6 +39,10 @@ module Barometer
       @q = query
       self.analyze!
       @conversions = {}
+    end
+    
+    def q
+      format ? Barometer::Query::Format.const_get(FORMAT_MAP[format.to_sym].to_s).convert_query(@q) : @q
     end
 
     # analyze the saved query to determine the format.
@@ -152,6 +157,16 @@ def get_conversion(format)
     nil
   end
 end
+
+  def latitude
+    return nil unless self.format == Query::Format::Coordinates.format
+    Query::Format::Coordinates.parse_latitude(self.q)
+  end
+  
+  def longitude
+    return nil unless self.format == Query::Format::Coordinates.format
+    Query::Format::Coordinates.parse_longitude(self.q)
+  end
     
   end
 end  

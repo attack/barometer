@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<contentlocation xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns="http://wherein.yahooapis.com/v1/schema" xml:lang="en">
+  <processingTime>0.001045</processingTime>
+  <version> build 091119</version>
+  <documentLength>17</documentLength>
+  <document>
+    <administrativeScope>
+      <woeId>2451206</woeId>
+      <type>Town</type>
+      <name><![CDATA[Millbrae, CA, US]]></name>
+      <centroid>
+        <latitude>37.6028</latitude>
+        <longitude>-122.395</longitude>
+      </centroid>
+    </administrativeScope>
+    <geographicScope>
+      <woeId>2451206</woeId>
+      <type>Town</type>
+      <name><![CDATA[Millbrae, CA, US]]></name>
+      <centroid>
+        <latitude>37.6028</latitude>
+        <longitude>-122.395</longitude>
+      </centroid>
+    </geographicScope>
+    <extents>
+      <center>
+        <latitude>37.6028</latitude>
+        <longitude>-122.395</longitude>
+      </center>
+      <southWest>
+        <latitude>37.5811</latitude>
+        <longitude>-122.429</longitude>
+      </southWest>
+      <northEast>
+        <latitude>37.6181</latitude>
+        <longitude>-122.373</longitude>
+      </northEast>
+    </extents>
+    <placeDetails>
+      <place>
+        <woeId>2451206</woeId>
+        <type>Town</type>
+        <name><![CDATA[Millbrae, CA, US]]></name>
+        <centroid>
+          <latitude>37.6028</latitude>
+          <longitude>-122.395</longitude>
+        </centroid>
+      </place>
+      <matchType>0</matchType>
+      <weight>1</weight>
+      <confidence>10</confidence>
+    </placeDetails>
+    <referenceList>
+      <reference>
+        <woeIds>2451206</woeIds>
+        <start>0</start>
+        <end>17</end>
+        <isPlaintextMarker>1</isPlaintextMarker>
+        <text><![CDATA[Millbrae, CA, USA]]></text>
+        <type>plaintext</type>
+        <xpath><![CDATA[]]></xpath>
+      </reference>
+    </referenceList>
+  </document>
+</contentlocation>

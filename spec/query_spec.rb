@@ -104,6 +104,19 @@ describe "Query" do
       @query.q.should be_nil
     end
     
+    it "attempts query conversion when reading q (if format known)" do
+      query = Barometer::Query.new(@geocode)
+      query.format.should == :geocode
+      Barometer::Query::Format::Geocode.should_receive(:convert_query).once.with(@geocode).and_return(@geocode)
+      query.q.should == @geocode
+    end
+    
+    it "does not attempt query conversion when reading q (if format unknown)" do
+      @query.format.should be_nil
+      Barometer::Query::Format.should_not_receive(:convert_query)
+      @query.q.should be_nil
+    end
+    
     it "responds to format" do
       @query.format.should be_nil
     end
@@ -142,6 +155,31 @@ describe "Query" do
     
     it "responds to conversions" do
       @query.conversions.should be_nil
+    end
+    
+    it "returns latitude for when recognized as coordinates" do
+      @query.q = @coordinates
+      @query.format.should be_nil
+      @query.analyze!
+      @query.format.to_sym.should == :coordinates
+      @query.latitude.should == @coordinates.split(',')[0]
+    end
+    
+    it "returns longitude for when recognized as coordinates" do
+      @query.q = @coordinates
+      @query.format.should be_nil
+      @query.analyze!
+      @query.format.to_sym.should == :coordinates
+      @query.longitude.should == @coordinates.split(',')[1]
+    end
+    
+    it "returns nothing for latitude/longitude when not coordinates" do
+      @query.q = @geocode
+      @query.format.should be_nil
+      @query.analyze!
+      @query.format.to_sym.should == :geocode
+      @query.latitude.should be_nil
+      @query.longitude.should be_nil
     end
     
   end

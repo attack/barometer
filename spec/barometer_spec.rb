@@ -4,7 +4,8 @@ describe "Barometer" do
   
   before(:each) do
     @config_hash = { 1 => [:wunderground] }
-    @key = KEY
+    @google_key = KEY
+    @yahoo_key = YAHOO_KEY
   end
   
   describe "and class methods" do
@@ -25,8 +26,16 @@ describe "Barometer" do
       Barometer.respond_to?("google_geocode_key").should be_true
       Barometer.google_geocode_key = nil
       Barometer.google_geocode_key.should be_nil
-      Barometer.google_geocode_key = @key
-      Barometer.google_geocode_key.should == @key
+      Barometer.google_geocode_key = @google_key
+      Barometer.google_geocode_key.should == @google_key
+    end
+    
+    it "sets the Placemaker Yahoo! app ID" do
+      Barometer.respond_to?("yahoo_placemaker_app_id").should be_true
+      Barometer.yahoo_placemaker_app_id = nil
+      Barometer.yahoo_placemaker_app_id.should be_nil
+      Barometer.yahoo_placemaker_app_id = @yahoo_key
+      Barometer.yahoo_placemaker_app_id.should == @yahoo_key
     end
     
     it "forces the geocoding of queries" do
@@ -94,7 +103,7 @@ describe "Barometer" do
   describe "when measuring" do
     
     before(:each) do
-      Barometer.google_geocode_key = @key
+      Barometer.google_geocode_key = @google_key
       query_term = "Calgary,AB"
       @barometer = Barometer::Base.new(query_term)
       @time = Time.now

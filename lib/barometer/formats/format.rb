@@ -10,6 +10,10 @@ module Barometer
   #
   class Query::Format
 
+    @@fixes_file = File.expand_path(
+      File.join(File.dirname(__FILE__), '..', 'translations', 'weather_country_codes.yml'))
+    @@fixes = nil
+
     # stubs
     #
     def self.regex; raise NotImplementedError; end
@@ -20,6 +24,7 @@ module Barometer
     def self.to(query=nil,country=nil); nil; end
     def self.country_code(query=nil); nil; end
     def self.convertable_formats; []; end
+    def self.convert_query(text); text; end
   
     # is the query of this format?
     #
@@ -40,6 +45,19 @@ module Barometer
     def self.is_a_query?(object=nil)
       return false unless object
       object.is_a?(Barometer::Query)
+    end
+    
+    private
+    
+    # fix the country code
+    #
+    # weather.com uses non-standard two letter country codes that
+    # hinder the ability to determine the country or fetch geo_data.
+    # correct these "mistakes"
+    #
+    def self._fix_country(country_code)
+      @@fixes ||= YAML.load_file(@@fixes_file)
+      @@fixes[country_code.upcase.to_s] || country_code
     end
   
   end

@@ -10,10 +10,6 @@ module Barometer
   #
   class Query::Format::WeatherID < Query::Format
   
-    @@fixes_file = File.expand_path(
-      File.join(File.dirname(__FILE__), '..', 'translations', 'weather_country_codes.yml'))
-    @@fixes = nil
-    
     def self.format; :weather_id; end
     def self.regex; /(^[A-Za-z]{4}[0-9]{4}$)/; end
     def self.convertable_formats
@@ -90,17 +86,6 @@ module Barometer
       output = [text["city"], text["region"], _fix_country(text["country"])]
       output.delete("")
       output.compact.join(', ')
-    end
-    
-    # fix the country code
-    #
-    # weather.com uses non-standard two letter country codes that
-    # hinder the ability to determine the country or fetch geo_data.
-    # correct these "mistakes"
-    #
-    def self._fix_country(country_code)
-      @@fixes ||= YAML.load_file(@@fixes_file)
-      @@fixes[country_code.upcase.to_s] || country_code
     end
 
   end

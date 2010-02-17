@@ -8,6 +8,7 @@ KEY = "ABC123"
 WEATHER_PARTNER_KEY = "1234"
 WEATHER_LICENSE_KEY = "12345"
 WEATHERBUG_CODE = "A9999"
+YAHOO_KEY = "YAHOO"
 
 # runcoderun uses a older version of fakeweb that has different syntax
 if ENV["RUN_CODE_RUN"]
@@ -136,6 +137,27 @@ if ENV["RUN_CODE_RUN"]
     :string => File.read(File.dirname(__FILE__) + '/fixtures/services/wunderground/forecast_calgary_ab.xml')
   )
   
+  #
+  # For Placemaker
+  #
+  FakeWeb.register_uri(:post, 
+    "http://wherein.yahooapis.com/v1/document",
+    [
+      {:string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/the_hills.xml')},
+      {:string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/the_hills.xml')},
+      {:string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/the_hills.xml')},
+      {:string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/T5B4M9.xml')},  
+      {:string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/coords.xml')},
+      {:string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/new_york.xml')},
+      {:string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/atlanta.xml')},
+      {:string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/ksfo.xml')}
+    ]
+  )
+  FakeWeb.register_uri(:get, 
+    "http://weather.yahooapis.com/forecastrss?w=615702",
+    :string => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/w615702.xml')
+  )
+  
 else
   
   #
@@ -261,6 +283,28 @@ else
   FakeWeb.register_uri(:get, 
     "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=#{CGI.escape('Calgary,AB')}",
     :body => File.read(File.dirname(__FILE__) + '/fixtures/services/wunderground/forecast_calgary_ab.xml')
+  )
+  
+  #
+  # For Placemaker
+  #
+  FakeWeb.register_uri(:post, 
+    "http://wherein.yahooapis.com/v1/document",
+    [
+      {:body => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/the_hills.xml')},
+      {:body => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/the_hills.xml')},
+      {:body => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/the_hills.xml')},
+      {:body => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/T5B4M9.xml')},  
+      {:body => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/coords.xml')},
+      {:body => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/new_york.xml')},
+      {:body => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/atlanta.xml')},
+      {:body => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/ksfo.xml')}
+    ]
+  )
+
+  FakeWeb.register_uri(:get, 
+    "http://weather.yahooapis.com/forecastrss?w=615702",
+    :body => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/w615702.xml')
   )
   
 end
