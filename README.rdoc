@@ -140,7 +140,7 @@ with geo-coding.
   barometer = Barometer.new("Paris")
   weather = barometer.measure
   
-  puts weather.current.temperture
+  puts weather.current.temperature
   
 == sources
 
