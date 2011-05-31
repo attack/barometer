@@ -65,7 +65,7 @@ describe "Data::Zone" do
         zone.code.should be_nil
 
         zone = Data::Zone.new(@timezone)
-        zone.code.should == "CET"
+        zone.code.should == "CEST"
       end
 
       it "responds to dst?" do
