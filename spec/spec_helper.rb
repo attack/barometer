@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'spec'
+require 'rspec'
 require 'mocha'
 require 'cgi'
 
@@ -12,6 +12,6 @@ require 'barometer'
 Barometer.google_geocode_key = "ABC123"
 Barometer.yahoo_placemaker_app_id = "YAHOO"
 
-Spec::Runner.configure do |config|
+RSpec.configure do |config|
   
 end
