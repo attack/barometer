@@ -384,9 +384,7 @@ Thank you to these developers who have contributed. No contribution is too small
 
 - repo: http://github.com/attack/barometer
 - rdoc: http://rdoc.info/projects/attack/barometer
-- metrics: http://getcaliper.com/caliper/project?repo=git%3A%2F%2Fgithub.com%2Fattack%2Fbarometer.git
-- ci status: http://runcoderun.com/attack/barometer
 
 == copyright
 
-Copyright (c) 2009-2010 Mark G. See LICENSE for details.
+Copyright (c) 2009-2011 Mark G. See LICENSE for details.
