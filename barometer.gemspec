@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.authors = ["Mark G"]
   s.email = %q{barometer@attackcorp.com}
-  s.date = %q{2010-02-10}
+  s.date = %q{2011-06-01}
 
   s.summary = %q{A multi API consuming weather forecasting superstar.}
   s.description = %q{A multi API consuming weather forecasting superstar.}

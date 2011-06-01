@@ -15,7 +15,7 @@ this.
 
 == version
 
-Version 0.6.8 is the current release of this gem. The gem is available from
+Version 0.7.0 is the current release of this gem. The gem is available from
 gemcutter (barometer: http://gemcutter.org/gems/barometer).
 Older version are available through rubyforge (barometer) and github
 (attack-barometer).
@@ -25,7 +25,7 @@ It is fully functional (for five weather service APIs).
 
 Currently this project has completed initial development and will work for a
 few weather services (wunderground, google, yahoo, weather.com, weather_bug).
-Barometer has been tested on both Ruby 1.8.7 and 1.9.1.
+Barometer is developed using only Ruby 1.9.2, but will probably on both Ruby 1.8.7 and 1.9.1.
 
 Features to be added in the future:
 - better command line output
@@ -198,15 +198,6 @@ This will output the weather information for the given query.
 See the help for more command line information.
 
   # barometer -h
-
-=== web demo
-
-There is a Sinatra application that demos the functionality of Barometer,
-and provides Barometer information.  Start this local demo with:
-
-  # barometer -w
-  
-NOTE: This requires the gems "sinatra" and "vegas".
   
 === fail
 

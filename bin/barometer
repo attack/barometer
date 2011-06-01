@@ -11,14 +11,6 @@
 #     barometer --yahoo 90210
 #     barometer --verbose 'new york'
 #
-# == Local Web Demo
-#   You can easily interact directly with barometer with the command:
-#     barometer -w
-#
-#   This demo has 2 gem requirements:
-#     - sinatra (tested with 0.9.1.1)
-#     - vegas (tested with 0.0.1)
-#
 # == Usage 
 #   barometer [options] query
 #
@@ -41,22 +33,17 @@
 #   -s, --wind          wind speed threshold used to determine windy?
 #   -a, --at            time/date used to determine when to calculate summary
 #
-#   Web Demo:
-#   -w, --web           run web-app with barometer demo
-#   -k, --kill          stop the web demo background process
-#   -S, --status        show the web demo status
-#
 # == Author
 #   Mark G
 #   http://github.com/attack/barometer
 #
 # == Copyright
-#   Copyright (c) 2009-2010 Mark G. Licensed under the MIT License:
+#   Copyright (c) 2009-2011 Mark G. Licensed under the MIT License:
 #   http://www.opensource.org/licenses/mit-license.php
 
 require 'rubygems'
-#require 'barometer'
-require '/Users/mark/work/fresh/gems/barometer/lib/barometer'
+require 'barometer'
+#require '/Users/mark/code/gems/barometer/lib/barometer'
 
 require 'optparse'
 require 'ostruct'
@@ -66,7 +53,7 @@ require 'yaml'
 
 # file where API keys are stored
 KEY_FILE = File.expand_path(File.join('~', '.barometer'))
-BAROMETER_VERSION = '0.6.8'
+BAROMETER_VERSION = '0.7.0'
 
 class App
   
@@ -83,7 +70,6 @@ class App
     @options.metric = true
     @options.sources = []
     @options.verbode = false
-    @options.web = false
     @options.at = nil
     @options.default = true
     
@@ -133,11 +119,6 @@ class App
       opt.on('--bug')              { @options.sources << :weather_bug; @options.default = false }
       opt.on('-p n', '--pop n')    {|n| @options.pop = n.to_i || 50 }
       opt.on('-s n', '--wind n')   {|n| @options.metric ? @options.windy_m = n.to_f || 10 : @options.windy_i = n.to_f || 7 }
-      
-      # pass these onto vegas
-      opt.on('-w', '--web')        { @options.web = true; ARGV.shift }
-      opt.on('-k', '--kill')       { @options.web = true }
-      opt.on('-S', '--status')     { @options.web = true }
             
       opt.parse!(@arguments) rescue return false
       
@@ -244,11 +225,6 @@ class App
       puts "  -p, --pop           pop threshold used to determine wet?"
       puts "  -s, --wind          wind speed threshold used to determine windy?"
       puts "  -a, --at            time/date used to determine when to calculate summary"
-      puts
-      puts "  Web Demo:"
-      puts "  -w, --web           run web-app with barometer demo"
-      puts "  -k, --kill          stop the web demo background process"
-      puts "  -S, --status        show the web demo status"
     end
     
     def output_version
@@ -256,25 +232,21 @@ class App
     end
     
     def process_command
-      if @options.web
-        run_web_mode(@arguments.join(" "))
-      else
-        barometer = Barometer.new(@arguments.join(" "))
-        begin
-          if @options.verbose
-            Barometer::debug!
-            div(char="*")
-            puts "DEBUG LOG"
-            blank
-          end
-          barometer.measure(@options.metric) if barometer
-          blank if @options.verbose
-          pretty_output(barometer) if barometer.weather
-        rescue Barometer::OutOfSources
-          puts
-          puts "   SORRY: your query did not provide any results"
-          puts
+      barometer = Barometer.new(@arguments.join(" "))
+      begin
+        if @options.verbose
+          Barometer::debug!
+          div(char="*")
+          puts "DEBUG LOG"
+          blank
         end
+        barometer.measure(@options.metric) if barometer
+        blank if @options.verbose
+        pretty_output(barometer) if barometer.weather
+      rescue Barometer::OutOfSources
+        puts
+        puts "   SORRY: your query did not provide any results"
+        puts
       end
     end
 end
@@ -474,18 +446,6 @@ def pretty_output(barometer)
     pretty_measurements(weather)
     pretty_info(weather)
     div("-")
-  end
-end
-
-def run_web_mode(query=nil)
-  
-  require 'rubygems'
-  require File.expand_path(File.dirname(__FILE__) + '/../lib/demometer/demometer.rb')
-  require 'vegas'
-  
-  Vegas::Runner.new(Demometer, 'demometer') do |opts, app|
-    # opts is an option parser object
-    # app is your app class
   end
 end
 
