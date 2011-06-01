@@ -65,7 +65,10 @@ describe "Data::Zone" do
         zone.code.should be_nil
 
         zone = Data::Zone.new(@timezone)
-        zone.code.should == "CEST"
+        # the expected result of this depends on the time of year
+        # when summer expect "CEST", otherwise "CET"
+        # just let TZINFO handle this
+        zone.code.should == TZInfo::Timezone.get(@timezone).period_for_utc(Time.now.utc).zone_identifier.to_s
       end
 
       it "responds to dst?" do
