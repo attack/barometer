@@ -367,6 +367,19 @@ Barometer attempts to be a common API to any weather service API.  I have includ
 several weather service 'drivers', but I know there are many more available.
 Please use the provided ones as examples to create more.
 
+= development
+
+Barometer now uses 'bundler'.  You just need to 'git clone' the repo and 'bundle install'.
+
+== Contributions
+
+Thank you to these developers who have contributed. No contribution is too small.
+
+- nofxx (https://github.com/nofxx)
+- floere (https://github.com/floere)
+- plukevdh (https://github.com/plukevdh)
+
+
 = Links
 
 - repo: http://github.com/attack/barometer
