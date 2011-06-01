@@ -53,7 +53,7 @@ require 'yaml'
 
 # file where API keys are stored
 KEY_FILE = File.expand_path(File.join('~', '.barometer'))
-BAROMETER_VERSION = '0.7.0'
+BAROMETER_VERSION = '0.7.1'
 
 class App
   
