@@ -144,7 +144,12 @@ describe "Data::LocalDateTime" do
       datetime.min.should == @m
       datetime.sec.should == @s
     end
-    
+
+    it "returns nil when string contains no date/time info" do
+      string = "Last Updated on , "
+      datetime = Data::LocalDateTime.parse(string)
+      datetime.should be_nil
+    end
   end
   
   describe "storing" do
