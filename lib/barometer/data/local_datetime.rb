@@ -70,13 +70,17 @@ module Barometer
         month = string.mon
         day = string.day
       elsif string.is_a?(String)
-        datetime = Time.parse(string)
-        year = datetime.year
-        month = datetime.mon
-        day = datetime.day
-        hour = datetime.hour
-        min = datetime.min
-        sec = datetime.sec
+        begin
+          datetime = Time.parse(string)
+          year = datetime.year
+          month = datetime.mon
+          day = datetime.day
+          hour = datetime.hour
+          min = datetime.min
+          sec = datetime.sec
+        rescue ArgumentError
+          return nil
+        end
       end
       Data::LocalDateTime.new(year, month, day, hour, min, sec)
     end
