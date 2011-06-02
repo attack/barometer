@@ -69,7 +69,7 @@ describe "Query::Geocode" do
         query = Barometer::Query.new(@short_zipcode)
         query.format.should == :short_zipcode
         new_query = Barometer::Query::Format::Geocode.to(query)
-        new_query.q.should == "Beverly Hills, CA, USA"
+        new_query.q.should == "Beverly Hills, CA, United States"
         new_query.country_code.should == "US"
         new_query.format.should == :geocode
         new_query.geo.should_not be_nil
@@ -80,7 +80,7 @@ describe "Query::Geocode" do
         query.format = :zipcode
         query.format.should == :zipcode
         new_query = Barometer::Query::Format::Geocode.to(query)
-        new_query.q.should == "Beverly Hills, CA, USA"
+        new_query.q.should == "Beverly Hills, CA, United States"
         new_query.country_code.should == "US"
         new_query.format.should == :geocode
         new_query.geo.should_not be_nil
@@ -100,7 +100,7 @@ describe "Query::Geocode" do
         query = Barometer::Query.new(@coordinates)
         query.format.should == :coordinates
         new_query = Barometer::Query::Format::Geocode.to(query)
-        new_query.q.should == "Manhattan, NY, USA"
+        new_query.q.should == "Manhattan, NY, United States"
         new_query.country_code.should == "US"
         new_query.format.should == :geocode
         new_query.geo.should_not be_nil
@@ -110,7 +110,7 @@ describe "Query::Geocode" do
         query = Barometer::Query.new(@icao)
         query.format.should == :icao
         new_query = Barometer::Query::Format::Geocode.to(query)
-        new_query.q.should == "San Francisco, CA, USA"
+        new_query.q.should == "San Francisco, CA, United States"
         new_query.country_code.should == "US"
         new_query.format.should == :geocode
         new_query.geo.should_not be_nil
@@ -154,7 +154,7 @@ describe "Query::Geocode" do
         query = Barometer::Query.new(@short_zipcode)
         query.format.should == :short_zipcode
         new_query = Barometer::Query::Format::Geocode.geocode(query)
-        new_query.q.should == "Beverly Hills, CA, USA"
+        new_query.q.should == "Beverly Hills, CA, United States"
         new_query.country_code.should == "US"
         new_query.format.should == :geocode
         new_query.geo.should_not be_nil

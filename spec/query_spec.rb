@@ -14,15 +14,15 @@ describe "Query" do
     
     # actual conversions
     @zipcode_to_coordinates = "34.1030032,-118.4104684"
-    @zipcode_to_geocode = "Beverly Hills, CA, USA"
+    @zipcode_to_geocode = "Beverly Hills, CA, United States"
     @zipcode_to_weather_id = "USCA0090"
     @postalcode_to_coordinates = "53.570516,-113.45784"
-    @geocode_to_coordinates = "40.7143528,-74.0059731"
+    @geocode_to_coordinates = "40.7143528,-74.00597309999999"
     @geocode_to_weather_id = "USNY0996"
-    @coordinates_to_geocode = "Manhattan, NY, USA"
+    @coordinates_to_geocode = "Manhattan, NY, United States"
     @coordinates_to_weather_id = "USNY0996"
     @icao_to_coordinates = "37.615223,-122.389979"
-    @icao_to_geocode = "San Francisco, CA, USA"
+    @icao_to_geocode = "San Francisco, CA, United States"
     @icao_to_weather_id = "USCA0987"
   end
   

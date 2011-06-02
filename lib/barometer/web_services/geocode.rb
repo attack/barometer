@@ -9,17 +9,24 @@ module Barometer
     def self.fetch(query)
       raise ArgumentError unless _is_a_query?(query)
       puts "geocoding: #{query.q}" if Barometer::debug?
+      
+      query_params = {}
+      query_params[:region] = query.country_code
+      query_params[:sensor] = 'false'
+      
+      if query.format == :coordinates
+        query_params[:latlng] = query.q
+      else
+        query_params[:address] = query.q
+      end
+      
       location = self.get(
-        "http://maps.google.com/maps/geo",
-        :query => {
-          :gl => query.country_code,
-          :output => "json",
-          :q => query.q,
-          :sensor => "false"
-        },
-        :format => :json, :timeout => Barometer.timeout
+        "http://maps.googleapis.com/maps/api/geocode/json",
+        :query => query_params,
+        :format => :json,
+        :timeout => Barometer.timeout
       )
-      location = location['kml']['Response'] if (location && location['kml'])
+      location = location['results'].first if (location && location['results'])
       location ? (geo = Data::Geo.new(location)) : nil
     end
     

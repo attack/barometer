@@ -16,44 +16,42 @@ module Barometer
       self
     end
     
-    # build the Geo object from a Hash
-    #
     def build_from_hash(location=nil)
       return nil unless location
       raise ArgumentError unless location.is_a?(Hash)
       
-      @query = location["name"]
-      placemark = location["Placemark"]
-      placemark = find_most_accurate(placemark)
+      if location["geometry"] && location["geometry"]["location"]
+        @latitude = location["geometry"]["location"]["lat"].to_f
+        @longitude = location["geometry"]["location"]["lng"].to_f
+      end
       
-      if placemark && placemark["Point"] && placemark["Point"]["coordinates"]
-        if placemark["Point"]["coordinates"].is_a?(Array)
-          @latitude = placemark["Point"]["coordinates"][1].to_f
-          @longitude = placemark["Point"]["coordinates"][0].to_f
-        else
-          @latitude = placemark["Point"]["coordinates"].split(',')[1].to_f
-          @longitude = placemark["Point"]["coordinates"].split(',')[0].to_f
-        end
-      end
-      if placemark && placemark["AddressDetails"] && placemark["AddressDetails"]["Country"]
-        country = placemark["AddressDetails"]["Country"]
-        if country["AdministrativeArea"]
-          ad_area = country["AdministrativeArea"]
-          if ad_area["SubAdministrativeArea"]
-            @locality = ad_area["SubAdministrativeArea"]["Locality"]["LocalityName"]
-          elsif ad_area["DependentLocality"] && ad_area["DependentLocality"]["DependentLocalityName"]
-            @locality = ad_area["DependentLocality"]["DependentLocalityName"]
-          elsif ad_area["Locality"] && ad_area["Locality"]["LocalityName"]
-            @locality = ad_area["Locality"]["LocalityName"]
-          else
-            @locality = ""
+      query_parts = []
+      if location["address_components"]
+        location["address_components"].each do |address_components|
+          skip unless address_components["types"]
+          # sublocality trumps locality
+          if address_components["types"].include?('sublocality')
+            @locality = address_components["long_name"]
           end
-          @region = ad_area["AdministrativeAreaName"]
+          if address_components["types"].include?('locality')
+            @locality ||= address_components["long_name"]
+          end
+          if address_components["types"].include?('administrative_area_level_1')
+            #@region = address_components["long_name"]
+            @region = address_components["short_name"]
+          end
+          if address_components["types"].include?('country')
+            @country = address_components["long_name"]
+            @country_code = address_components["short_name"]
+          end
+          if !(address_components["types"] & location["types"]).empty?
+            query_parts << address_components["long_name"]
+          end
         end
-        @country = country["CountryName"]
-        @country_code = country["CountryNameCode"]
-        @address = country["AddressLine"]
       end
+      
+      @query = query_parts.join(', ')
+      @address = ""
     end
 
     def coordinates
@@ -64,17 +62,6 @@ module Barometer
       s = [@address, @locality, @region, @country || @country_code]
       s.delete("")
       s.compact.join(', ')
-    end
-    
-    # geocode may return multiple results, use the first one that has the best accuracy
-    #
-    def find_most_accurate(placemark)
-      return placemark unless placemark.is_a?(Array)
-      most_accurate = placemark.first
-      placemark.each do |p|
-        most_accurate = p if p && p["AddressDetails"] && p["AddressDetails"]["Accuracy"] && p["AddressDetails"]["Accuracy"].to_i < most_accurate["AddressDetails"]["Accuracy"].to_i
-      end
-      most_accurate
     end
 
   end

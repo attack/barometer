@@ -12,49 +12,49 @@ YAHOO_KEY = "YAHOO"
 #
 # for geocoding
 #
-geo_url = "http://maps.google.com/maps/geo?"
+geo_url_v3 = "http://maps.googleapis.com/maps/api/geocode/json?"
 
-# http://maps.google.com/maps/geo?gl=US&sensor=false&q=90210&output=json
+# http://maps.googleapis.com/maps/api/geocode/json?region=US&sensor=false&address=90210
 FakeWeb.register_uri(:get, 
-  "#{geo_url}gl=US&sensor=false&q=90210&output=json",
-  :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/90210.json')
+  "#{geo_url_v3}region=US&sensor=false&address=90210",
+  :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/90210_v3.json')
 )
-# http://maps.google.com/maps/geo?gl=&q=40.756054%2C-73.986951&output=json&sensor=false
+# http://maps.googleapis.com/maps/api/geocode/json?region=&sensor=false&latlng=40.756054%2C-73.986951
 FakeWeb.register_uri(:get, 
-  "#{geo_url}gl=&q=#{CGI.escape("40.756054,-73.986951")}&output=json&sensor=false",
-  :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/40_73.json')
+  "#{geo_url_v3}region=&sensor=false&latlng=40.756054%2C-73.986951",
+  :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/40_73_v3.json')
 )
-# http://maps.google.com/maps/geo?gl=&q=New%20York%2C%20NY&output=json&sensor=false
+# http://maps.googleapis.com/maps/api/geocode/json?region=&sensor=false&address=New%20York%2C%20NY
 FakeWeb.register_uri(:get, 
-  "#{geo_url}gl=&q=New%20York%2C%20NY&output=json&sensor=false",
-  :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/newyork_ny.json')
+  "#{geo_url_v3}region=&sensor=false&address=New%20York%2C%20NY",
+  :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/newyork_ny_v3.json')
 )
-# http://maps.google.com/maps/geo?gl=CA&output=json&q=T5B%204M9&sensor=false
+# http://maps.googleapis.com/maps/api/geocode/json?region=CA&sensor=false&address=T5B%204M9
 FakeWeb.register_uri(:get, 
-  "#{geo_url}gl=CA&output=json&q=T5B%204M9&sensor=false",
-  :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/T5B4M9.json')
+  "#{geo_url_v3}region=CA&sensor=false&address=T5B%204M9",
+  :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/T5B4M9_v3.json')
 )
-# http://maps.google.com/maps/geo?gl=US&q=KSFO&output=json&sensor=false
+# http://maps.googleapis.com/maps/api/geocode/json?region=US&sensor=false&address=KSFO
 FakeWeb.register_uri(:get, 
-  "#{geo_url}gl=US&q=KSFO&output=json&sensor=false",
-  :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/ksfo.json')
+  "#{geo_url_v3}region=US&sensor=false&address=KSFO",
+  :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/ksfo_v3.json')
 )
-# http://maps.google.com/maps/geo?gl=&q=Atlanta%2C%20GA%2C%20US&output=json&sensor=false
+# http://maps.googleapis.com/maps/api/geocode/json?region=&sensor=false&address=Atlanta%2C%20GA%2C%20US
 FakeWeb.register_uri(:get, 
-  "#{geo_url}gl=&q=Atlanta%2C%20GA%2C%20US&output=json&sensor=false",
-  :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/atlanta.json')
+  "#{geo_url_v3}region=&sensor=false&address=Atlanta%2C%20GA%2C%20US",
+  :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/atlanta_v3.json')
 )
-# http://maps.google.com/maps/geo?gl=&q=Calgary%2CAB&sensor=false&output=json
+# http://maps.googleapis.com/maps/api/geocode/json?region=&sensor=false&address=Calgary%2CAB
 FakeWeb.register_uri(:get, 
-  "#{geo_url}gl=&q=Calgary%2CAB&sensor=false&output=json",
-  :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/calgary_ab.json')
+  "#{geo_url_v3}region=&sensor=false&address=Calgary%2CAB",
+  :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/calgary_ab_v3.json')
 )
 #
 # for weather.com searches
 #
 # http://xoap.weather.com:80/search/search?where=Beverly%20Hills%2C%20CA%2C%20USA
 FakeWeb.register_uri(:get, 
-  "http://xoap.weather.com:80/search/search?where=Beverly%20Hills%2C%20CA%2C%20USA",
+  "http://xoap.weather.com:80/search/search?where=Beverly%20Hills%2C%20CA%2C%20United%20States",
   :body => File.read(File.dirname(__FILE__) + '/fixtures/formats/weather_id/the_hills.xml')
 )
 # http://xoap.weather.com:80/search/search?where=New%20York%2C%20NY
@@ -64,12 +64,12 @@ FakeWeb.register_uri(:get,
 )
 # http://xoap.weather.com:80/search/search?where=Manhattan%2C%20NY%2C%20USA
 FakeWeb.register_uri(:get, 
-  "http://xoap.weather.com:80/search/search?where=Manhattan%2C%20NY%2C%20USA",
+  "http://xoap.weather.com:80/search/search?where=Manhattan%2C%20NY%2C%20United%20States",
   :body => File.read(File.dirname(__FILE__) + '/fixtures/formats/weather_id/manhattan.xml')
 )
 # http://xoap.weather.com:80/search/search?where=New%20York%2C%20NY%2C%20USA
 FakeWeb.register_uri(:get, 
-  "http://xoap.weather.com:80/search/search?where=New%20York%2C%20NY%2C%20USA",
+  "http://xoap.weather.com:80/search/search?where=New%20York%2C%20NY%2C%20United%20States",
   :body => File.read(File.dirname(__FILE__) + '/fixtures/formats/weather_id/new_york.xml')
 )
 # http://xoap.weather.com:80/search/search?where=90210
@@ -79,7 +79,7 @@ FakeWeb.register_uri(:get,
 )
 # http://xoap.weather.com:80/search/search?where=San%20Francisco%2C%20CA%2C%20USA
 FakeWeb.register_uri(:get, 
-  "http://xoap.weather.com:80/search/search?where=San%20Francisco%2C%20CA%2C%20USA",
+  "http://xoap.weather.com:80/search/search?where=San%20Francisco%2C%20CA%2C%20United%20States",
   :body => File.read(File.dirname(__FILE__) + '/fixtures/formats/weather_id/ksfo.xml')
 )
 #
@@ -135,12 +135,12 @@ FakeWeb.register_uri(:get,
 #
 # http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=51.045%2C-114.0572222
 FakeWeb.register_uri(:get, 
-  "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=51.045%2C-114.0572222",
+  "http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=51.04499999999999%2C-114.0572222",
   :body => File.read(File.dirname(__FILE__) + '/fixtures/services/wunderground/current_calgary_ab.xml')
 )
 # http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=51.045%2C-114.0572222
 FakeWeb.register_uri(:get, 
-  "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=51.045%2C-114.0572222",
+  "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=51.04499999999999%2C-114.0572222",
   :body => File.read(File.dirname(__FILE__) + '/fixtures/services/wunderground/forecast_calgary_ab.xml')
 )  
 FakeWeb.register_uri(:get, 
