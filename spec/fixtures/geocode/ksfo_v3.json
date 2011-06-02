@@ -1,0 +1,73 @@
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "San Francisco International Airport",
+               "short_name" : "SFO",
+               "types" : [ "establishment" ]
+            },
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "SF",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "South San Francisco",
+               "short_name" : "South San Francisco",
+               "types" : [ "administrative_area_level_3", "political" ]
+            },
+            {
+               "long_name" : "San Mateo",
+               "short_name" : "San Mateo",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "94128",
+               "short_name" : "94128",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "San Francisco International Airport, San Francisco, CA 94128, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.63921040,
+                  "lng" : -122.35491660
+               },
+               "southwest" : {
+                  "lat" : 37.60437690,
+                  "lng" : -122.40141080
+               }
+            },
+            "location" : {
+               "lat" : 37.6152230,
+               "lng" : -122.3899790
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.6328980,
+                  "lng" : -122.35796420
+               },
+               "southwest" : {
+                  "lat" : 37.59754380,
+                  "lng" : -122.42199380
+               }
+            }
+         },
+         "types" : [ "airport", "airport", "establishment" ]
+      }
+   ],
+   "status" : "OK"
+}

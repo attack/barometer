@@ -1,0 +1,68 @@
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "T5B 4M9",
+               "short_name" : "T5B 4M9",
+               "types" : [ "postal_code" ]
+            },
+            {
+               "long_name" : "Montrose",
+               "short_name" : "Montrose",
+               "types" : [ "sublocality", "political" ]
+            },
+            {
+               "long_name" : "Edmonton",
+               "short_name" : "Edmonton",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "Division No. 11",
+               "short_name" : "Division No. 11",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "Alberta",
+               "short_name" : "AB",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "Canada",
+               "short_name" : "CA",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Edmonton, AB T5B 4M9, Canada",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 53.57536850,
+                  "lng" : -113.4531120
+               },
+               "southwest" : {
+                  "lat" : 53.57041430,
+                  "lng" : -113.45893970
+               }
+            },
+            "location" : {
+               "lat" : 53.5705160,
+               "lng" : -113.457840
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 53.57603902068017,
+                  "lng" : -113.4528782293198
+               },
+               "southwest" : {
+                  "lat" : 53.56974377931983,
+                  "lng" : -113.4591734706802
+               }
+            }
+         },
+         "types" : [ "postal_code" ]
+      }
+   ],
+   "status" : "OK"
+}
