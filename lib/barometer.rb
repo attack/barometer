@@ -15,6 +15,13 @@ module Barometer
   def self.debug!; @@debug_mode = true; end;
   def self.debug?; @@debug_mode; end;
   
+  def self.google_geocode_key
+    warn "[DEPRECATION] `Barometer.google_geocode_key` is deprecated.  A Google API key is no longer needed"
+  end
+  def self.google_geocode_key=(google_key)
+    warn "[DEPRECATION] `Barometer.google_geocode_key=(key)` is deprecated.  A Google API key is no longer needed"
+  end
+  
   @@yahoo_placemaker_app_id = nil
   def self.yahoo_placemaker_app_id; @@yahoo_placemaker_app_id; end;
   def self.yahoo_placemaker_app_id=(yahoo_key); @@yahoo_placemaker_app_id = yahoo_key; end;

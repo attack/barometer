@@ -21,6 +21,18 @@ describe "Barometer" do
       Barometer.source(:wunderground).should == Barometer::WeatherService::Wunderground
     end
     
+    it "deprecates the Google geocoding API key reader" do
+      Barometer.should_receive(:warn)
+      Barometer.respond_to?("google_geocode_key").should be_true
+      Barometer.google_geocode_key
+    end
+    
+    it "deprecates the Google geocoding API key writer" do
+      Barometer.should_receive(:warn)
+      Barometer.respond_to?("google_geocode_key=").should be_true
+      Barometer.google_geocode_key= 'KEY'
+    end
+    
     it "sets the Placemaker Yahoo! app ID" do
       Barometer.respond_to?("yahoo_placemaker_app_id").should be_true
       Barometer.yahoo_placemaker_app_id = nil

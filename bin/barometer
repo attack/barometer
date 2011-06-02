@@ -69,7 +69,7 @@ class App
     @options.timezone = false
     @options.metric = true
     @options.sources = []
-    @options.verbode = false
+    @options.verbose = false
     @options.at = nil
     @options.default = true
     
