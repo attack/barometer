@@ -143,14 +143,6 @@ describe "Query::Coordinates" do
         new_query.geo.should_not be_nil
       end
 
-      it "skips conversion when no API key" do
-        Barometer.google_geocode_key = nil
-        Barometer.google_geocode_key.should be_nil
-        query = Barometer::Query.new(@short_zipcode)
-        Barometer::Query::Format::Coordinates.to(query).q.should be_nil
-        Barometer.google_geocode_key = KEY
-      end
-
     end
     
     describe "parsing" do

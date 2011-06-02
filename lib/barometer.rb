@@ -15,10 +15,6 @@ module Barometer
   def self.debug!; @@debug_mode = true; end;
   def self.debug?; @@debug_mode; end;
   
-  @@google_geocode_key = nil
-  def self.google_geocode_key; @@google_geocode_key; end;
-  def self.google_geocode_key=(google_key); @@google_geocode_key = google_key; end;
-  
   @@yahoo_placemaker_app_id = nil
   def self.yahoo_placemaker_app_id; @@yahoo_placemaker_app_id; end;
   def self.yahoo_placemaker_app_id=(yahoo_key); @@yahoo_placemaker_app_id = yahoo_key; end;

@@ -119,10 +119,6 @@ describe "Query::WoeID" do
   
     describe "when converting using 'to'," do
       
-      before(:each) do
-        Barometer.google_geocode_key = KEY
-      end
-      
       it "requires a Barometer::Query object" do
         lambda { Query::Format::WoeID.to }.should raise_error(ArgumentError)
         lambda { Query::Format::WoeID.to("invalid") }.should raise_error(ArgumentError)

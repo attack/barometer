@@ -34,24 +34,15 @@ Features to be added in the future:
 
 = dependencies
 
-== Google API key
+== Google API key [UPDATED]
 
-In most cases you will need to have a free google geocode api key.
-Get one here: http://code.google.com/apis/maps/signup.html
-Then put it in the file '~/.barometer' by adding the lines:
-
-  google:
-    geocode: YOUR_KEY_HERE
-
-You will need this for:
-- using the Barometer gem (unless you use queries that are directly supported
-  by the weather source API, ie yahoo will take a zip code directly and doesn't
-  require any geocoding)
-- running the Barometer binary
+As stated on the Google Geocoding API website
+(http://code.google.com/apis/maps/documentation/geocoding/), Google no longer
+requires an API key.  Therefore Barometer no longer requires a Google API key.
 
 === other keys
 
-The same file can hold all your weather service API keys.
+The '~/.barometer' file can hold all your weather service API keys.
 
 eg. weather.com
 
@@ -130,12 +121,8 @@ You can use barometer right out of the box, as it is configured to use one
 register-less (no API key required) international weather service
 (wunderground.com).
 
-For better results, signup for a google-map key and enhance your barometer
-with geo-coding.
-
   require 'barometer'
   
-  Barometer.google_geocode_key = "THE_GOOGLE_API_KEY"
   barometer = Barometer.new("Paris")
   weather = barometer.measure
   
@@ -148,8 +135,8 @@ The available sources are:
   Wunderground.com (:wunderground) [default]
   Yahoo! Weather (:yahoo)
   Google Weather (:google)
-  Weather.com (:weather_dot_com)
-  WeatherBug.com (:weather_bug)
+  Weather.com (:weather_dot_com) [requires key]
+  WeatherBug.com (:weather_bug) [requires key]
   
 == source configuration
 
@@ -178,7 +165,6 @@ Weather services, one with keys.
 
   require 'barometer'
   
-  Barometer.google_geocode_key = "THE_GOOGLE_API_KEY"
   # use yahoo and google, if they both fail, use wunderground
   Barometer.config = { 1 => [:yahoo, :google], 2 => :wunderground }
 

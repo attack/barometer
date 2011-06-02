@@ -132,14 +132,6 @@ describe "Query::Geocode" do
         new_query.format.should == :geocode
         new_query.geo.should be_nil
       end
-      
-      it "skips conversion when no API key" do
-        Barometer.google_geocode_key = nil
-        Barometer.google_geocode_key.should be_nil
-        query = Barometer::Query.new(@coordinates)
-        Barometer::Query::Format::Geocode.to(query).q.should be_nil
-        Barometer.google_geocode_key = KEY
-      end
 
     end
     

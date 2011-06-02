@@ -4,7 +4,6 @@ FakeWeb.allow_net_connect = false
 #
 # Set random test keys
 #
-KEY = "ABC123"
 WEATHER_PARTNER_KEY = "1234"
 WEATHER_LICENSE_KEY = "12345"
 WEATHERBUG_CODE = "A9999"
@@ -17,37 +16,37 @@ geo_url = "http://maps.google.com/maps/geo?"
 
 # http://maps.google.com/maps/geo?gl=US&sensor=false&q=90210&output=json
 FakeWeb.register_uri(:get, 
-  "#{geo_url}gl=US&key=#{KEY}&sensor=false&q=90210&output=json",
+  "#{geo_url}gl=US&sensor=false&q=90210&output=json",
   :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/90210.json')
 )
 # http://maps.google.com/maps/geo?gl=&q=40.756054%2C-73.986951&output=json&sensor=false
 FakeWeb.register_uri(:get, 
-  "#{geo_url}gl=&q=#{CGI.escape("40.756054,-73.986951")}&output=json&key=#{KEY}&sensor=false",
+  "#{geo_url}gl=&q=#{CGI.escape("40.756054,-73.986951")}&output=json&sensor=false",
   :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/40_73.json')
 )
 # http://maps.google.com/maps/geo?gl=&q=New%20York%2C%20NY&output=json&sensor=false
 FakeWeb.register_uri(:get, 
-  "#{geo_url}gl=&q=New%20York%2C%20NY&output=json&key=#{KEY}&sensor=false",
+  "#{geo_url}gl=&q=New%20York%2C%20NY&output=json&sensor=false",
   :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/newyork_ny.json')
 )
 # http://maps.google.com/maps/geo?gl=CA&output=json&q=T5B%204M9&sensor=false
 FakeWeb.register_uri(:get, 
-  "#{geo_url}gl=CA&key=#{KEY}&output=json&q=T5B%204M9&sensor=false",
+  "#{geo_url}gl=CA&output=json&q=T5B%204M9&sensor=false",
   :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/T5B4M9.json')
 )
 # http://maps.google.com/maps/geo?gl=US&q=KSFO&output=json&sensor=false
 FakeWeb.register_uri(:get, 
-  "#{geo_url}gl=US&q=KSFO&output=json&key=#{KEY}&sensor=false",
+  "#{geo_url}gl=US&q=KSFO&output=json&sensor=false",
   :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/ksfo.json')
 )
 # http://maps.google.com/maps/geo?gl=&q=Atlanta%2C%20GA%2C%20US&output=json&sensor=false
 FakeWeb.register_uri(:get, 
-  "#{geo_url}gl=&q=Atlanta%2C%20GA%2C%20US&output=json&key=#{KEY}&sensor=false",
+  "#{geo_url}gl=&q=Atlanta%2C%20GA%2C%20US&output=json&sensor=false",
   :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/atlanta.json')
 )
 # http://maps.google.com/maps/geo?gl=&q=Calgary%2CAB&sensor=false&output=json
 FakeWeb.register_uri(:get, 
-  "#{geo_url}gl=&key=#{KEY}&q=Calgary%2CAB&sensor=false&output=json",
+  "#{geo_url}gl=&q=Calgary%2CAB&sensor=false&output=json",
   :body => File.read(File.dirname(__FILE__) + '/fixtures/geocode/calgary_ab.json')
 )
 #

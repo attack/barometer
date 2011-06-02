@@ -24,9 +24,6 @@ describe "Query" do
     @icao_to_coordinates = "37.615223,-122.389979"
     @icao_to_geocode = "San Francisco, CA, USA"
     @icao_to_weather_id = "USCA0987"
-    
-    Barometer.google_geocode_key = nil
-    #Barometer.skip_graticule = true
   end
   
   describe "determines the query format" do
@@ -135,16 +132,6 @@ describe "Query" do
       query.format.should_not be_nil
     end
     
-    it "responds to google_api_key" do
-      Barometer.google_geocode_key.should be_nil
-    end
-    
-    it "defaults to the Module geocode key" do
-      key = "KEY"
-      Barometer.google_geocode_key = key
-      Barometer.google_geocode_key.should == key
-    end
-    
     it "responds to geo" do
       @query.geo.should be_nil
     end
@@ -244,7 +231,6 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@short_zipcode)
-          Barometer.google_geocode_key = KEY
         end
         
         it "converts to zipcode" do
@@ -293,7 +279,6 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@zipcode)
-          Barometer.google_geocode_key = KEY
           Barometer.force_geocode = false
         end
         
@@ -343,7 +328,6 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@postal_code)
-          Barometer.google_geocode_key = KEY
         end
         
         it "converts to coordinates" do
@@ -389,7 +373,6 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@icao)
-          Barometer.google_geocode_key = KEY
         end
         
         it "converts to coordinates" do
@@ -437,7 +420,6 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@geocode)
-          Barometer.google_geocode_key = KEY
         end
         
         it "converts to coordinates" do
@@ -484,7 +466,6 @@ describe "Query" do
         
         before(:each) do
           @query = Barometer::Query.new(@coordinates)
-          Barometer.google_geocode_key = KEY
         end
         
         it "converts to geocode" do

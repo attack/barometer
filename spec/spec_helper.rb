@@ -9,7 +9,6 @@ $:.unshift((File.join(File.dirname(__FILE__), '..', 'lib')))
 require 'barometer'
 
 #Barometer.debug!
-Barometer.google_geocode_key = "ABC123"
 Barometer.yahoo_placemaker_app_id = "YAHOO"
 
 RSpec.configure do |config|

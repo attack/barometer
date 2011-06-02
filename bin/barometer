@@ -449,17 +449,6 @@ def pretty_output(barometer)
   end
 end
 
-def geocode_google_key_message
-  puts
-  puts "MISSING KEYS !!!"
-  puts "Please update the key_file '#{KEY_FILE}' with your google api key"
-  puts "Get it here: http://code.google.com/apis/maps/signup.html"
-  puts "Then, add this line to the file:"
-  puts "google:"
-  puts "  geocode: YOUR_KEY_KERE"
-  puts
-end
-
 def weather_key_message
   puts
   puts "MISSING KEYS !!!"
@@ -489,15 +478,8 @@ if File.exists?(KEY_FILE)
 	if keys["yahoo"] && keys["yahoo"]["app_id"]
 	  Barometer.yahoo_placemaker_app_id = keys["yahoo"]["app_id"]
   end
-	if keys["google"] && keys["google"]["geocode"]
-	  Barometer.google_geocode_key = keys["google"]["geocode"]
-  else
-    geocode_google_key_message
-    exit
-  end
 else
-  File.open(KEY_FILE, 'w') {|f| f << "google: geocode: YOUR_KEY_KERE" }
-  geocode_google_key_message
+  File.open(KEY_FILE, 'w') {|f| f << "yahoo: app_id: YOUR_KEY_KERE" }
   exit
 end
 

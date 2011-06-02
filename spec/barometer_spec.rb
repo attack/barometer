@@ -4,7 +4,6 @@ describe "Barometer" do
   
   before(:each) do
     @config_hash = { 1 => [:wunderground] }
-    @google_key = KEY
     @yahoo_key = YAHOO_KEY
   end
   
@@ -20,14 +19,6 @@ describe "Barometer" do
     
     it "returns a Weather Service driver" do
       Barometer.source(:wunderground).should == Barometer::WeatherService::Wunderground
-    end
-    
-    it "sets the Graticule Google geocoding API key" do
-      Barometer.respond_to?("google_geocode_key").should be_true
-      Barometer.google_geocode_key = nil
-      Barometer.google_geocode_key.should be_nil
-      Barometer.google_geocode_key = @google_key
-      Barometer.google_geocode_key.should == @google_key
     end
     
     it "sets the Placemaker Yahoo! app ID" do
@@ -103,7 +94,6 @@ describe "Barometer" do
   describe "when measuring" do
     
     before(:each) do
-      Barometer.google_geocode_key = @google_key
       query_term = "Calgary,AB"
       @barometer = Barometer::Base.new(query_term)
       @time = Time.now
