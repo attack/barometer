@@ -15,7 +15,7 @@ this.
 
 == version
 
-Version 0.7.2 is the current release of this gem. The gem is available from
+Version 0.7.3 is the current release of this gem. The gem is available from
 gemcutter (barometer: http://gemcutter.org/gems/barometer).
 Older version are available through rubyforge (barometer) and github
 (attack-barometer).
