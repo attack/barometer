@@ -1,1 +1,93 @@
-<aws:weather xmlns:aws="http://www.aws.com/aws"><aws:api version="2.0" /><aws:WebURL>http://weather.weatherbug.com/CA/Los Angeles-weather.html?ZCode=Z5546&amp;Units=1&amp;stat=LSNGH</aws:WebURL><aws:InputLocationURL>http://weather.weatherbug.com/CA/Beverly Hills-weather.html?ZCode=Z5546&amp;Units=1</aws:InputLocationURL><aws:ob><aws:ob-date><aws:year number="2009" /><aws:month number="5" text="May" abbrv="May" /><aws:day number="15" text="Friday" abbrv="Fri" /><aws:hour number="11" hour-24="11" /><aws:minute number="00" /><aws:second number="02" /><aws:am-pm abbrv="AM" /><aws:time-zone offset="-7" text="Pacific Daylight Time" abbrv="PDT" /></aws:ob-date><aws:requested-station-id /><aws:station-id>LSNGH</aws:station-id><aws:station>Milken Community HS</aws:station><aws:city-state zipcode="90049">Los Angeles, CA</aws:city-state><aws:country>USA</aws:country><aws:latitude>34.1258316040039</aws:latitude><aws:longitude>-118.478332519531</aws:longitude><aws:site-url>http://www.milkenschool.org/</aws:site-url><aws:aux-temp units="&amp;deg;C">23.5</aws:aux-temp><aws:aux-temp-rate units="&amp;deg;C">-17.8</aws:aux-temp-rate><aws:current-condition icon="http://deskwx.weatherbug.com/images/Forecast/icons/cond023.gif">Hazy</aws:current-condition><aws:dew-point units="&amp;deg;C">14.4444444444444</aws:dew-point><aws:elevation units="m">383</aws:elevation><aws:feels-like units="&amp;deg;C">22</aws:feels-like><aws:gust-time><aws:year number="2009" /><aws:month number="5" text="May" abbrv="May" /><aws:day number="15" text="Friday" abbrv="Fri" /><aws:hour number="10" hour-24="10" /><aws:minute number="53" /><aws:second number="00" /><aws:am-pm abbrv="AM" /><aws:time-zone offset="-7" text="Pacific Daylight Time" abbrv="PDT" /></aws:gust-time><aws:gust-direction>SSE</aws:gust-direction><aws:gust-speed units="km/h">16</aws:gust-speed><aws:humidity units="%">62</aws:humidity><aws:humidity-high units="%">100</aws:humidity-high><aws:humidity-low units="%">62</aws:humidity-low><aws:humidity-rate>-9</aws:humidity-rate><aws:indoor-temp units="&amp;deg;C">46</aws:indoor-temp><aws:indoor-temp-rate units="&amp;deg;C">1</aws:indoor-temp-rate><aws:light>34.2</aws:light><aws:light-rate>0.4</aws:light-rate><aws:moon-phase moon-phase-img="http://api.wxbug.net/images/moonphase/mphase18.gif">71</aws:moon-phase><aws:pressure units="mb">1011.31</aws:pressure><aws:pressure-high units="mb">1,011.36</aws:pressure-high><aws:pressure-low units="mb">1,010.39</aws:pressure-low><aws:pressure-rate units="mb/h">0.23</aws:pressure-rate><aws:rain-month units="mm">0.00</aws:rain-month><aws:rain-rate units="mm/h">0.00</aws:rain-rate><aws:rain-rate-max units="mm/h">0.00</aws:rain-rate-max><aws:rain-today units="mm">0.00</aws:rain-today><aws:rain-year units="mm">38.35</aws:rain-year><aws:temp units="&amp;deg;C">22.2</aws:temp><aws:temp-high units="&amp;deg;C">22</aws:temp-high><aws:temp-low units="&amp;deg;C">13</aws:temp-low><aws:temp-rate units="&amp;deg;C/h">2.2</aws:temp-rate><aws:sunrise><aws:year number="2009" /><aws:month number="5" text="May" abbrv="May" /><aws:day number="15" text="Friday" abbrv="Fri" /><aws:hour number="5" hour-24="05" /><aws:minute number="52" /><aws:second number="17" /><aws:am-pm abbrv="AM" /><aws:time-zone offset="-7" text="Pacific Daylight Time" abbrv="PDT" /></aws:sunrise><aws:sunset><aws:year number="2009" /><aws:month number="5" text="May" abbrv="May" /><aws:day number="15" text="Friday" abbrv="Fri" /><aws:hour number="7" hour-24="19" /><aws:minute number="48" /><aws:second number="37" /><aws:am-pm abbrv="PM" /><aws:time-zone offset="-7" text="Pacific Daylight Time" abbrv="PDT" /></aws:sunset><aws:wet-bulb units="&amp;deg;C">17.39</aws:wet-bulb><aws:wind-speed units="km/h">11</aws:wind-speed><aws:wind-speed-avg units="km/h">8</aws:wind-speed-avg><aws:wind-direction>SE</aws:wind-direction><aws:wind-direction-avg>SE</aws:wind-direction-avg></aws:ob></aws:weather>
+<?xml version="1.0"?>
+<aws:weather xmlns:aws="http://www.aws.com/aws">
+  <aws:api version="2.0"/>
+  <aws:WebURL>http://weather.weatherbug.com/CA/Los Angeles-weather.html?ZCode=Z5546&amp;Units=1&amp;stat=LSNGN</aws:WebURL>
+  <aws:InputLocationURL>http://weather.weatherbug.com/CA/Beverly Hills-weather.html?ZCode=Z5546&amp;Units=1</aws:InputLocationURL>
+  <aws:ob>
+    <aws:ob-date>
+      <aws:year number="2011"/>
+      <aws:month number="6" text="June" abbrv="Jun"/>
+      <aws:day number="2" text="Thursday" abbrv="Thu"/>
+      <aws:hour number="7" hour-24="07"/>
+      <aws:minute number="01"/>
+      <aws:second number="00"/>
+      <aws:am-pm abbrv="AM"/>
+      <aws:time-zone offset="-7" text="Pacific Daylight Time (USA)" abbrv="PDT"/>
+    </aws:ob-date>
+    <aws:requested-station-id/>
+    <aws:station-id>LSNGN</aws:station-id>
+    <aws:station>Alexander Hamilton Senior HS</aws:station>
+    <aws:city-state zipcode="90034">Los Angeles,  CA</aws:city-state>
+    <aws:country>USA</aws:country>
+    <aws:latitude>34.0336112976074</aws:latitude>
+    <aws:longitude>-118.389999389648</aws:longitude>
+    <aws:site-url>http://www.hamiltonhighschool.net/</aws:site-url>
+    <aws:aux-temp units="&amp;deg;C">17</aws:aux-temp>
+    <aws:aux-temp-rate units="&amp;deg;C">-0.5</aws:aux-temp-rate>
+    <aws:current-condition icon="http://deskwx.weatherbug.com/images/Forecast/icons/cond007.gif">Sunny</aws:current-condition>
+    <aws:dew-point units="&amp;deg;C">10</aws:dew-point>
+    <aws:elevation units="m">40</aws:elevation>
+    <aws:feels-like units="&amp;deg;C">14</aws:feels-like>
+    <aws:gust-time>
+      <aws:year number="2011"/>
+      <aws:month number="6" text="June" abbrv="Jun"/>
+      <aws:day number="2" text="Thursday" abbrv="Thu"/>
+      <aws:hour number="12" hour-24="00"/>
+      <aws:minute number="43"/>
+      <aws:second number="00"/>
+      <aws:am-pm abbrv="AM"/>
+      <aws:time-zone offset="-7" text="Pacific Daylight Time (USA)" abbrv="PDT"/>
+    </aws:gust-time>
+    <aws:gust-direction>SE</aws:gust-direction>
+    <aws:gust-direction-degrees>130</aws:gust-direction-degrees>
+    <aws:gust-speed units="km/h">6</aws:gust-speed>
+    <aws:humidity units="%">79</aws:humidity>
+    <aws:humidity-high units="%">91</aws:humidity-high>
+    <aws:humidity-low units="%">79</aws:humidity-low>
+    <aws:humidity-rate>-6</aws:humidity-rate>
+    <aws:indoor-temp units="&amp;deg;C">23</aws:indoor-temp>
+    <aws:indoor-temp-rate units="&amp;deg;C">0</aws:indoor-temp-rate>
+    <aws:light>4.3</aws:light>
+    <aws:light-rate>4.2</aws:light-rate>
+    <aws:moon-phase moon-phase-img="http://api.wxbug.net/images/moonphase/mphase01.gif">0</aws:moon-phase>
+    <aws:pressure units="mb">1017.61</aws:pressure>
+    <aws:pressure-high units="mb">1017.61</aws:pressure-high>
+    <aws:pressure-low units="mb">1016.26</aws:pressure-low>
+    <aws:pressure-rate units="mb/h">0.34</aws:pressure-rate>
+    <aws:rain-month units="mm">0.00</aws:rain-month>
+    <aws:rain-rate units="mm/h">0.00</aws:rain-rate>
+    <aws:rain-rate-max units="mm/h">0.00</aws:rain-rate-max>
+    <aws:rain-today units="mm">0.00</aws:rain-today>
+    <aws:rain-year units="mm">158.50</aws:rain-year>
+    <aws:temp units="&amp;deg;C">13.6</aws:temp>
+    <aws:temp-high units="&amp;deg;C">14</aws:temp-high>
+    <aws:temp-low units="&amp;deg;C">12</aws:temp-low>
+    <aws:temp-rate units="&amp;deg;C/h">1.4</aws:temp-rate>
+    <aws:sunrise>
+      <aws:year number="2011"/>
+      <aws:month number="6" text="June" abbrv="Jun"/>
+      <aws:day number="2" text="Thursday" abbrv="Thu"/>
+      <aws:hour number="5" hour-24="05"/>
+      <aws:minute number="42"/>
+      <aws:second number="59"/>
+      <aws:am-pm abbrv="AM"/>
+      <aws:time-zone offset="-7" text="Pacific Daylight Time (USA)" abbrv="PDT"/>
+    </aws:sunrise>
+    <aws:sunset>
+      <aws:year number="2011"/>
+      <aws:month number="6" text="June" abbrv="Jun"/>
+      <aws:day number="2" text="Thursday" abbrv="Thu"/>
+      <aws:hour number="8" hour-24="20"/>
+      <aws:minute number="00"/>
+      <aws:second number="17"/>
+      <aws:am-pm abbrv="PM"/>
+      <aws:time-zone offset="-7" text="Pacific Daylight Time (USA)" abbrv="PDT"/>
+    </aws:sunset>
+    <aws:wet-bulb units="&amp;deg;C">11.7</aws:wet-bulb>
+    <aws:wind-speed units="km/h">0</aws:wind-speed>
+    <aws:wind-speed-avg units="km/h">2</aws:wind-speed-avg>
+    <aws:wind-direction>SE</aws:wind-direction>
+    <aws:wind-direction-degrees>130</aws:wind-direction-degrees>
+    <aws:wind-direction-avg>SE</aws:wind-direction-avg>
+  </aws:ob>
+</aws:weather>

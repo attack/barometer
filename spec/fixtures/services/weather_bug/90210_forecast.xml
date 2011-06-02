@@ -1,1 +1,76 @@
-<aws:weather xmlns:aws="http://www.aws.com/aws"><aws:api version="2.0" /><aws:WebURL>http://weather.weatherbug.com/CA/Beverly Hills-weather/local-forecast/7-day-forecast.html?ZCode=Z5546&amp;Units=1</aws:WebURL><aws:forecasts type="Detailed" date="Fri, 15 May 2009 8:26:00 GMT"><aws:location><aws:city>Beverly Hills</aws:city><aws:state>CA</aws:state><aws:zip>90210</aws:zip><aws:zone>CA041</aws:zone></aws:location><aws:forecast><aws:title alttitle="FRI">Friday</aws:title><aws:short-prediction>Partly Cloudy</aws:short-prediction><aws:image isNight="0" icon="cond003.gif">http://deskwx.weatherbug.com/images/Forecast/icons/cond003.gif</aws:image><aws:description>Friday</aws:description><aws:prediction>Areas of low clouds and fog in the morning then sunny. Highs in the upper 60s to mid 70s at the beaches to the lower 80s inland.</aws:prediction><aws:high units="&amp;deg;C">27</aws:high><aws:low units="&amp;deg;C">17</aws:low></aws:forecast><aws:forecast><aws:title alttitle="SAT">Saturday</aws:title><aws:short-prediction>Partly Cloudy</aws:short-prediction><aws:image isNight="0" icon="cond003.gif">http://deskwx.weatherbug.com/images/Forecast/icons/cond003.gif</aws:image><aws:description>Saturday</aws:description><aws:prediction>Areas of low clouds and fog in the morning then sunny. Highs in the lower to mid 70s at the beaches to the lower to mid 80s inland.</aws:prediction><aws:high units="&amp;deg;C">28</aws:high><aws:low units="&amp;deg;C">17</aws:low></aws:forecast><aws:forecast><aws:title alttitle="SUN">Sunday</aws:title><aws:short-prediction>Partly Cloudy</aws:short-prediction><aws:image isNight="0" icon="cond003.gif">http://deskwx.weatherbug.com/images/Forecast/icons/cond003.gif</aws:image><aws:description>Sunday</aws:description><aws:prediction>Areas of low clouds and fog in the morning then sunny. Highs in the lower to mid 70s at the beaches to the lower to mid 80s inland.</aws:prediction><aws:high units="&amp;deg;C">28</aws:high><aws:low units="&amp;deg;C">17</aws:low></aws:forecast><aws:forecast><aws:title alttitle="MON">Monday</aws:title><aws:short-prediction>Mostly Sunny</aws:short-prediction><aws:image isNight="0" icon="cond026.gif">http://deskwx.weatherbug.com/images/Forecast/icons/cond026.gif</aws:image><aws:description>Monday</aws:description><aws:prediction>Areas of low clouds and fog in the morning then mostly sunny. Highs around 70 at the beaches to around 80 inland.</aws:prediction><aws:high units="&amp;deg;C">26</aws:high><aws:low units="&amp;deg;C">16</aws:low></aws:forecast><aws:forecast><aws:title alttitle="TUE">Tuesday</aws:title><aws:short-prediction>Mostly Sunny</aws:short-prediction><aws:image isNight="0" icon="cond026.gif">http://deskwx.weatherbug.com/images/Forecast/icons/cond026.gif</aws:image><aws:description>Tuesday</aws:description><aws:prediction>Night through morning low clouds and fog...otherwise mostly clear. Lows around 60. Highs in the mid to upper 60s at the beaches to the 70s inland.</aws:prediction><aws:high units="&amp;deg;C">25</aws:high><aws:low units="&amp;deg;C">16</aws:low></aws:forecast><aws:forecast><aws:title alttitle="WED">Wednesday</aws:title><aws:short-prediction>Mostly Sunny</aws:short-prediction><aws:image isNight="0" icon="cond026.gif">http://deskwx.weatherbug.com/images/Forecast/icons/cond026.gif</aws:image><aws:description>Wednesday</aws:description><aws:prediction>Night through morning low clouds and fog...otherwise mostly clear. Lows around 60. Highs in the mid to upper 60s at the beaches to the 70s inland.</aws:prediction><aws:high units="&amp;deg;C">24</aws:high><aws:low units="&amp;deg;C">16</aws:low></aws:forecast><aws:forecast><aws:title alttitle="THU">Thursday</aws:title><aws:short-prediction>Mostly Sunny</aws:short-prediction><aws:image isNight="0" icon="cond026.gif">http://deskwx.weatherbug.com/images/Forecast/icons/cond026.gif</aws:image><aws:description>Thursday</aws:description><aws:prediction>Night through morning low clouds and fog...otherwise mostly clear. Lows around 60. Highs in the mid to upper 60s at the beaches to the 70s inland.</aws:prediction><aws:high units="&amp;deg;C">24</aws:high><aws:low units="&amp;deg;C">--</aws:low></aws:forecast></aws:forecasts></aws:weather>
+<?xml version="1.0"?>
+<aws:weather xmlns:aws="http://www.aws.com/aws">
+  <aws:api version="2.0"/>
+  <aws:WebURL>http://weather.weatherbug.com/CA/Beverly Hills-weather/local-forecast/7-day-forecast.html?ZCode=Z5546&amp;Units=1</aws:WebURL>
+  <aws:forecasts type="Detailed" date="6/2/2011 3:22:00 AM">
+    <aws:location>
+      <aws:city>Beverly Hills</aws:city>
+      <aws:state>CA</aws:state>
+      <aws:zip>90210</aws:zip>
+      <aws:zone>CA041</aws:zone>
+    </aws:location>
+    <aws:forecast>
+      <aws:title alttitle="THU">Thursday</aws:title>
+      <aws:short-prediction>Sunny</aws:short-prediction>
+      <aws:image isNight="0" icon="cond007.gif">http://deskwx.weatherbug.com/images/Forecast/icons/cond007.gif</aws:image>
+      <aws:description>Thursday</aws:description>
+      <aws:prediction>Sunny. Highs in the upper 60s to mid 70s. West winds 15 to 25 mph in the afternoon.</aws:prediction>
+      <aws:high units="&amp;deg;C">24</aws:high>
+      <aws:low units="&amp;deg;C">11</aws:low>
+    </aws:forecast>
+    <aws:forecast>
+      <aws:title alttitle="FRI">Friday</aws:title>
+      <aws:short-prediction>Sunny</aws:short-prediction>
+      <aws:image isNight="0" icon="cond007.gif">http://deskwx.weatherbug.com/images/Forecast/icons/cond007.gif</aws:image>
+      <aws:description>Friday</aws:description>
+      <aws:prediction>Sunny. Highs from around 70 at the beaches to around 80 inland. Southwest winds around 15 mph in the afternoon.</aws:prediction>
+      <aws:high units="&amp;deg;C">26</aws:high>
+      <aws:low units="&amp;deg;C">12</aws:low>
+    </aws:forecast>
+    <aws:forecast>
+      <aws:title alttitle="SAT">Saturday</aws:title>
+      <aws:short-prediction>Partly Cloudy</aws:short-prediction>
+      <aws:image isNight="0" icon="cond003.gif">http://deskwx.weatherbug.com/images/Forecast/icons/cond003.gif</aws:image>
+      <aws:description>Saturday</aws:description>
+      <aws:prediction>Partly cloudy in the morning then becoming mostly cloudy. Highs in the upper 60s to mid 70s.</aws:prediction>
+      <aws:high units="&amp;deg;C">24</aws:high>
+      <aws:low units="&amp;deg;C">12</aws:low>
+    </aws:forecast>
+    <aws:forecast>
+      <aws:title alttitle="SUN">Sunday</aws:title>
+      <aws:short-prediction>Mostly Cloudy</aws:short-prediction>
+      <aws:image isNight="0" icon="cond024.gif">http://deskwx.weatherbug.com/images/Forecast/icons/cond024.gif</aws:image>
+      <aws:description>Sunday</aws:description>
+      <aws:prediction>Mostly cloudy with a 20 percent chance of showers. Highs in the mid 60s to around 70.</aws:prediction>
+      <aws:high units="&amp;deg;C">23</aws:high>
+      <aws:low units="&amp;deg;C">12</aws:low>
+    </aws:forecast>
+    <aws:forecast>
+      <aws:title alttitle="MON">Monday</aws:title>
+      <aws:short-prediction>Partly Cloudy</aws:short-prediction>
+      <aws:image isNight="0" icon="cond003.gif">http://deskwx.weatherbug.com/images/Forecast/icons/cond003.gif</aws:image>
+      <aws:description>Monday</aws:description>
+      <aws:prediction>Partly cloudy in the morning then becoming mostly sunny. Highs in the mid 60s to lower 70s.</aws:prediction>
+      <aws:high units="&amp;deg;C">23</aws:high>
+      <aws:low units="&amp;deg;C">13</aws:low>
+    </aws:forecast>
+    <aws:forecast>
+      <aws:title alttitle="TUE">Tuesday</aws:title>
+      <aws:short-prediction>Mostly Sunny</aws:short-prediction>
+      <aws:image isNight="0" icon="cond026.gif">http://deskwx.weatherbug.com/images/Forecast/icons/cond026.gif</aws:image>
+      <aws:description>Tuesday</aws:description>
+      <aws:prediction>Mostly clear. Lows in the mid to upper 50s. Highs in the upper 60s to mid 70s.</aws:prediction>
+      <aws:high units="&amp;deg;C">24</aws:high>
+      <aws:low units="&amp;deg;C">13</aws:low>
+    </aws:forecast>
+    <aws:forecast>
+      <aws:title alttitle="WED">Wednesday</aws:title>
+      <aws:short-prediction>Mostly Sunny</aws:short-prediction>
+      <aws:image isNight="0" icon="cond026.gif">http://deskwx.weatherbug.com/images/Forecast/icons/cond026.gif</aws:image>
+      <aws:description>Wednesday</aws:description>
+      <aws:prediction>Night through morning low clouds and fog...otherwise mostly clear. Lows in the mid to upper 50s. Highs in the upper 60s to mid 70s.</aws:prediction>
+      <aws:high units="&amp;deg;C">24</aws:high>
+      <aws:low units="&amp;deg;C">--</aws:low>
+    </aws:forecast>
+  </aws:forecasts>
+</aws:weather>

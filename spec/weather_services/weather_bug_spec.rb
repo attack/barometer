@@ -182,29 +182,29 @@ describe "WeatherBug" do
       result = WeatherService::WeatherBug._measure(@measurement, @query)
 
       # build current
-      @measurement.current.humidity.to_i.should == 62
-      @measurement.current.condition.should == "Hazy"
-      @measurement.current.icon.should == "23"
-      @measurement.current.temperature.to_i.should == 22
-      @measurement.current.dew_point.to_i.should == 14
-      @measurement.current.wind_chill.to_i.should == 22
-      @measurement.current.wind.to_i.should == 11
+      @measurement.current.humidity.to_i.should == 79
+      @measurement.current.condition.should == "Sunny"
+      @measurement.current.icon.should == "7"
+      @measurement.current.temperature.to_i.should == 13
+      @measurement.current.dew_point.to_i.should == 10
+      @measurement.current.wind_chill.to_i.should == 14
+      @measurement.current.wind.to_i.should == 0
       @measurement.current.wind.direction.should == "SE"
-      @measurement.current.pressure.to_f.should == 1011.31
+      @measurement.current.pressure.to_f.should == 1017.61
 
       # build sun
-      @measurement.current.sun.rise.to_s.should == "05:52 am"
-      @measurement.current.sun.set.to_s.should == "07:48 pm"
+      @measurement.current.sun.rise.to_s.should == "05:42 am"
+      @measurement.current.sun.set.to_s.should == "08:00 pm"
       
       # build station
-      @measurement.station.id.should == "LSNGH"
-      @measurement.station.name.should == "Milken Community HS"
+      @measurement.station.id.should == "LSNGN"
+      @measurement.station.name.should == "Alexander Hamilton Senior HS"
       @measurement.station.city.should == "Los Angeles"
       @measurement.station.state_code.should == "CA"
       @measurement.station.country.should == "USA"
-      @measurement.station.zip_code.should == "90049"
-      @measurement.station.latitude.to_f.should == 34.1258316040039
-      @measurement.station.longitude.to_f.should == -118.478332519531
+      @measurement.station.zip_code.should == "90034"
+      @measurement.station.latitude.to_f.should == 34.0336112976074
+      @measurement.station.longitude.to_f.should == -118.389999389648
   
       # builds location
       @measurement.location.city.should == "Beverly Hills"
@@ -214,18 +214,18 @@ describe "WeatherBug" do
       # builds forecasts
       @measurement.forecast.size.should == 7
 
-      @measurement.forecast[0].date.should == Date.parse("May 15 2009")
-      @measurement.forecast[0].condition.should == "Partly Cloudy"
-      @measurement.forecast[0].icon.should == "3"
-      @measurement.forecast[0].high.to_i.should == 27
-      @measurement.forecast[0].low.to_i.should == 17
+      @measurement.forecast[0].date.should == Date.parse("Jun 2 2011")
+      @measurement.forecast[0].condition.should == "Sunny"
+      @measurement.forecast[0].icon.should == "7"
+      @measurement.forecast[0].high.to_i.should == 24
+      @measurement.forecast[0].low.to_i.should == 11
 
-      @measurement.forecast[0].sun.rise.to_s.should == "05:52 am"
-      @measurement.forecast[0].sun.set.to_s.should == "07:48 pm"
+      @measurement.forecast[0].sun.rise.to_s.should == "05:42 am"
+      @measurement.forecast[0].sun.set.to_s.should == "08:00 pm"
       
       # builds local time
-      @measurement.measured_at.to_s.should == "11:00 am"
-      @measurement.current.current_at.to_s.should == "11:00 am"
+      @measurement.measured_at.to_s.should == "07:01 am"
+      @measurement.current.current_at.to_s.should == "07:01 am"
       
       # builds timezone
       @measurement.timezone.code.should == Data::Zone.new("PDT").code
