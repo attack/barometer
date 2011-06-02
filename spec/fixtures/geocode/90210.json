@@ -12,14 +12,11 @@
    "Country" : {
       "AdministrativeArea" : {
          "AdministrativeAreaName" : "CA",
-         "SubAdministrativeArea" : {
-            "Locality" : {
-               "LocalityName" : "Beverly Hills",
-               "PostalCode" : {
-                  "PostalCodeNumber" : "90210"
-               }
-            },
-            "SubAdministrativeAreaName" : "Los Angeles"
+         "Locality" : {
+            "LocalityName" : "Beverly Hills",
+            "PostalCode" : {
+               "PostalCodeNumber" : "90210"
+            }
          }
       },
       "CountryName" : "USA",
@@ -28,10 +25,10 @@
 },
     "ExtendedData": {
       "LatLonBox": {
-        "north": 34.1320070,
-        "south": 34.0644090,
-        "east": -118.3809750,
-        "west": -118.4467140
+        "north": 34.1377559,
+        "south": 34.0642330,
+        "east": -118.3896720,
+        "west": -118.4467160
       }
     },
     "Point": {

@@ -131,7 +131,7 @@ module Barometer
       return unless query
       puts "fetch google: #{query.q}" if Barometer::debug?
       self.get(
-        "http://google.com/ig/api",
+        "http://www.google.com/ig/api",
         :query => {:weather => query.q, :hl => (metric ? "en-GB" : "en-US")},
         :format => :xml,
         :timeout => Barometer.timeout

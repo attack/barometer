@@ -48,7 +48,6 @@ You will need this for:
   by the weather source API, ie yahoo will take a zip code directly and doesn't
   require any geocoding)
 - running the Barometer binary
-- running the Barometer Web Demo
 
 === other keys
 

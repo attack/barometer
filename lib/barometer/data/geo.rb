@@ -36,20 +36,23 @@ module Barometer
         end
       end
       if placemark && placemark["AddressDetails"] && placemark["AddressDetails"]["Country"]
-        if placemark["AddressDetails"]["Country"]["AdministrativeArea"]
-          if placemark["AddressDetails"]["Country"]["AdministrativeArea"]["SubAdministrativeArea"]
-            locality = placemark["AddressDetails"]["Country"]["AdministrativeArea"]["SubAdministrativeArea"]["Locality"]
+        country = placemark["AddressDetails"]["Country"]
+        if country["AdministrativeArea"]
+          ad_area = country["AdministrativeArea"]
+          if ad_area["SubAdministrativeArea"]
+            @locality = ad_area["SubAdministrativeArea"]["Locality"]["LocalityName"]
+          elsif ad_area["DependentLocality"] && ad_area["DependentLocality"]["DependentLocalityName"]
+            @locality = ad_area["DependentLocality"]["DependentLocalityName"]
+          elsif ad_area["Locality"] && ad_area["Locality"]["LocalityName"]
+            @locality = ad_area["Locality"]["LocalityName"]
           else
-            locality = placemark["AddressDetails"]["Country"]["AdministrativeArea"]["Locality"]
+            @locality = ""
           end
-          if locality
-            @locality = locality["LocalityName"]
-          end
-          @region = placemark["AddressDetails"]["Country"]["AdministrativeArea"]["AdministrativeAreaName"]
+          @region = ad_area["AdministrativeAreaName"]
         end
-        @country = placemark["AddressDetails"]["Country"]["CountryName"]
-        @country_code = placemark["AddressDetails"]["Country"]["CountryNameCode"]
-        @address = placemark["AddressDetails"]["Country"]["AddressLine"]
+        @country = country["CountryName"]
+        @country_code = country["CountryNameCode"]
+        @address = country["AddressLine"]
       end
     end
 

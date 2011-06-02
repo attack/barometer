@@ -1,16 +1,18 @@
 == now
+- use Yahoo placemaker for geocoding (as exclusive, or as priority for supported conversions)
+- remove use of google api key
+
+== very soon
 
 - google geocoding terms of service indicate that "a map must be shown" ... what to do?
 - driver: hamweather
 - driver: meter
 - improve code based on metrics
-- ability to use Placemaker for geocoding (instead of Google)
 - use Geomojo to convert coords to woe_id (when no yahoo key)
 - remove use of HTTParty, use Net:HTTP and Nokogiri instead
 
 == soon
 
-- style the demo app results
 - refactor: data-zone
 - methods to use service_specific icons/images
 

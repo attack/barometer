@@ -6,44 +6,20 @@
   },
   "Placemark": [ {
     "id": "p1",
-    "address": "Times Sq - 42nd St Station, New York, NY 10036, USA",
-    "AddressDetails": {
-   "Accuracy" : 9,
-   "AddressLine" : [ "Times Sq - 42nd St Station" ]
-},
-    "ExtendedData": {
-      "LatLonBox": {
-        "north": 40.7591946,
-        "south": 40.7528994,
-        "east": -73.9838014,
-        "west": -73.9900966
-      }
-    },
-    "Point": {
-      "coordinates": [ -73.9869490, 40.7560470, 0 ]
-    }
-  }, {
-    "id": "p2",
-    "address": "600-614 7th Ave, New York, NY 10036, USA",
+    "address": "601-699 7th Ave, Manhattan, NY 10036, USA",
     "AddressDetails": {
    "Accuracy" : 8,
    "Country" : {
       "AdministrativeArea" : {
          "AdministrativeAreaName" : "NY",
-         "SubAdministrativeArea" : {
-            "Locality" : {
-               "DependentLocality" : {
-                  "DependentLocalityName" : "Manhattan",
-                  "PostalCode" : {
-                     "PostalCodeNumber" : "10036"
-                  },
-                  "Thoroughfare" : {
-                     "ThoroughfareName" : "600-614 7th Ave"
-                  }
-               },
-               "LocalityName" : "New York"
+         "DependentLocality" : {
+            "DependentLocalityName" : "Manhattan",
+            "PostalCode" : {
+               "PostalCodeNumber" : "10036"
             },
-            "SubAdministrativeAreaName" : "New York"
+            "Thoroughfare" : {
+               "ThoroughfareName" : "601-699 7th Ave"
+            }
          }
       },
       "CountryName" : "USA",
@@ -59,115 +35,7 @@
       }
     },
     "Point": {
-      "coordinates": [ -73.9869562, 40.7560561, 0 ]
-    }
-  }, {
-    "id": "p3",
-    "address": "Times Square-42nd Street, New York, NY 10036, USA",
-    "AddressDetails": {
-   "Accuracy" : 9,
-   "AddressLine" : [ "Times Square-42nd Street" ]
-},
-    "ExtendedData": {
-      "LatLonBox": {
-        "north": 40.7591476,
-        "south": 40.7528524,
-        "east": -73.9838524,
-        "west": -73.9901476
-      }
-    },
-    "Point": {
-      "coordinates": [ -73.9870000, 40.7560000, 0 ]
-    }
-  }, {
-    "id": "p4",
-    "address": "W 42 ST at 7 AV, New York, NY 10036, USA",
-    "AddressDetails": {
-   "Accuracy" : 9,
-   "AddressLine" : [ "W 42 ST at 7 AV" ]
-},
-    "ExtendedData": {
-      "LatLonBox": {
-        "north": 40.7591446,
-        "south": 40.7528494,
-        "east": -73.9839964,
-        "west": -73.9902916
-      }
-    },
-    "Point": {
-      "coordinates": [ -73.9871440, 40.7559970, 0 ]
-    }
-  }, {
-    "id": "p5",
-    "address": "W 42 ST at 7 AV, New York, NY 10036, USA",
-    "AddressDetails": {
-   "Accuracy" : 9,
-   "AddressLine" : [ "W 42 ST at 7 AV" ]
-},
-    "ExtendedData": {
-      "LatLonBox": {
-        "north": 40.7594606,
-        "south": 40.7531654,
-        "east": -73.9842484,
-        "west": -73.9905436
-      }
-    },
-    "Point": {
-      "coordinates": [ -73.9873960, 40.7563130, 0 ]
-    }
-  }, {
-    "id": "p6",
-    "address": "W 42 ST at BROADWAY, New York, NY 10036, USA",
-    "AddressDetails": {
-   "Accuracy" : 9,
-   "AddressLine" : [ "W 42 ST at BROADWAY" ]
-},
-    "ExtendedData": {
-      "LatLonBox": {
-        "north": 40.7588236,
-        "south": 40.7525284,
-        "east": -73.9831654,
-        "west": -73.9894606
-      }
-    },
-    "Point": {
-      "coordinates": [ -73.9863130, 40.7556760, 0 ]
-    }
-  }, {
-    "id": "p7",
-    "address": "7 AV at W 41 ST, New York, NY 10036, USA",
-    "AddressDetails": {
-   "Accuracy" : 9,
-   "AddressLine" : [ "7 AV at W 41 ST" ]
-},
-    "ExtendedData": {
-      "LatLonBox": {
-        "north": 40.7586296,
-        "south": 40.7523344,
-        "east": -73.9843024,
-        "west": -73.9905976
-      }
-    },
-    "Point": {
-      "coordinates": [ -73.9874500, 40.7554820, 0 ]
-    }
-  }, {
-    "id": "p8",
-    "address": "7 AV at W 45 ST, New York, NY 10036, USA",
-    "AddressDetails": {
-   "Accuracy" : 9,
-   "AddressLine" : [ "7 AV at W 45 ST" ]
-},
-    "ExtendedData": {
-      "LatLonBox": {
-        "north": 40.7610286,
-        "south": 40.7547334,
-        "east": -73.9825394,
-        "west": -73.9888346
-      }
-    },
-    "Point": {
-      "coordinates": [ -73.9856870, 40.7578810, 0 ]
+      "coordinates": [ -73.9869147, 40.7560395, 0 ]
     }
   } ]
 }

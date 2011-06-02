@@ -16,13 +16,13 @@ describe "Query" do
     @zipcode_to_coordinates = "34.1030032,-118.4104684"
     @zipcode_to_geocode = "Beverly Hills, CA, USA"
     @zipcode_to_weather_id = "USCA0090"
-    @postalcode_to_coordinates = "53.570447,-113.456083"
-    @geocode_to_coordinates = "40.7142691,-74.0059729"
+    @postalcode_to_coordinates = "53.570516,-113.45784"
+    @geocode_to_coordinates = "40.7143528,-74.0059731"
     @geocode_to_weather_id = "USNY0996"
-    @coordinates_to_geocode = "New York, NY, USA"
+    @coordinates_to_geocode = "Manhattan, NY, USA"
     @coordinates_to_weather_id = "USNY0996"
     @icao_to_coordinates = "37.615223,-122.389979"
-    @icao_to_geocode = "Millbrae, CA, USA"
+    @icao_to_geocode = "San Francisco, CA, USA"
     @icao_to_weather_id = "USCA0987"
     
     Barometer.google_geocode_key = nil

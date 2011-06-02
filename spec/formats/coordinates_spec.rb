@@ -107,7 +107,7 @@ describe "Query::Coordinates" do
         query = Barometer::Query.new(@geocode)
         query.format.should == :geocode
         new_query = Barometer::Query::Format::Coordinates.to(query)
-        new_query.q.should == "40.7142691,-74.0059729"
+        new_query.q.should == "40.7143528,-74.0059731"
         new_query.country_code.should == "US"
         new_query.format.should == :coordinates
         new_query.geo.should_not be_nil
@@ -117,7 +117,7 @@ describe "Query::Coordinates" do
         query = Barometer::Query.new(@postal_code)
         query.format.should == :postalcode
         new_query = Barometer::Query::Format::Coordinates.to(query)
-        new_query.q.should == "53.570447,-113.456083"
+        new_query.q.should == "53.570516,-113.45784"
         new_query.country_code.should == "CA"
         new_query.format.should == :coordinates
         new_query.geo.should_not be_nil
@@ -137,7 +137,7 @@ describe "Query::Coordinates" do
         query = Barometer::Query.new(@coordinates)
         query.format.should == :coordinates
         new_query = Barometer::Query::Format::Coordinates.to(query)
-        new_query.q.should == "40.7560561,-73.9869562"
+        new_query.q.should == "40.7560395,-73.9869147"
         new_query.country_code.should == "US"
         new_query.format.should == :coordinates
         new_query.geo.should_not be_nil

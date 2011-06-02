@@ -162,21 +162,21 @@ describe "WeatherDotCom" do
       result = WeatherService::WeatherDotCom._measure(@measurement, @query)
       
       # build current
-      @measurement.current.humidity.to_i.should == 75
-      @measurement.current.icon.should == "33"
+      @measurement.current.humidity.to_i.should == 65
+      @measurement.current.icon.should == "34"
       @measurement.current.condition.should == "Fair"
-      @measurement.current.temperature.to_i.should == 16
-      @measurement.current.dew_point.to_i.should == 12
-      @measurement.current.wind_chill.to_i.should == 16
-      @measurement.current.wind.to_i.should == 5
-      @measurement.current.wind.degrees.to_i.should == 80
-      @measurement.current.wind.direction.should == "E"
-      @measurement.current.pressure.to_f.should == 1016.6
+      @measurement.current.temperature.to_i.should == 17
+      @measurement.current.dew_point.to_i.should == 10
+      @measurement.current.wind_chill.to_i.should == 17
+      @measurement.current.wind.to_i.should == 14
+      @measurement.current.wind.degrees.to_i.should == 230
+      @measurement.current.wind.direction.should == "SW"
+      @measurement.current.pressure.to_f.should == 1017.9
       @measurement.current.visibility.to_f.should == 16.1
       
       # build sun
-      @measurement.current.sun.rise.to_s.should == "06:01 am"
-      @measurement.current.sun.set.to_s.should == "07:40 pm"
+      @measurement.current.sun.rise.to_s.should == "05:43 am"
+      @measurement.current.sun.set.to_s.should == "08:00 pm"
 
       # builds location
       @measurement.location.name.should == "Beverly Hills, CA (90210)"
@@ -187,35 +187,35 @@ describe "WeatherDotCom" do
       @measurement.forecast.size.should == 10
 
       # day
-      @measurement.forecast[0].valid_start_date.should == Date.parse("May 3 7:00 am")
-      @measurement.forecast[0].valid_end_date.should == Date.parse("May 3 6:59:59 pm")
-      @measurement.forecast[0].condition.should == "Partly Cloudy"
-      @measurement.forecast[0].icon.should == "30"
+      @measurement.forecast[0].valid_start_date.should == Date.parse("Jun 1 7:00 am")
+      @measurement.forecast[0].valid_end_date.should == Date.parse("Jun 1 6:59:59 pm")
+      @measurement.forecast[0].condition.should == "N/A"
+      @measurement.forecast[0].icon.should == "44"
       @measurement.forecast[0].high.should be_nil
-      @measurement.forecast[0].low.to_i.should == 14
-      @measurement.forecast[0].pop.to_i.should == 10
-      @measurement.forecast[0].humidity.to_i.should == 65
+      @measurement.forecast[0].low.to_i.should == 12
+      @measurement.forecast[0].pop.to_i.should == 0
+      @measurement.forecast[0].humidity.to_i.should == 0
       
-      @measurement.forecast[0].wind.should_not be_nil
-      @measurement.forecast[0].wind.to_i.should == 16
-      @measurement.forecast[0].wind.degrees.to_i.should == 288
-      @measurement.forecast[0].wind.direction.should == "WNW"
+      @measurement.forecast[0].wind.should be_nil
+      @measurement.forecast[0].wind.to_i.should be_nil
+      @measurement.forecast[0].wind.degrees.to_i.should == 0
+      @measurement.forecast[0].wind.direction.should == "N/A"
       
-      @measurement.forecast[0].sun.rise.to_s.should == "06:02 am"
-      @measurement.forecast[0].sun.set.to_s.should == "07:40 pm"
+      @measurement.forecast[0].sun.rise.to_s.should == "05:43 am"
+      @measurement.forecast[0].sun.set.to_s.should == "08:00 pm"
       
       # night
       @measurement.forecast[1].should_not be_nil
-      @measurement.forecast[1].valid_start_date.should == Date.parse("May 3 7:00 pm")
-      @measurement.forecast[1].valid_end_date.should == Date.parse("May 4 6:59:59 am")
-      @measurement.forecast[1].condition.should == "Partly Cloudy"
-      @measurement.forecast[1].icon.should == "29"
-      @measurement.forecast[1].pop.to_i.should == 10
-      @measurement.forecast[1].humidity.to_i.should == 71
+      @measurement.forecast[1].valid_start_date.should == Date.parse("Jun 1 7:00 pm")
+      @measurement.forecast[1].valid_end_date.should == Date.parse("Jun 2 6:59:59 am")
+      @measurement.forecast[1].condition.should == "Clear"
+      @measurement.forecast[1].icon.should == "31"
+      @measurement.forecast[1].pop.to_i.should == 0
+      @measurement.forecast[1].humidity.to_i.should == 62
       
       @measurement.forecast[1].wind.should_not be_nil
-      @measurement.forecast[1].wind.to_i.should == 14
-      @measurement.forecast[1].wind.degrees.to_i.should == 335
+      @measurement.forecast[1].wind.to_i.should == 16
+      @measurement.forecast[1].wind.degrees.to_i.should == 343
       @measurement.forecast[1].wind.direction.should == "NNW"
     end
     

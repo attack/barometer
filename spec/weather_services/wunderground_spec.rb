@@ -199,8 +199,8 @@ describe "Wunderground" do
       # build current
       #@measurement.current.sun.rise.should == sun_rise
       #@measurement.current.sun.set.should == sun_set
-      @measurement.current.sun.rise.to_s.should == "06:23 am"
-      @measurement.current.sun.set.to_s.should == "08:45 pm"
+      @measurement.current.sun.rise.to_s.should == "05:26 am"
+      @measurement.current.sun.set.to_s.should == "09:41 pm"
     end
     
   end

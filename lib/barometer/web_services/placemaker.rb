@@ -5,6 +5,8 @@ module Barometer
   # Yahoo! Placemaker is a geoparsing web service,
   # this uses Placemaker to obtain a WOEID, as only Yahoo knows them
   #
+  # accepts: city name, coords, postal code, NOT zip code, NOT icao
+  #
   class WebService::Placemaker < WebService
     
     # get the woe_id for a given query
