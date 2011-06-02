@@ -177,3 +177,26 @@ FakeWeb.register_uri(:get,
   "http://weather.yahooapis.com/forecastrss?w=615702",
   :body => File.read(File.dirname(__FILE__) + '/fixtures/services/placemaker/w615702.xml')
 )
+
+#
+# for NOAA weather
+#
+#http://www.weather.gov/forecasts/xml/sample_products/browser_interface/ndfdBrowserClientByDay.php?format=24%20hourly&numDays=7&zipCodeList=90210
+FakeWeb.register_uri(:get, 
+"http://www.weather.gov/forecasts/xml/sample_products/browser_interface/ndfdBrowserClientByDay.php?format=24%20hourly&numDays=7&zipCodeList=90210",
+  :body => File.read(File.dirname(__FILE__) + '/fixtures/services/noaa/90210_forecast.xml')
+)
+# http://www.weather.gov/xml/current_obs/KSMO.xml
+FakeWeb.register_uri(:get, 
+"http://www.weather.gov/xml/current_obs/KSMO.xml",
+  :body => File.read(File.dirname(__FILE__) + '/fixtures/services/noaa/90210_current.xml')
+)
+
+#
+# For NOAA station id finder
+#
+# http://forecast.weather.gov/MapClick.php?&textField1=34.10&textField2=-118.41
+FakeWeb.register_uri(:get, 
+  "http://forecast.weather.gov/MapClick.php?&textField1=34.10&textField2=-118.41",
+  :body => File.read(File.dirname(__FILE__) + '/fixtures/services/noaa/station_34_118.html')
+)

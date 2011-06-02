@@ -29,6 +29,7 @@
 #   --google            add google as a source
 #   --weather           add weather.com as a source
 #   --bug               add weather_bug as a source
+#   --noaa              add NOAA as a source
 #   -p, --pop           pop threshold used to determine wet?
 #   -s, --wind          wind speed threshold used to determine windy?
 #   -a, --at            time/date used to determine when to calculate summary
@@ -117,6 +118,7 @@ class App
       opt.on('--google')           { @options.sources << :google; @options.default = false }
       opt.on('--weather')          { @options.sources << :weather_dot_com; @options.default = false }
       opt.on('--bug')              { @options.sources << :weather_bug; @options.default = false }
+      opt.on('--noaa')             { @options.sources << :noaa; @options.default = false }
       opt.on('-p n', '--pop n')    {|n| @options.pop = n.to_i || 50 }
       opt.on('-s n', '--wind n')   {|n| @options.metric ? @options.windy_m = n.to_f || 10 : @options.windy_i = n.to_f || 7 }
             
@@ -222,6 +224,7 @@ class App
       puts "  --google            add google as a source"
       puts "  --weather           add weather.com as a source"
       puts "  --bug               add weather_bug as a source"
+      puts "  --noaa              add NOAA as a source"
       puts "  -p, --pop           pop threshold used to determine wet?"
       puts "  -s, --wind          wind speed threshold used to determine windy?"
       puts "  -a, --at            time/date used to determine when to calculate summary"
@@ -359,7 +362,7 @@ def pretty_current(c)
   return unless c
   section("CURRENT", 2) do
     pretty_hash({
-      "Measured at" => c.current_at, "Updated at" => c.updated_at,
+      "Measured at" => c.current_at, "Updated at" => c.updated_at.to_s(true),
       "Humidity" => c.humidity, "Icon" => c.icon,
       "Condition" => c.condition, "Temperature" => c.temperature,
       "Dew Point" => c.dew_point, "Heat Index" => c.heat_index,

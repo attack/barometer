@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<dwml version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.nws.noaa.gov/forecasts/xml/DWMLgen/schema/DWML.xsd">
+  <head>
+    <product srsName="WGS 1984" concise-name="dwmlByDay" operational-mode="official">
+      <title>NOAA's National Weather Service Forecast by 24 Hour Period</title>
+      <field>meteorological</field>
+      <category>forecast</category>
+      <creation-date refresh-frequency="PT1H">2011-06-02T17:24:02Z</creation-date>
+    </product>
+    <source>
+      <more-information>http://www.nws.noaa.gov/forecasts/xml/</more-information>
+      <production-center>Meteorological Development Laboratory<sub-center>Product Generation Branch</sub-center></production-center>
+      <disclaimer>http://www.nws.noaa.gov/disclaimer.html</disclaimer>
+      <credit>http://www.weather.gov/</credit>
+      <credit-logo>http://www.weather.gov/images/xml_logo.gif</credit-logo>
+      <feedback>http://www.weather.gov/feedback.php</feedback>
+    </source>
+  </head>
+  <data>
+    <location>
+      <location-key>point1</location-key>
+      <point latitude="34.10" longitude="-118.41"/>
+    </location>
+    <moreWeatherInformation applicable-location="point1">http://forecast.weather.gov/MapClick.php?textField1=34.10&amp;textField2=-118.41</moreWeatherInformation>
+    <time-layout time-coordinate="local" summarization="24hourly">
+      <layout-key>k-p24h-n7-1</layout-key>
+      <start-valid-time>2011-06-02T06:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-03T06:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-03T06:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-04T06:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-04T06:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-05T06:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-05T06:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-06T06:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-06T06:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-07T06:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-07T06:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-08T06:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-08T06:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-09T06:00:00-07:00</end-valid-time>
+    </time-layout>
+    <time-layout time-coordinate="local" summarization="12hourly">
+      <layout-key>k-p12h-n14-2</layout-key>
+      <start-valid-time>2011-06-02T06:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-02T18:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-02T18:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-03T06:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-03T06:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-03T18:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-03T18:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-04T06:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-04T06:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-04T18:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-04T18:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-05T06:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-05T06:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-05T18:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-05T18:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-06T06:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-06T06:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-06T18:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-06T18:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-07T06:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-07T06:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-07T18:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-07T18:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-08T06:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-08T06:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-08T18:00:00-07:00</end-valid-time>
+      <start-valid-time>2011-06-08T18:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-09T06:00:00-07:00</end-valid-time>
+    </time-layout>
+    <time-layout time-coordinate="local" summarization="24hourly">
+      <layout-key>k-p7d-n1-3</layout-key>
+      <start-valid-time>2011-06-02T06:00:00-07:00</start-valid-time>
+      <end-valid-time>2011-06-09T06:00:00-07:00</end-valid-time>
+    </time-layout>
+    <parameters applicable-location="point1">
+      <temperature type="maximum" units="Fahrenheit" time-layout="k-p24h-n7-1">
+        <name>Daily Maximum Temperature</name>
+        <value>75</value>
+        <value>77</value>
+        <value>75</value>
+        <value>72</value>
+        <value>72</value>
+        <value>76</value>
+        <value>76</value>
+      </temperature>
+      <temperature type="minimum" units="Fahrenheit" time-layout="k-p24h-n7-1">
+        <name>Daily Minimum Temperature</name>
+        <value>52</value>
+        <value>57</value>
+        <value>57</value>
+        <value>54</value>
+        <value>55</value>
+        <value>55</value>
+        <value xsi:nil="true"/>
+      </temperature>
+      <probability-of-precipitation type="12 hour" units="percent" time-layout="k-p12h-n14-2">
+        <name>12 Hourly Probability of Precipitation</name>
+        <value>2</value>
+        <value>2</value>
+        <value>1</value>
+        <value>6</value>
+        <value>10</value>
+        <value>18</value>
+        <value>20</value>
+        <value>20</value>
+        <value>11</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value>2</value>
+        <value xsi:nil="true"/>
+      </probability-of-precipitation>
+      <weather time-layout="k-p24h-n7-1">
+        <name>Weather Type, Coverage, and Intensity</name>
+        <weather-conditions weather-summary="Mostly Sunny"/>
+        <weather-conditions weather-summary="Partly Sunny"/>
+        <weather-conditions weather-summary="Mostly Cloudy"/>
+        <weather-conditions weather-summary="Slight Chance Rain Showers">
+          <value coverage="slight chance" intensity="light" weather-type="rain showers" qualifier="none"/>
+        </weather-conditions>
+        <weather-conditions weather-summary="Mostly Sunny"/>
+        <weather-conditions weather-summary="Patchy Fog">
+          <value coverage="patchy" intensity="none" weather-type="fog" qualifier="none"/>
+        </weather-conditions>
+        <weather-conditions weather-summary="Partly Sunny"/>
+      </weather>
+      <conditions-icon type="forecast-NWS" time-layout="k-p24h-n7-1">
+        <name>Conditions Icons</name>
+        <icon-link>http://www.nws.noaa.gov/weather/images/fcicons/few.jpg</icon-link>
+        <icon-link>http://www.nws.noaa.gov/weather/images/fcicons/sct.jpg</icon-link>
+        <icon-link>http://www.nws.noaa.gov/weather/images/fcicons/bkn.jpg</icon-link>
+        <icon-link>http://www.nws.noaa.gov/weather/images/fcicons/hi_shwrs20.jpg</icon-link>
+        <icon-link>http://www.nws.noaa.gov/weather/images/fcicons/few.jpg</icon-link>
+        <icon-link>http://www.nws.noaa.gov/weather/images/fcicons/fg.jpg</icon-link>
+        <icon-link>http://www.nws.noaa.gov/weather/images/fcicons/sct.jpg</icon-link>
+      </conditions-icon>
+      <hazards time-layout="k-p7d-n1-3">
+        <name>Watches, Warnings, and Advisories</name>
+        <hazard-conditions xsi:nil="true"/>
+      </hazards>
+    </parameters>
+  </data>
+</dwml>

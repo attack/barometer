@@ -33,15 +33,15 @@ module Barometer
       
       measurement = Barometer::Measurement.new(self._source_name, metric)
       measurement.start_at = Time.now.utc
-      if self._meets_requirements?(query)
-        converted_query = query.convert!(self._accepted_formats)
-        if converted_query
-          measurement.source = self._source_name
-          measurement.query = converted_query.q
-          measurement.format = converted_query.format
-          measurement = self._measure(measurement, converted_query, metric)
-        end
+      
+      converted_query = query.convert!(self._accepted_formats)
+      if converted_query
+        measurement.source = self._source_name
+        measurement.query = converted_query.q
+        measurement.format = converted_query.format
+        measurement = self._measure(measurement, converted_query, metric)
       end
+
       measurement.end_at = Time.now.utc
       measurement
     end
@@ -133,6 +133,8 @@ module Barometer
     def self._measure(measurement, query, metric=true)
       raise ArgumentError unless measurement.is_a?(Barometer::Measurement)
       raise ArgumentError unless query.is_a?(Barometer::Query)
+      
+      return measurement unless self._meets_requirements?(query)
   
       begin
         result = _fetch(query, metric)

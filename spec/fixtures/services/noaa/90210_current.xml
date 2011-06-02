@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="ISO-8859-1"?> 
+<?xml-stylesheet href="latest_ob.xsl" type="text/xsl"?>
+<current_observation version="1.0"
+	 xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xsi:noNamespaceSchemaLocation="http://www.weather.gov/view/current_observation.xsd">
+	<credit>NOAA's National Weather Service</credit>
+	<credit_URL>http://weather.gov/</credit_URL>
+	<image>
+		<url>http://weather.gov/images/xml_logo.gif</url>
+		<title>NOAA's National Weather Service</title>
+		<link>http://weather.gov</link>
+	</image>
+	<suggested_pickup>15 minutes after the hour</suggested_pickup>
+	<suggested_pickup_period>60</suggested_pickup_period>
+	<location>Santa Monica Muni, CA</location>
+	<station_id>KSMO</station_id>
+	<latitude>34.03</latitude>
+	<longitude>-118.45</longitude>
+	<observation_time>Last Updated on Jun 2 2011, 10:51 am PDT</observation_time>
+        <observation_time_rfc822>Thu, 02 Jun 2011 10:51:00 -0700</observation_time_rfc822>
+	<weather>Fair</weather>
+	<temperature_string>63.0 F (17.2 C)</temperature_string>
+	<temp_f>63.0</temp_f>
+	<temp_c>17.2</temp_c>
+	<relative_humidity>58</relative_humidity>
+	<wind_string>Southwest at 6.9 MPH (6 KT)</wind_string>
+	<wind_dir>Southwest</wind_dir>
+	<wind_degrees>230</wind_degrees>
+	<wind_mph>6.9</wind_mph>
+	<wind_kt>6</wind_kt>
+	<pressure_string>1018.5 mb</pressure_string>
+	<pressure_mb>1018.5</pressure_mb>
+	<pressure_in>30.08</pressure_in>
+	<dewpoint_string>48.0 F (8.9 C)</dewpoint_string>
+	<dewpoint_f>48.0</dewpoint_f>
+	<dewpoint_c>8.9</dewpoint_c>
+	<windchill_string>63 F (17 C)</windchill_string>
+      	<windchill_f>63</windchill_f>
+      	<windchill_c>17</windchill_c>
+	<visibility_mi>10.00</visibility_mi>
+ 	<icon_url_base>http://weather.gov/weather/images/fcicons/</icon_url_base>
+	<two_day_history_url>http://www.weather.gov/data/obhistory/KSMO.html</two_day_history_url>
+	<icon_url_name>skc.jpg</icon_url_name>
+	<ob_url>http://www.nws.noaa.gov/data/METAR/KSMO.1.txt</ob_url>
+	<disclaimer_url>http://weather.gov/disclaimer.html</disclaimer_url>
+	<copyright_url>http://weather.gov/disclaimer.html</copyright_url>
+	<privacy_policy_url>http://weather.gov/notice.html</privacy_policy_url>
+</current_observation>
