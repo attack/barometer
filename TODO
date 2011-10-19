@@ -1,12 +1,11 @@
 == now
 - use Yahoo placemaker for geocoding (as exclusive, or as priority for supported conversions)
-- remove use of google api key
 
 == very soon
 
 - google geocoding terms of service indicate that "a map must be shown" ... what to do?
 - driver: hamweather
-- driver: meter
+- driver: metar
 - improve code based on metrics
 - use Geomojo to convert coords to woe_id (when no yahoo key)
 - remove use of HTTParty, use Net:HTTP and Nokogiri instead
@@ -20,7 +19,7 @@
 
 - Rdoc compatible documentation
 - add uv, moon, elevation info to current
-- driver: noaa, intellicast
+- driver: intellicast
 - weather.com simple_questions improve answers (use extra data)
 - make sure you can compare LocalTime to LocalDateTime in LocalTime class
 
