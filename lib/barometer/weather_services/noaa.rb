@@ -289,7 +289,6 @@ module Barometer
         result['parameters']['temperature'].first['value'] &&
         !result['parameters']['temperature'].first['value'].collect{|t| t.respond_to?(:to_i) ? t.to_i : nil}.compact.empty?
       else
-        puts "here"
         return {}
       end
       
