@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# == Barometer 
+# == Barometer
 #   This is the command line interface to the barometer gem.
 #
 # == Examples
@@ -11,7 +11,7 @@
 #     barometer --yahoo 90210
 #     barometer --verbose 'new york'
 #
-# == Usage 
+# == Usage
 #   barometer [options] query
 #
 #   For help use: barometer -h
@@ -57,12 +57,12 @@ KEY_FILE = File.expand_path(File.join('~', '.barometer'))
 BAROMETER_VERSION = '0.7.3'
 
 class App
-  
+
   attr_reader :options
 
   def initialize(arguments, stdin)
     @arguments = arguments.dup
-    
+
     # Set defaults
     @options = OpenStruct.new
     @options.timeout = 15
@@ -73,7 +73,7 @@ class App
     @options.verbose = false
     @options.at = nil
     @options.default = true
-    
+
     # thresholds
     @options.windy_m = 10
     @options.windy_i = 7
@@ -82,28 +82,28 @@ class App
 
   # Parse options, check arguments, then process the command
   def run
-    if parsed_options? && arguments_valid? 
+    if parsed_options? && arguments_valid?
       puts "Start at #{DateTime.now}\n\n" if @options.verbose
       output_options if @options.verbose # [Optional]
-            
-      process_arguments            
+
+      process_arguments
       process_command
-      
+
       puts "\nFinished at #{DateTime.now}" if @options.verbose
     else
       output_usage
     end
   end
-  
+
   protected
-  
+
     # future options
     #
     # time: -a --at
     #
     def parsed_options?
       # Specify options
-      opt = OptionParser.new 
+      opt = OptionParser.new
       opt.on('-v', '--version')    { output_version ; exit 0 }
       opt.on('-h', '--help')       { output_help }
       opt.on('-V', '--verbose')    { @options.verbose = true }
@@ -121,13 +121,13 @@ class App
       opt.on('--noaa')             { @options.sources << :noaa; @options.default = false }
       opt.on('-p n', '--pop n')    {|n| @options.pop = n.to_i || 50 }
       opt.on('-s n', '--wind n')   {|n| @options.metric ? @options.windy_m = n.to_f || 10 : @options.windy_i = n.to_f || 7 }
-            
+
       opt.parse!(@arguments) rescue return false
-      
+
       process_options
-      true      
+      true
     end
-    
+
     def config_weather_dot_com
       if File.exists?(KEY_FILE)
       	keys = YAML.load_file(KEY_FILE)
@@ -145,7 +145,7 @@ class App
       end
       { :weather_dot_com => { :keys => { :partner => partner_key, :license => license_key } } }
     end
-    
+
     def config_weather_bug
       if File.exists?(KEY_FILE)
       	keys = YAML.load_file(KEY_FILE)
@@ -180,11 +180,11 @@ class App
       Barometer.config = { 1 => @options.sources }
       Barometer.timeout = @options.timeout
     end
-    
+
     def output_options
       puts "Options:\n"
-      
-      @options.marshal_dump.each do |name, val|        
+
+      @options.marshal_dump.each do |name, val|
         puts "  #{name} = #{val}"
       end
       puts
@@ -194,17 +194,17 @@ class App
     def arguments_valid?
       true if (@arguments.length >= 1 || @options.web)
     end
-    
+
     # Setup the arguments
     def process_arguments
       #puts @arguments.inspect
     end
-    
+
     def output_help
       output_version
       #output_usage
     end
-    
+
     def output_usage
       puts "Usage: "
       puts "barometer [options] query"
@@ -229,11 +229,11 @@ class App
       puts "  -s, --wind          wind speed threshold used to determine windy?"
       puts "  -a, --at            time/date used to determine when to calculate summary"
     end
-    
+
     def output_version
       puts "#{File.basename(__FILE__)} version #{BAROMETER_VERSION}"
     end
-    
+
     def process_command
       barometer = Barometer.new(@arguments.join(" "))
       begin
@@ -378,7 +378,7 @@ def pretty_forecast(f)
   return unless f
   section("FOR: #{f.date}", 3) do
     pretty_hash({
-      "Valid From" => f.valid_start_date.to_s(true), 
+      "Valid From" => f.valid_start_date.to_s(true),
       "Valid Until" => f.valid_end_date.to_s(true),
       "Icon" => f.icon, "Description" => f.description,
       "Condition" => f.condition, "High" => f.high,
@@ -482,8 +482,7 @@ if File.exists?(KEY_FILE)
 	  Barometer.yahoo_placemaker_app_id = keys["yahoo"]["app_id"]
   end
 else
-  File.open(KEY_FILE, 'w') {|f| f << "yahoo: app_id: YOUR_KEY_KERE" }
-  exit
+  File.open(KEY_FILE, 'w') {|f| f << "yahoo:\n  app_id: YOUR_KEY_KERE" }
 end
 
 # Create and run the application
