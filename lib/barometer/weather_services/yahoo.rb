@@ -100,24 +100,24 @@ module Barometer
       raise ArgumentError unless data.is_a?(Hash)
       current = Measurement::Result.new(metric)
       if data
-        if data['item'] && data['item']['yweather:condition']
-          condition_result = data['item']['yweather:condition']
+        if data['item'] && data['item']['condition']
+          condition_result = data['item']['condition']
           current.updated_at = Data::LocalDateTime.parse(condition_result['date'])
           current.icon = condition_result['code']
           current.condition = condition_result['text']
           current.temperature = Data::Temperature.new(metric)
           current.temperature << condition_result['temp']
         end
-        if data['yweather:atmosphere']
-          atmosphere_result = data['yweather:atmosphere']
+        if data['atmosphere']
+          atmosphere_result = data['atmosphere']
           current.humidity = atmosphere_result['humidity'].to_i
           current.pressure = Data::Pressure.new(metric)
           current.pressure << atmosphere_result['pressure']
           current.visibility = Data::Distance.new(metric)
           current.visibility << atmosphere_result['visibility']
         end
-        if data['yweather:wind']
-          wind_result = data['yweather:wind']
+        if data['wind']
+          wind_result = data['wind']
           current.wind = Data::Speed.new(metric)
           current.wind << wind_result['speed']
           current.wind.degrees = wind_result['degrees'].to_f
@@ -132,8 +132,8 @@ module Barometer
       raise ArgumentError unless data.is_a?(Hash)
       forecasts = Measurement::ResultArray.new
       
-      if data && data['item'] && data['item']['yweather:forecast']
-         forecast_result = data['item']['yweather:forecast']
+      if data && data['item'] && data['item']['forecast']
+         forecast_result = data['item']['forecast']
          
         forecast_result.each do |forecast|
           forecast_measurement = Measurement::Result.new
@@ -163,13 +163,13 @@ module Barometer
         location.latitude = geo.latitude
         location.longitude = geo.longitude
       else
-        if data && data['yweather:location']
-          location.city = data['yweather:location']['city']
-          location.state_code = data['yweather:location']['region']
-          location.country_code = data['yweather:location']['country']
+        if data && data['location']
+          location.city = data['location']['city']
+          location.state_code = data['location']['region']
+          location.country_code = data['location']['country']
           if data['item']
-            location.latitude = data['item']['geo:lat']
-            location.longitude = data['item']['geo:long']
+            location.latitude = data['item']['lat']
+            location.longitude = data['item']['long']
           end
         end
       end
@@ -179,9 +179,9 @@ module Barometer
     def self._build_sun(data)
       raise ArgumentError unless data.is_a?(Hash)
       sun = nil
-      if data && data['yweather:astronomy'] && data['item']
-        local_rise = Data::LocalTime.parse(data['yweather:astronomy']['sunrise'])
-        local_set = Data::LocalTime.parse(data['yweather:astronomy']['sunset'])
+      if data && data['astronomy'] && data['item']
+        local_rise = Data::LocalTime.parse(data['astronomy']['sunrise'])
+        local_set = Data::LocalTime.parse(data['astronomy']['sunset'])
         sun = Data::Sun.new(local_rise, local_set)
       end
       sun || Data::Sun.new
@@ -196,12 +196,13 @@ module Barometer
         :w => query.format == :woe_id ? query.q : nil,
         :u => (metric ? 'c' : 'f')
       }.delete_if {|k,v| v.nil? }
-      self.get(
+      r = self.get(
         "http://weather.yahooapis.com/forecastrss",
         :query => options,
         :format => :xml,
         :timeout => Barometer.timeout
-      )['rss']['channel']
+      )
+      r['rss']['channel']
     end
     
   end
