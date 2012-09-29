@@ -26,12 +26,13 @@ module Barometer
       puts "reverse weather_id: #{query.q}" if Barometer::debug?
       return nil unless query
       raise ArgumentError unless _is_a_query?(query)
-      self.get(
+      response = self.get(
         "http://weather.yahooapis.com/forecastrss",
         :query => { :p => query.q },
-        :format => :xml,
         :timeout => Barometer.timeout
-      )['rss']['channel']["yweather:location"]
+      )
+      output = Crack::XML.parse(response)
+      output['rss']['channel']['yweather:location']
     end
     
     # filter out words that weather.com has trouble geo-locating
