@@ -1,3 +1,5 @@
+require 'crack'
+
 module Barometer
   #
   # = WeatherBug
@@ -126,21 +128,21 @@ module Barometer
       raise ArgumentError unless data.is_a?(Hash)
       forecasts = Measurement::ResultArray.new
       # go through each forecast and create an instance
-      if data && data["aws:forecast"]
+      if data && data["forecast"]
         start_date = Date.strptime(data['date'], "%m/%d/%Y %H:%M:%S %p")
         i = 0
-        data["aws:forecast"].each do |forecast|
+        data["forecast"].each do |forecast|
           forecast_measurement = Measurement::Result.new
-          icon_match = forecast['aws:image'].match(/cond(\d*)\.gif$/)
+          icon_match = forecast['image']['icon'].match(/cond(\d*)\.gif$/)
           forecast_measurement.icon = icon_match[1].to_i.to_s if icon_match
           forecast_measurement.date = start_date + i
-          forecast_measurement.condition = forecast['aws:short_prediction']
+          forecast_measurement.condition = forecast['short_prediction']
 
           forecast_measurement.high = Data::Temperature.new(metric)
-          forecast_measurement.high << forecast['aws:high']
+          forecast_measurement.high << forecast['high']['__content__']
 
           forecast_measurement.low = Data::Temperature.new(metric)
-          forecast_measurement.low << forecast['aws:low']
+          forecast_measurement.low << forecast['low']['__content__']
 
           forecasts << forecast_measurement
           i += 1
@@ -162,10 +164,10 @@ module Barometer
         location.latitude = geo.latitude
         location.longitude = geo.longitude
       else
-        if data && data['aws:location']
-          location.city = data['aws:location']['aws:city']
-          location.state_code = data['aws:location']['aws:state']
-          location.zip_code = data['aws:location']['aws:zip']
+        if data && data['location']
+          location.city = data['location']['city']
+          location.state_code = data['location']['state']
+          location.zip_code = data['location']['zip']
         end
       end
       location
@@ -251,7 +253,7 @@ module Barometer
       zipcode = zip_match[1] if zip_match
       
       # build xml
-      output = Crack::XML.parse(response)
+      output = ::Crack::XML.parse(response)
       output = output["aws:weather"]["aws:ob"]
       
       # add missing data
@@ -277,7 +279,7 @@ module Barometer
         }.merge(q),
         :format => :xml,
         :timeout => Barometer.timeout
-      )["aws:weather"]["aws:forecasts"]
+      )["weather"]["forecasts"]
     end
     
     # since we have two sets of data, override these calls to choose the

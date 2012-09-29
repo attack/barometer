@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency(%q<httparty>, ">= 0.4.5")
   s.add_dependency(%q<tzinfo>, ">= 0.3.14")
   s.add_dependency("nokogiri")
+  s.add_dependency("crack")
 
   s.add_development_dependency("rspec", "~> 2.6")
   s.add_development_dependency("mocha")
