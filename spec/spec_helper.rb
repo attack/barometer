@@ -2,6 +2,7 @@ require 'rubygems'
 require 'rspec'
 require 'mocha'
 require 'cgi'
+require 'pry'
 
 require File.expand_path(File.dirname(__FILE__) + '/fakeweb_helper')
 
