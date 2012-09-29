@@ -63,7 +63,7 @@ module Barometer
         :query => { :w => query.q },
         :format => :xml,
         :timeout => Barometer.timeout
-      )['rss']['channel']["yweather:location"]
+      )['rss']['channel']["location"]
     end
     
     # parses a Nokogori doc object

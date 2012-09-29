@@ -40,15 +40,15 @@ module Barometer
       #
       pre_query = nil
       if original_query.format == :weather_id
-        pre_query = Query::Format::WeatherID.reverse(original_query)
+        pre_query = Barometer::Query::Format::WeatherID.reverse(original_query)
       end
 
       # pre-convert ([:short_zipcode, :zipcode, :postalcode, :icao] -> :geocode)
       #
       unless pre_query
         if [:short_zipcode, :zipcode, :icao].include?(original_query.format)
-          unless pre_query = original_query.get_conversion(Query::Format::Geocode.format)
-            pre_query = Query::Format::Geocode.to(original_query)
+          unless pre_query = original_query.get_conversion(Barometer::Query::Format::Geocode.format)
+            pre_query = Barometer::Query::Format::Geocode.to(original_query)
           end
         end
       end
@@ -97,7 +97,7 @@ module Barometer
     def self._query_placemaker(query=nil)
       return nil unless query
       raise ArgumentError unless is_a_query?(query)
-      doc = WebService::Placemaker.fetch(query)
+      doc = Barometer::WebService::Placemaker.fetch(query)
       _parse_woe_from_placemaker(doc)
     end
     
@@ -117,7 +117,7 @@ module Barometer
     def self._reverse(query=nil)
       return nil unless query
       raise ArgumentError unless is_a_query?(query)
-      response = WebService::Placemaker.reverse(query)
+      response = Barometer::WebService::Placemaker.reverse(query)
       _parse_geocode(response)
     end
 
@@ -126,7 +126,7 @@ module Barometer
     #
     def self._parse_woe_from_placemaker(doc)
       return nil unless doc
-      WebService::Placemaker.parse_woe_id(doc)
+      Barometer::WebService::Placemaker.parse_woe_id(doc)
     end
     
     # match the first :woe_id (from search results)
