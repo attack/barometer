@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'rspec'
-require 'mocha'
+require 'mocha_standalone'
 require 'cgi'
 require 'pry'
 
