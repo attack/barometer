@@ -1,8 +1,11 @@
 # -*- encoding: utf-8 -*-
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'barometer/version'
 
 Gem::Specification.new do |s|
   s.name = %q{barometer}
-  s.version = "0.7.4"
+  s.version = Barometer::VERSION
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.rubygems_version = %q{1.3.5}
@@ -16,7 +19,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/attack/barometer}
 
   s.default_executable = %q{barometer}
-  
+
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
@@ -35,4 +38,3 @@ Gem::Specification.new do |s|
   s.add_development_dependency("rake")
   s.add_development_dependency("pry")
 end
-
