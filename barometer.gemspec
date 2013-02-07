@@ -14,20 +14,21 @@ Gem::Specification.new do |s|
 
   s.default_executable = %q{barometer}
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- spec/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
+  s.files = `git ls-files`.split("\n")
+  s.test_files = `git ls-files -- spec/*`.split("\n")
+  s.executables = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
   s.rdoc_options = ["--charset=UTF-8"]
 
-  s.add_dependency(%q<httparty>, ">= 0.4.5")
-  s.add_dependency(%q<tzinfo>, ">= 0.3.14")
-  s.add_dependency("nokogiri")
-  s.add_dependency("crack")
+  s.add_dependency %q<httparty>, ">= 0.4.5"
+  s.add_dependency %q<tzinfo>, ">= 0.3.14"
+  s.add_dependency "nokogiri"
+  s.add_dependency "crack"
 
-  s.add_development_dependency("rspec")
-  s.add_development_dependency("fakeweb")
-  s.add_development_dependency("rake")
-  s.add_development_dependency("pry")
+  s.add_development_dependency "rspec"
+  s.add_development_dependency "fakeweb"
+  s.add_development_dependency "rake"
+  s.add_development_dependency "pry"
+  s.add_development_dependency "fakefs"
 end
