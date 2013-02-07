@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'rspec'
-require 'mocha_standalone'
 require 'cgi'
 require 'pry'
 
@@ -13,5 +12,4 @@ require 'barometer'
 Barometer.yahoo_placemaker_app_id = "YAHOO"
 
 RSpec.configure do |config|
-  
 end
