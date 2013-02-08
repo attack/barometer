@@ -1,0 +1,55 @@
+---
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :get
+    uri: http://weather.yahooapis.com:80/forecastrss?p=90210&u=c
+    body: 
+    headers: 
+  response: !ruby/struct:VCR::Response
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 200
+      message: OK
+    headers:
+      date:
+      - Fri, 08 Feb 2013 02:54:42 GMT
+      p3p:
+      - policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV
+        TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY
+        ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV"
+      cache-control:
+      - public
+      expires:
+      - Fri, 08 Feb 2013 03:24:42 GMT
+      vary:
+      - Accept-Encoding
+      content-length:
+      - '2363'
+      content-type:
+      - text/xml;charset=UTF-8
+      age:
+      - '0'
+      server:
+      - YTS/1.19.11
+    body: ! "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n\t\t<rss
+      version=\"2.0\" xmlns:yweather=\"http://xml.weather.yahoo.com/ns/rss/1.0\" xmlns:geo=\"http://www.w3.org/2003/01/geo/wgs84_pos#\">\n\t\t\t<channel>\n\t\t\n<title>Yahoo!
+      Weather - Beverly Hills, CA</title>\n<link>http://us.rd.yahoo.com/dailynews/rss/weather/Beverly_Hills__CA/*http://weather.yahoo.com/forecast/USCA0090_c.html</link>\n<description>Yahoo!
+      Weather for Beverly Hills, CA</description>\n<language>en-us</language>\n<lastBuildDate>Thu,
+      07 Feb 2013 5:51 pm PST</lastBuildDate>\n<ttl>60</ttl>\n<yweather:location city=\"Beverly
+      Hills\" region=\"CA\"   country=\"US\"/>\n<yweather:units temperature=\"C\"
+      distance=\"km\" pressure=\"mb\" speed=\"km/h\"/>\n<yweather:wind chill=\"13\"
+      \  direction=\"220\"   speed=\"11.27\" />\n<yweather:atmosphere humidity=\"69\"
+      \ visibility=\"16.09\"  pressure=\"1016.6\"  rising=\"0\" />\n<yweather:astronomy
+      sunrise=\"6:46 am\"   sunset=\"5:30 pm\"/>\n<image>\n<title>Yahoo! Weather</title>\n<width>142</width>\n<height>18</height>\n<link>http://weather.yahoo.com</link>\n<url>http://l.yimg.com/a/i/brand/purplelogo//uh/us/news-wea.gif</url>\n</image>\n<item>\n<title>Conditions
+      for Beverly Hills, CA at 5:51 pm PST</title>\n<geo:lat>34.08</geo:lat>\n<geo:long>-118.4</geo:long>\n<link>http://us.rd.yahoo.com/dailynews/rss/weather/Beverly_Hills__CA/*http://weather.yahoo.com/forecast/USCA0090_c.html</link>\n<pubDate>Thu,
+      07 Feb 2013 5:51 pm PST</pubDate>\n<yweather:condition  text=\"Cloudy\"  code=\"26\"
+      \ temp=\"13\"  date=\"Thu, 07 Feb 2013 5:51 pm PST\" />\n<description><![CDATA[\n<img
+      src=\"http://l.yimg.com/a/i/us/we/52/26.gif\"/><br />\n<b>Current Conditions:</b><br
+      />\nCloudy, 13 C<BR />\n<BR /><b>Forecast:</b><BR />\nThu - Showers Late. High:
+      16 Low: 8<br />\nFri - Thundershowers. High: 14 Low: 5<br />\n<br />\n<a href=\"http://us.rd.yahoo.com/dailynews/rss/weather/Beverly_Hills__CA/*http://weather.yahoo.com/forecast/USCA0090_c.html\">Full
+      Forecast at Yahoo! Weather</a><BR/><BR/>\n(provided by <a href=\"http://www.weather.com\"
+      >The Weather Channel</a>)<br/>\n]]></description>\n<yweather:forecast day=\"Thu\"
+      date=\"7 Feb 2013\" low=\"8\" high=\"16\" text=\"Showers Late\" code=\"45\"
+      />\n<yweather:forecast day=\"Fri\" date=\"8 Feb 2013\" low=\"5\" high=\"14\"
+      text=\"Thundershowers\" code=\"11\" />\n<guid isPermaLink=\"false\">USCA0090_2013_02_08_7_00_PST</guid>\n</item>\n</channel>\n</rss>\n\n<!--
+      api24.weather.bf1.yahoo.com Fri Feb  8 02:54:42 PST 2013 -->\n"
+    http_version: '1.1'
