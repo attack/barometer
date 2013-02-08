@@ -16,26 +16,26 @@ module Barometer
   # :woe_id and how to convert to a :woe_id.
   #
   class Query::Format::WoeID < Query::Format
-  
+
     def self.format; :woe_id; end
     def self.regex; /(^[0-9]{4}$)|(^[0-9]{6,7}$)|(^w[0-9]{4,7}$)/; end
     def self.convertable_formats
       [:short_zipcode, :zipcode, :weather_id, :coordinates, :icao, :geocode, :postalcode]
     end
-    
+
     # remove the 'w' from applicable queries (only needed for detection)
     #
     def self.convert_query(text)
       return nil unless text
       text.delete('w')
     end
-    
+
     # convert to this format, X -> :woeid
     #
     def self.to(original_query)
       raise ArgumentError unless is_a_query?(original_query)
       return nil unless converts?(original_query)
-    
+
       # pre-convert (:weather_id -> :geocode)
       #
       pre_query = nil
@@ -55,7 +55,7 @@ module Barometer
 
       converted_query = Barometer::Query.new
       converted_query.country_code = original_query.country_code if original_query
-      
+
       # TODO
       # use Geomojo.com (when no Yahoo! appid)
       #
@@ -72,12 +72,12 @@ module Barometer
         converted_query.q = _query_placemaker(pre_query || original_query)
         converted_query.format = format
       end
-      
+
       converted_query.geo = pre_query.geo if pre_query
       converted_query.country_code = pre_query.country_code if pre_query
       converted_query
     end
-    
+
     # reverse lookup, :woe_id -> (:geocode || :coordinates)
     #
     def self.reverse(original_query)
@@ -88,9 +88,9 @@ module Barometer
       converted_query.format = Barometer::Query::Format::Geocode.format
       converted_query
     end
-    
+
     private
-    
+
     # Yahoo! Placemaker
     # [:geocode,:coordinates] -> :woe_id
     #
@@ -100,7 +100,7 @@ module Barometer
       doc = Barometer::WebService::Placemaker.fetch(query)
       _parse_woe_from_placemaker(doc)
     end
-    
+
     # Geomojo.com
     # [:coordinates] -> :woe_id
     #
@@ -110,7 +110,7 @@ module Barometer
     #   doc = WebService::Geomojo.fetch(query)
     #   _parse_woe_from_geomojo(doc)
     # end
-    
+
     # :woe_id -> :geocode
     # query yahoo with :woe_id and parse geo_data
     #
@@ -128,7 +128,7 @@ module Barometer
       return nil unless doc
       Barometer::WebService::Placemaker.parse_woe_id(doc)
     end
-    
+
     # match the first :woe_id (from search results)
     #   expects a Nokogiri doc
     #
@@ -145,6 +145,6 @@ module Barometer
       output.delete("")
       output.compact.join(', ')
     end
-    
+
   end
 end

@@ -8,23 +8,23 @@ module Barometer
   # accepts: city name, coords, postal code, NOT zip code, NOT icao
   #
   class WebService::Placemaker < WebService
-    
+
     # get the woe_id for a given query
     #
     def self.fetch(query)
-      
+
       begin
         require 'nokogiri'
       rescue LoadError
         puts "\n****\nTo use this functionality you will need to install Nokogiri >= 1.3.3\n****\n\n"
         return nil
       end
-      
+
       puts "fetch woe_id: #{query.q}" if Barometer::debug?
       return nil unless query
       return nil unless _has_geocode_key?
       raise ArgumentError unless _is_a_query?(query)
-      
+
       # BUG: httparty doesn't seem to post correctly
       # self.post(
       #   'http://wherein.yahooapis.com/v1/document',
@@ -35,7 +35,7 @@ module Barometer
       #    :appid => Barometer.yahoo_placemaker_app_id
       #   }, :format => :xml, :timeout => Barometer.timeout
       # )
-      
+
       # TODO: include timeout
       #   :timeout => Barometer.timeout
       #
@@ -48,7 +48,7 @@ module Barometer
           'appid' => Barometer.yahoo_placemaker_app_id
         }
       )
-      
+
       Nokogiri::HTML.parse(res.body)
     end
 
@@ -65,15 +65,15 @@ module Barometer
         :timeout => Barometer.timeout
       )['rss']['channel']["location"]
     end
-    
+
     # parses a Nokogori doc object
     #
     def self.parse_woe_id(doc)
       doc.search('woeid').first.content
     end
-    
+
     private
-    
+
     # convert coordinates to a microformat version of coordinates
     # so that Placemaker uses them correctly
     #
