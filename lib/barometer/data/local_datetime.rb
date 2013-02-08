@@ -2,12 +2,12 @@ require 'date'
 module Barometer
   #
   # A simple DateTime class
-  # 
+  #
   # A time class that represents the local date_time ...
   # it has no concept of time zone
   #
   class Data::LocalDateTime < Data::LocalTime
-    
+
     attr_reader :year, :month, :day
 
     def initialize(y,mon,d,h=0,m=0,s=0)
@@ -18,31 +18,31 @@ module Barometer
       super(h,m,s)
       self
     end
-    
+
     def year=(y)
       unless y && y.is_a?(Fixnum) && Date.civil(y,@month,@day)
         raise(ArgumentError, "invalid year")
       end
       @year = y
     end
-    
+
     def month=(m)
       unless m && m.is_a?(Fixnum) && Date.civil(@year,m,@day)
         raise(ArgumentError, "invalid month")
       end
       @month = m
     end
-    
+
     def day=(d)
       unless d && d.is_a?(Fixnum) && Date.civil(@year,@month,d)
         raise(ArgumentError, "invalid day")
       end
       @day = d
     end
-  
-    def parse(string)
+
+    def parse(string, format=nil)
       return unless string
-      new_date = Data::LocalDateTime.parse(string)
+      new_date = Data::LocalDateTime.parse(string, format)
       @year = new_date.year
       @month = new_date.month
       @day = new_date.day
@@ -51,11 +51,11 @@ module Barometer
       @sec = new_date.sec
       self
     end
-    
-    def self.parse(string)
+
+    def self.parse(string, format=nil)
       return nil unless string
       return string if string.is_a?(Data::LocalDateTime)
-      
+
       year = nil; month = nil; day = nil;
       hour = nil; min = nil; sec = nil;
       if string.is_a?(Time) || string.is_a?(DateTime)
@@ -71,7 +71,11 @@ module Barometer
         day = string.day
       elsif string.is_a?(String)
         begin
-          datetime = Time.parse(string)
+          datetime = if format
+            Time.strptime(string, format)
+          else
+            Time.parse(string)
+          end
           year = datetime.year
           month = datetime.mon
           day = datetime.day
@@ -84,19 +88,19 @@ module Barometer
       end
       Data::LocalDateTime.new(year, month, day, hour, min, sec)
     end
-    
+
     # convert to a Date class
     #
     def to_d
       Date.civil(@year, @month, @day)
     end
-    
+
     # convert to a DateTime class
     #
     def to_dt
       DateTime.new(@year, @month, @day, @hour, @min, @sec)
     end
-  
+
     def <=>(other)
       if other.is_a?(String) || other.is_a?(Time) || other.is_a?(DateTime) || other.is_a?(Date)
         the_other = Data::LocalDateTime.parse(other)
@@ -104,7 +108,7 @@ module Barometer
         the_other = other
       end
       raise ArgumentError unless the_other.is_a?(Data::LocalDateTime) || the_other.is_a?(Data::LocalTime)
-      
+
       if ((other.is_a?(String) || other.is_a?(Time) || other.is_a?(DateTime)) &&
         the_other.is_a?(Data::LocalDateTime)) || other.is_a?(Data::LocalDateTime)
         # we are counting days + seconds
@@ -121,21 +125,21 @@ module Barometer
         return total_seconds <=> the_other.total_seconds
       end
     end
-  
+
     def to_s(time=false)
       datetime = self.to_dt
       format = (time ? "%Y-%m-%d %I:%M:%S %p" : "%Y-%m-%d")
       datetime.strftime(format).downcase
     end
-    
+
     def nil?; @year == 0 && @month == 0 && @day == 0 && super; end
-    
+
     # this assumes all years have 366 days (which only is true for leap years)
     # but since this is just for comparisons, this will be accurate
     #
     def _total_days
       self.to_d.yday + (@year * 366)
     end
-    
+
   end
 end
