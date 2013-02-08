@@ -26,8 +26,6 @@
 #   -i, --imperial      measure in imperial
 #   --wunderground      add wunderground as a source
 #   --yahoo             add yahoo as a source
-#   --google            add google as a source
-#   --weather           add weather.com as a source
 #   --bug               add weather_bug as a source
 #   --noaa              add NOAA as a source
 #   -p, --pop           pop threshold used to determine wet?
@@ -39,7 +37,7 @@
 #   http://github.com/attack/barometer
 #
 # == Copyright
-#   Copyright (c) 2009-2011 Mark G. Licensed under the MIT License:
+#   Copyright (c) 2009-2013 Mark G. Licensed under the MIT License:
 #   http://www.opensource.org/licenses/mit-license.php
 
 require 'rubygems'
@@ -54,7 +52,6 @@ require 'yaml'
 
 # file where API keys are stored
 KEY_FILE = File.expand_path(File.join('~', '.barometer'))
-BAROMETER_VERSION = '0.7.4'
 
 class App
 
@@ -115,8 +112,6 @@ class App
       opt.on('-i', '--imperial')   { @options.metric = false }
       opt.on('--wunderground')     { @options.sources << :wunderground; @options.default = false }
       opt.on('--yahoo')            { @options.sources << :yahoo; @options.default = false }
-      opt.on('--google')           { @options.sources << :google; @options.default = false }
-      opt.on('--weather')          { @options.sources << :weather_dot_com; @options.default = false }
       opt.on('--bug')              { @options.sources << :weather_bug; @options.default = false }
       opt.on('--noaa')             { @options.sources << :noaa; @options.default = false }
       opt.on('-p n', '--pop n')    {|n| @options.pop = n.to_i || 50 }
@@ -126,24 +121,6 @@ class App
 
       process_options
       true
-    end
-
-    def config_weather_dot_com
-      if File.exists?(KEY_FILE)
-      	keys = YAML.load_file(KEY_FILE)
-      	if keys["weather"] && keys["weather"]["partner"] && keys["weather"]["license"]
-      	  partner_key = keys["weather"]["partner"].to_s
-      	  license_key = keys["weather"]["license"].to_s
-        else
-          weather_key_message
-          exit
-        end
-      else
-        File.open(KEY_FILE, 'w') {|f| f << "\nweather:\n  partner: PARTNER_KEY\n  license: LICENSE_KEY" }
-        weather_key_message
-        exit
-      end
-      { :weather_dot_com => { :keys => { :partner => partner_key, :license => license_key } } }
     end
 
     def config_weather_bug
@@ -169,10 +146,6 @@ class App
       @options.sources = @options.sources.uniq
       Barometer.force_geocode =  @options.geocode
       Barometer.enhance_timezone =  @options.timezone
-      if @options.sources.include?(:weather_dot_com)
-        @options.sources.delete(:weather_dot_com)
-        @options.sources << config_weather_dot_com
-      end
       if @options.sources.include?(:weather_bug)
         @options.sources.delete(:weather_bug)
         @options.sources << config_weather_bug
@@ -221,8 +194,6 @@ class App
       puts "  -i, --imperial      measure in imperial"
       puts "  --wunderground      add wunderground as a source"
       puts "  --yahoo             add yahoo as a source"
-      puts "  --google            add google as a source"
-      puts "  --weather           add weather.com as a source"
       puts "  --bug               add weather_bug as a source"
       puts "  --noaa              add NOAA as a source"
       puts "  -p, --pop           pop threshold used to determine wet?"
@@ -231,7 +202,7 @@ class App
     end
 
     def output_version
-      puts "#{File.basename(__FILE__)} version #{BAROMETER_VERSION}"
+      puts "#{File.basename(__FILE__)} version #{Barometer::VERSION}"
     end
 
     def process_command
@@ -431,7 +402,7 @@ end
 def pretty_info(w)
   title("INFO", 1)
   value("GitHub", "http://github.com/attack/barometer")
-  value("Barometer Version", BAROMETER_VERSION)
+  value("Barometer Version", Barometer::VERSION)
   value("Total Time", "#{(w.end_at - w.start_at)} s")
 end
 
@@ -450,18 +421,6 @@ def pretty_output(barometer)
     pretty_info(weather)
     div("-")
   end
-end
-
-def weather_key_message
-  puts
-  puts "MISSING KEYS !!!"
-  puts "Please update the key_file '#{KEY_FILE}' with your weather api keys"
-  puts "Get it here: ???"
-  puts "Then, add these lines to the file:"
-  puts "weather:"
-  puts "  partner: PARTNER_KEY"
-  puts "  license: LICENSE_KEY"
-  puts
 end
 
 def bug_key_message

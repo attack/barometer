@@ -24,8 +24,8 @@ It is fully functional (for five weather service APIs).
 ## status
 
 Currently this project has completed initial development and will work for a
-few weather services (wunderground, yahoo, weather.com, weather_bug).
-Barometer is developed using only Ruby 1.9.2, but will probably on both Ruby 1.8.7 and 1.9.1.
+few weather services (wunderground, yahoo, weather_bug).
+Barometer is developed using only Ruby 1.9.3, but will probably on both Ruby 1.8.7, 1.9.1 & 1.9.2.
 
 Features to be added in the future:
 * better command line output
@@ -43,12 +43,6 @@ requires an API key.  Therefore Barometer no longer requires a Google API key.
 ### other keys
 
 The '~/.barometer' file can hold all your weather service API keys.
-
-eg. weather.com
-
-  weather:
-    partner: YOUR_PARTNER_KEY
-    license: YOUR_LICENSE_KEY
 
 eg. weatherbug.com
 
@@ -136,7 +130,6 @@ The available sources are:
 
   Wunderground.com (:wunderground) [default]
   Yahoo! Weather (:yahoo)
-  Weather.com (:weather_dot_com) [requires key]
   WeatherBug.com (:weather_bug) [requires key]
 
 ## source configuration
@@ -167,7 +160,7 @@ a weight value, this weight is respected when calculating averages.
 Weather services, one with keys.
 
 ```ruby
-  Barometer.config = { 1 => [:yahoo, {:weather_dot_com => {:keys => {:partner => PARTNER_KEY, :license => LICENSE_KEY } }}] }
+  Barometer.config = { 1 => [:yahoo, {:weather_bug => {:keys => {:code => CODE_KEY} }}] }
 ```
 
 ### multiple weather API, with hierarchy
@@ -176,7 +169,7 @@ Weather services, one with keys.
   require 'barometer'
 
   # use yahoo and weather.com, if they both fail, use wunderground
-  Barometer.config = { 1 => [:yahoo, {:weather_dot_com => {:keys => {:partner => PARTNER_KEY, :license => LICENSE_KEY } }}], 2 => :wunderground }
+  Barometer.config = { 1 => [:yahoo, {:weather_bug => {:keys => {:code => CODE_KEY} }}], 2 => :wunderground }
 
   barometer = Barometer.new("Paris")
   weather = barometer.measure
@@ -207,7 +200,7 @@ weather service.
 For example, if you look at the example above, the query of "Paris" refers
 to a city in France.  Yahoo weather services only supports
 weather results for USA (at least at the time of writing).  Therefore, 
-Barometer would not use Yahoo, just Weather.com and failover to use Wunderground
+Barometer would not use Yahoo, just WeatherBug and failover to use Wunderground
 (if needed).
 
 ## searching
