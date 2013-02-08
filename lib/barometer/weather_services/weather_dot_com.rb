@@ -56,7 +56,7 @@ module Barometer
   # - collect moon and uv information
   #
   class WeatherService::WeatherDotCom < WeatherService
-    
+
     @@partner_key = nil
     @@license_key = nil
 
@@ -100,7 +100,7 @@ module Barometer
         end
       end
     end
-    
+
     def self._parse_local_time(data)
       (data && data['loc']) ? Data::LocalTime.parse(data['loc']['tm']) : nil
     end
@@ -120,7 +120,9 @@ module Barometer
       current = Measurement::Result.new
       if data
         if data['cc']
-          current.updated_at = Data::LocalDateTime.parse(data['cc']['lsup'])
+          if updated_at = Data::LocalDateTime.parse(data['cc']['lsup'], '%m/%d/%y %I:%M %p %Z')
+            current.updated_at = updated_at
+          end
           current.icon = data['cc']['icon']
           current.condition = data['cc']['t']
           current.humidity = data['cc']['hmid'].to_i
@@ -146,17 +148,17 @@ module Barometer
       end
       current
     end
-    
+
     def self._build_forecast(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       forecasts = Measurement::ResultArray.new
-    
+
       if data && data['dayf'] && data['dayf']['day']
         local_date = data['dayf']['lsup']
         data['dayf']['day'].each do |forecast|
           day_measurement = Measurement::Result.new
           night_measurement = Measurement::Result.new
-          
+
           # as stated by weather.com "day = 7am-7pm"
           # and "night = 7pm-7am"
           date = Date.parse(forecast['dt'])
@@ -165,7 +167,7 @@ module Barometer
           day_measurement.valid_end_date = Data::LocalDateTime.new(date.year,date.month,date.day,18,59,59)
           night_measurement.valid_start_date = Data::LocalDateTime.new(date.year,date.month,date.day,19,0,0)
           night_measurement.valid_end_date = Data::LocalDateTime.new(date.year,date.month,date.day+1,6,59,59)
-          
+
           high = Data::Temperature.new(metric)
           high << forecast['hi']
           low = Data::Temperature.new(metric)
@@ -174,14 +176,14 @@ module Barometer
           day_measurement.low = low
           night_measurement.high = high
           night_measurement.low = low
-          
+
           # build sun
           rise_local_time = Data::LocalTime.parse(forecast['sunr'])
           set_local_time = Data::LocalTime.parse(forecast['suns'])
           sun = Data::Sun.new(rise_local_time, set_local_time)
           day_measurement.sun = sun
           night_measurement.sun = sun
-          
+
           if forecast['part']
             forecast['part'].each do |part|
               if part['p'] == 'd'
@@ -191,29 +193,29 @@ module Barometer
                 day_measurement.icon = part['icon']
                 day_measurement.pop = part['ppcp'].to_i
                 day_measurement.humidity = part['hmid'].to_i
-                
+
                 if part['wind']
                   day_measurement.wind = Data::Speed.new(metric)
                   day_measurement.wind << part['wind']['s']
                   day_measurement.wind.degrees = part['wind']['d'].to_i
                   day_measurement.wind.direction = part['wind']['t']
                 end
-                
-              elsif part['p'] == 'n'  
+
+              elsif part['p'] == 'n'
                 # add this to the night
                 night_measurement.description = "#{date_string} - Night"
                 night_measurement.condition = part['t']
                 night_measurement.icon = part['icon']
                 night_measurement.pop = part['ppcp'].to_i
                 night_measurement.humidity = part['hmid'].to_i
-                
+
                 if part['wind']
                   night_measurement.wind = Data::Speed.new(metric)
                   night_measurement.wind << part['wind']['s']
                   night_measurement.wind.degrees = part['wind']['d'].to_i
                   night_measurement.wind.direction = part['wind']['t']
                 end
-                
+
               end
             end
           end
@@ -245,7 +247,7 @@ module Barometer
       end
       location
     end
-    
+
     def self._build_sun(data)
       raise ArgumentError unless data.is_a?(Hash)
       sun = nil
@@ -253,7 +255,7 @@ module Barometer
         if data['loc']
           rise_local_time = Data::LocalTime.parse(data['loc']['sunr'])
           set_local_time = Data::LocalTime.parse(data['loc']['suns'])
-        end  
+        end
         sun = Data::Sun.new(rise_local_time, set_local_time)
       end
       sun || Data::Sun.new
@@ -274,6 +276,6 @@ module Barometer
         :timeout => Barometer.timeout
       )['weather']
     end
-    
+
   end
 end

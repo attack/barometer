@@ -45,17 +45,17 @@ module Barometer
   # Unable to locate.
   #
   class WeatherService::Wunderground < WeatherService
-    
+
     #########################################################################
     # PRIVATE
     # If class methods could be private, the remaining methods would be.
     #
-    
+
     def self._source_name; :wunderground; end
     def self._accepted_formats
       [:zipcode, :postalcode, :icao, :coordinates, :geocode]
     end
-    
+
     # these are the icon codes that indicate "wet", used by wet? function
     def self._wet_icon_codes
       %w(flurries rain sleet snow tstorms nt_flurries nt_rain nt_sleet nt_snow nt_tstorms chancerain chancetstorms)
@@ -75,7 +75,7 @@ module Barometer
           forecast.sun = measurement.current.sun
         end
       end
-      
+
       measurement
     end
 
@@ -90,7 +90,7 @@ module Barometer
         )
       end
     end
-    
+
     def self._build_links(data)
       links = {}
       if data["credit"] && data["credit_URL"]
@@ -101,63 +101,65 @@ module Barometer
 
     def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
-      
+
       current = Measurement::Result.new
-      current.updated_at = Data::LocalDateTime.parse(data['observation_time']) if data['observation_time']
+      if data['observation_time'] && data['observation_time'].match(/\d/)
+        current.updated_at = Data::LocalDateTime.parse(data['observation_time'])
+      end
       current.humidity = data['relative_humidity'].to_i
       current.icon = data['icon'] if data['icon']
-      
+
       current.temperature = Data::Temperature.new(metric)
       current.temperature << [data['temp_c'], data['temp_f']]
-      
+
       current.wind = Data::Speed.new(metric)
       current.wind.mph = data['wind_mph'].to_f
       current.wind.degrees = data['wind_degrees'].to_i
       current.wind.direction = data['wind_dir']
-      
+
       current.pressure = Data::Pressure.new(metric)
       current.pressure << [data['pressure_mb'], data['pressure_in']]
-      
+
       current.dew_point = Data::Temperature.new(metric)
       current.dew_point << [data['dewpoint_c'], data['dewpoint_f']]
-      
+
       current.heat_index = Data::Temperature.new(metric)
       current.heat_index << [data['heat_index_c'], data['heat_index_f']]
-      
+
       current.wind_chill = Data::Temperature.new(metric)
       current.wind_chill << [data['windchill_c'], data['windchill_f']]
-      
+
       current.visibility = Data::Distance.new(metric)
       current.visibility << [data['visibility_km'], data['visibility_mi']]
-      
+
       current
     end
-    
+
     def self._build_forecast(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       forecasts = Measurement::ResultArray.new
       # go through each forecast and create an instance
       if data && data['simpleforecast'] &&
          data['simpleforecast']['forecastday']
-         
+
         data['simpleforecast']['forecastday'].each do |forecast|
           forecast_measurement = Measurement::Result.new
           forecast_measurement.icon = forecast['icon']
           forecast_measurement.date = Date.parse(forecast['date']['pretty'])
           forecast_measurement.pop = forecast['pop'].to_i
-          
+
           forecast_measurement.high = Data::Temperature.new(metric)
           forecast_measurement.high << [forecast['high']['celsius'],forecast['high']['fahrenheit']]
-          
+
           forecast_measurement.low = Data::Temperature.new(metric)
           forecast_measurement.low << [forecast['low']['celsius'],forecast['low']['fahrenheit']]
-          
+
           forecasts << forecast_measurement
         end
       end
       forecasts
     end
-    
+
     def self._build_location(data, geo=nil)
       raise ArgumentError unless data.is_a?(Hash)
       location = Data::Location.new
@@ -173,7 +175,7 @@ module Barometer
       end
       location
     end
-    
+
     def self._build_station(data)
       raise ArgumentError unless data.is_a?(Hash)
       station = Data::Location.new
@@ -190,7 +192,7 @@ module Barometer
       end
       station
     end
-    
+
     def self._build_sun(data)
       raise ArgumentError unless data.is_a?(Hash)
       sun = nil
@@ -209,7 +211,7 @@ module Barometer
       end
       sun || Data::Sun.new
     end
-    
+
     # override default _fetch behavior
     # this service requires TWO seperate http requests (one for current
     # and one for forecasted weather) ... combine the results
@@ -220,7 +222,7 @@ module Barometer
       result << _fetch_forecast(query)
       result
     end
-    
+
     # use HTTParty to get the current weather
     #
     def self._fetch_current(query)
@@ -233,7 +235,7 @@ module Barometer
        :timeout => Barometer.timeout
        )['current_observation']
     end
-    
+
     # use HTTParty to get the forecasted weather
     #
     def self._fetch_forecast(query)
@@ -246,7 +248,7 @@ module Barometer
         :timeout => Barometer.timeout
       )['forecast']
     end
-    
+
     # since we have two sets of data, override these calls to choose the
     # right set of data
     #
@@ -257,6 +259,6 @@ module Barometer
     def self._links_result(data=nil); data[0]; end
     def self._sun_result(data=nil); data[1]; end
     def self._timezone_result(data=nil); data[1]; end
-    
+
   end
 end
