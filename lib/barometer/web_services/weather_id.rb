@@ -31,7 +31,7 @@ module Barometer
         :query => { :p => query.q },
         :format => :xml,
         :timeout => Barometer.timeout
-      )['rss']['channel']["yweather:location"]
+      )['rss']['channel']["location"]
     end
 
     # filter out words that weather.com has trouble geo-locating
