@@ -1,0 +1,56 @@
+---
+- !ruby/struct:VCR::HTTPInteraction
+  request: !ruby/struct:VCR::Request
+    method: :get
+    uri: http://maps.googleapis.com:80/maps/api/geocode/json?region=US&sensor=false&address=90210
+    body: 
+    headers: 
+  response: !ruby/struct:VCR::Response
+    status: !ruby/struct:VCR::ResponseStatus
+      code: 200
+      message: OK
+    headers:
+      content-type:
+      - application/json; charset=UTF-8
+      date:
+      - Fri, 08 Feb 2013 03:02:35 GMT
+      expires:
+      - Sat, 09 Feb 2013 03:02:35 GMT
+      cache-control:
+      - public, max-age=86400
+      vary:
+      - Accept-Language
+      access-control-allow-origin:
+      - ! '*'
+      server:
+      - mafe
+      x-xss-protection:
+      - 1; mode=block
+      x-frame-options:
+      - SAMEORIGIN
+    body: ! "{\n   \"results\" : [\n      {\n         \"address_components\" : [\n
+      \           {\n               \"long_name\" : \"90210\",\n               \"short_name\"
+      : \"90210\",\n               \"types\" : [ \"postal_code\" ]\n            },\n
+      \           {\n               \"long_name\" : \"Beverly Hills\",\n               \"short_name\"
+      : \"Beverly Hills\",\n               \"types\" : [ \"locality\", \"political\"
+      ]\n            },\n            {\n               \"long_name\" : \"Los Angeles\",\n
+      \              \"short_name\" : \"Los Angeles\",\n               \"types\" :
+      [ \"administrative_area_level_2\", \"political\" ]\n            },\n            {\n
+      \              \"long_name\" : \"California\",\n               \"short_name\"
+      : \"CA\",\n               \"types\" : [ \"administrative_area_level_1\", \"political\"
+      ]\n            },\n            {\n               \"long_name\" : \"United States\",\n
+      \              \"short_name\" : \"US\",\n               \"types\" : [ \"country\",
+      \"political\" ]\n            }\n         ],\n         \"formatted_address\"
+      : \"Beverly Hills, CA 90210, USA\",\n         \"geometry\" : {\n            \"bounds\"
+      : {\n               \"northeast\" : {\n                  \"lat\" : 34.13547710,\n
+      \                 \"lng\" : -118.38671290\n               },\n               \"southwest\"
+      : {\n                  \"lat\" : 34.0650940,\n                  \"lng\" : -118.44237810\n
+      \              }\n            },\n            \"location\" : {\n               \"lat\"
+      : 34.10300320,\n               \"lng\" : -118.41046840\n            },\n            \"location_type\"
+      : \"APPROXIMATE\",\n            \"viewport\" : {\n               \"northeast\"
+      : {\n                  \"lat\" : 34.13547710,\n                  \"lng\" : -118.38671290\n
+      \              },\n               \"southwest\" : {\n                  \"lat\"
+      : 34.0650940,\n                  \"lng\" : -118.44237810\n               }\n
+      \           }\n         },\n         \"types\" : [ \"postal_code\" ]\n      }\n
+      \  ],\n   \"status\" : \"OK\"\n}\n"
+    http_version: '1.1'
