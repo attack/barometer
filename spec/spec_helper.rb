@@ -14,16 +14,17 @@ downcased_weatherbug_code = WEATHERBUG_CODE.to_s
 downcased_weatherbug_code[0] = WEATHERBUG_CODE.to_s[0..0].downcase
 
 # Barometer.debug!
-Barometer.yahoo_placemaker_app_id = "YAHOO"
+Barometer.yahoo_placemaker_app_id = 'placemaker'
 
 VCR.configure do |config|
   config.cassette_library_dir = 'spec/cassettes'
   config.hook_into :webmock
   config.default_cassette_options = { :record => :none, :serialize_with => :json }
 
-  config.filter_sensitive_data('<YAHOO_KEY>') { YAHOO_KEY.to_s }
   config.filter_sensitive_data('WEATHERBUG_CODE') { WEATHERBUG_CODE.to_s }
   config.filter_sensitive_data('WEATHERBUG_CODE') { downcased_weatherbug_code }
+  config.filter_sensitive_data('<YAHOO_KEY>') { YAHOO_KEY.to_s }
+  config.filter_sensitive_data('<PLACEMAKER_KEY>') { Barometer.yahoo_placemaker_app_id.to_s }
 
   config.configure_rspec_metadata!
 end
