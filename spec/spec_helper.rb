@@ -22,6 +22,7 @@ VCR.configure do |config|
   config.default_cassette_options = { :record => :new_episodes }
   config.filter_sensitive_data('<YAHOO_KEY>') { YAHOO_KEY.to_s }
   config.filter_sensitive_data('<WEATHERBUG_CODE>') { WEATHERBUG_CODE.to_s }
+  config.filter_sensitive_data('<WEATHERBUG_CODE>') { WEATHERBUG_CODE.to_s.downcase }
   config.filter_sensitive_data('<WEATHER_PARTNER_KEY>') { WEATHER_PARTNER_KEY.to_s }
   config.filter_sensitive_data('<WEATHER_LICENSE_KEY>') { WEATHER_LICENSE_KEY.to_s }
   config.configure_rspec_metadata!
