@@ -54,7 +54,6 @@ require 'yaml'
 KEY_FILE = File.expand_path(File.join('~', '.barometer'))
 
 class App
-
   attr_reader :options
 
   def initialize(arguments, stdin)
@@ -83,7 +82,6 @@ class App
       puts "Start at #{DateTime.now}\n\n" if @options.verbose
       output_options if @options.verbose # [Optional]
 
-      process_arguments
       process_command
 
       puts "\nFinished at #{DateTime.now}" if @options.verbose
@@ -125,9 +123,9 @@ class App
 
     def config_weather_bug
       if File.exists?(KEY_FILE)
-      	keys = YAML.load_file(KEY_FILE)
-      	if keys["weather_bug"] && keys["weather_bug"]["code"]
-      	  code = keys["weather_bug"]["code"].to_s
+        keys = YAML.load_file(KEY_FILE)
+        if keys["weather_bug"] && keys["weather_bug"]["code"]
+          code = keys["weather_bug"]["code"].to_s
         else
           bug_key_message
           exit
@@ -168,14 +166,8 @@ class App
       true if (@arguments.length >= 1 || @options.web)
     end
 
-    # Setup the arguments
-    def process_arguments
-      #puts @arguments.inspect
-    end
-
     def output_help
       output_version
-      #output_usage
     end
 
     def output_usage
@@ -436,9 +428,9 @@ end
 
 # set API keys
 if File.exists?(KEY_FILE)
-	keys = YAML.load_file(KEY_FILE)
-	if keys["yahoo"] && keys["yahoo"]["app_id"]
-	  Barometer.yahoo_placemaker_app_id = keys["yahoo"]["app_id"]
+  keys = YAML.load_file(KEY_FILE)
+  if keys["yahoo"] && keys["yahoo"]["app_id"]
+    Barometer.yahoo_placemaker_app_id = keys["yahoo"]["app_id"]
   end
 else
   File.open(KEY_FILE, 'w') {|f| f << "yahoo:\n  app_id: YOUR_KEY_KERE" }
