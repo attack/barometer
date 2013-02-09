@@ -1,7 +1,14 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require "addressable/uri"
+
+params_in_body = lambda do |request_1, request_2|
+  a1 = Addressable::URI.parse("?#{request_1.body}")
+  a2 = Addressable::URI.parse("?#{request_2.body}")
+  a1.query_values == a2.query_values
+end
 
 describe Barometer::Query::Format::WoeID, :vcr => {
-  :match_requests_on => [:method, :uri, :body],
+  :match_requests_on => [:method, :uri, params_in_body],
   :cassette_name => "Query::Format::WoeID"
 } do
   before(:each) do
