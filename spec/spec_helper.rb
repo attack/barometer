@@ -18,7 +18,7 @@ Barometer.yahoo_placemaker_app_id = "YAHOO"
 
 VCR.config do |config|
   config.cassette_library_dir = 'spec/cassettes'
-  config.stub_with :fakeweb
+  config.stub_with :webmock
   config.default_cassette_options = { :record => :new_episodes }
   config.filter_sensitive_data('<YAHOO_KEY>') { YAHOO_KEY.to_s }
   config.filter_sensitive_data('<WEATHERBUG_CODE>') { WEATHERBUG_CODE.to_s }
