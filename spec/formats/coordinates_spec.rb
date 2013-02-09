@@ -104,7 +104,11 @@ describe Barometer::Query::Format::Coordinates, :vcr => {
         query = Barometer::Query.new(@geocode)
         query.format.should == :geocode
         new_query = Barometer::Query::Format::Coordinates.to(query)
-        new_query.q.should == "40.7143528,-74.00597309999999"
+
+        new_query_coords = new_query.q.split(',').map{|c| c.to_f}
+        new_query_coords[0].should be_within(0.00001).of(40.7143528)
+        new_query_coords[1].should be_within(0.00001).of(-74.0059731)
+
         new_query.country_code.should == "US"
         new_query.format.should == :coordinates
         new_query.geo.should_not be_nil
@@ -134,7 +138,11 @@ describe Barometer::Query::Format::Coordinates, :vcr => {
         query = Barometer::Query.new(@coordinates)
         query.format.should == :coordinates
         new_query = Barometer::Query::Format::Coordinates.to(query)
-        new_query.q.should == "40.75604130000001,-73.9869192"
+
+        new_query_coords = new_query.q.split(',').map{|c| c.to_f}
+        new_query_coords[0].should be_within(0.00001).of(40.7560413)
+        new_query_coords[1].should be_within(0.00001).of(-73.9869192)
+
         new_query.country_code.should == "US"
         new_query.format.should == :coordinates
         new_query.geo.should_not be_nil

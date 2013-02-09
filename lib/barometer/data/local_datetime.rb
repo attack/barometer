@@ -74,7 +74,7 @@ module Barometer
           datetime = if format
             Time.strptime(string, format)
           else
-            Time.parse(string)
+            DateTime.parse(string)
           end
           year = datetime.year
           month = datetime.mon

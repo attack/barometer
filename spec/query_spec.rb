@@ -18,7 +18,7 @@ describe Barometer::Query, :vcr => {
     @zipcode_to_geocode = "Beverly Hills, CA, United States"
     @zipcode_to_weather_id = "USCA0090"
     @postalcode_to_coordinates = "53.5721719,-113.4551835"
-    @geocode_to_coordinates = "40.7143528,-74.00597309999999"
+    @geocode_to_coordinates = "40.7143528,-74.0059731"
     @geocode_to_weather_id = "USNY0996"
     @coordinates_to_geocode = "Manhattan, NY, United States"
     @coordinates_to_weather_id = "USNY0996"
@@ -409,7 +409,12 @@ describe Barometer::Query, :vcr => {
         it "converts to coordinates" do
           acceptable_formats = [:coordinates]
           query = @query.convert!(acceptable_formats)
-          query.q.should == @geocode_to_coordinates
+
+          query_coords = query.q.split(',').map{|c| c.to_f}
+          expected_coords = @geocode_to_coordinates.split(',').map{|c| c.to_f}
+
+          query_coords[0].should be_within(0.00001).of(expected_coords[0])
+          query_coords[1].should be_within(0.00001).of(expected_coords[1])
           query.country_code.should == "US"
         end
 
