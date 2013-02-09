@@ -1,15 +1,15 @@
 module Barometer
   class Data::Units
     include Comparable
-    
+
     attr_accessor :metric
-    
+
     def initialize(metric=true); @metric = metric; end
-    
+
     #
     # HELPERS
     #
-    
+
     def metric?; @metric; end
     def metric!; @metric=true; end
     def imperial!; @metric=false; end
@@ -18,10 +18,10 @@ module Barometer
     #
     def <<(value)
       return unless value
-      
+
       # these values can be treated like 'nil'
       nil_values = ["NA", "N/A", ""]
-    
+
       begin
         if value.is_a?(Array)
           value_m = value[0].to_f if (value[0] && !nil_values.include?(value[0]))
@@ -35,11 +35,11 @@ module Barometer
       rescue
         # do nothing
       end
-    
+
       self.metric? ? self.metric_default = value_m || value_b :
         self.imperial_default = value_i || value_b
     end
-    
+
     # stubs
     #
     def metric_default=(value); raise NotImplementedError; end

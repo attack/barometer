@@ -93,5 +93,3 @@ module Barometer
 
   end
 end
-
-

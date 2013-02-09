@@ -9,19 +9,19 @@ module Barometer
   # and what the country_code is.
   #
   class Query::Format::WeatherID < Query::Format
-  
+
     def self.format; :weather_id; end
     def self.regex; /(^[A-Za-z]{4}[0-9]{4}$)/; end
     def self.convertable_formats
       [:short_zipcode, :zipcode, :coordinates, :icao, :geocode]
     end
-      
+
     # the first two letters of the :weather_id is the country_code
     #
     def self.country_code(query=nil)
       (query && query.size >= 2) ? _fix_country(query[0..1]) : nil
     end
-      
+
     # convert to this format, X -> :weather_id
     #
     def self.to(original_query)
@@ -37,7 +37,7 @@ module Barometer
       converted_query.country_code = country_code(converted_query.q)
       converted_query
     end
-    
+
     # reverse lookup, :weather_id -> (:geocode || :coordinates)
     #
     def self.reverse(original_query)
@@ -48,9 +48,9 @@ module Barometer
       converted_query.format = Query::Format::Geocode.format
       converted_query
     end
-    
+
     private
-    
+
     # :geocode -> :weather_id
     # search weather.com for the given query
     #
@@ -60,7 +60,7 @@ module Barometer
       response = WebService::WeatherID.fetch(query)
       _parse_weather_id(response)
     end
-    
+
     # :weather_id -> :geocode
     # query yahoo with :weather_id and parse geo_data
     #
@@ -70,7 +70,7 @@ module Barometer
       response = WebService::WeatherID.reverse(query)
       _parse_geocode(response)
     end
-    
+
     # match the first :weather_id (from search results)
     #
     def self._parse_weather_id(text)
@@ -78,7 +78,7 @@ module Barometer
       match = text.match(/loc id=[\\]?['|""]([0-9a-zA-Z]*)[\\]?['|""]/)
       match ? match[1] : nil
     end
-    
+
     # parse the geo_data
     #
     def self._parse_geocode(text)

@@ -1,30 +1,30 @@
 module Barometer
   #
   # A simple Geo class
-  # 
+  #
   # Used to store location data
   #
   class Data::Geo
-    
+
     attr_accessor :latitude, :longitude, :query
     attr_accessor :locality, :region, :country, :country_code, :address
-    
+
     def initialize(location=nil)
       return unless location
       raise ArgumentError unless location.is_a?(Hash)
       self.build_from_hash(location)
       self
     end
-    
+
     def build_from_hash(location=nil)
       return nil unless location
       raise ArgumentError unless location.is_a?(Hash)
-      
+
       if location["geometry"] && location["geometry"]["location"]
         @latitude = location["geometry"]["location"]["lat"].to_f
         @longitude = location["geometry"]["location"]["lng"].to_f
       end
-      
+
       query_parts = []
       if location["address_components"]
         location["address_components"].each do |address_components|
@@ -49,7 +49,7 @@ module Barometer
           end
         end
       end
-      
+
       @query = query_parts.join(', ')
       @address = ""
     end
@@ -57,7 +57,7 @@ module Barometer
     def coordinates
       [@latitude, @longitude].join(',')
     end
-    
+
     def to_s
       s = [@address, @locality, @region, @country || @country_code]
       s.delete("")

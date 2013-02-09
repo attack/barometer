@@ -8,7 +8,7 @@ module Barometer
   # :postalcode and what the country_code is.
   #
   class Query::Format::Postalcode < Query::Format
-  
+
     def self.format; :postalcode; end
     def self.country_code(query=nil); "CA"; end
     def self.regex
@@ -17,6 +17,6 @@ module Barometer
       #   [ ]?[0-9]{1}[ABCEGHJ-NPRSTV-Z]{1}[0-9]{1}$
       /^[A-Z]{1}[\d]{1}[A-Z]{1}[ ]?[\d]{1}[A-Z]{1}[\d]{1}$/
     end
-  
+
   end
 end

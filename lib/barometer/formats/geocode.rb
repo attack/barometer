@@ -23,10 +23,10 @@ module Barometer
       unless converts?(original_query)
         return (original_query.format == format ? original_query.dup : nil)
       end
-      
+
       unless converted_query = original_query.get_conversion(format)
         converted_query = Barometer::Query.new
-        
+
         converted_query = case original_query.format
         when :weather_id
           Query::Format::WeatherID.reverse(original_query)
@@ -35,7 +35,7 @@ module Barometer
         else
           geocode(original_query)
         end
-        
+
         original_query.post_conversion(converted_query) if converted_query
       end
       converted_query
@@ -45,7 +45,7 @@ module Barometer
     #
     def self.geocode(original_query)
       raise ArgumentError unless is_a_query?(original_query)
-      
+
       converted_query = Barometer::Query.new
       converted_query.geo = Barometer::WebService::Geocode.fetch(original_query)
       if converted_query.geo

@@ -25,7 +25,7 @@
 
 - be smart, never make duplicate queries
   - ie. if you are including wunderground, do it first and use the timezone info
-    
+
 - conversion and weather fetching queries should have hooks to allow
   for configurable caching via memcache, then web service calls can 
   be cached across multiple measurement instances.
@@ -37,15 +37,15 @@
 - Parsing dates is slow (ie Time.parse)
   for data parsing with known date/time formats, parse the
   needed information explicitly
-  
+
   example:
-  
+
   _parse_date(text)
     text =~ /^(\d\d\d\d)-(\d\d)-(\d\d)/
     Time.new($3,$2,$1)
   end
-  
-  
+
+
 == other weather info
 
 === intellicast

@@ -1,22 +1,22 @@
 module Barometer
   class Base
-    
+
     # allow the configuration of specific weather APIs to be used,
     # and the order in which they would be used
     #
     @@config = { 1 => [:wunderground] }
     def self.config; @@config; end;
     def self.config=(hash); @@config = hash; end;
-    
+
     attr_reader   :query
     attr_accessor :weather, :success
-    
+
     def initialize(query=nil)
       @query = Barometer::Query.new(query)
       @weather = Barometer::Weather.new
       @success = false
     end
-    
+
     # iterate through all the configured sources and
     # collect weather data for each one
     #
@@ -33,15 +33,15 @@ module Barometer
         end
         level += 1
       end
-      
+
       @weather.end_at = Time.now.utc
       @weather
     end
-    
+
     def success?; @success; end
-    
+
     private
-    
+
     # iterate through the setup until we have a source name (and possibly
     # a config for that source), then measure with that source
     #
@@ -66,7 +66,7 @@ module Barometer
         end
       end
     end
-    
+
     # do that actual source measurement
     #
     def _measure(datum, config=nil, metric=nil)

@@ -46,16 +46,16 @@ module Barometer
   # - the Yahoo! WOEID is only used by Yahoo!, and is a 32-bit number. Unfortunately
   #   this number confilcts with US Zipcodes (ie the zipcode=90210 and the
   #   WOEID=90210 cannot be destinguished and do not mean the same thing).  To
-  #   solve this, any 5 digit number will be dtected as a ZIPCODE.  To have a 
+  #   solve this, any 5 digit number will be dtected as a ZIPCODE.  To have a
   #   5 digit query be detected as a WOEID, prepend it with a 'w' (ie: w90210).
   #
   class WeatherService::Yahoo < WeatherService
-    
+
     #########################################################################
     # PRIVATE
     # If class methods could be private, the remaining methods would be.
     #
-    
+
     def self._source_name; :yahoo; end
     def self._accepted_formats; [:zipcode, :weather_id, :woe_id]; end
 
@@ -67,11 +67,11 @@ module Barometer
       codes = (29..34).to_a + [36]
       codes.collect {|c| c.to_s}
     end
-  
+
    def self._build_extra(measurement, result, metric=true)
      #raise ArgumentError unless measurement.is_a?(Data::Measurement)
      #raise ArgumentError unless query.is_a?(Barometer::Query)
-     
+
      # use todays sun data for all future days
      if measurement.forecast && measurement.current.sun
        measurement.forecast.each do |forecast|
@@ -80,14 +80,14 @@ module Barometer
      end
      measurement
    end
-   
+
     def self._build_timezone(data)
       if data && data['item'] && data['item']['pubDate']
         zone_match = data['item']['pubDate'].match(/ ([A-Z]*)$/)
         Data::Zone.new(zone_match[1]) if zone_match
       end
     end
-    
+
     def self._build_links(data)
       links = {}
       if data["title"] && data["link"]
@@ -95,7 +95,7 @@ module Barometer
       end
       links
     end
-    
+
     def self._build_current(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       current = Measurement::Result.new(metric)
@@ -127,14 +127,14 @@ module Barometer
       end
       current
     end
-    
+
     def self._build_forecast(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       forecasts = Measurement::ResultArray.new
-      
+
       if data && data['item'] && data['item']['forecast']
          forecast_result = data['item']['forecast']
-         
+
         forecast_result.each do |forecast|
           forecast_measurement = Measurement::Result.new
           forecast_measurement.icon = forecast['code']
@@ -149,7 +149,7 @@ module Barometer
       end
       forecasts
     end
-    
+
     def self._build_location(data, geo=nil)
       raise ArgumentError unless data.is_a?(Hash)
       raise ArgumentError unless (geo.nil? || geo.is_a?(Data::Geo))
@@ -175,7 +175,7 @@ module Barometer
       end
       location
     end
-    
+
     def self._build_sun(data)
       raise ArgumentError unless data.is_a?(Hash)
       sun = nil
@@ -186,7 +186,7 @@ module Barometer
       end
       sun || Data::Sun.new
     end
-    
+
     # use HTTParty to get the current weather
     def self._fetch(query, metric=true)
       return unless query
@@ -204,6 +204,6 @@ module Barometer
       )
       r['rss']['channel']
     end
-    
+
   end
 end

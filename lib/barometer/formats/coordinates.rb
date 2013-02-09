@@ -8,20 +8,20 @@ module Barometer
   # :coordinates and how to convert to :coordinates.
   #
   class Query::Format::Coordinates < Query::Format
-  
+
     def self.format; :coordinates; end
     def self.regex; /^[-]?[0-9\.]+[,]{1}\s?[-]?[0-9\.]+$/; end
     def self.convertable_formats
       [:short_zipcode, :zipcode, :postalcode, :weather_id, :coordinates, :icao, :geocode, :woe_id]
     end
-    
+
     # convert to this format, X -> :coordinates
     #
     def self.to(original_query)
       raise ArgumentError unless is_a_query?(original_query)
       return nil unless converts?(original_query)
       converted_query = Barometer::Query.new
-      
+
       # pre-convert
       #
       pre_query = nil
@@ -33,7 +33,7 @@ module Barometer
       elsif original_query.format == :woe_id
         pre_query = Query::Format::WoeID.reverse(original_query)
       end
-      
+
       # convert & adjust
       #
       converted_query = Query::Format::Geocode.geocode(pre_query || original_query)
@@ -42,12 +42,12 @@ module Barometer
 
       converted_query
     end
-    
+
     def self.parse_latitude(query)
       coordinates = query.to_s.split(',')
       coordinates ? coordinates[0] : nil
     end
-    
+
     def self.parse_longitude(query)
       coordinates = query.to_s.split(',')
       coordinates ? coordinates[1] : nil

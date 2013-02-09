@@ -18,14 +18,14 @@ module Barometer
     #
     def self.regex; raise NotImplementedError; end
     def self.format; raise NotImplementedError; end
-  
+
     # defaults
     #
     def self.to(query=nil,country=nil); nil; end
     def self.country_code(query=nil); nil; end
     def self.convertable_formats; []; end
     def self.convert_query(text); text; end
-  
+
     # is the query of this format?
     #
     def self.is?(query=nil)
@@ -46,9 +46,9 @@ module Barometer
       return false unless object
       object.is_a?(Barometer::Query)
     end
-    
+
     private
-    
+
     # fix the country code
     #
     # weather.com uses non-standard two letter country codes that
@@ -59,6 +59,6 @@ module Barometer
       @@fixes ||= YAML.load_file(@@fixes_file)
       @@fixes[country_code.upcase.to_s] || country_code
     end
-  
+
   end
 end

@@ -11,18 +11,18 @@ one_letter:
     U : RU
     Y : AU
     Z : CN
-    
+
 two_letter:
     # A - Western South Pacific
     AG : SB
     AN : NR
     AY : PG
-    
+
     # B - Iceland/Greenland and Kosovo
     BG : GL
     BI : IS
     #BK : Kosovo (also LY Serbia (RS) because of disputes)
-    
+
     # D - West Africa
     DA : DZ
     DB : BJ
@@ -33,7 +33,7 @@ two_letter:
     DR : NE
     DT : TN
     # DX : Togolese Republic
-    
+
     # E - Northern Europe
     EB : BE
     ED : DE
@@ -50,7 +50,7 @@ two_letter:
     ET : DE
     EV : LV
     EY : LT
-    
+
     # F - Southern Africa
     FA : ZA
     FB : BW
@@ -75,7 +75,7 @@ two_letter:
     FX : LS
     FY : NA
     FZ : CD
-    
+
     # G - Northwestern Africa
     GA : ML
     GB : GM
@@ -90,7 +90,7 @@ two_letter:
     GS : EH
     GU : GN
     GV : CV
-    
+
     # H - Northeastern Africa
     HA : ET
     HB : BI
@@ -105,7 +105,7 @@ two_letter:
     HS : SD
     HT : TZ
     HU : UG
-    
+
     # L - Southern Europe,Israel and Turkey
     LA : AL
     LB : BG
@@ -133,7 +133,7 @@ two_letter:
     LX : GI
     #LY : Serbia (RS) and Montenegro (ME)
     LZ : SK
-    
+
     # M - Central America and Mexico
     MB : TC
     MD : DO
@@ -150,7 +150,7 @@ two_letter:
     MW : KY
     MY : BS
     MZ : BZ
-    
+
     # N - South Pacific
     NC : CK
     # NF : Fiji (FJ), Tonga (TO)
@@ -162,7 +162,7 @@ two_letter:
     NV : VU
     NW : NC
     # NZ : New Zealand (NZ), Antarctica (AQ)
-    
+
     # O - Southwest Asia (excluding Israel and Turkey), Afghanistan and Pakistan
     OA : AF
     OB : BH
@@ -178,7 +178,7 @@ two_letter:
     OS : SY
     OT : QA
     OY : YE
-    
+
     # P - Eastern North Pacific
     PA : US
     # PB : Baker Island
@@ -194,14 +194,14 @@ two_letter:
     PP : US
     # PT : Federated States of Micronesia (FM), Palau (PW)
     # PW : Wake Island
-    
+
     # R - Western North Pacific
     RC : TW
     RJ : JP
     RK : KR
     RO : JP
     RP : PH
-    
+
     # S - South America
     SA : AR
     SB : BR
@@ -221,7 +221,7 @@ two_letter:
     SV : VE
     SW : BR
     SY : GY
-    
+
     # T - Caribbean
     TA : AG
     TB : BB
@@ -239,7 +239,7 @@ two_letter:
     TU : VG
     TV : VC
     TX : BM
-    
+
     # U - Russia and former Soviet States
     UA : KZ
     UB : AZ
@@ -248,7 +248,7 @@ two_letter:
     UK : UA
     UM : BY
     #UT    Tajikistan (TJ), Turkmenistan (TM), Uzbekistan (UZ)
-    
+
     # V - South Asia (except Afghanistan and Pakistan) and mainland Southeast Asia
     VA : IN
     VC : LK
@@ -266,7 +266,7 @@ two_letter:
     VT : TH
     VV : VN
     VY : MM
-    
+
     # W - Maritime Southeast Asia (except the Philippines)
     WA : ID
     # WB : Malaysia (MY), Brunei (BN)
@@ -276,7 +276,7 @@ two_letter:
     WQ : ID
     WR : ID
     WS : SG
-    
+
     # Z - China, Mongolia and North Korea
     ZK : KP
     ZM : MN

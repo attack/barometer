@@ -1,13 +1,13 @@
 module Barometer
   #
   # A simple Time class
-  # 
+  #
   # A time class that represents the local time ...
   # it has no concept of time zone or date
   #
   class Data::LocalTime
     include Comparable
-    
+
     attr_reader :hour, :min, :sec
 
     def initialize(h=0,m=0,s=0)
@@ -16,7 +16,7 @@ module Barometer
       self.sec = s
       self
     end
-    
+
     def hour=(h)
       raise ArgumentError unless (h.is_a?(Fixnum) || h.nil?)
       hour_cap = 24
@@ -26,7 +26,7 @@ module Barometer
         @hour = h
       end
     end
-    
+
     def min=(m)
       raise ArgumentError unless (m.is_a?(Fixnum) || m.nil?)
       minute_cap = 60
@@ -38,7 +38,7 @@ module Barometer
         @min = m
       end
     end
-    
+
     def sec=(s)
       raise ArgumentError unless (s.is_a?(Fixnum) || s.nil?)
       second_cap = 60
@@ -50,7 +50,7 @@ module Barometer
         @sec = s
       end
     end
-    
+
     def parse(string)
       if string.is_a?(Time) || string.is_a?(DateTime)
         @hour = string.hour
@@ -64,21 +64,21 @@ module Barometer
       end
       self
     end
-    
+
     def self.parse(string)
       return string if string.is_a?(Data::LocalTime)
       local = Data::LocalTime.new
       local.parse(string)
       local
     end
-    
+
     # convert to a Time class
     #
     def to_t
       date = Date.today
       Time.local(date.year,date.month,date.day,@hour,@min,@sec)
     end
-    
+
     def total_seconds
       (@hour * 60 * 60) + (@min * 60) + @sec
     end
@@ -92,7 +92,7 @@ module Barometer
       raise ArgumentError unless the_other.is_a?(Data::LocalTime)
       total_seconds <=> the_other.total_seconds
     end
-    
+
     def +(seconds)
       local_time = Data::LocalTime.new
       if seconds.is_a?(Fixnum) || seconds.is_a?(Float)
@@ -121,14 +121,14 @@ module Barometer
       raise ArgumentError unless the_other.is_a?(Data::LocalTime)
       (self.total_seconds - the_other.total_seconds).to_i.abs
     end
-  
+
     def to_s(seconds=false)
       time = self.to_t
       format = (seconds ? "%I:%M:%S %p" : "%I:%M %p")
       time.strftime(format).downcase
     end
-    
+
     def nil?; @hour == 0 && @min == 0 && @sec == 0; end
-    
+
   end
 end

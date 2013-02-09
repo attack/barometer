@@ -9,7 +9,7 @@ module Barometer
   # and what the country_code is.
   #
   class Query::Format::Zipcode < Query::Format
-  
+
     def self.format; :zipcode; end
     def self.country_code(query=nil); "US"; end
     def self.regex; /(^[0-9]{5}$)|(^[0-9]{5}-[0-9]{4}$)/; end
@@ -26,6 +26,6 @@ module Barometer
       converted_query.country_code = country_code(converted_query.q)
       converted_query
     end
-  
+
   end
 end

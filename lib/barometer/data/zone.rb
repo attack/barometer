@@ -4,19 +4,19 @@ require 'tzinfo'
 module Barometer
   #
   # A simple Zone class
-  # 
+  #
   # Used for building and converting timezone aware date and times
   # Really, these are just wrappers for TZInfo conversions plus
   # some extras.
   #
   class Data::Zone
-    
+
     @@zone_codes_file = File.expand_path(
       File.join(File.dirname(__FILE__), '..', 'translations', 'zone_codes.yml'))
     @@zone_codes = nil
 
     attr_accessor :zone_full, :zone_code, :zone_offset, :tz
-    
+
     def initialize(zone)
       if Data::Zone.is_zone_full?(zone)
         @zone_full = zone
@@ -29,22 +29,22 @@ module Barometer
         raise(ArgumentError, "invalid time zone")
       end
     end
-    
+
     def current
       @zone_full || @zone_offset || @zone_code
     end
-    
+
     # what is the Timezone Short Code for the current timezone
     def code
       return @zone_code if @zone_code
       return nil unless @tz
       @tz.period_for_utc(Time.now.utc).zone_identifier.to_s
     end
-    
+
     def full
       @zone_full || nil
     end
-    
+
     def offset
       if @zone_offset
         @zone_offset.to_f * 60 * 60
@@ -53,13 +53,13 @@ module Barometer
       elsif @zone_full
       end
     end
-    
+
     # is the current timezone in daylights savings mode?
     def dst?
       return nil unless @tz
       @tz.period_for_utc(Time.now.utc).dst?
     end
-    
+
     # return Time.now.utc for the set timezone
     def now(convert=false)
       if @zone_full
@@ -69,13 +69,13 @@ module Barometer
       end
       convert ? Data::LocalTime.parse(now) : now
     end
-    
+
     # return Date.today for the set timezone
     def today
       now = self.now
       Date.new(now.year, now.month, now.day)
     end
-    
+
     def local_to_utc(local_time)
       if @zone_full
         @tz.local_to_utc(local_time)
@@ -85,7 +85,7 @@ module Barometer
           local_time.hour,local_time.min,local_time.sec)
       end
     end
-    
+
     def utc_to_local(utc_time)
       if @zone_full
         @tz.utc_to_local(utc_time)
@@ -93,22 +93,22 @@ module Barometer
         utc_time + self.offset
       end
     end
-    
+
     #
     # Class Methods
     #
-    
+
     def self.is_zone_code?(zone)
       return false unless (zone && zone.is_a?(String))
       _load_zone_codes unless @@zone_codes
       Time.zone_offset(zone) || (@@zone_codes && @@zone_codes.has_key?(zone))
     end
-    
+
     def self.is_zone_full?(zone)
       return false unless (zone && zone.is_a?(String))
       zone.match(/[A-Za-z]+\/[A-Za-z]+/) ? true : false
     end
-    
+
     def self.is_zone_offset?(zone)
       return false unless (zone && (zone.is_a?(Fixnum) || zone.is_a?(Float)))
       zone.to_f.abs <= 14
@@ -131,11 +131,11 @@ module Barometer
       end
       offset
     end
-    
+
     def self._load_zone_codes
       $:.unshift(File.dirname(__FILE__))
       @@zone_codes ||= YAML.load_file(@@zone_codes_file)
     end
-    
+
   end
 end

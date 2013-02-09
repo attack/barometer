@@ -36,7 +36,7 @@ module Barometer
   #   are specific to WeatherBug and un-supported by Barometer
   #
   class WeatherService::WeatherBug < WeatherService
-    
+
     @@api_code = nil
 
     def self.keys=(keys)
@@ -67,7 +67,7 @@ module Barometer
       codes = [0,2,3,4,7,26,31,64,65,75]
       codes.collect {|c| c.to_s}
     end
-    
+
     def self._build_extra(measurement, result, metric=true)
       #raise ArgumentError unless measurement.is_a?(Data::Measurement)
       #raise ArgumentError unless query.is_a?(Barometer::Query)
@@ -78,7 +78,7 @@ module Barometer
           forecast.sun = measurement.current.sun
         end
       end
-      
+
       measurement
     end
 
@@ -123,7 +123,7 @@ module Barometer
 
       current
     end
-    
+
     def self._build_forecast(data, metric=true)
       raise ArgumentError unless data.is_a?(Hash)
       forecasts = Measurement::ResultArray.new
@@ -150,7 +150,7 @@ module Barometer
       end
       forecasts
     end
-    
+
     def self._build_location(data, geo=nil)
       raise ArgumentError unless data.is_a?(Hash)
       raise ArgumentError unless (geo.nil? || geo.is_a?(Data::Geo))
@@ -172,7 +172,7 @@ module Barometer
       end
       location
     end
-    
+
     def self._build_station(data)
       raise ArgumentError unless data.is_a?(Hash)
       station = Data::Location.new
@@ -186,7 +186,7 @@ module Barometer
       station.longitude = data['aws:longitude']
       station
     end
-    
+
     def self._build_sun(data)
       raise ArgumentError unless data.is_a?(Hash)
       sun = nil
@@ -220,16 +220,16 @@ module Barometer
       result << _fetch_forecast(query,metric)
       result
     end
-    
+
     # use HTTParty to get the current weather
     #
     def self._fetch_current(query, metric=true)
       puts "fetch weatherbug current: #{query.q}" if Barometer::debug?
-      
+
       q = ( query.format.to_sym == :short_zipcode ?
         { :zipCode => query.q } :
         { :lat => query.q.split(',')[0], :long => query.q.split(',')[1] })
-      
+
       # httparty and the xml builder it uses miss some information
       # 1st - get the raw response
       # 2nd - manually get the missing information
@@ -242,36 +242,36 @@ module Barometer
         }.merge(q),
         :format => :plain,
         :timeout => Barometer.timeout
-      )  
-      
+      )
+
       # get icon
       icon_match = response.match(/cond(\d*)\.gif/)
       icon = icon_match[1] if icon_match
-      
+
       # get station zipcode
       zip_match = response.match(/zipcode=\"(\d*)\"/)
       zipcode = zip_match[1] if zip_match
-      
+
       # build xml
       output = ::Crack::XML.parse(response)
       output = output["aws:weather"]["aws:ob"]
-      
+
       # add missing data
       output["aws:icon"] = icon
       output["aws:station_zipcode"] = zipcode
-      
+
       output
     end
-    
+
     # use HTTParty to get the current weather
     #
     def self._fetch_forecast(query, metric=true)
       puts "fetch weatherbug forecast: #{query.q}" if Barometer::debug?
-      
+
       q = ( query.format.to_sym == :short_zipcode ?
         { :zipCode => query.q } :
         { :lat => query.q.split(',')[0], :long => query.q.split(',')[1] })
-      
+
       self.get(
         "http://#{@@api_code}.api.wxbug.net/getForecastRSS.aspx",
         :query => { :ACode => @@api_code,
@@ -281,7 +281,7 @@ module Barometer
         :timeout => Barometer.timeout
       )["weather"]["forecasts"]
     end
-    
+
     # since we have two sets of data, override these calls to choose the
     # right set of data
     #
