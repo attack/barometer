@@ -34,11 +34,15 @@ describe Barometer, :vcr => {
     end
 
     it "sets the Placemaker Yahoo! app ID" do
+      cache_key = Barometer.yahoo_placemaker_app_id
+
       Barometer.respond_to?("yahoo_placemaker_app_id").should be_true
       Barometer.yahoo_placemaker_app_id = nil
       Barometer.yahoo_placemaker_app_id.should be_nil
       Barometer.yahoo_placemaker_app_id = @yahoo_key
       Barometer.yahoo_placemaker_app_id.should == @yahoo_key
+
+      Barometer.yahoo_placemaker_app_id = cache_key
     end
 
     it "forces the geocoding of queries" do
