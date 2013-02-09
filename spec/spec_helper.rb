@@ -25,6 +25,7 @@ VCR.configure do |config|
   config.filter_sensitive_data('<WEATHER_PARTNER_KEY>') { WEATHER_PARTNER_KEY.to_s }
   config.filter_sensitive_data('<WEATHER_LICENSE_KEY>') { WEATHER_LICENSE_KEY.to_s }
   config.configure_rspec_metadata!
+  config.default_cassette_options = { :serialize_with => :json }
 end
 
 RSpec.configure do |config|
