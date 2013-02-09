@@ -17,18 +17,20 @@ this.
 
 ## version
 
-Version 0.7.4 is the current release of this gem. The gem is available from
-rubygems (barometer: http://rubygems.org/gems/barometer).
-It is fully functional (for five weather service APIs).
+Version 0.8.0 is the current release of this gem. The gem is available from
+[rubygems](http://rubygems.org/gems/barometer).
+It is fully functional for many weather service APIs.
 
 ## status
 
 Currently this project has completed initial development and will work for a
 few weather services (wunderground, yahoo, weather_bug).
-Barometer is developed using only Ruby 1.9.3, but will probably on both Ruby 1.8.7, 1.9.1 & 1.9.2.
+Barometer is developed using Ruby 1.9.3 and 1.8.7, but it should work on other versions.
+Checkout the current [Travis CI status](https://travis-ci.org/attack/barometer) to see
+what rubies are currently running the test suite.
 
 Features to be added in the future:
-* better command line output
+* historical weather data
 * even more weather service drivers (hamweather)
 * icon support
 
@@ -36,9 +38,9 @@ Features to be added in the future:
 
 ## Google API key
 
-As stated on the Google Geocoding API website
-(http://code.google.com/apis/maps/documentation/geocoding/), Google no longer
-requires an API key.  Therefore Barometer no longer requires a Google API key.
+As stated on the
+[Google Geocoding API website](http://code.google.com/apis/maps/documentation/geocoding/),
+Google no longer requires an API key.  Therefore Barometer no longer requires a Google API key.
 
 ### other keys
 
@@ -128,9 +130,10 @@ register-less (no API key required) international weather service
 
 The available sources are:
 
-  Wunderground.com (:wunderground) [default]
-  Yahoo! Weather (:yahoo)
-  WeatherBug.com (:weather_bug) [requires key]
+* Wunderground.com (:wunderground) [default]
+* Yahoo! Weather (:yahoo)
+* WeatherBug.com (:weather_bug) [requires key]
+* NOAA (:noaa) [beta]
 
 ## source configuration
 
@@ -168,7 +171,7 @@ Weather services, one with keys.
 ```ruby
   require 'barometer'
 
-  # use yahoo and weather.com, if they both fail, use wunderground
+  # use yahoo and weather bug, if they both fail, use wunderground
   Barometer.config = { 1 => [:yahoo, {:weather_bug => {:keys => {:code => CODE_KEY} }}], 2 => :wunderground }
 
   barometer = Barometer.new("Paris")
@@ -187,21 +190,6 @@ This will output the weather information for the given query.
 See the help for more command line information.
 
   # barometer -h
-
-### fail
-
-What would cause a weather service to fail?  The most obvious is that the
-particular weather service in currently unavailable or not reachable.
-Other possible reasons would include not having the API (or a valid API
-key for the particular weather service, if required), not providing a
-valid query, or providing a query for a location not supported by the
-weather service.
-
-For example, if you look at the example above, the query of "Paris" refers
-to a city in France.  Yahoo weather services only supports
-weather results for USA (at least at the time of writing).  Therefore, 
-Barometer would not use Yahoo, just WeatherBug and failover to use Wunderground
-(if needed).
 
 ## searching
 
@@ -265,7 +253,6 @@ values).
 ```ruby
   require 'barometer'
 
-  Barometer.google_geocode_key = "THE_GOOGLE_API_KEY"
   # use yahoo and wunderground
   Barometer.config = { 1 => [:yahoo, :wunderground] }
 
@@ -301,7 +288,9 @@ there will be no answer.
   #   this defaults to the current time
   # NOTE: in my example the values are metric, so the threshold is 10 kph
 
+```ruby
   weather.windy?(10)
+```
 
 ### is it wet?
 
@@ -310,28 +299,36 @@ there will be no answer.
   #   this defaults to the current time
   # NOTE: in my example the threshold is 50 %
 
+```ruby
   weather.wet?(50)
+```
 
 ### is it sunny?
 
   # 1st parameter is the utc_time for which you want to know the answer,
   #   this defaults to the current time
 
+```ruby
   weather.sunny?
+```
 
 ### is it day?
 
   # 1st parameter is the utc_time for which you want to know the answer,
   #   this defaults to the current time
 
+```ruby
   weather.day?
+```
 
 ### is it night?
 
   # 1st parameter is the utc_time for which you want to know the answer,
   #   this defaults to the current time
 
+```ruby
   weather.night?
+```
 
 # design
 
