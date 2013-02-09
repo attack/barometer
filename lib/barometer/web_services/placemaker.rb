@@ -20,10 +20,10 @@ module Barometer
         return nil
       end
 
-      puts "fetch woe_id: #{query.q}" if Barometer::debug?
       return nil unless query
       return nil unless _has_geocode_key?
       raise ArgumentError unless _is_a_query?(query)
+      puts "fetch woe_id: #{query.q}" if Barometer::debug?
 
       # BUG: httparty doesn't seem to post correctly
       # self.post(
