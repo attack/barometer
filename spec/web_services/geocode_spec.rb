@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Barometer::WebService::Geocode do
-  use_vcr_cassette
-
+describe Barometer::WebService::Geocode, :vcr => {
+  :cassette_name => "WebService::Geocode"
+} do
   before(:each) do
     @zipcode = "90210"
   end

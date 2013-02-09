@@ -1,0 +1,3371 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://weather.yahooapis.com/forecastrss?w=615702
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers: {}
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 09 Feb 2013 16:45:44 GMT
+      P3p:
+      - policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV
+        TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY
+        ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV"
+      Cache-Control:
+      - public
+      Expires:
+      - Sat, 09 Feb 2013 17:15:44 GMT
+      Vary:
+      - Accept-Encoding
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Age:
+      - '0'
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Server:
+      - YTS/1.19.11
+    body:
+      encoding: US-ASCII
+      string: ! "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n\t\t<rss
+        version=\"2.0\" xmlns:yweather=\"http://xml.weather.yahoo.com/ns/rss/1.0\"
+        xmlns:geo=\"http://www.w3.org/2003/01/geo/wgs84_pos#\">\n\t\t\t<channel>\n\t\t\n<title>Yahoo!
+        Weather - Paris, FR</title>\n<link>http://us.rd.yahoo.com/dailynews/rss/weather/Paris__FR/*http://weather.yahoo.com/forecast/FRXX0076_f.html</link>\n<description>Yahoo!
+        Weather for Paris, FR</description>\n<language>en-us</language>\n<lastBuildDate>Sat,
+        09 Feb 2013 5:00 pm CET</lastBuildDate>\n<ttl>60</ttl>\n<yweather:location
+        city=\"Paris\" region=\"\"   country=\"France\"/>\n<yweather:units temperature=\"F\"
+        distance=\"mi\" pressure=\"in\" speed=\"mph\"/>\n<yweather:wind chill=\"30\"
+        \  direction=\"110\"   speed=\"5\" />\n<yweather:atmosphere humidity=\"81\"
+        \ visibility=\"6.21\"  pressure=\"30.09\"  rising=\"0\" />\n<yweather:astronomy
+        sunrise=\"8:09 am\"   sunset=\"6:00 pm\"/>\n<image>\n<title>Yahoo! Weather</title>\n<width>142</width>\n<height>18</height>\n<link>http://weather.yahoo.com</link>\n<url>http://l.yimg.com/a/i/brand/purplelogo//uh/us/news-wea.gif</url>\n</image>\n<item>\n<title>Conditions
+        for Paris, FR at 5:00 pm CET</title>\n<geo:lat>48.86</geo:lat>\n<geo:long>2.34</geo:long>\n<link>http://us.rd.yahoo.com/dailynews/rss/weather/Paris__FR/*http://weather.yahoo.com/forecast/FRXX0076_f.html</link>\n<pubDate>Sat,
+        09 Feb 2013 5:00 pm CET</pubDate>\n<yweather:condition  text=\"Partly Cloudy\"
+        \ code=\"30\"  temp=\"34\"  date=\"Sat, 09 Feb 2013 5:00 pm CET\" />\n<description><![CDATA[\n<img
+        src=\"http://l.yimg.com/a/i/us/we/52/30.gif\"/><br />\n<b>Current Conditions:</b><br
+        />\nPartly Cloudy, 34 F<BR />\n<BR /><b>Forecast:</b><BR />\nSat - Partly
+        Cloudy. High: 39 Low: 28<br />\nSun - Snow to Wintry Mix. High: 34 Low: 34<br
+        />\n<br />\n<a href=\"http://us.rd.yahoo.com/dailynews/rss/weather/Paris__FR/*http://weather.yahoo.com/forecast/FRXX0076_f.html\">Full
+        Forecast at Yahoo! Weather</a><BR/><BR/>\n(provided by <a href=\"http://www.weather.com\"
+        >The Weather Channel</a>)<br/>\n]]></description>\n<yweather:forecast day=\"Sat\"
+        date=\"9 Feb 2013\" low=\"28\" high=\"39\" text=\"Partly Cloudy\" code=\"29\"
+        />\n<yweather:forecast day=\"Sun\" date=\"10 Feb 2013\" low=\"34\" high=\"34\"
+        text=\"Snow to Wintry Mix\" code=\"7\" />\n<guid isPermaLink=\"false\">FRXX0076_2013_02_10_7_00_CET</guid>\n</item>\n</channel>\n</rss>\n\n<!--
+        api23.weather.bf1.yahoo.com Sat Feb  9 16:45:44 PST 2013 -->\n"
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:45:44 GMT
+- request:
+    method: post
+    uri: http://wherein.yahooapis.com/v1/document
+    body:
+      encoding: US-ASCII
+      string: documentType=text%2Fhtml&outputType=xml&documentContent=New+York%2C+NY&appid=YAHOO
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 09 Feb 2013 16:45:47 GMT
+      P3p:
+      - policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV
+        TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY
+        ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV"
+      X-Yahoo-Serving-Host:
+      - wws06.geotech.bf1.yahoo.com
+      Content-Language:
+      - en
+      Cache-Control:
+      - public,must-revalidate
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Age:
+      - '0'
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Via:
+      - HTTP/1.1 r08.ycpi.ac4.yahoo.net (YahooTrafficServer/1.20.20 [cMsSf ])
+      Server:
+      - YTS/1.20.20
+    body:
+      encoding: US-ASCII
+      string: ! '<?xml version="1.0" encoding="utf-8"?>
+
+        <contentlocation xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns:xml="http://www.w3.org/XML/1998/namespace"
+        xmlns="http://wherein.yahooapis.com/v1/schema" xml:lang="en">
+
+        <processingTime>0.001506</processingTime>
+
+        <version>1.8.0.872 build 121220</version>
+
+        <documentLength>12</documentLength>
+
+        <document>
+
+        <administrativeScope>
+
+        <woeId>2459115</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[New York, NY, US]]></name>
+
+        <centroid>
+
+        <latitude>40.7146</latitude>
+
+        <longitude>-74.0071</longitude>
+
+        </centroid>
+
+        </administrativeScope>
+
+        <geographicScope>
+
+        <woeId>2459115</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[New York, NY, US]]></name>
+
+        <centroid>
+
+        <latitude>40.7146</latitude>
+
+        <longitude>-74.0071</longitude>
+
+        </centroid>
+
+        </geographicScope>
+
+        <localScopes>
+
+        <localScope>
+
+        <woeId>2459115</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[New York, NY, US (Town)]]></name>
+
+        <centroid>
+
+        <latitude>40.7146</latitude>
+
+        <longitude>-74.0071</longitude>
+
+        </centroid>
+
+        <southWest>
+
+        <latitude>40.4766</latitude>
+
+        <longitude>-74.2589</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>40.9176</latitude>
+
+        <longitude>-73.7004</longitude>
+
+        </northEast>
+
+        <ancestors>
+
+        <ancestor>
+
+        <woeId>2347591</woeId>
+
+        <type>State</type>
+
+        <name><![CDATA[New York]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>23424977</woeId>
+
+        <type>Country</type>
+
+        <name><![CDATA[United States]]></name>
+
+        </ancestor>
+
+        </ancestors>
+
+        </localScope>
+
+        </localScopes>
+
+        <extents>
+
+        <center>
+
+        <latitude>40.7146</latitude>
+
+        <longitude>-74.0071</longitude>
+
+        </center>
+
+        <southWest>
+
+        <latitude>40.4766</latitude>
+
+        <longitude>-74.2589</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>40.9176</latitude>
+
+        <longitude>-73.7004</longitude>
+
+        </northEast>
+
+        </extents>
+
+        <placeDetails>
+
+        <placeId>1</placeId>
+
+        <place>
+
+        <woeId>2459115</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[New York, NY, US]]></name>
+
+        <centroid>
+
+        <latitude>40.7146</latitude>
+
+        <longitude>-74.0071</longitude>
+
+        </centroid>
+
+        </place>
+
+        <placeReferenceIds>1</placeReferenceIds>
+
+        <matchType>0</matchType>
+
+        <weight>1</weight>
+
+        <confidence>10</confidence>
+
+        </placeDetails>
+
+        <referenceList>
+
+        <reference>
+
+        <woeIds>2459115</woeIds>
+
+        <placeReferenceId>1</placeReferenceId>
+
+        <placeIds>1</placeIds>
+
+        <start>0</start>
+
+        <end>12</end>
+
+        <isPlaintextMarker>1</isPlaintextMarker>
+
+        <text><![CDATA[New York, NY]]></text>
+
+        <type>plaintext</type>
+
+        <xpath><![CDATA[]]></xpath>
+
+        </reference>
+
+        </referenceList>
+
+        </document>
+
+        </contentlocation>
+
+'
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:45:47 GMT
+- request:
+    method: get
+    uri: http://maps.googleapis.com/maps/api/geocode/json?address=90210&region=US&sensor=false
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers: {}
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Date:
+      - Sat, 09 Feb 2013 16:45:47 GMT
+      Expires:
+      - Sun, 10 Feb 2013 16:45:47 GMT
+      Cache-Control:
+      - public, max-age=86400
+      Vary:
+      - Accept-Language
+      Access-Control-Allow-Origin:
+      - ! '*'
+      Server:
+      - mafe
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Frame-Options:
+      - SAMEORIGIN
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: ! "{\n   \"results\" : [\n      {\n         \"address_components\" :
+        [\n            {\n               \"long_name\" : \"90210\",\n               \"short_name\"
+        : \"90210\",\n               \"types\" : [ \"postal_code\" ]\n            },\n
+        \           {\n               \"long_name\" : \"Beverly Hills\",\n               \"short_name\"
+        : \"Beverly Hills\",\n               \"types\" : [ \"locality\", \"political\"
+        ]\n            },\n            {\n               \"long_name\" : \"Los Angeles\",\n
+        \              \"short_name\" : \"Los Angeles\",\n               \"types\"
+        : [ \"administrative_area_level_2\", \"political\" ]\n            },\n            {\n
+        \              \"long_name\" : \"California\",\n               \"short_name\"
+        : \"CA\",\n               \"types\" : [ \"administrative_area_level_1\", \"political\"
+        ]\n            },\n            {\n               \"long_name\" : \"United
+        States\",\n               \"short_name\" : \"US\",\n               \"types\"
+        : [ \"country\", \"political\" ]\n            }\n         ],\n         \"formatted_address\"
+        : \"Beverly Hills, CA 90210, USA\",\n         \"geometry\" : {\n            \"bounds\"
+        : {\n               \"northeast\" : {\n                  \"lat\" : 34.13547710,\n
+        \                 \"lng\" : -118.38671290\n               },\n               \"southwest\"
+        : {\n                  \"lat\" : 34.0650940,\n                  \"lng\" :
+        -118.44237810\n               }\n            },\n            \"location\"
+        : {\n               \"lat\" : 34.10300320,\n               \"lng\" : -118.41046840\n
+        \           },\n            \"location_type\" : \"APPROXIMATE\",\n            \"viewport\"
+        : {\n               \"northeast\" : {\n                  \"lat\" : 34.13547710,\n
+        \                 \"lng\" : -118.38671290\n               },\n               \"southwest\"
+        : {\n                  \"lat\" : 34.0650940,\n                  \"lng\" :
+        -118.44237810\n               }\n            }\n         },\n         \"types\"
+        : [ \"postal_code\" ]\n      }\n   ],\n   \"status\" : \"OK\"\n}\n"
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:45:48 GMT
+- request:
+    method: post
+    uri: http://wherein.yahooapis.com/v1/document
+    body:
+      encoding: US-ASCII
+      string: documentType=text%2Fhtml&outputType=xml&documentContent=Beverly+Hills%2C+CA%2C+United+States&appid=YAHOO
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 09 Feb 2013 16:45:48 GMT
+      P3p:
+      - policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV
+        TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY
+        ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV"
+      X-Yahoo-Serving-Host:
+      - wws07.geotech.ne1.yahoo.com
+      Content-Language:
+      - en
+      Cache-Control:
+      - public,must-revalidate
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Age:
+      - '0'
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Via:
+      - HTTP/1.1 r18.ycpi.ac4.yahoo.net (YahooTrafficServer/1.20.20 [cMsSf ])
+      Server:
+      - YTS/1.20.20
+    body:
+      encoding: US-ASCII
+      string: ! '<?xml version="1.0" encoding="utf-8"?>
+
+        <contentlocation xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns:xml="http://www.w3.org/XML/1998/namespace"
+        xmlns="http://wherein.yahooapis.com/v1/schema" xml:lang="en">
+
+        <processingTime>0.001732</processingTime>
+
+        <version>1.8.0.872 build 121220</version>
+
+        <documentLength>32</documentLength>
+
+        <document>
+
+        <administrativeScope>
+
+        <woeId>2363796</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Beverly Hills, CA, US]]></name>
+
+        <centroid>
+
+        <latitude>34.0735</latitude>
+
+        <longitude>-118.4</longitude>
+
+        </centroid>
+
+        </administrativeScope>
+
+        <geographicScope>
+
+        <woeId>2363796</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Beverly Hills, CA, US]]></name>
+
+        <centroid>
+
+        <latitude>34.0735</latitude>
+
+        <longitude>-118.4</longitude>
+
+        </centroid>
+
+        </geographicScope>
+
+        <localScopes>
+
+        <localScope>
+
+        <woeId>2363796</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Beverly Hills, CA, US (Town)]]></name>
+
+        <centroid>
+
+        <latitude>34.0735</latitude>
+
+        <longitude>-118.4</longitude>
+
+        </centroid>
+
+        <southWest>
+
+        <latitude>34.0541</latitude>
+
+        <longitude>-118.427</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>34.1125</latitude>
+
+        <longitude>-118.372</longitude>
+
+        </northEast>
+
+        <ancestors>
+
+        <ancestor>
+
+        <woeId>12587688</woeId>
+
+        <type>County</type>
+
+        <name><![CDATA[Los Angeles]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>2347563</woeId>
+
+        <type>State</type>
+
+        <name><![CDATA[California]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>23424977</woeId>
+
+        <type>Country</type>
+
+        <name><![CDATA[United States]]></name>
+
+        </ancestor>
+
+        </ancestors>
+
+        </localScope>
+
+        </localScopes>
+
+        <extents>
+
+        <center>
+
+        <latitude>34.0735</latitude>
+
+        <longitude>-118.4</longitude>
+
+        </center>
+
+        <southWest>
+
+        <latitude>34.0541</latitude>
+
+        <longitude>-118.427</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>34.1125</latitude>
+
+        <longitude>-118.372</longitude>
+
+        </northEast>
+
+        </extents>
+
+        <placeDetails>
+
+        <placeId>1</placeId>
+
+        <place>
+
+        <woeId>2363796</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Beverly Hills, CA, US]]></name>
+
+        <centroid>
+
+        <latitude>34.0735</latitude>
+
+        <longitude>-118.4</longitude>
+
+        </centroid>
+
+        </place>
+
+        <placeReferenceIds>1</placeReferenceIds>
+
+        <matchType>0</matchType>
+
+        <weight>1</weight>
+
+        <confidence>10</confidence>
+
+        </placeDetails>
+
+        <referenceList>
+
+        <reference>
+
+        <woeIds>2363796</woeIds>
+
+        <placeReferenceId>1</placeReferenceId>
+
+        <placeIds>1</placeIds>
+
+        <start>0</start>
+
+        <end>32</end>
+
+        <isPlaintextMarker>1</isPlaintextMarker>
+
+        <text><![CDATA[Beverly Hills, CA, United States]]></text>
+
+        <type>plaintext</type>
+
+        <xpath><![CDATA[]]></xpath>
+
+        </reference>
+
+        </referenceList>
+
+        </document>
+
+        </contentlocation>
+
+'
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:45:48 GMT
+- request:
+    method: post
+    uri: http://wherein.yahooapis.com/v1/document
+    body:
+      encoding: US-ASCII
+      string: documentType=text%2Fhtml&outputType=xml&documentContent=T5B+4M9&appid=YAHOO
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 09 Feb 2013 16:45:48 GMT
+      P3p:
+      - policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV
+        TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY
+        ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV"
+      X-Yahoo-Serving-Host:
+      - wws12.geotech.bf1.yahoo.com
+      Content-Language:
+      - en
+      Cache-Control:
+      - public,must-revalidate
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Age:
+      - '0'
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Via:
+      - HTTP/1.1 r18.ycpi.ac4.yahoo.net (YahooTrafficServer/1.20.20 [cMsSf ])
+      Server:
+      - YTS/1.20.20
+    body:
+      encoding: US-ASCII
+      string: ! '<?xml version="1.0" encoding="utf-8"?>
+
+        <contentlocation xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns:xml="http://www.w3.org/XML/1998/namespace"
+        xmlns="http://wherein.yahooapis.com/v1/schema" xml:lang="en">
+
+        <processingTime>0.001466</processingTime>
+
+        <version>1.8.0.872 build 121220</version>
+
+        <documentLength>7</documentLength>
+
+        <document>
+
+        <administrativeScope>
+
+        <woeId>8676</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Edmonton, Alberta, CA]]></name>
+
+        <centroid>
+
+        <latitude>53.5559</latitude>
+
+        <longitude>-113.493</longitude>
+
+        </centroid>
+
+        </administrativeScope>
+
+        <geographicScope>
+
+        <woeId>24354344</woeId>
+
+        <type>Zip</type>
+
+        <name><![CDATA[T5B 4M9, Edmonton, Alberta, CA]]></name>
+
+        <centroid>
+
+        <latitude>53.5705</latitude>
+
+        <longitude>-113.458</longitude>
+
+        </centroid>
+
+        </geographicScope>
+
+        <localScopes>
+
+        <localScope>
+
+        <woeId>24354344</woeId>
+
+        <type>Zip</type>
+
+        <name><![CDATA[T5B 4M9, Edmonton, Alberta, CA (Zip)]]></name>
+
+        <centroid>
+
+        <latitude>53.5705</latitude>
+
+        <longitude>-113.458</longitude>
+
+        </centroid>
+
+        <southWest>
+
+        <latitude>53.5695</latitude>
+
+        <longitude>-113.46</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>53.5715</latitude>
+
+        <longitude>-113.456</longitude>
+
+        </northEast>
+
+        <ancestors>
+
+        <ancestor>
+
+        <woeId>8676</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Edmonton]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>29375228</woeId>
+
+        <type>County</type>
+
+        <name><![CDATA[Alberta]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>2344915</woeId>
+
+        <type>Province/Territory</type>
+
+        <name><![CDATA[Alberta]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>23424775</woeId>
+
+        <type>Country</type>
+
+        <name><![CDATA[Canada]]></name>
+
+        </ancestor>
+
+        </ancestors>
+
+        </localScope>
+
+        </localScopes>
+
+        <extents>
+
+        <center>
+
+        <latitude>53.5705</latitude>
+
+        <longitude>-113.458</longitude>
+
+        </center>
+
+        <southWest>
+
+        <latitude>53.5695</latitude>
+
+        <longitude>-113.46</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>53.5715</latitude>
+
+        <longitude>-113.456</longitude>
+
+        </northEast>
+
+        </extents>
+
+        <placeDetails>
+
+        <placeId>1</placeId>
+
+        <place>
+
+        <woeId>24354344</woeId>
+
+        <type>Zip</type>
+
+        <name><![CDATA[T5B 4M9, Edmonton, Alberta, CA]]></name>
+
+        <centroid>
+
+        <latitude>53.5705</latitude>
+
+        <longitude>-113.458</longitude>
+
+        </centroid>
+
+        </place>
+
+        <placeReferenceIds>1</placeReferenceIds>
+
+        <matchType>0</matchType>
+
+        <weight>1</weight>
+
+        <confidence>7</confidence>
+
+        </placeDetails>
+
+        <referenceList>
+
+        <reference>
+
+        <woeIds>24354344</woeIds>
+
+        <placeReferenceId>1</placeReferenceId>
+
+        <placeIds>1</placeIds>
+
+        <start>0</start>
+
+        <end>7</end>
+
+        <isPlaintextMarker>1</isPlaintextMarker>
+
+        <text><![CDATA[T5B 4M9]]></text>
+
+        <type>plaintext</type>
+
+        <xpath><![CDATA[]]></xpath>
+
+        </reference>
+
+        </referenceList>
+
+        </document>
+
+        </contentlocation>
+
+'
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:45:48 GMT
+- request:
+    method: post
+    uri: http://wherein.yahooapis.com/v1/document
+    body:
+      encoding: US-ASCII
+      string: documentType=text%2Fhtml&outputType=xml&documentContent=%3Chtml%3E%3Cbody%3E%3Cdiv+class%3D%22geo%22%3E%3Cspan+class%3D%22latitude%22%3E40.756054%3C%2Fspan%3E%3Cspan+class%3D%22longitude%22%3E-73.986951%3C%2Fspan%3E%3C%2Fdiv%3E%3C%2Fbody%3E%3C%2Fhtml%3E&appid=YAHOO
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 09 Feb 2013 16:45:48 GMT
+      P3p:
+      - policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV
+        TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY
+        ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV"
+      X-Yahoo-Serving-Host:
+      - wws04.geotech.ne1.yahoo.com
+      Content-Language:
+      - en
+      Cache-Control:
+      - public,must-revalidate
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Age:
+      - '0'
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Via:
+      - HTTP/1.1 r21.ycpi.ac4.yahoo.net (YahooTrafficServer/1.20.20 [cMsSf ])
+      Server:
+      - YTS/1.20.20
+    body:
+      encoding: US-ASCII
+      string: ! '<?xml version="1.0" encoding="utf-8"?>
+
+        <contentlocation xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns:xml="http://www.w3.org/XML/1998/namespace"
+        xmlns="http://wherein.yahooapis.com/v1/schema" xml:lang="en">
+
+        <processingTime>0.003931</processingTime>
+
+        <version>1.8.0.872 build 121220</version>
+
+        <documentLength>129</documentLength>
+
+        <document>
+
+        <administrativeScope>
+
+        <woeId>12589342</woeId>
+
+        <type>County</type>
+
+        <name><![CDATA[Manhattan, New York, NY, US]]></name>
+
+        <centroid>
+
+        <latitude>40.7909</latitude>
+
+        <longitude>-73.9664</longitude>
+
+        </centroid>
+
+        </administrativeScope>
+
+        <geographicScope>
+
+        <woeId>12761349</woeId>
+
+        <type>Zip</type>
+
+        <name><![CDATA[10018, New York, NY, US]]></name>
+
+        <centroid>
+
+        <latitude>40.7565</latitude>
+
+        <longitude>-73.9972</longitude>
+
+        </centroid>
+
+        </geographicScope>
+
+        <localScopes>
+
+        <localScope>
+
+        <woeId>12761349</woeId>
+
+        <type>Zip</type>
+
+        <name><![CDATA[10018, New York, NY, US (Zip)]]></name>
+
+        <centroid>
+
+        <latitude>40.7565</latitude>
+
+        <longitude>-73.9972</longitude>
+
+        </centroid>
+
+        <southWest>
+
+        <latitude>40.7491</latitude>
+
+        <longitude>-74.0071</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>40.7614</latitude>
+
+        <longitude>-73.9809</longitude>
+
+        </northEast>
+
+        <ancestors>
+
+        <ancestor>
+
+        <woeId>12589342</woeId>
+
+        <type>County</type>
+
+        <name><![CDATA[Manhattan]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>2459115</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[New York]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>2347591</woeId>
+
+        <type>State</type>
+
+        <name><![CDATA[New York]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>23424977</woeId>
+
+        <type>Country</type>
+
+        <name><![CDATA[United States]]></name>
+
+        </ancestor>
+
+        </ancestors>
+
+        </localScope>
+
+        </localScopes>
+
+        <extents>
+
+        <center>
+
+        <latitude>40.7561</latitude>
+
+        <longitude>-73.987</longitude>
+
+        </center>
+
+        <southWest>
+
+        <latitude>40.7491</latitude>
+
+        <longitude>-74.0071</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>40.7614</latitude>
+
+        <longitude>-73.9809</longitude>
+
+        </northEast>
+
+        </extents>
+
+        <placeDetails>
+
+        <placeId>1</placeId>
+
+        <place>
+
+        <woeId>12761349</woeId>
+
+        <type>Zip</type>
+
+        <name><![CDATA[10018, New York, NY, US]]></name>
+
+        <centroid>
+
+        <latitude>40.7561</latitude>
+
+        <longitude>-73.987</longitude>
+
+        </centroid>
+
+        </place>
+
+        <placeReferenceIds>1</placeReferenceIds>
+
+        <matchType>1</matchType>
+
+        <weight>1</weight>
+
+        <confidence>10</confidence>
+
+        </placeDetails>
+
+        <referenceList>
+
+        <reference>
+
+        <woeIds>12761349</woeIds>
+
+        <placeReferenceId>1</placeReferenceId>
+
+        <placeIds>1</placeIds>
+
+        <start>-1</start>
+
+        <end>-1</end>
+
+        <isPlaintextMarker>0</isPlaintextMarker>
+
+        <text><![CDATA[]]></text>
+
+        <type>xpath</type>
+
+        <xpath><![CDATA[/html[1]/body[1]/div[1]/span[2]]]></xpath>
+
+        </reference>
+
+        </referenceList>
+
+        </document>
+
+        </contentlocation>
+
+'
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:45:48 GMT
+- request:
+    method: get
+    uri: http://weather.yahooapis.com/forecastrss?p=USGA0028
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers: {}
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 09 Feb 2013 16:45:48 GMT
+      P3p:
+      - policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV
+        TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY
+        ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV"
+      Cache-Control:
+      - public
+      Expires:
+      - Sat, 09 Feb 2013 17:15:48 GMT
+      Vary:
+      - Accept-Encoding
+      Content-Type:
+      - text/xml;charset=UTF-8
+      Age:
+      - '0'
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Server:
+      - YTS/1.19.11
+    body:
+      encoding: US-ASCII
+      string: ! "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>\n\t\t<rss
+        version=\"2.0\" xmlns:yweather=\"http://xml.weather.yahoo.com/ns/rss/1.0\"
+        xmlns:geo=\"http://www.w3.org/2003/01/geo/wgs84_pos#\">\n\t\t\t<channel>\n\t\t\n<title>Yahoo!
+        Weather - Atlanta, GA</title>\n<link>http://us.rd.yahoo.com/dailynews/rss/weather/Atlanta__GA/*http://weather.yahoo.com/forecast/USGA0028_f.html</link>\n<description>Yahoo!
+        Weather for Atlanta, GA</description>\n<language>en-us</language>\n<lastBuildDate>Sat,
+        09 Feb 2013 10:51 am EST</lastBuildDate>\n<ttl>60</ttl>\n<yweather:location
+        city=\"Atlanta\" region=\"GA\"   country=\"US\"/>\n<yweather:units temperature=\"F\"
+        distance=\"mi\" pressure=\"in\" speed=\"mph\"/>\n<yweather:wind chill=\"47\"
+        \  direction=\"0\"   speed=\"0\" />\n<yweather:atmosphere humidity=\"52\"
+        \ visibility=\"10\"  pressure=\"30.3\"  rising=\"1\" />\n<yweather:astronomy
+        sunrise=\"7:26 am\"   sunset=\"6:15 pm\"/>\n<image>\n<title>Yahoo! Weather</title>\n<width>142</width>\n<height>18</height>\n<link>http://weather.yahoo.com</link>\n<url>http://l.yimg.com/a/i/brand/purplelogo//uh/us/news-wea.gif</url>\n</image>\n<item>\n<title>Conditions
+        for Atlanta, GA at 10:51 am EST</title>\n<geo:lat>33.75</geo:lat>\n<geo:long>-84.39</geo:long>\n<link>http://us.rd.yahoo.com/dailynews/rss/weather/Atlanta__GA/*http://weather.yahoo.com/forecast/USGA0028_f.html</link>\n<pubDate>Sat,
+        09 Feb 2013 10:51 am EST</pubDate>\n<yweather:condition  text=\"Partly Cloudy\"
+        \ code=\"30\"  temp=\"47\"  date=\"Sat, 09 Feb 2013 10:51 am EST\" />\n<description><![CDATA[\n<img
+        src=\"http://l.yimg.com/a/i/us/we/52/30.gif\"/><br />\n<b>Current Conditions:</b><br
+        />\nPartly Cloudy, 47 F<BR />\n<BR /><b>Forecast:</b><BR />\nSat - Sunny.
+        High: 61 Low: 40<br />\nSun - PM Showers. High: 60 Low: 55<br />\n<br />\n<a
+        href=\"http://us.rd.yahoo.com/dailynews/rss/weather/Atlanta__GA/*http://weather.yahoo.com/forecast/USGA0028_f.html\">Full
+        Forecast at Yahoo! Weather</a><BR/><BR/>\n(provided by <a href=\"http://www.weather.com\"
+        >The Weather Channel</a>)<br/>\n]]></description>\n<yweather:forecast day=\"Sat\"
+        date=\"9 Feb 2013\" low=\"40\" high=\"61\" text=\"Sunny\" code=\"32\" />\n<yweather:forecast
+        day=\"Sun\" date=\"10 Feb 2013\" low=\"55\" high=\"60\" text=\"PM Showers\"
+        code=\"39\" />\n<guid isPermaLink=\"false\">USGA0028_2013_02_10_7_00_EST</guid>\n</item>\n</channel>\n</rss>\n\n<!--
+        api25.weather.bf1.yahoo.com Sat Feb  9 16:45:48 PST 2013 -->"
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:45:48 GMT
+- request:
+    method: post
+    uri: http://wherein.yahooapis.com/v1/document
+    body:
+      encoding: US-ASCII
+      string: documentType=text%2Fhtml&outputType=xml&documentContent=Atlanta%2C+GA%2C+US&appid=YAHOO
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 09 Feb 2013 16:45:49 GMT
+      P3p:
+      - policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV
+        TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY
+        ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV"
+      X-Yahoo-Serving-Host:
+      - wws09.geotech.bf1.yahoo.com
+      Content-Language:
+      - en
+      Cache-Control:
+      - public,must-revalidate
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Age:
+      - '1'
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Via:
+      - HTTP/1.1 r23.ycpi.ac4.yahoo.net (YahooTrafficServer/1.20.20 [cMsSf ])
+      Server:
+      - YTS/1.20.20
+    body:
+      encoding: US-ASCII
+      string: ! '<?xml version="1.0" encoding="utf-8"?>
+
+        <contentlocation xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns:xml="http://www.w3.org/XML/1998/namespace"
+        xmlns="http://wherein.yahooapis.com/v1/schema" xml:lang="en">
+
+        <processingTime>0.001865</processingTime>
+
+        <version>1.8.0.872 build 121220</version>
+
+        <documentLength>15</documentLength>
+
+        <document>
+
+        <administrativeScope>
+
+        <woeId>2357024</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Atlanta, GA, US]]></name>
+
+        <centroid>
+
+        <latitude>33.7483</latitude>
+
+        <longitude>-84.3911</longitude>
+
+        </centroid>
+
+        </administrativeScope>
+
+        <geographicScope>
+
+        <woeId>2357024</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Atlanta, GA, US]]></name>
+
+        <centroid>
+
+        <latitude>33.7483</latitude>
+
+        <longitude>-84.3911</longitude>
+
+        </centroid>
+
+        </geographicScope>
+
+        <localScopes>
+
+        <localScope>
+
+        <woeId>2357024</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Atlanta, GA, US (Town)]]></name>
+
+        <centroid>
+
+        <latitude>33.7483</latitude>
+
+        <longitude>-84.3911</longitude>
+
+        </centroid>
+
+        <southWest>
+
+        <latitude>33.648</latitude>
+
+        <longitude>-84.5466</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>33.8872</latitude>
+
+        <longitude>-84.2897</longitude>
+
+        </northEast>
+
+        <ancestors>
+
+        <ancestor>
+
+        <woeId>12587929</woeId>
+
+        <type>County</type>
+
+        <name><![CDATA[Fulton]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>2347569</woeId>
+
+        <type>State</type>
+
+        <name><![CDATA[Georgia]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>23424977</woeId>
+
+        <type>Country</type>
+
+        <name><![CDATA[United States]]></name>
+
+        </ancestor>
+
+        </ancestors>
+
+        </localScope>
+
+        </localScopes>
+
+        <extents>
+
+        <center>
+
+        <latitude>33.7483</latitude>
+
+        <longitude>-84.3911</longitude>
+
+        </center>
+
+        <southWest>
+
+        <latitude>33.648</latitude>
+
+        <longitude>-84.5466</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>33.8872</latitude>
+
+        <longitude>-84.2897</longitude>
+
+        </northEast>
+
+        </extents>
+
+        <placeDetails>
+
+        <placeId>1</placeId>
+
+        <place>
+
+        <woeId>2357024</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Atlanta, GA, US]]></name>
+
+        <centroid>
+
+        <latitude>33.7483</latitude>
+
+        <longitude>-84.3911</longitude>
+
+        </centroid>
+
+        </place>
+
+        <placeReferenceIds>1</placeReferenceIds>
+
+        <matchType>0</matchType>
+
+        <weight>1</weight>
+
+        <confidence>10</confidence>
+
+        </placeDetails>
+
+        <referenceList>
+
+        <reference>
+
+        <woeIds>2357024</woeIds>
+
+        <placeReferenceId>1</placeReferenceId>
+
+        <placeIds>1</placeIds>
+
+        <start>0</start>
+
+        <end>15</end>
+
+        <isPlaintextMarker>1</isPlaintextMarker>
+
+        <text><![CDATA[Atlanta, GA, US]]></text>
+
+        <type>plaintext</type>
+
+        <xpath><![CDATA[]]></xpath>
+
+        </reference>
+
+        </referenceList>
+
+        </document>
+
+        </contentlocation>
+
+'
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:45:49 GMT
+- request:
+    method: get
+    uri: http://maps.googleapis.com/maps/api/geocode/json?address=KSFO&region=US&sensor=false
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers: {}
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json; charset=UTF-8
+      Date:
+      - Sat, 09 Feb 2013 16:45:49 GMT
+      Expires:
+      - Sun, 10 Feb 2013 16:45:49 GMT
+      Cache-Control:
+      - public, max-age=86400
+      Vary:
+      - Accept-Language
+      Access-Control-Allow-Origin:
+      - ! '*'
+      Server:
+      - mafe
+      X-Xss-Protection:
+      - 1; mode=block
+      X-Frame-Options:
+      - SAMEORIGIN
+      Transfer-Encoding:
+      - chunked
+    body:
+      encoding: US-ASCII
+      string: ! "{\n   \"results\" : [\n      {\n         \"address_components\" :
+        [\n            {\n               \"long_name\" : \"San Francisco Airport\",\n
+        \              \"short_name\" : \"San Francisco Airport\",\n               \"types\"
+        : [ \"establishment\" ]\n            },\n            {\n               \"long_name\"
+        : \"South Airport Boulevard\",\n               \"short_name\" : \"South Airport
+        Boulevard\",\n               \"types\" : [ \"route\" ]\n            },\n            {\n
+        \              \"long_name\" : \"San Francisco\",\n               \"short_name\"
+        : \"San Francisco\",\n               \"types\" : [ \"locality\", \"political\"
+        ]\n            },\n            {\n               \"long_name\" : \"San Mateo\",\n
+        \              \"short_name\" : \"San Mateo\",\n               \"types\" :
+        [ \"administrative_area_level_2\", \"political\" ]\n            },\n            {\n
+        \              \"long_name\" : \"California\",\n               \"short_name\"
+        : \"CA\",\n               \"types\" : [ \"administrative_area_level_1\", \"political\"
+        ]\n            },\n            {\n               \"long_name\" : \"United
+        States\",\n               \"short_name\" : \"US\",\n               \"types\"
+        : [ \"country\", \"political\" ]\n            },\n            {\n               \"long_name\"
+        : \"94128\",\n               \"short_name\" : \"94128\",\n               \"types\"
+        : [ \"postal_code\" ]\n            }\n         ],\n         \"formatted_address\"
+        : \"San Francisco Airport (SFO), South Airport Boulevard, San Francisco, CA
+        94128, USA\",\n         \"geometry\" : {\n            \"bounds\" : {\n               \"northeast\"
+        : {\n                  \"lat\" : 37.63970170,\n                  \"lng\" :
+        -122.35491970\n               },\n               \"southwest\" : {\n                  \"lat\"
+        : 37.6042910,\n                  \"lng\" : -122.40154280\n               }\n
+        \           },\n            \"location\" : {\n               \"lat\" : 37.6152230,\n
+        \              \"lng\" : -122.3899790\n            },\n            \"location_type\"
+        : \"APPROXIMATE\",\n            \"viewport\" : {\n               \"northeast\"
+        : {\n                  \"lat\" : 37.63970170,\n                  \"lng\" :
+        -122.35491970\n               },\n               \"southwest\" : {\n                  \"lat\"
+        : 37.6042910,\n                  \"lng\" : -122.40154280\n               }\n
+        \           }\n         },\n         \"types\" : [ \"airport\", \"transit_station\",
+        \"establishment\" ]\n      }\n   ],\n   \"status\" : \"OK\"\n}\n"
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:45:49 GMT
+- request:
+    method: post
+    uri: http://wherein.yahooapis.com/v1/document
+    body:
+      encoding: US-ASCII
+      string: documentType=text%2Fhtml&outputType=xml&documentContent=San+Francisco%2C+CA%2C+United+States&appid=YAHOO
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 09 Feb 2013 16:45:49 GMT
+      P3p:
+      - policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV
+        TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY
+        ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV"
+      X-Yahoo-Serving-Host:
+      - wws01.geotech.bf1.yahoo.com
+      Content-Language:
+      - en
+      Cache-Control:
+      - public,must-revalidate
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Age:
+      - '0'
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Via:
+      - HTTP/1.1 r05.ycpi.nyc.yahoo.net (YahooTrafficServer/1.20.20 [cMsSf ])
+      Server:
+      - YTS/1.20.20
+    body:
+      encoding: US-ASCII
+      string: ! '<?xml version="1.0" encoding="utf-8"?>
+
+        <contentlocation xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns:xml="http://www.w3.org/XML/1998/namespace"
+        xmlns="http://wherein.yahooapis.com/v1/schema" xml:lang="en">
+
+        <processingTime>0.00186</processingTime>
+
+        <version>1.8.0.872 build 121220</version>
+
+        <documentLength>32</documentLength>
+
+        <document>
+
+        <administrativeScope>
+
+        <woeId>2487956</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[San Francisco, CA, US]]></name>
+
+        <centroid>
+
+        <latitude>37.7771</latitude>
+
+        <longitude>-122.42</longitude>
+
+        </centroid>
+
+        </administrativeScope>
+
+        <geographicScope>
+
+        <woeId>2487956</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[San Francisco, CA, US]]></name>
+
+        <centroid>
+
+        <latitude>37.7771</latitude>
+
+        <longitude>-122.42</longitude>
+
+        </centroid>
+
+        </geographicScope>
+
+        <localScopes>
+
+        <localScope>
+
+        <woeId>2487956</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[San Francisco, CA, US (Town)]]></name>
+
+        <centroid>
+
+        <latitude>37.7771</latitude>
+
+        <longitude>-122.42</longitude>
+
+        </centroid>
+
+        <southWest>
+
+        <latitude>37.604</latitude>
+
+        <longitude>-123.014</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>37.8324</latitude>
+
+        <longitude>-122.355</longitude>
+
+        </northEast>
+
+        <ancestors>
+
+        <ancestor>
+
+        <woeId>12587707</woeId>
+
+        <type>County</type>
+
+        <name><![CDATA[San Francisco]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>2347563</woeId>
+
+        <type>State</type>
+
+        <name><![CDATA[California]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>23424977</woeId>
+
+        <type>Country</type>
+
+        <name><![CDATA[United States]]></name>
+
+        </ancestor>
+
+        </ancestors>
+
+        </localScope>
+
+        </localScopes>
+
+        <extents>
+
+        <center>
+
+        <latitude>37.7771</latitude>
+
+        <longitude>-122.42</longitude>
+
+        </center>
+
+        <southWest>
+
+        <latitude>37.604</latitude>
+
+        <longitude>-123.014</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>37.8324</latitude>
+
+        <longitude>-122.355</longitude>
+
+        </northEast>
+
+        </extents>
+
+        <placeDetails>
+
+        <placeId>1</placeId>
+
+        <place>
+
+        <woeId>2487956</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[San Francisco, CA, US]]></name>
+
+        <centroid>
+
+        <latitude>37.7771</latitude>
+
+        <longitude>-122.42</longitude>
+
+        </centroid>
+
+        </place>
+
+        <placeReferenceIds>1</placeReferenceIds>
+
+        <matchType>0</matchType>
+
+        <weight>1</weight>
+
+        <confidence>10</confidence>
+
+        </placeDetails>
+
+        <referenceList>
+
+        <reference>
+
+        <woeIds>2487956</woeIds>
+
+        <placeReferenceId>1</placeReferenceId>
+
+        <placeIds>1</placeIds>
+
+        <start>0</start>
+
+        <end>32</end>
+
+        <isPlaintextMarker>1</isPlaintextMarker>
+
+        <text><![CDATA[San Francisco, CA, United States]]></text>
+
+        <type>plaintext</type>
+
+        <xpath><![CDATA[]]></xpath>
+
+        </reference>
+
+        </referenceList>
+
+        </document>
+
+        </contentlocation>
+
+'
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:45:49 GMT
+- request:
+    method: post
+    uri: http://wherein.yahooapis.com/v1/document
+    body:
+      encoding: US-ASCII
+      string: documentType=text%2Fhtml&outputType=xml&documentContent=New+York%2C+NY&appid=<YAHOO_KEY>
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 09 Feb 2013 16:59:13 GMT
+      P3p:
+      - policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV
+        TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY
+        ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV"
+      X-Yahoo-Serving-Host:
+      - wws09.geotech.bf1.yahoo.com
+      Content-Language:
+      - en
+      Cache-Control:
+      - public,must-revalidate
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Age:
+      - '0'
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Via:
+      - HTTP/1.1 r16.ycpi.ac4.yahoo.net (YahooTrafficServer/1.20.20 [cMsSf ])
+      Server:
+      - YTS/1.20.20
+    body:
+      encoding: US-ASCII
+      string: ! '<?xml version="1.0" encoding="utf-8"?>
+
+        <contentlocation xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns:xml="http://www.w3.org/XML/1998/namespace"
+        xmlns="http://wherein.yahooapis.com/v1/schema" xml:lang="en">
+
+        <processingTime>0.001486</processingTime>
+
+        <version>1.8.0.872 build 121220</version>
+
+        <documentLength>12</documentLength>
+
+        <document>
+
+        <administrativeScope>
+
+        <woeId>2459115</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[New York, NY, US]]></name>
+
+        <centroid>
+
+        <latitude>40.7146</latitude>
+
+        <longitude>-74.0071</longitude>
+
+        </centroid>
+
+        </administrativeScope>
+
+        <geographicScope>
+
+        <woeId>2459115</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[New York, NY, US]]></name>
+
+        <centroid>
+
+        <latitude>40.7146</latitude>
+
+        <longitude>-74.0071</longitude>
+
+        </centroid>
+
+        </geographicScope>
+
+        <localScopes>
+
+        <localScope>
+
+        <woeId>2459115</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[New York, NY, US (Town)]]></name>
+
+        <centroid>
+
+        <latitude>40.7146</latitude>
+
+        <longitude>-74.0071</longitude>
+
+        </centroid>
+
+        <southWest>
+
+        <latitude>40.4766</latitude>
+
+        <longitude>-74.2589</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>40.9176</latitude>
+
+        <longitude>-73.7004</longitude>
+
+        </northEast>
+
+        <ancestors>
+
+        <ancestor>
+
+        <woeId>2347591</woeId>
+
+        <type>State</type>
+
+        <name><![CDATA[New York]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>23424977</woeId>
+
+        <type>Country</type>
+
+        <name><![CDATA[United States]]></name>
+
+        </ancestor>
+
+        </ancestors>
+
+        </localScope>
+
+        </localScopes>
+
+        <extents>
+
+        <center>
+
+        <latitude>40.7146</latitude>
+
+        <longitude>-74.0071</longitude>
+
+        </center>
+
+        <southWest>
+
+        <latitude>40.4766</latitude>
+
+        <longitude>-74.2589</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>40.9176</latitude>
+
+        <longitude>-73.7004</longitude>
+
+        </northEast>
+
+        </extents>
+
+        <placeDetails>
+
+        <placeId>1</placeId>
+
+        <place>
+
+        <woeId>2459115</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[New York, NY, US]]></name>
+
+        <centroid>
+
+        <latitude>40.7146</latitude>
+
+        <longitude>-74.0071</longitude>
+
+        </centroid>
+
+        </place>
+
+        <placeReferenceIds>1</placeReferenceIds>
+
+        <matchType>0</matchType>
+
+        <weight>1</weight>
+
+        <confidence>10</confidence>
+
+        </placeDetails>
+
+        <referenceList>
+
+        <reference>
+
+        <woeIds>2459115</woeIds>
+
+        <placeReferenceId>1</placeReferenceId>
+
+        <placeIds>1</placeIds>
+
+        <start>0</start>
+
+        <end>12</end>
+
+        <isPlaintextMarker>1</isPlaintextMarker>
+
+        <text><![CDATA[New York, NY]]></text>
+
+        <type>plaintext</type>
+
+        <xpath><![CDATA[]]></xpath>
+
+        </reference>
+
+        </referenceList>
+
+        </document>
+
+        </contentlocation>
+
+'
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:59:13 GMT
+- request:
+    method: post
+    uri: http://wherein.yahooapis.com/v1/document
+    body:
+      encoding: US-ASCII
+      string: documentType=text%2Fhtml&outputType=xml&documentContent=Beverly+Hills%2C+CA%2C+United+States&appid=<YAHOO_KEY>
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 09 Feb 2013 16:59:13 GMT
+      P3p:
+      - policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV
+        TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY
+        ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV"
+      X-Yahoo-Serving-Host:
+      - wws02.geotech.bf1.yahoo.com
+      Content-Language:
+      - en
+      Cache-Control:
+      - public,must-revalidate
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Age:
+      - '0'
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Via:
+      - HTTP/1.1 r16.ycpi.ac4.yahoo.net (YahooTrafficServer/1.20.20 [cMsSf ])
+      Server:
+      - YTS/1.20.20
+    body:
+      encoding: US-ASCII
+      string: ! '<?xml version="1.0" encoding="utf-8"?>
+
+        <contentlocation xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns:xml="http://www.w3.org/XML/1998/namespace"
+        xmlns="http://wherein.yahooapis.com/v1/schema" xml:lang="en">
+
+        <processingTime>0.001898</processingTime>
+
+        <version>1.8.0.872 build 121220</version>
+
+        <documentLength>32</documentLength>
+
+        <document>
+
+        <administrativeScope>
+
+        <woeId>2363796</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Beverly Hills, CA, US]]></name>
+
+        <centroid>
+
+        <latitude>34.0735</latitude>
+
+        <longitude>-118.4</longitude>
+
+        </centroid>
+
+        </administrativeScope>
+
+        <geographicScope>
+
+        <woeId>2363796</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Beverly Hills, CA, US]]></name>
+
+        <centroid>
+
+        <latitude>34.0735</latitude>
+
+        <longitude>-118.4</longitude>
+
+        </centroid>
+
+        </geographicScope>
+
+        <localScopes>
+
+        <localScope>
+
+        <woeId>2363796</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Beverly Hills, CA, US (Town)]]></name>
+
+        <centroid>
+
+        <latitude>34.0735</latitude>
+
+        <longitude>-118.4</longitude>
+
+        </centroid>
+
+        <southWest>
+
+        <latitude>34.0541</latitude>
+
+        <longitude>-118.427</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>34.1125</latitude>
+
+        <longitude>-118.372</longitude>
+
+        </northEast>
+
+        <ancestors>
+
+        <ancestor>
+
+        <woeId>12587688</woeId>
+
+        <type>County</type>
+
+        <name><![CDATA[Los Angeles]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>2347563</woeId>
+
+        <type>State</type>
+
+        <name><![CDATA[California]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>23424977</woeId>
+
+        <type>Country</type>
+
+        <name><![CDATA[United States]]></name>
+
+        </ancestor>
+
+        </ancestors>
+
+        </localScope>
+
+        </localScopes>
+
+        <extents>
+
+        <center>
+
+        <latitude>34.0735</latitude>
+
+        <longitude>-118.4</longitude>
+
+        </center>
+
+        <southWest>
+
+        <latitude>34.0541</latitude>
+
+        <longitude>-118.427</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>34.1125</latitude>
+
+        <longitude>-118.372</longitude>
+
+        </northEast>
+
+        </extents>
+
+        <placeDetails>
+
+        <placeId>1</placeId>
+
+        <place>
+
+        <woeId>2363796</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Beverly Hills, CA, US]]></name>
+
+        <centroid>
+
+        <latitude>34.0735</latitude>
+
+        <longitude>-118.4</longitude>
+
+        </centroid>
+
+        </place>
+
+        <placeReferenceIds>1</placeReferenceIds>
+
+        <matchType>0</matchType>
+
+        <weight>1</weight>
+
+        <confidence>10</confidence>
+
+        </placeDetails>
+
+        <referenceList>
+
+        <reference>
+
+        <woeIds>2363796</woeIds>
+
+        <placeReferenceId>1</placeReferenceId>
+
+        <placeIds>1</placeIds>
+
+        <start>0</start>
+
+        <end>32</end>
+
+        <isPlaintextMarker>1</isPlaintextMarker>
+
+        <text><![CDATA[Beverly Hills, CA, United States]]></text>
+
+        <type>plaintext</type>
+
+        <xpath><![CDATA[]]></xpath>
+
+        </reference>
+
+        </referenceList>
+
+        </document>
+
+        </contentlocation>
+
+'
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:59:13 GMT
+- request:
+    method: post
+    uri: http://wherein.yahooapis.com/v1/document
+    body:
+      encoding: US-ASCII
+      string: documentType=text%2Fhtml&outputType=xml&documentContent=T5B+4M9&appid=<YAHOO_KEY>
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 09 Feb 2013 16:59:13 GMT
+      P3p:
+      - policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV
+        TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY
+        ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV"
+      X-Yahoo-Serving-Host:
+      - wws13.geotech.bf1.yahoo.com
+      Content-Language:
+      - en
+      Cache-Control:
+      - public,must-revalidate
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Age:
+      - '0'
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Via:
+      - HTTP/1.1 r25.ycpi.ac4.yahoo.net (YahooTrafficServer/1.20.20 [cMsSf ])
+      Server:
+      - YTS/1.20.20
+    body:
+      encoding: US-ASCII
+      string: ! '<?xml version="1.0" encoding="utf-8"?>
+
+        <contentlocation xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns:xml="http://www.w3.org/XML/1998/namespace"
+        xmlns="http://wherein.yahooapis.com/v1/schema" xml:lang="en">
+
+        <processingTime>0.00147</processingTime>
+
+        <version>1.8.0.872 build 121220</version>
+
+        <documentLength>7</documentLength>
+
+        <document>
+
+        <administrativeScope>
+
+        <woeId>8676</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Edmonton, Alberta, CA]]></name>
+
+        <centroid>
+
+        <latitude>53.5559</latitude>
+
+        <longitude>-113.493</longitude>
+
+        </centroid>
+
+        </administrativeScope>
+
+        <geographicScope>
+
+        <woeId>24354344</woeId>
+
+        <type>Zip</type>
+
+        <name><![CDATA[T5B 4M9, Edmonton, Alberta, CA]]></name>
+
+        <centroid>
+
+        <latitude>53.5705</latitude>
+
+        <longitude>-113.458</longitude>
+
+        </centroid>
+
+        </geographicScope>
+
+        <localScopes>
+
+        <localScope>
+
+        <woeId>24354344</woeId>
+
+        <type>Zip</type>
+
+        <name><![CDATA[T5B 4M9, Edmonton, Alberta, CA (Zip)]]></name>
+
+        <centroid>
+
+        <latitude>53.5705</latitude>
+
+        <longitude>-113.458</longitude>
+
+        </centroid>
+
+        <southWest>
+
+        <latitude>53.5695</latitude>
+
+        <longitude>-113.46</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>53.5715</latitude>
+
+        <longitude>-113.456</longitude>
+
+        </northEast>
+
+        <ancestors>
+
+        <ancestor>
+
+        <woeId>8676</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Edmonton]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>29375228</woeId>
+
+        <type>County</type>
+
+        <name><![CDATA[Alberta]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>2344915</woeId>
+
+        <type>Province/Territory</type>
+
+        <name><![CDATA[Alberta]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>23424775</woeId>
+
+        <type>Country</type>
+
+        <name><![CDATA[Canada]]></name>
+
+        </ancestor>
+
+        </ancestors>
+
+        </localScope>
+
+        </localScopes>
+
+        <extents>
+
+        <center>
+
+        <latitude>53.5705</latitude>
+
+        <longitude>-113.458</longitude>
+
+        </center>
+
+        <southWest>
+
+        <latitude>53.5695</latitude>
+
+        <longitude>-113.46</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>53.5715</latitude>
+
+        <longitude>-113.456</longitude>
+
+        </northEast>
+
+        </extents>
+
+        <placeDetails>
+
+        <placeId>1</placeId>
+
+        <place>
+
+        <woeId>24354344</woeId>
+
+        <type>Zip</type>
+
+        <name><![CDATA[T5B 4M9, Edmonton, Alberta, CA]]></name>
+
+        <centroid>
+
+        <latitude>53.5705</latitude>
+
+        <longitude>-113.458</longitude>
+
+        </centroid>
+
+        </place>
+
+        <placeReferenceIds>1</placeReferenceIds>
+
+        <matchType>0</matchType>
+
+        <weight>1</weight>
+
+        <confidence>7</confidence>
+
+        </placeDetails>
+
+        <referenceList>
+
+        <reference>
+
+        <woeIds>24354344</woeIds>
+
+        <placeReferenceId>1</placeReferenceId>
+
+        <placeIds>1</placeIds>
+
+        <start>0</start>
+
+        <end>7</end>
+
+        <isPlaintextMarker>1</isPlaintextMarker>
+
+        <text><![CDATA[T5B 4M9]]></text>
+
+        <type>plaintext</type>
+
+        <xpath><![CDATA[]]></xpath>
+
+        </reference>
+
+        </referenceList>
+
+        </document>
+
+        </contentlocation>
+
+'
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:59:13 GMT
+- request:
+    method: post
+    uri: http://wherein.yahooapis.com/v1/document
+    body:
+      encoding: US-ASCII
+      string: documentType=text%2Fhtml&outputType=xml&documentContent=%3Chtml%3E%3Cbody%3E%3Cdiv+class%3D%22geo%22%3E%3Cspan+class%3D%22latitude%22%3E40.756054%3C%2Fspan%3E%3Cspan+class%3D%22longitude%22%3E-73.986951%3C%2Fspan%3E%3C%2Fdiv%3E%3C%2Fbody%3E%3C%2Fhtml%3E&appid=<YAHOO_KEY>
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 09 Feb 2013 16:59:13 GMT
+      P3p:
+      - policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV
+        TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY
+        ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV"
+      X-Yahoo-Serving-Host:
+      - wws06.geotech.bf1.yahoo.com
+      Content-Language:
+      - en
+      Cache-Control:
+      - public,must-revalidate
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Age:
+      - '0'
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Via:
+      - HTTP/1.1 r13.ycpi.ac4.yahoo.net (YahooTrafficServer/1.20.20 [cMsSf ])
+      Server:
+      - YTS/1.20.20
+    body:
+      encoding: US-ASCII
+      string: ! '<?xml version="1.0" encoding="utf-8"?>
+
+        <contentlocation xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns:xml="http://www.w3.org/XML/1998/namespace"
+        xmlns="http://wherein.yahooapis.com/v1/schema" xml:lang="en">
+
+        <processingTime>0.00404</processingTime>
+
+        <version>1.8.0.872 build 121220</version>
+
+        <documentLength>129</documentLength>
+
+        <document>
+
+        <administrativeScope>
+
+        <woeId>12589342</woeId>
+
+        <type>County</type>
+
+        <name><![CDATA[Manhattan, New York, NY, US]]></name>
+
+        <centroid>
+
+        <latitude>40.7909</latitude>
+
+        <longitude>-73.9664</longitude>
+
+        </centroid>
+
+        </administrativeScope>
+
+        <geographicScope>
+
+        <woeId>12761349</woeId>
+
+        <type>Zip</type>
+
+        <name><![CDATA[10018, New York, NY, US]]></name>
+
+        <centroid>
+
+        <latitude>40.7565</latitude>
+
+        <longitude>-73.9972</longitude>
+
+        </centroid>
+
+        </geographicScope>
+
+        <localScopes>
+
+        <localScope>
+
+        <woeId>12761349</woeId>
+
+        <type>Zip</type>
+
+        <name><![CDATA[10018, New York, NY, US (Zip)]]></name>
+
+        <centroid>
+
+        <latitude>40.7565</latitude>
+
+        <longitude>-73.9972</longitude>
+
+        </centroid>
+
+        <southWest>
+
+        <latitude>40.7491</latitude>
+
+        <longitude>-74.0071</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>40.7614</latitude>
+
+        <longitude>-73.9809</longitude>
+
+        </northEast>
+
+        <ancestors>
+
+        <ancestor>
+
+        <woeId>12589342</woeId>
+
+        <type>County</type>
+
+        <name><![CDATA[Manhattan]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>2459115</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[New York]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>2347591</woeId>
+
+        <type>State</type>
+
+        <name><![CDATA[New York]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>23424977</woeId>
+
+        <type>Country</type>
+
+        <name><![CDATA[United States]]></name>
+
+        </ancestor>
+
+        </ancestors>
+
+        </localScope>
+
+        </localScopes>
+
+        <extents>
+
+        <center>
+
+        <latitude>40.7561</latitude>
+
+        <longitude>-73.987</longitude>
+
+        </center>
+
+        <southWest>
+
+        <latitude>40.7491</latitude>
+
+        <longitude>-74.0071</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>40.7614</latitude>
+
+        <longitude>-73.9809</longitude>
+
+        </northEast>
+
+        </extents>
+
+        <placeDetails>
+
+        <placeId>1</placeId>
+
+        <place>
+
+        <woeId>12761349</woeId>
+
+        <type>Zip</type>
+
+        <name><![CDATA[10018, New York, NY, US]]></name>
+
+        <centroid>
+
+        <latitude>40.7561</latitude>
+
+        <longitude>-73.987</longitude>
+
+        </centroid>
+
+        </place>
+
+        <placeReferenceIds>1</placeReferenceIds>
+
+        <matchType>1</matchType>
+
+        <weight>1</weight>
+
+        <confidence>10</confidence>
+
+        </placeDetails>
+
+        <referenceList>
+
+        <reference>
+
+        <woeIds>12761349</woeIds>
+
+        <placeReferenceId>1</placeReferenceId>
+
+        <placeIds>1</placeIds>
+
+        <start>-1</start>
+
+        <end>-1</end>
+
+        <isPlaintextMarker>0</isPlaintextMarker>
+
+        <text><![CDATA[]]></text>
+
+        <type>xpath</type>
+
+        <xpath><![CDATA[/html[1]/body[1]/div[1]/span[2]]]></xpath>
+
+        </reference>
+
+        </referenceList>
+
+        </document>
+
+        </contentlocation>
+
+'
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:59:13 GMT
+- request:
+    method: post
+    uri: http://wherein.yahooapis.com/v1/document
+    body:
+      encoding: US-ASCII
+      string: documentType=text%2Fhtml&outputType=xml&documentContent=Atlanta%2C+GA%2C+US&appid=<YAHOO_KEY>
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 09 Feb 2013 16:59:14 GMT
+      P3p:
+      - policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV
+        TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY
+        ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV"
+      X-Yahoo-Serving-Host:
+      - wws04.geotech.bf1.yahoo.com
+      Content-Language:
+      - en
+      Cache-Control:
+      - public,must-revalidate
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Age:
+      - '0'
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Via:
+      - HTTP/1.1 r16.ycpi.ac4.yahoo.net (YahooTrafficServer/1.20.20 [cMsSf ])
+      Server:
+      - YTS/1.20.20
+    body:
+      encoding: US-ASCII
+      string: ! '<?xml version="1.0" encoding="utf-8"?>
+
+        <contentlocation xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns:xml="http://www.w3.org/XML/1998/namespace"
+        xmlns="http://wherein.yahooapis.com/v1/schema" xml:lang="en">
+
+        <processingTime>0.001492</processingTime>
+
+        <version>1.8.0.872 build 121220</version>
+
+        <documentLength>15</documentLength>
+
+        <document>
+
+        <administrativeScope>
+
+        <woeId>2357024</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Atlanta, GA, US]]></name>
+
+        <centroid>
+
+        <latitude>33.7483</latitude>
+
+        <longitude>-84.3911</longitude>
+
+        </centroid>
+
+        </administrativeScope>
+
+        <geographicScope>
+
+        <woeId>2357024</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Atlanta, GA, US]]></name>
+
+        <centroid>
+
+        <latitude>33.7483</latitude>
+
+        <longitude>-84.3911</longitude>
+
+        </centroid>
+
+        </geographicScope>
+
+        <localScopes>
+
+        <localScope>
+
+        <woeId>2357024</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Atlanta, GA, US (Town)]]></name>
+
+        <centroid>
+
+        <latitude>33.7483</latitude>
+
+        <longitude>-84.3911</longitude>
+
+        </centroid>
+
+        <southWest>
+
+        <latitude>33.648</latitude>
+
+        <longitude>-84.5466</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>33.8872</latitude>
+
+        <longitude>-84.2897</longitude>
+
+        </northEast>
+
+        <ancestors>
+
+        <ancestor>
+
+        <woeId>12587929</woeId>
+
+        <type>County</type>
+
+        <name><![CDATA[Fulton]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>2347569</woeId>
+
+        <type>State</type>
+
+        <name><![CDATA[Georgia]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>23424977</woeId>
+
+        <type>Country</type>
+
+        <name><![CDATA[United States]]></name>
+
+        </ancestor>
+
+        </ancestors>
+
+        </localScope>
+
+        </localScopes>
+
+        <extents>
+
+        <center>
+
+        <latitude>33.7483</latitude>
+
+        <longitude>-84.3911</longitude>
+
+        </center>
+
+        <southWest>
+
+        <latitude>33.648</latitude>
+
+        <longitude>-84.5466</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>33.8872</latitude>
+
+        <longitude>-84.2897</longitude>
+
+        </northEast>
+
+        </extents>
+
+        <placeDetails>
+
+        <placeId>1</placeId>
+
+        <place>
+
+        <woeId>2357024</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[Atlanta, GA, US]]></name>
+
+        <centroid>
+
+        <latitude>33.7483</latitude>
+
+        <longitude>-84.3911</longitude>
+
+        </centroid>
+
+        </place>
+
+        <placeReferenceIds>1</placeReferenceIds>
+
+        <matchType>0</matchType>
+
+        <weight>1</weight>
+
+        <confidence>10</confidence>
+
+        </placeDetails>
+
+        <referenceList>
+
+        <reference>
+
+        <woeIds>2357024</woeIds>
+
+        <placeReferenceId>1</placeReferenceId>
+
+        <placeIds>1</placeIds>
+
+        <start>0</start>
+
+        <end>15</end>
+
+        <isPlaintextMarker>1</isPlaintextMarker>
+
+        <text><![CDATA[Atlanta, GA, US]]></text>
+
+        <type>plaintext</type>
+
+        <xpath><![CDATA[]]></xpath>
+
+        </reference>
+
+        </referenceList>
+
+        </document>
+
+        </contentlocation>
+
+'
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:59:14 GMT
+- request:
+    method: post
+    uri: http://wherein.yahooapis.com/v1/document
+    body:
+      encoding: US-ASCII
+      string: documentType=text%2Fhtml&outputType=xml&documentContent=San+Francisco%2C+CA%2C+United+States&appid=<YAHOO_KEY>
+    headers:
+      Accept:
+      - ! '*/*'
+      User-Agent:
+      - Ruby
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Sat, 09 Feb 2013 16:59:14 GMT
+      P3p:
+      - policyref="http://info.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV
+        TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY
+        ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV"
+      X-Yahoo-Serving-Host:
+      - wws01.geotech.bf1.yahoo.com
+      Content-Language:
+      - en
+      Cache-Control:
+      - public,must-revalidate
+      Content-Type:
+      - text/xml; charset=UTF-8
+      Age:
+      - '0'
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Via:
+      - HTTP/1.1 r07.ycpi.ac4.yahoo.net (YahooTrafficServer/1.20.20 [cMsSf ])
+      Server:
+      - YTS/1.20.20
+    body:
+      encoding: US-ASCII
+      string: ! '<?xml version="1.0" encoding="utf-8"?>
+
+        <contentlocation xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns:xml="http://www.w3.org/XML/1998/namespace"
+        xmlns="http://wherein.yahooapis.com/v1/schema" xml:lang="en">
+
+        <processingTime>0.001854</processingTime>
+
+        <version>1.8.0.872 build 121220</version>
+
+        <documentLength>32</documentLength>
+
+        <document>
+
+        <administrativeScope>
+
+        <woeId>2487956</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[San Francisco, CA, US]]></name>
+
+        <centroid>
+
+        <latitude>37.7771</latitude>
+
+        <longitude>-122.42</longitude>
+
+        </centroid>
+
+        </administrativeScope>
+
+        <geographicScope>
+
+        <woeId>2487956</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[San Francisco, CA, US]]></name>
+
+        <centroid>
+
+        <latitude>37.7771</latitude>
+
+        <longitude>-122.42</longitude>
+
+        </centroid>
+
+        </geographicScope>
+
+        <localScopes>
+
+        <localScope>
+
+        <woeId>2487956</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[San Francisco, CA, US (Town)]]></name>
+
+        <centroid>
+
+        <latitude>37.7771</latitude>
+
+        <longitude>-122.42</longitude>
+
+        </centroid>
+
+        <southWest>
+
+        <latitude>37.604</latitude>
+
+        <longitude>-123.014</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>37.8324</latitude>
+
+        <longitude>-122.355</longitude>
+
+        </northEast>
+
+        <ancestors>
+
+        <ancestor>
+
+        <woeId>12587707</woeId>
+
+        <type>County</type>
+
+        <name><![CDATA[San Francisco]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>2347563</woeId>
+
+        <type>State</type>
+
+        <name><![CDATA[California]]></name>
+
+        </ancestor>
+
+        <ancestor>
+
+        <woeId>23424977</woeId>
+
+        <type>Country</type>
+
+        <name><![CDATA[United States]]></name>
+
+        </ancestor>
+
+        </ancestors>
+
+        </localScope>
+
+        </localScopes>
+
+        <extents>
+
+        <center>
+
+        <latitude>37.7771</latitude>
+
+        <longitude>-122.42</longitude>
+
+        </center>
+
+        <southWest>
+
+        <latitude>37.604</latitude>
+
+        <longitude>-123.014</longitude>
+
+        </southWest>
+
+        <northEast>
+
+        <latitude>37.8324</latitude>
+
+        <longitude>-122.355</longitude>
+
+        </northEast>
+
+        </extents>
+
+        <placeDetails>
+
+        <placeId>1</placeId>
+
+        <place>
+
+        <woeId>2487956</woeId>
+
+        <type>Town</type>
+
+        <name><![CDATA[San Francisco, CA, US]]></name>
+
+        <centroid>
+
+        <latitude>37.7771</latitude>
+
+        <longitude>-122.42</longitude>
+
+        </centroid>
+
+        </place>
+
+        <placeReferenceIds>1</placeReferenceIds>
+
+        <matchType>0</matchType>
+
+        <weight>1</weight>
+
+        <confidence>10</confidence>
+
+        </placeDetails>
+
+        <referenceList>
+
+        <reference>
+
+        <woeIds>2487956</woeIds>
+
+        <placeReferenceId>1</placeReferenceId>
+
+        <placeIds>1</placeIds>
+
+        <start>0</start>
+
+        <end>32</end>
+
+        <isPlaintextMarker>1</isPlaintextMarker>
+
+        <text><![CDATA[San Francisco, CA, United States]]></text>
+
+        <type>plaintext</type>
+
+        <xpath><![CDATA[]]></xpath>
+
+        </reference>
+
+        </referenceList>
+
+        </document>
+
+        </contentlocation>
+
+'
+    http_version: 
+  recorded_at: Sat, 09 Feb 2013 16:59:14 GMT
+recorded_with: VCR 2.4.0

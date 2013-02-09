@@ -1,11 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "Query::Format" do
-
+describe Barometer::Query::Format do
   describe "and class methods" do
-
     describe "is?," do
-
       it "requires a String" do
         invalid = 1
         lambda { Barometer::Query::Format.is?(invalid) }.should raise_error(ArgumentError)
@@ -18,11 +15,9 @@ describe "Query::Format" do
       it "calls a stubbed undefined method" do
         lambda { Barometer::Query::Format.is?("valid") }.should raise_error(NotImplementedError)
       end
-
     end
 
     describe "converts?," do
-
       it "requires a Query object" do
         invalid = 1
         Barometer::Query::Format.converts?(invalid).should be_false
@@ -36,7 +31,6 @@ describe "Query::Format" do
         valid = Barometer::Query.new
         Barometer::Query::Format.converts?(valid).should be_false
       end
-
     end
 
     it "detects a Query object" do
@@ -76,7 +70,5 @@ describe "Query::Format" do
       text = "this is a query"
       Barometer::Query::Format.convert_query(text).should == text
     end
-
   end
-
 end

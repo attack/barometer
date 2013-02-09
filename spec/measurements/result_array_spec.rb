@@ -1,33 +1,28 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "Result Array" do
-
+describe Barometer::Measurement::ResultArray do
   describe "instance methods" do
-
     before(:each) do
-      @array = Measurement::ResultArray.new
+      @array = Barometer::Measurement::ResultArray.new
     end
 
     describe "'<<'" do
-
-      it "requires Measurement::Result" do
+      it "requires Barometer::Measurement::Result" do
         lambda { @array << "invalid" }.should raise_error(ArgumentError)
       end
 
       it "adds ForecastMeasurement" do
         @array.size.should == 0
-        forecast = Measurement::Result.new
+        forecast = Barometer::Measurement::Result.new
         @array << forecast
         @array.size.should == 1
       end
-
     end
 
     describe "when searching forecasts using 'for'" do
-
       before(:each) do
         1.upto(4) do |i|
-          forecast_measurement = Measurement::Result.new
+          forecast_measurement = Barometer::Measurement::Result.new
           forecast_measurement.date = Date.parse((Time.now + (i * 60 * 60 * 24)).to_s)
           @array << forecast_measurement
         end
@@ -37,7 +32,7 @@ describe "Result Array" do
       end
 
       it "returns nil when there are no forecasts" do
-        @array = Measurement::ResultArray.new
+        @array = Barometer::Measurement::ResultArray.new
         @array.size.should == 0
         @array.for(@tommorrow).should be_nil
       end
@@ -82,24 +77,18 @@ describe "Result Array" do
         tommorrow.class.should == String
         @array[tommorrow].should == @array.first
       end
-
     end
-
   end
 
   describe "simple questions" do
-
     before(:each) do
-      @array = Measurement::ResultArray.new
-      #@early = Data::LocalTime("6:00 am")
-      #@noon = Data::LocalTime("12:00 pm")
-      #@late = Data::LocalTime("8:00 pm")
+      @array = Barometer::Measurement::ResultArray.new
       @now = Time.utc(2009,5,5,10,30,25)
 
       @sun_icons = %w(sunny)
 
       0.upto(1) do |i|
-        forecast_measurement = Measurement::Result.new
+        forecast_measurement = Barometer::Measurement::Result.new
         forecast_measurement.date = Date.parse((@now + (i * 60 * 60 * 24)).to_s)
         wind = Data::Speed.new
         wind << (i * 5)
@@ -139,7 +128,6 @@ describe "Result Array" do
     end
 
     describe "wet?" do
-
       it "answers via pop" do
         @array.wet?(@tommorrow).should be_false
         @array.wet?(@tommorrow,nil,50).should be_false
@@ -157,9 +145,6 @@ describe "Result Array" do
         # pretend that "sun" means wet
         @array.wet?(@tommorrow,@sun_icons).should be_true
       end
-
     end
-
   end
-
 end

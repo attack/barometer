@@ -1,9 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "Measurement" do
-
+describe Barometer::Measurement do
   describe "when initialized" do
-
     before(:each) do
       @measurement = Barometer::Measurement.new
     end
@@ -66,15 +64,9 @@ describe "Measurement" do
     it "responds to measured_at" do
       @measurement.measured_at.should be_nil
     end
-
-    # it "responds to measured_for" do
-    #   @measurement.links.should == {}
-    # end
-
   end
 
   describe "when writing data" do
-
     before(:each) do
       @measurement = Barometer::Measurement.new
     end
@@ -178,11 +170,9 @@ describe "Measurement" do
       valid_data.class.should == Data::LocalTime
       lambda { @measurement.measured_at = valid_data }.should_not raise_error(ArgumentError)
     end
-
   end
 
   describe "and the helpers" do
-
     before(:each) do
       @measurement = Barometer::Measurement.new
     end
@@ -233,27 +223,9 @@ describe "Measurement" do
       @measurement.current.current_at = Data::LocalTime.new(9,0,0)
       @measurement.current?.should be_true
       @measurement.current?("9:00 am").should be_true
-
-
     end
 
-
-    # it "indicates if current" do
-    #   #@measurement.time.should be_nil
-    #   @measurement.current?.should be_false
-    #   @measurement.stamp!
-    #   @measurement.time.should_not be_nil
-    #   @measurement.current?.should be_true
-    #
-    #   @measurement.time -= (60*60*3)
-    #   @measurement.current?.should be_true
-    #
-    #   @measurement.time -= (60*60*5)
-    #   @measurement.current?.should be_false
-    # end
-
     describe "changing units" do
-
       before(:each) do
         @measurement = Barometer::Measurement.new
       end
@@ -278,13 +250,10 @@ describe "Measurement" do
         @measurement.metric!
         @measurement.metric?.should be_true
       end
-
     end
-
   end
 
   describe "when searching forecasts using 'for'" do
-
     before(:each) do
       @measurement = Barometer::Measurement.new
 
@@ -341,7 +310,6 @@ describe "Measurement" do
       yesterday.class.should == Time
       @measurement.for(yesterday).should be_nil
     end
-
   end
 
   describe "when answering the simple questions," do
@@ -350,17 +318,6 @@ describe "Measurement" do
       @measurement.current = Barometer::Measurement::Result.new
       @now = Data::LocalDateTime.parse("2009-05-01 2:05 pm")
     end
-
-    # def windy?(time_string=nil, threshold=10)
-    #   local_time = Data::LocalTime.parse(time_string)
-    #   if current?(local_time)
-    #     return nil unless current
-    #     current.windy?(threshold)
-    #   else
-    #     return nil unless forecast && (future = forecast[local_time])
-    #     future.windy?(threshold)
-    #   end
-    # end
 
     describe "windy?" do
       it "returns true if a current_measurement returns true" do

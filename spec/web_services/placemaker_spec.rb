@@ -1,16 +1,13 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "WebService::Placemaker" do
-
+describe Barometer::WebService::Placemaker do
   before(:each) do
     @coordinates = "40.756054,-73.986951"
     @geocode = "New York, NY"
   end
 
   describe "and the class methods" do
-
     describe "fetch," do
-
       it "requires a Query object" do
         lambda { Barometer::WebService::Placemaker.fetch }.should raise_error(ArgumentError)
         lambda { Barometer::WebService::Placemaker.fetch("invalid") }.should raise_error(ArgumentError)
@@ -40,7 +37,5 @@ describe "WebService::Placemaker" do
     #   Barometer.google_geocode_key = KEY
     #   Barometer::WebService::Geocode.send("_has_geocode_key?").should be_true
     # end
-
   end
-
 end

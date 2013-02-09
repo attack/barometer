@@ -16,16 +16,17 @@ YAHOO_KEY = Barometer::KeyFileParser.find(:yahoo, :app_id)
 #Barometer.debug!
 Barometer.yahoo_placemaker_app_id = "YAHOO"
 
-VCR.config do |config|
+VCR.configure do |config|
   config.cassette_library_dir = 'spec/cassettes'
-  config.stub_with :webmock
+  config.hook_into :webmock
   config.default_cassette_options = { :record => :new_episodes }
   config.filter_sensitive_data('<YAHOO_KEY>') { YAHOO_KEY.to_s }
   config.filter_sensitive_data('<WEATHERBUG_CODE>') { WEATHERBUG_CODE.to_s }
   config.filter_sensitive_data('<WEATHER_PARTNER_KEY>') { WEATHER_PARTNER_KEY.to_s }
   config.filter_sensitive_data('<WEATHER_LICENSE_KEY>') { WEATHER_LICENSE_KEY.to_s }
+  config.configure_rspec_metadata!
 end
 
 RSpec.configure do |config|
-  config.extend VCR::RSpec::Macros
+  config.treat_symbols_as_metadata_keys_with_true_values = true
 end

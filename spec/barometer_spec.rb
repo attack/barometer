@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe Barometer do
-  use_vcr_cassette
-
+describe Barometer, :vcr => {
+  :cassette_name => "Barometer"
+} do
   before(:each) do
     @config_hash = { 1 => [:wunderground] }
     @yahoo_key = YAHOO_KEY

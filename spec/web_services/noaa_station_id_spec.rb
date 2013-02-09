@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Barometer::WebService::NoaaStation do
-  use_vcr_cassette
-
+describe Barometer::WebService::NoaaStation, :vcr => {
+  :cassette_name => "WebService::NoaaStation"
+} do
   before(:each) do
     @latitude = "34.10"
     @longitude = "-118.41"

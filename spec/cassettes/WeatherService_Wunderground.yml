@@ -2,66 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: http://maps.googleapis.com/maps/api/geocode/json?address=Calgary,AB&region=&sensor=false
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers: {}
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Content-Type:
-      - application/json; charset=UTF-8
-      Date:
-      - Sat, 09 Feb 2013 17:00:28 GMT
-      Expires:
-      - Sun, 10 Feb 2013 17:00:28 GMT
-      Cache-Control:
-      - public, max-age=86400
-      Vary:
-      - Accept-Language
-      Access-Control-Allow-Origin:
-      - ! '*'
-      Server:
-      - mafe
-      X-Xss-Protection:
-      - 1; mode=block
-      X-Frame-Options:
-      - SAMEORIGIN
-      Transfer-Encoding:
-      - chunked
-    body:
-      encoding: US-ASCII
-      string: ! "{\n   \"results\" : [\n      {\n         \"address_components\" :
-        [\n            {\n               \"long_name\" : \"Calgary\",\n               \"short_name\"
-        : \"Calgary\",\n               \"types\" : [ \"locality\", \"political\" ]\n
-        \           },\n            {\n               \"long_name\" : \"Division No.
-        6\",\n               \"short_name\" : \"Division No. 6\",\n               \"types\"
-        : [ \"administrative_area_level_2\", \"political\" ]\n            },\n            {\n
-        \              \"long_name\" : \"Alberta\",\n               \"short_name\"
-        : \"AB\",\n               \"types\" : [ \"administrative_area_level_1\", \"political\"
-        ]\n            },\n            {\n               \"long_name\" : \"Canada\",\n
-        \              \"short_name\" : \"CA\",\n               \"types\" : [ \"country\",
-        \"political\" ]\n            }\n         ],\n         \"formatted_address\"
-        : \"Calgary, AB, Canada\",\n         \"geometry\" : {\n            \"bounds\"
-        : {\n               \"northeast\" : {\n                  \"lat\" : 51.183830,\n
-        \                 \"lng\" : -113.9056380\n               },\n               \"southwest\"
-        : {\n                  \"lat\" : 50.84240399999999,\n                  \"lng\"
-        : -114.271360\n               }\n            },\n            \"location\"
-        : {\n               \"lat\" : 51.04532460,\n               \"lng\" : -114.05810120\n
-        \           },\n            \"location_type\" : \"APPROXIMATE\",\n            \"viewport\"
-        : {\n               \"northeast\" : {\n                  \"lat\" : 51.183830,\n
-        \                 \"lng\" : -113.9056380\n               },\n               \"southwest\"
-        : {\n                  \"lat\" : 50.84240399999999,\n                  \"lng\"
-        : -114.271360\n               }\n            }\n         },\n         \"types\"
-        : [ \"locality\", \"political\" ]\n      }\n   ],\n   \"status\" : \"OK\"\n}\n"
-    http_version: 
-  recorded_at: Sat, 09 Feb 2013 17:00:29 GMT
-- request:
-    method: get
-    uri: http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=51.0453246,-114.0581012
+    uri: http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=Calgary,AB
     body:
       encoding: US-ASCII
       string: ''
@@ -72,11 +13,11 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sat, 09 Feb 2013 17:00:29 GMT
+      - Sat, 09 Feb 2013 16:38:40 GMT
       Server:
       - Apache/1.3.42 (Unix) PHP/5.3.2
       X-Creationtime:
-      - '0.040'
+      - '0.039'
       Connection:
       - close
       Transfer-Encoding:
@@ -92,19 +33,19 @@ http_interactions:
         Underground</title>\n\t\t<link>http://wunderground.com/</link>\n\t\t</image>\n
         \ <display_location>\n  <full>Calgary, Alberta</full>\n  <city>Calgary</city>\n
         \ <state>AB</state>\n  <state_name>Alberta</state_name>\n  <country>CA</country>\n
-        \ <country_iso3166>CA</country_iso3166>\n  <zip>00000</zip>\n  <latitude>51.045325</latitude>\n
-        \ <longitude>-114.058101</longitude>\n  <elevation>1047.00000000 ft</elevation>\n
+        \ <country_iso3166>CA</country_iso3166>\n  <zip>00000</zip>\n  <latitude>51.11999893</latitude>\n
+        \ <longitude>-114.01999664</longitude>\n  <elevation>1084.00000000 ft</elevation>\n
         \ </display_location>\n\t\t<observation_location>\n\t\t<full>Calgary, </full>\n\t\t<city>Calgary</city>\n\t\t<state></state>\n\t\t<country>CA</country>\n\t\t<country_iso3166>CA</country_iso3166>\n\t\t<latitude>51.11999893</latitude>\n\t\t<longitude>-114.01999664</longitude>\n\t\t<elevation>3556
         ft</elevation>\n\t\t</observation_location>\n\t\t<station_id>CYYC</station_id>\n\t\t<observation_time>Last
-        Updated on February 9, 9:50 AM MST</observation_time>\n\t\t<observation_time_rfc822>Sat,
-        09 Feb 2013 16:50:00 GMT</observation_time_rfc822>\n\t\t<observation_epoch>1360428600</observation_epoch>\n\t\t<local_time>February
-        9, 10:00 AM MST</local_time>\n\t\t<local_time_rfc822>Sat, 09 Feb 2013 17:00:29
-        GMT</local_time_rfc822>\n\t\t<local_epoch>1360429229</local_epoch>\n\t\t<weather>light
-        snow</weather>\n\t\t<temperature_string>30 F (-1 C)</temperature_string>\n\t\t<temp_f>30</temp_f>\n\t\t<temp_c>-1</temp_c>\n\t\t<relative_humidity>93%</relative_humidity>\n\t\t<wind_string>From
-        the NW at 10 MPH </wind_string>\n\t\t<wind_dir>NW</wind_dir>\n\t\t<wind_degrees>320</wind_degrees>\n\t\t<wind_mph>10</wind_mph>\n\t\t<wind_gust_mph></wind_gust_mph>\n\t\t<pressure_string>29.99
-        in (1016 mb)</pressure_string>\r\n\t\t<pressure_mb>1016</pressure_mb>\r\n\t\t<pressure_in>29.99</pressure_in>\r\n\t\t<dewpoint_string>28
-        F (-2 C)</dewpoint_string>\r\n\t\t<dewpoint_f>28</dewpoint_f>\r\n\t\t<dewpoint_c>-2</dewpoint_c>\r\n\t\t\r\n\t\t<heat_index_string>NA</heat_index_string>\r\n\t\t<heat_index_f>NA</heat_index_f>\r\n\t\t<heat_index_c>NA</heat_index_c>\r\n\t\t\r\n\t\t\r\n\t\t<windchill_string>21
-        F (-6 C)</windchill_string>\r\n\t\t<windchill_f>21</windchill_f>\r\n\t\t<windchill_c>-6</windchill_c>\r\n\t\t\r\n\t\t<visibility_mi>6.0</visibility_mi>\r\n\t\t<visibility_km>9.7</visibility_km>\r\n\t\t<icons>\r\n\t\t\t<icon_set
+        Updated on February 9, 9:26 AM MST</observation_time>\n\t\t<observation_time_rfc822>Sat,
+        09 Feb 2013 16:26:00 GMT</observation_time_rfc822>\n\t\t<observation_epoch>1360427160</observation_epoch>\n\t\t<local_time>February
+        9, 9:38 AM MST</local_time>\n\t\t<local_time_rfc822>Sat, 09 Feb 2013 16:38:40
+        GMT</local_time_rfc822>\n\t\t<local_epoch>1360427920</local_epoch>\n\t\t<weather>light
+        snow</weather>\n\t\t<temperature_string>30 F (-1 C)</temperature_string>\n\t\t<temp_f>30</temp_f>\n\t\t<temp_c>-1</temp_c>\n\t\t<relative_humidity>86%</relative_humidity>\n\t\t<wind_string>From
+        the North at 22 MPH Gusting to 32 MPH</wind_string>\n\t\t<wind_dir>North</wind_dir>\n\t\t<wind_degrees>350</wind_degrees>\n\t\t<wind_mph>22</wind_mph>\n\t\t<wind_gust_mph>32</wind_gust_mph>\n\t\t<pressure_string>29.99
+        in (1016 mb)</pressure_string>\r\n\t\t<pressure_mb>1016</pressure_mb>\r\n\t\t<pressure_in>29.99</pressure_in>\r\n\t\t<dewpoint_string>27
+        F (-3 C)</dewpoint_string>\r\n\t\t<dewpoint_f>27</dewpoint_f>\r\n\t\t<dewpoint_c>-3</dewpoint_c>\r\n\t\t\r\n\t\t<heat_index_string>NA</heat_index_string>\r\n\t\t<heat_index_f>NA</heat_index_f>\r\n\t\t<heat_index_c>NA</heat_index_c>\r\n\t\t\r\n\t\t\r\n\t\t<windchill_string>17
+        F (-8 C)</windchill_string>\r\n\t\t<windchill_f>17</windchill_f>\r\n\t\t<windchill_c>-8</windchill_c>\r\n\t\t\r\n\t\t<visibility_mi>1.0</visibility_mi>\r\n\t\t<visibility_km>1.6</visibility_km>\r\n\t\t<icons>\r\n\t\t\t<icon_set
         name=\"Default\">\r\n\t\t\t\t<icon_url>http://icons-ak.wxug.com/i/c/a/snow.gif</icon_url>\r\n\t\t\t</icon_set>\r\n\t\t\t<icon_set
         name=\"Smiley\">\r\n\t\t\t\t<icon_url>http://icons-ak.wxug.com/i/c/b/snow.gif</icon_url>\r\n\t\t\t</icon_set>\r\n\t\t\t<icon_set
         name=\"Generic\">\r\n\t\t\t\t<icon_url>http://icons-ak.wxug.com/i/c/c/snow.gif</icon_url>\r\n\t\t\t</icon_set>\r\n\t\t\t<icon_set
@@ -116,10 +57,10 @@ http_interactions:
         name=\"Helen\">\r\n\t\t\t\t<icon_url>http://icons-ak.wxug.com/i/c/i/snow.gif</icon_url>\r\n\t\t\t</icon_set>\r\n\t\t\t<icon_set
         name=\"Incredible\">\r\n\t\t\t\t<icon_url>http://icons-ak.wxug.com/i/c/k/snow.gif</icon_url>\r\n\t\t\t</icon_set>\r\n\t\t</icons>\r\n\t\t<icon_url_base>http://icons-ak.wxug.com/graphics/conds/</icon_url_base>\r\n\t\t<icon_url_name>.GIF</icon_url_name>\r\n\t\t<icon>snow</icon>\r\n\t\t<forecast_url>http://www.wunderground.com/global/stations/71877.html</forecast_url>\r\n\t\t<history_url>http://www.wunderground.com/history/airport/CYYC/2013/2/9/DailyHistory.html</history_url>\r\n\t\t<ob_url>http://www.wunderground.com/cgi-bin/findweather/getForecast?query=51.11999893,-114.01999664</ob_url>\r\n\t</current_observation>\r\n"
     http_version: 
-  recorded_at: Sat, 09 Feb 2013 17:00:29 GMT
+  recorded_at: Sat, 09 Feb 2013 16:38:41 GMT
 - request:
     method: get
-    uri: http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=51.0453246,-114.0581012
+    uri: http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=Calgary,AB
     body:
       encoding: US-ASCII
       string: ''
@@ -130,11 +71,11 @@ http_interactions:
       message: OK
     headers:
       Date:
-      - Sat, 09 Feb 2013 17:00:29 GMT
+      - Sat, 09 Feb 2013 16:38:41 GMT
       Server:
       - Apache/1.3.42 (Unix) PHP/5.3.2
       X-Creationtime:
-      - '0.081'
+      - '0.065'
       Connection:
       - close
       Transfer-Encoding:
@@ -398,10 +339,10 @@ http_interactions:
         \               <icon_url>http://icons-ak.wxug.com/i/c/k/clear.gif</icon_url>\r\n\t
         \           </icon_set>\r\n\t        </icons>\r\n            <skyicon>mostlysunny</skyicon>\r\n\t\t\t<pop>0</pop>\r\n
         \       </forecastday>\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n</simpleforecast>\r\n<moon_phase>\r\n
-        \       <percentIlluminated>0</percentIlluminated>\r\n        <ageOfMoon>29</ageOfMoon>\r\n\t\t<current_time>\r\n\t\t\t<hour>10</hour>\r\n\t\t\t<minute>00</minute>\r\n\t\t</current_time>\r\n
+        \       <percentIlluminated>0</percentIlluminated>\r\n        <ageOfMoon>29</ageOfMoon>\r\n\t\t<current_time>\r\n\t\t\t<hour>9</hour>\r\n\t\t\t<minute>38</minute>\r\n\t\t</current_time>\r\n
         \       <sunset>\r\n            <hour>17</hour>\r\n            <minute>42</minute>\r\n
         \       </sunset>\r\n        <sunrise>\r\n            <hour>7</hour>\r\n            <minute>59</minute>\r\n
         \       </sunrise>\r\n</moon_phase>\r\n</forecast>\r\n\r\n"
     http_version: 
-  recorded_at: Sat, 09 Feb 2013 17:00:29 GMT
+  recorded_at: Sat, 09 Feb 2013 16:38:41 GMT
 recorded_with: VCR 2.4.0

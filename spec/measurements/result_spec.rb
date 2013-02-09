@@ -1,11 +1,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "Result Measurement" do
-
+describe Barometer::Measurement::Result do
   describe "when initialized" do
-
     before(:each) do
-      @result = Measurement::Result.new
+      @result = Barometer::Measurement::Result.new
     end
 
     it "responds to temperature" do
@@ -97,13 +95,11 @@ describe "Result Measurement" do
       @result.metric = false
       @result.metric?.should be_false
     end
-
   end
 
   describe "when writing data" do
-
     before(:each) do
-      @result = Measurement::Result.new
+      @result = Barometer::Measurement::Result.new
     end
 
     it "only accepts Data::Temperature for temperature" do
@@ -257,7 +253,7 @@ describe "Result Measurement" do
     end
 
     it "sets valid_start_date and valid_end_date if given date" do
-      forecast = Measurement::Result.new
+      forecast = Barometer::Measurement::Result.new
       forecast.valid_start_date.should be_nil
       forecast.valid_end_date.should be_nil
       date = Date.new(2009,05,05)
@@ -280,13 +276,13 @@ describe "Result Measurement" do
     end
 
     it "returns true if the valid_date range includes the given date" do
-      forecast = Measurement::Result.new
+      forecast = Barometer::Measurement::Result.new
       forecast.date = Date.new(2009,05,05)
       forecast.for_datetime?(Data::LocalDateTime.new(2009,5,5,12,0,0)).should be_true
     end
 
     it "returns false if the valid_date range excludes the given date" do
-      forecast = Measurement::Result.new
+      forecast = Barometer::Measurement::Result.new
       forecast.date = Date.new(2009,05,05)
       forecast.for_datetime?(Data::LocalDateTime.new(2009,5,4,12,0,0)).should be_false
     end
@@ -345,13 +341,11 @@ describe "Result Measurement" do
       valid_data.class.should == Data::Sun
       lambda { @result.sun = valid_data }.should_not raise_error(ArgumentError)
     end
-
   end
 
   describe "method missing" do
-
     before(:each) do
-      @result = Measurement::Result.new
+      @result = Barometer::Measurement::Result.new
     end
 
     it "responds to method + ?" do
@@ -376,13 +370,11 @@ describe "Result Measurement" do
       @result.humidity.should be_nil
       @result.humidity?.should be_false
     end
-
   end
 
   describe "answer simple questions, like" do
-
     before(:each) do
-      @result = Measurement::Result.new
+      @result = Barometer::Measurement::Result.new
       @result.temperature = Data::Temperature.new
       @result.temperature << 5
       @dew_point = Data::Temperature.new
@@ -390,7 +382,6 @@ describe "Result Measurement" do
     end
 
     describe "windy?" do
-
       before(:each) do
         @wind = Data::Speed.new
         @wind << 11
@@ -420,11 +411,9 @@ describe "Result Measurement" do
         @result.wind = @wind
         @result.windy?(15).should be_false
       end
-
     end
 
     describe "day?" do
-
       before(:each) do
         @early_time = Data::LocalTime.parse("6:00 am")
         @mid_time = Data::LocalTime.parse("11:00 am")
@@ -462,13 +451,10 @@ describe "Result Measurement" do
         @result.sun = sun
         @result.day?(@late_time).should be_false
       end
-
     end
 
     describe "wet?" do
-
       describe "wet_by_humidity?" do
-
         it "requires real threshold number (or nil)" do
           lambda { @result.send("_wet_by_humidity?","invalid") }.should raise_error(ArgumentError)
           lambda { @result.send("_wet_by_humidity?") }.should_not raise_error(ArgumentError)
@@ -497,11 +483,9 @@ describe "Result Measurement" do
           @result.send("_wet_by_humidity?",99).should be_false
           @result.wet?(nil,99).should be_false
         end
-
       end
 
       describe "wet_by_icon?" do
-
         before(:each) do
           @wet_icons = %w(rain thunderstorm)
         end
@@ -534,11 +518,9 @@ describe "Result Measurement" do
           @result.send("_wet_by_icon?",@wet_icons).should be_false
           @result.wet?(@wet_icons).should be_false
         end
-
       end
 
       describe "wet_by_dewpoint?" do
-
         it "returns nil when no dewpoint" do
           @result.dew_point?.should be_false
           @result.send("_wet_by_dewpoint?").should be_nil
@@ -561,11 +543,9 @@ describe "Result Measurement" do
           @result.send("_wet_by_dewpoint?").should be_false
           @result.wet?.should be_false
         end
-
       end
 
       describe "wet_by_pop?" do
-
         it "requires real threshold number (or nil)" do
           lambda { @result.send("_wet_by_pop?","invalid") }.should raise_error(ArgumentError)
           lambda { @result.send("_wet_by_pop?") }.should_not raise_error(ArgumentError)
@@ -593,15 +573,11 @@ describe "Result Measurement" do
           @result.send("_wet_by_pop?",50).should be_false
           @result.wet?.should be_false
         end
-
       end
-
     end
 
     describe "sunny?" do
-
       describe "sunny_by_icon?" do
-
         before(:each) do
           @sunny_icons = %w(sunny clear)
           @early_time = Data::LocalTime.parse("6:00 am")
@@ -650,11 +626,7 @@ describe "Result Measurement" do
           @result.sun = @sun
           @result.sunny?(@early_time,@sunny_icons).should be_false
         end
-
       end
-
     end
-
   end
-
 end

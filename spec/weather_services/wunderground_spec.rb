@@ -1,9 +1,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 include Barometer
 
-describe Barometer::WeatherService::Wunderground do
-  use_vcr_cassette
-
+describe Barometer::WeatherService::Wunderground, :vcr => {
+  :cassette_name => "WeatherService::Wunderground"
+} do
   before(:each) do
     @accepted_formats = [:zipcode, :postalcode, :icao, :coordinates, :geocode]
     @base_uri = "http://api.wunderground.com/auto/wui/geo"

@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Barometer::WeatherService do
-  use_vcr_cassette
-
+describe Barometer::WeatherService, :vcr => {
+  :cassette_name => "WeatherService"
+} do
   before(:each) do
     query_term = "Calgary,AB"
     @query = Barometer::Query.new(query_term)

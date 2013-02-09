@@ -1,9 +1,9 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 include Barometer
 
-describe Barometer::WeatherService::Yahoo do
-  use_vcr_cassette
-
+describe Barometer::WeatherService::Yahoo, :vcr => {
+  :cassette_name => "WeatherService::Yahoo"
+} do
   before(:each) do
     @accepted_formats = [:zipcode, :weather_id, :woe_id]
   end

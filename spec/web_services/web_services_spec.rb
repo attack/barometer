@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "Web Services" do
+describe Barometer::WebService do
   describe "and the class method" do
     describe "source" do
       it "stubs fetch" do

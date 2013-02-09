@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
-describe Barometer::Query do
-  use_vcr_cassette
-
+describe Barometer::Query, :vcr => {
+  :cassette_name => "Query"
+} do
   before(:each) do
     @short_zipcode = "90210"
     @zipcode = @short_zipcode
