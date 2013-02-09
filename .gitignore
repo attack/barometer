@@ -8,5 +8,6 @@ coverage
 *.gem
 
 .rvmrc
+.rspec
 .bundle
 Gemfile.lock
