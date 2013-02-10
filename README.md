@@ -36,6 +36,8 @@ Features to be added in the future:
 
 # dependencies
 
+[![Dependency Status](https://gemnasium.com/attack/barometer.png)](https://gemnasium.com/attack/barometer)
+
 ## Google API key
 
 As stated on the
@@ -332,6 +334,8 @@ there will be no answer.
 
 # design
 
+[![Code Climate](https://codeclimate.com/github/attack/barometer.png)](https://codeclimate.com/github/attack/barometer)
+
 * create a Barometer instance
 * supply a query, there are very little restrictions on the format:
   * city, country, specific address (basically anything Google will geocode)
@@ -371,6 +375,8 @@ Thank you to these developers who have contributed. No contribution is too small
 
 * repo: http://github.com/attack/barometer
 * rdoc: http://rdoc.info/projects/attack/barometer
+* travis ci: https://travis-ci.org/attack/barometer
+* code climate: https://codeclimate.com/github/attack/barometer
 
 ## copyright
 
