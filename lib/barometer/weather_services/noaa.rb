@@ -1,36 +1,4 @@
 module Barometer
-  #
-  # = NOAA Weather
-  # http://www.weather.gov/
-  #
-  # - key required: NO
-  # - registration required: NO
-  # - supported countries: US only
-  #
-  # === performs geo coding
-  # - city: NO
-  # - coordinates: YES
-  #
-  # === time info
-  # - sun rise/set: NO
-  # - provides timezone: ?
-  # - requires TZInfo: ?
-  #
-  # == resources
-  # - API: http://www.weather.gov/forecasts/xml/rest.php
-  #
-  # === Possible queries:
-  # - http://www.weather.gov/forecasts/xml/sample_products/browser_interface/ndfdBrowserClientByDay.php? \
-  #   format=24%20hourly&numDays=7&zipCodeList=90210
-  # - http://www.weather.gov/xml/current_obs/KSMO.xml
-  #
-  # what query can be:
-  # - zipcode
-  # - coordinates
-  #
-  # = NOAA terms of use
-  # see API url provided above
-  #
   class WeatherService::Noaa < WeatherService
 
     #########################################################################
