@@ -1,49 +1,4 @@
 module Barometer
-  #
-  #   [DEFAULT PROVIDER]
-  #
-  # = Weather Underground
-  # www.wunderground.com
-  #
-  # - key required: NO
-  # - registration required: NO
-  # - supported countries: ALL
-  #
-  # === performs geo coding
-  # - city: YES
-  # - coordinates: YES
-  # NOTE: provides geo data for location and weather station
-  #
-  # === time info
-  # - sun rise/set: YES (today only)
-  # - provides timezone: YES
-  # - requires TZInfo: YES
-  # *NOTE: If accuarcy of times and converting, this service is the top choice.
-  #        They provide the full timezone name that is needed for the most
-  #        accurate time conversions.
-  #
-  # == resources
-  # - API: http://wiki.wunderground.com/index.php/API_-_XML
-  #
-  # === Possible queries:
-  # - http://api.wunderground.com/auto/wui/geo/GeoLookupXML/index.xml?query=94107
-  # - http://api.wunderground.com/auto/wui/geo/WXCurrentObXML/index.xml?query=KSFO
-  # - http://api.wunderground.com/weatherstation/WXCurrentObXML.asp?ID=KCASANFR70
-  # - http://api.wunderground.com/auto/wui/geo/AlertsXML/index.xml?query=86445
-  # - http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml?query=Chicago,IL
-  #
-  # where query can be:
-  # - zipcode (US or Canadian)
-  # - city state; city, state
-  # - city
-  # - state
-  # - country
-  # - airport code (3-letter or 4-letter)
-  # - lat,lon
-  #
-  # = Wunderground terms of use
-  # Unable to locate.
-  #
   class WeatherService::Wunderground < WeatherService
 
     #########################################################################
