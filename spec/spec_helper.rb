@@ -8,6 +8,8 @@ require 'fakefs/spec_helpers'
 $:.unshift((File.join(File.dirname(__FILE__), '..', 'lib')))
 require 'barometer'
 
+Dir["./spec/support/**/*.rb"].sort.each {|f| require f}
+
 WEATHERBUG_CODE = Barometer::KeyFileParser.find(:weather_bug, :code) || 'weatherbug'
 YAHOO_KEY = Barometer::KeyFileParser.find(:yahoo, :app_id) || 'yahoo'
 downcased_weatherbug_code = WEATHERBUG_CODE.to_s
@@ -32,3 +34,5 @@ end
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
 end
+
+include BarometerMatchers

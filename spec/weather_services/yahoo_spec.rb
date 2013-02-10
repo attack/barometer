@@ -110,34 +110,22 @@ describe Barometer::WeatherService::Yahoo, :vcr => {
     end
   end
 
-  describe "overall data correctness" do
-    before(:each) do
-      @query = Barometer::Query.new("90210")
-      @measurement = Barometer::Measurement.new
+  describe "response" do
+    let(:query) { Barometer::Query.new("90210") }
+
+    subject do
+      WeatherService::Yahoo._measure(Barometer::Measurement.new, query)
     end
 
-    it "should correctly build the data" do
-      result = WeatherService::Yahoo._measure(@measurement, @query)
+    it "has the expected data" do
+      should measure(:current, :sun, :rise).as_format(:datetime)
+      should measure(:current, :sun, :set).as_format(:datetime)
+      should measure(:location, :city).as_value("Beverly Hills")
 
-      # build current
-      @measurement.current.sun.rise.to_s.should match(/^\d{1,2}:\d{1,2}[ ]?[apmAPM]{0,2}$/i)
-      @measurement.current.sun.set.to_s.should match(/^\d{1,2}:\d{1,2}[ ]?[apmAPM]{0,2}$/i)
-
-      # builds location
-      @measurement.location.city.should == "Beverly Hills"
-
-      # builds forecasts
-      @measurement.forecast.size.should == 2
-
-      @measurement.forecast[0].condition.should match(/^[\w ]+$/i)
-      @measurement.forecast[0].icon.to_s.should match(/^\d{1,3}$/i)
-      @measurement.forecast[0].sun.rise.to_s.should match(/^\d{1,2}:\d{1,2}[ ]?[apmAPM]{0,2}$/i)
-      @measurement.forecast[0].sun.set.to_s.should match(/^\d{1,2}:\d{1,2}[ ]?[apmAPM]{0,2}$/i)
-
-      @measurement.forecast[1].condition.should match(/^[\w ]+$/i)
-      @measurement.forecast[1].icon.to_s.should match(/^\d{1,3}$/i)
-      @measurement.forecast[1].sun.rise.to_s.should match(/^\d{1,2}:\d{1,2}[ ]?[apmAPM]{0,2}$/i)
-      @measurement.forecast[1].sun.set.to_s.should match(/^\d{1,2}:\d{1,2}[ ]?[apmAPM]{0,2}$/i)
+      should forecast(:condition).as_format(:optional_string)
+      should forecast(:icon).as_format(:number)
+      should forecast(:sun, :rise).as_format(:datetime)
+      should forecast(:sun, :set).as_format(:datetime)
     end
   end
 end

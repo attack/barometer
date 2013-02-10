@@ -156,63 +156,52 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
     end
   end
 
-  describe "overall data correctness" do
-    before(:each) do
-      @query = Barometer::Query.new("90210")
-      @measurement = Barometer::Measurement.new
+  describe "response" do
+    let(:query) { Barometer::Query.new("90210") }
+
+    subject do
+      WeatherService::WeatherBug.keys = { :code => WEATHERBUG_CODE }
+      WeatherService::WeatherBug._measure(Barometer::Measurement.new, query)
     end
 
-    it "should correctly build the data" do
-      result = WeatherService::WeatherBug._measure(@measurement, @query)
+    it "has the expected data" do
+      should measure(:current, :humidity).as_format(:number)
+      should measure(:current, :condition).as_format(:optional_string)
+      should measure(:current, :icon).as_format(:number)
+      should measure(:current, :temperature).as_format(:temperature)
+      should measure(:current, :dew_point).as_format(:temperature)
+      should measure(:current, :wind_chill).as_format(:temperature)
+      should measure(:current, :wind).as_format(:wind)
+      should measure(:current, :wind, :direction).as_format(:wind_direction)
+      should measure(:current, :pressure).as_format(:pressure)
+      should measure(:current, :sun, :rise).as_format(:datetime)
+      should measure(:current, :sun, :set).as_format(:datetime)
 
-      # build current
-      @measurement.current.humidity.to_s.should match(/^\d{1,2}$/i)
-      @measurement.current.condition.should match(/^[\w ]+$/i)
-      @measurement.current.icon.to_s.should match(/^\d{1,3}$/i)
-      @measurement.current.temperature.to_s.should match(/^\d{1,3}[ ]?[cfCF]?$/i)
-      @measurement.current.dew_point.to_s.should match(/^\d{1,3}[ ]?[cfCF]?$/i)
-      @measurement.current.wind_chill.to_s.should match(/^\d{1,3}[ ]?[cfCF]?$/i)
-      @measurement.current.wind.to_s.should match(/^\d{1,3}[ ]?[a-zA-Z]{0,3}$/i)
-      @measurement.current.wind.direction.to_s.should match(/^[neswNESW]{0,3}$/i)
-      @measurement.current.pressure.to_s.should match(/^\d{1,4}[ ]?[a-zA-Z]{0,3}$/i)
+      should measure(:station, :id).as_value("LSNGN")
+      should measure(:station, :name).as_value("Alexander Hamilton Senior HS")
+      should measure(:station, :city).as_value("Los Angeles")
+      should measure(:station, :state_code).as_value("CA")
+      should measure(:station, :country).as_value("USA")
+      should measure(:station, :zip_code).as_value("90034")
+      should measure(:station, :latitude).as_value(34.0336112976074)
+      should measure(:station, :longitude).as_value(-118.389999389648)
 
-      # build sun
-      @measurement.current.sun.rise.to_s.should match(/^\d{1,2}:\d{1,2}[ ]?[apmAPM]{0,2}$/i)
-      @measurement.current.sun.set.to_s.should match(/^\d{1,2}:\d{1,2}[ ]?[apmAPM]{0,2}$/i)
+      should measure(:location, :city).as_value("Beverly Hills")
+      should measure(:location, :state_code).as_value("CA")
+      should measure(:location, :zip_code).as_value("90210")
 
-      # build station
-      @measurement.station.id.should == "LSNGN"
-      @measurement.station.name.should == "Alexander Hamilton Senior HS"
-      @measurement.station.city.should == "Los Angeles"
-      @measurement.station.state_code.should == "CA"
-      @measurement.station.country.should == "USA"
-      @measurement.station.zip_code.should == "90034"
-      @measurement.station.latitude.to_f.should == 34.0336112976074
-      @measurement.station.longitude.to_f.should == -118.389999389648
+      should measure(:measured_at).as_format(:datetime)
+      should measure(:current, :current_at).as_format(:datetime)
+      should measure(:timezone, :code).as_format(/^P[DS]T$/i)
 
-      # builds location
-      @measurement.location.city.should == "Beverly Hills"
-      @measurement.location.state_code.should == "CA"
-      @measurement.location.zip_code.should == "90210"
-
-      # builds forecasts
-      @measurement.forecast.size.should == 7
-
-      @measurement.forecast[0].date.to_s.should match(/^\d{1,4}-\d{1,2}-\d{1,2}$/i)
-      @measurement.forecast[0].condition.should match(/^[\w ]+$/i)
-      @measurement.forecast[0].icon.to_s.should match(/^\d{1,3}$/i)
-      @measurement.forecast[0].high.to_s.should match(/^\d{1,3}[ ]?[cfCF]?$/i)
-      @measurement.forecast[0].low.to_s.should match(/^\d{1,3}[ ]?[cfCF]?$/i)
-
-      @measurement.forecast[0].sun.rise.to_s.should match(/^\d{1,2}:\d{1,2}[ ]?[apmAPM]{0,2}$/i)
-      @measurement.forecast[0].sun.set.to_s.should match(/^\d{1,2}:\d{1,2}[ ]?[apmAPM]{0,2}$/i)
-
-      # builds local time
-      @measurement.measured_at.to_s.should match(/^\d{1,2}:\d{1,2}[ ]?[apmAPM]{0,2}$/i)
-      @measurement.current.current_at.to_s.should match(/^\d{1,2}:\d{1,2}[ ]?[apmAPM]{0,2}$/i)
-
-      # builds timezone
-      @measurement.timezone.code.should match(/^P[DS]T$/i)
+      subject.forecast.size.should == 7
+      should forecast(:date).as_format(:date)
+      should forecast(:condition).as_format(:optional_string)
+      should forecast(:icon).as_format(:number)
+      should forecast(:high).as_format(:temperature)
+      should forecast(:low).as_format(:temperature)
+      should forecast(:sun, :rise).as_format(:datetime)
+      should forecast(:sun, :set).as_format(:datetime)
     end
   end
 end

@@ -158,22 +158,19 @@ describe Barometer::WeatherService::Wunderground, :vcr => {
     end
   end
 
-  describe "overall data correctness" do
-    before(:each) do
-      @query = Barometer::Query.new("Calgary,AB")
-      @measurement = Barometer::Measurement.new
+  describe "response" do
+    let(:query) { Barometer::Query.new("Calgary,AB") }
+
+    subject do
+      WeatherService::Wunderground._measure(Barometer::Measurement.new, query)
     end
 
-   it "should correctly build the data" do
-      result = WeatherService::Wunderground._measure(@measurement, @query)
+    it "has the expected data" do
+      should measure(:timezone, :zone_full).as_value('America/Edmonton')
+      should measure(:timezone, :current).as_value('America/Edmonton')
 
-      # build timezone
-      @measurement.timezone.zone_full.should == "America/Edmonton"
-      @measurement.timezone.current.should == "America/Edmonton"
-
-      # build current
-      @measurement.current.sun.rise.to_s.should match(/^\d{1,2}:\d{1,2}[ ]?[apmAPM]{0,2}$/i)
-      @measurement.current.sun.set.to_s.should match(/^\d{1,2}:\d{1,2}[ ]?[apmAPM]{0,2}$/i)
+      should measure(:current, :sun, :rise).as_format(:datetime)
+      should measure(:current, :sun, :set).as_format(:datetime)
     end
   end
 end
