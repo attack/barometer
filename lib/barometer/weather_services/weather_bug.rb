@@ -1,40 +1,6 @@
 require 'crack'
 
 module Barometer
-  #
-  # = WeatherBug
-  # www.weatherbug.com
-  #
-  # - key required: YES (api_code)
-  # - registration required: YES
-  # - supported countries: US (by zipcode), International (by coordinates)
-  #
-  # === performs geo coding
-  # - city: YES
-  # - coordinates: PARTIAL (just for weather station)
-  #
-  # === time info
-  # - sun rise/set: YES
-  # - provides timezone: NO, but provides a timezone short code and utc offset
-  # - requires TZInfo: NO
-  #
-  # == resources
-  # - API: http://weather.weatherbug.com/corporate/products/API/help.aspx
-  #
-  # === Possible queries:
-  # - http://[API_Code].api.wxbug.net:80/getLiveWeatherRSS.aspx?ACode=[API_Code]&OutputType=1&UnitType=1&zipCode=90210
-  #
-  # where query can be:
-  # - zipcode (US) [5 digits only]
-  # - coordinates (International)
-  #
-  # = WeatherBug.com terms of use
-  # ???
-  #
-  # == notes
-  # - WeatherBug also supports queries using "citycode" and "stationID", but these
-  #   are specific to WeatherBug and un-supported by Barometer
-  #
   class WeatherService::WeatherBug < WeatherService
 
     @@api_code = nil
