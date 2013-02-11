@@ -120,12 +120,12 @@ register-less (no API key required) international weather service
 (wunderground.com).
 
 ```ruby
-  require 'barometer'
+require 'barometer'
 
-  barometer = Barometer.new("Paris")
-  weather = barometer.measure
+barometer = Barometer.new("Paris")
+weather = barometer.measure
 
-  puts weather.current.temperature
+puts weather.current.temperature
 ```
 
 ## sources
@@ -146,40 +146,40 @@ have its own config.
 Weather services in parallel
 
 ```ruby
-  Barometer.config = { 1 => [:yahoo, :wunderground] }
+Barometer.config = { 1 => [:yahoo, :wunderground] }
 ```
 
 Weather services in primary/failover
 
 ```ruby
-  Barometer.config = { 1 => [:yahoo], 2 => :wunderground }
+Barometer.config = { 1 => [:yahoo], 2 => :wunderground }
 ```
 
 Weather services, one with some configuration. In this case we are setting
 a weight value, this weight is respected when calculating averages.
 
 ```ruby
-  Barometer.config = { 1 => [{:wunderground => {:weight => 2}}, :yahoo] }
+Barometer.config = { 1 => [{:wunderground => {:weight => 2}}, :yahoo] }
 ```
 
 Weather services, one with keys.
 
 ```ruby
-  Barometer.config = { 1 => [:yahoo, {:weather_bug => {:keys => {:code => CODE_KEY} }}] }
+Barometer.config = { 1 => [:yahoo, {:weather_bug => {:keys => {:code => CODE_KEY} }}] }
 ```
 
 ### multiple weather API, with hierarchy
 
 ```ruby
-  require 'barometer'
+require 'barometer'
 
-  # use yahoo and weather bug, if they both fail, use wunderground
-  Barometer.config = { 1 => [:yahoo, {:weather_bug => {:keys => {:code => CODE_KEY} }}], 2 => :wunderground }
+# use yahoo and weather bug, if they both fail, use wunderground
+Barometer.config = { 1 => [:yahoo, {:weather_bug => {:keys => {:code => CODE_KEY} }}], 2 => :wunderground }
 
-  barometer = Barometer.new("Paris")
-  weather = barometer.measure
+barometer = Barometer.new("Paris")
+weather = barometer.measure
 
-  puts weather.current.temperture
+puts weather.current.temperture
 ```
 
 ## command line
@@ -202,48 +202,48 @@ the data as shown in the above examples.
 ### by preference (default service)
 
 ```ruby
-  weather.default         # returns measurement for default source
-  weather.current         # returns current_measurement for default
-  weather.now             # returns current_measurement for default
-  weather.forecast        # returns all forecast_measurements for default
-  weather.today           # returns forecast_measurement for default today
-  weather.tomorrow        # returns forecast_measurement for default tomorrow
+weather.default         # returns measurement for default source
+weather.current         # returns current_measurement for default
+weather.now             # returns current_measurement for default
+weather.forecast        # returns all forecast_measurements for default
+weather.today           # returns forecast_measurement for default today
+weather.tomorrow        # returns forecast_measurement for default tomorrow
 
-  puts weather.now.temperature.c
-  puts weather.tomorrow.high.c
+puts weather.now.temperature.c
+puts weather.tomorrow.high.c
 ```
 
 ### by source
 
 ```ruby
-  weather.source(:wunderground)   # returns measurement for specified source
-  weather.sources                 # lists all successful sources
+weather.source(:wunderground)   # returns measurement for specified source
+weather.sources                 # lists all successful sources
 
-  puts weather.source(:wunderground).current.temperature.c
+puts weather.source(:wunderground).current.temperature.c
 ```
 
 ### by date
 
 ```ruby
-  # note, the date is the date of the locations weather, not the date of the
-  # user measuring the weather
-  date = Date.parse("01-01-2009")
-  weather.for(date)       # returns forecast_measurement for default on date 
-  weather.source(:wunderground).for(date)   # same as above but specific source
+# note, the date is the date of the locations weather, not the date of the
+# user measuring the weather
+date = Date.parse("01-01-2009")
+weather.for(date)       # returns forecast_measurement for default on date 
+weather.source(:wunderground).for(date)   # same as above but specific source
 
-  puts weather.source(:wunderground).for(date).high.c
+puts weather.source(:wunderground).for(date).high.c
 ```
 
 ### by time
 
 ```ruby
-  # note, the time is the time of the locations weather, not the time of the
-  # user measuring the weather
-  time = Time.parse("13:00 01-01-2009")
-  weather.for(time)       # returns forecast_measurement for default at time 
-  weather.source(:wunderground).for(time)   # same as above but specific source
+# note, the time is the time of the locations weather, not the time of the
+# user measuring the weather
+time = Time.parse("13:00 01-01-2009")
+weather.for(time)       # returns forecast_measurement for default at time 
+weather.source(:wunderground).for(time)   # same as above but specific source
 
-  puts weather.source(:wunderground).for(time).low.f
+puts weather.source(:wunderground).for(time).low.f
 ```
 
 ## averages
@@ -253,15 +253,15 @@ for the values (currently only for the 'current' values and not the forecasted
 values).
 
 ```ruby
-  require 'barometer'
+require 'barometer'
 
-  # use yahoo and wunderground
-  Barometer.config = { 1 => [:yahoo, :wunderground] }
+# use yahoo and wunderground
+Barometer.config = { 1 => [:yahoo, :wunderground] }
 
-  barometer = Barometer.new("90210")
-  weather = barometer.measure
+barometer = Barometer.new("90210")
+weather = barometer.measure
 
-  puts weather.temperture
+puts weather.temperture
 ```
 
 This will calculate the average temperature as given by :yahoo and :wunderground
@@ -291,7 +291,7 @@ there will be no answer.
   # NOTE: in my example the values are metric, so the threshold is 10 kph
 
 ```ruby
-  weather.windy?(10)
+weather.windy?(10)
 ```
 
 ### is it wet?
@@ -302,7 +302,7 @@ there will be no answer.
   # NOTE: in my example the threshold is 50 %
 
 ```ruby
-  weather.wet?(50)
+weather.wet?(50)
 ```
 
 ### is it sunny?
@@ -311,7 +311,7 @@ there will be no answer.
   #   this defaults to the current time
 
 ```ruby
-  weather.sunny?
+weather.sunny?
 ```
 
 ### is it day?
@@ -320,7 +320,7 @@ there will be no answer.
   #   this defaults to the current time
 
 ```ruby
-  weather.day?
+weather.day?
 ```
 
 ### is it night?
@@ -329,7 +329,7 @@ there will be no answer.
   #   this defaults to the current time
 
 ```ruby
-  weather.night?
+weather.night?
 ```
 
 # design
