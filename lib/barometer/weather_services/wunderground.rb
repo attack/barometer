@@ -217,3 +217,5 @@ module Barometer
 
   end
 end
+
+Barometer::WeatherService.register(:wunderground, Barometer::WeatherService::Wunderground)

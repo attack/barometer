@@ -9,6 +9,10 @@ describe Barometer::WeatherService::Wunderground, :vcr => {
     @base_uri = "http://api.wunderground.com/auto/wui/geo"
   end
 
+  it "auto-registers this weather service as :wunderground" do
+    Barometer::WeatherService.source(:wunderground).should == Barometer::WeatherService::Wunderground
+  end
+
   describe "the class methods" do
     it "defines accepted_formats" do
       WeatherService::Wunderground._accepted_formats.should == @accepted_formats

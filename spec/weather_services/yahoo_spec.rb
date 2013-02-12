@@ -8,6 +8,10 @@ describe Barometer::WeatherService::Yahoo, :vcr => {
     @accepted_formats = [:zipcode, :weather_id, :woe_id]
   end
 
+  it "auto-registers this weather service as :yahoo" do
+    Barometer::WeatherService.source(:yahoo).should == Barometer::WeatherService::Yahoo
+  end
+
   describe "the class methods" do
     it "defines accepted_formats" do
       WeatherService::Yahoo._accepted_formats.should == @accepted_formats

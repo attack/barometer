@@ -8,6 +8,10 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
     @accepted_formats = [:short_zipcode, :coordinates]
   end
 
+  it "auto-registers this weather service as :weather_bug" do
+    Barometer::WeatherService.source(:weather_bug).should == Barometer::WeatherService::WeatherBug
+  end
+
   describe "the class methods" do
     it "defines accepted_formats" do
       WeatherService::WeatherBug._accepted_formats.should == @accepted_formats

@@ -16,13 +16,22 @@ module Barometer
     # all service drivers will use the HTTParty gem
     include HTTParty
 
-    # retrieves the weather source Service object
-    def self.source(source_name)
-      raise ArgumentError unless (source_name.is_a?(String) || source_name.is_a?(Symbol))
-      source_name = source_name.to_s.split("_").collect{ |s| s.capitalize }.join('')
-      raise ArgumentError unless Barometer::WeatherService.const_defined?(source_name)
-      raise ArgumentError unless Barometer::WeatherService.const_get(source_name).superclass == Barometer::WeatherService
-      Barometer::WeatherService.const_get(source_name)
+    def self.services=(services)
+      @@services = services
+    end
+
+    def self.services
+      @@services
+    end
+
+    def self.register(key, service)
+      @@services ||= {}
+      @@services[key] = service
+    end
+
+    def self.source(key)
+      @@services ||= {}
+      @@services[key]
     end
 
     #

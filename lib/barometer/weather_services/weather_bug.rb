@@ -261,3 +261,5 @@ module Barometer
 
   end
 end
+
+Barometer::WeatherService.register(:weather_bug, Barometer::WeatherService::WeatherBug)

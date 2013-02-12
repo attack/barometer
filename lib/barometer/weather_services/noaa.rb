@@ -283,3 +283,5 @@ module Barometer
   end
 
 end
+
+Barometer::WeatherService.register(:noaa, Barometer::WeatherService::Noaa)

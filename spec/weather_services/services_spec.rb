@@ -10,33 +10,34 @@ describe Barometer::WeatherService, :vcr => {
     @time = Time.now
   end
 
-  describe "and the class method" do
-    describe "source" do
-      it "responds" do
-        Barometer::WeatherService.respond_to?("source").should be_true
-      end
+  describe ".register" do
+    before do
+      @services_cache = Barometer::WeatherService.services
+      Barometer::WeatherService.services = {}
+    end
 
-      it "requires a Symbol or String" do
-        lambda { Barometer::WeatherService.source }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.source(1) }.should raise_error(ArgumentError)
+    after do
+      Barometer::WeatherService.services = @services_cache
+    end
 
-        lambda { Barometer::WeatherService.source("wunderground") }.should_not raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.source(:wunderground) }.should_not raise_error(ArgumentError)
-      end
+    it "adds the weather service to the list of available services" do
+      expect {
+        Barometer::WeatherService.register(:test_weather, double(:weather_service))
+      }.to change { Barometer::WeatherService.services.count }.by(1)
+    end
 
-      it "raises an error if source doesn't exist" do
-        lambda { Barometer::WeatherService.source(:not_valid) }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService.source(:wunderground) }.should_not raise_error(ArgumentError)
-      end
+    it "allows the serivce to be referenced by key" do
+      Barometer::WeatherService.services.should_not have_key :test_weather
+      Barometer::WeatherService.register(:test_weather, double(:weather_service))
+      Barometer::WeatherService.services.should have_key :test_weather
+    end
 
-      it "returns the corresponding Service object" do
-        Barometer::WeatherService.source(:wunderground).should == Barometer::WeatherService::Wunderground
-        Barometer::WeatherService.source(:wunderground).superclass.should == Barometer::WeatherService
-      end
-
-      it "raises an error when retrieving the wrong class" do
-        lambda { Barometer::WeatherService.source(:temperature) }.should raise_error(ArgumentError)
-      end
+    it "only registers a key once" do
+      weather_service = double(:weather_service)
+      Barometer::WeatherService.register(:test_weather, weather_service)
+      expect {
+        Barometer::WeatherService.register(:test_weather, weather_service)
+      }.not_to change { Barometer::WeatherService.services.count }
     end
   end
 

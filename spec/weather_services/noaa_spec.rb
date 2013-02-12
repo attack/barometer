@@ -8,6 +8,10 @@ describe Barometer::WeatherService::Noaa, :vcr => {
     @accepted_formats = [:zipcode, :coordinates]
   end
 
+  it "auto-registers this weather service as :noaa" do
+    Barometer::WeatherService.source(:noaa).should == Barometer::WeatherService::Noaa
+  end
+
   describe "the class methods" do
     it "defines accepted_formats" do
       WeatherService::Noaa._accepted_formats.should == @accepted_formats

@@ -157,3 +157,5 @@ module Barometer
 
   end
 end
+
+Barometer::WeatherService.register(:yahoo, Barometer::WeatherService::Yahoo)
