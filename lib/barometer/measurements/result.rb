@@ -99,11 +99,13 @@ module Barometer
     end
 
     def icon=(icon)
+      return unless icon
       raise ArgumentError unless icon.is_a?(String)
       @icon = icon
     end
 
     def condition=(condition)
+      return unless condition
       raise ArgumentError unless condition.is_a?(String)
       @condition = condition
     end

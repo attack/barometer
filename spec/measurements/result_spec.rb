@@ -304,21 +304,23 @@ describe Barometer::Measurement::Result do
 
     it "only accepts String for icon" do
       invalid_data = 1
-      invalid_data.class.should_not == String
       lambda { @result.icon = invalid_data }.should raise_error(ArgumentError)
 
       valid_data = "valid"
-      valid_data.class.should == String
+      lambda { @result.icon = valid_data }.should_not raise_error(ArgumentError)
+
+      valid_data = nil
       lambda { @result.icon = valid_data }.should_not raise_error(ArgumentError)
     end
 
     it "only accepts String for condition" do
       invalid_data = 1
-      invalid_data.class.should_not == String
       lambda { @result.condition = invalid_data }.should raise_error(ArgumentError)
 
       valid_data = "valid"
-      valid_data.class.should == String
+      lambda { @result.condition = valid_data }.should_not raise_error(ArgumentError)
+
+      valid_data = nil
       lambda { @result.condition = valid_data }.should_not raise_error(ArgumentError)
     end
 
