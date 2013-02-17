@@ -36,3 +36,4 @@ RSpec.configure do |config|
 end
 
 include BarometerMatchers
+include Barometer::Matchers

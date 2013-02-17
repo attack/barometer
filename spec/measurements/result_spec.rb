@@ -1,25 +1,20 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Barometer::Measurement::Result do
+  describe "data fields" do
+    subject { Barometer::Measurement::Result.new }
+
+    it { should have_field(:temperature).of_type(Data::Temperature) }
+    it { should have_field(:dew_point).of_type(Data::Temperature) }
+    it { should have_field(:heat_index).of_type(Data::Temperature) }
+    it { should have_field(:wind_chill).of_type(Data::Temperature) }
+    it { should have_field(:high).of_type(Data::Temperature) }
+    it { should have_field(:low).of_type(Data::Temperature) }
+  end
+
   describe "when initialized" do
     before(:each) do
       @result = Barometer::Measurement::Result.new
-    end
-
-    it "responds to temperature" do
-      @result.temperature.should be_nil
-    end
-
-    it "responds to dew_point" do
-      @result.dew_point.should be_nil
-    end
-
-    it "responds to heat_index" do
-      @result.heat_index.should be_nil
-    end
-
-    it "responds to wind_chill" do
-      @result.wind_chill.should be_nil
     end
 
     it "responds to pressure" do
@@ -40,14 +35,6 @@ describe Barometer::Measurement::Result do
 
     it "responds to date" do
       @result.date.should be_nil
-    end
-
-    it "responds to low" do
-      @result.low.should be_nil
-    end
-
-    it "responds to high" do
-      @result.high.should be_nil
     end
 
     it "responds to pop" do
@@ -100,46 +87,6 @@ describe Barometer::Measurement::Result do
   describe "when writing data" do
     before(:each) do
       @result = Barometer::Measurement::Result.new
-    end
-
-    it "only accepts Data::Temperature for temperature" do
-      invalid_data = 1
-      invalid_data.class.should_not == Data::Temperature
-      lambda { @result.temperature = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = Data::Temperature.new
-      valid_data.class.should == Data::Temperature
-      lambda { @result.temperature = valid_data }.should_not raise_error(ArgumentError)
-    end
-
-    it "only accepts Data::Temperature for dew_point" do
-      invalid_data = 1
-      invalid_data.class.should_not == Data::Temperature
-      lambda { @result.dew_point = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = Data::Temperature.new
-      valid_data.class.should == Data::Temperature
-      lambda { @result.dew_point = valid_data }.should_not raise_error(ArgumentError)
-    end
-
-    it "only accepts Data::Temperature for heat_index" do
-      invalid_data = 1
-      invalid_data.class.should_not == Data::Temperature
-      lambda { @result.heat_index = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = Data::Temperature.new
-      valid_data.class.should == Data::Temperature
-      lambda { @result.heat_index = valid_data }.should_not raise_error(ArgumentError)
-    end
-
-    it "only accepts Data::Temperature for wind_chill" do
-      invalid_data = 1
-      invalid_data.class.should_not == Data::Temperature
-      lambda { @result.wind_chill = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = Data::Temperature.new
-      valid_data.class.should == Data::Temperature
-      lambda { @result.wind_chill = valid_data }.should_not raise_error(ArgumentError)
     end
 
     it "only accepts Data::Pressure for pressure" do
@@ -200,26 +147,6 @@ describe Barometer::Measurement::Result do
       valid_data = Date.new
       valid_data.class.should == Date
       lambda { @result.date = valid_data }.should_not raise_error(ArgumentError)
-    end
-
-    it "only accepts Data::Temperature for high" do
-      invalid_data = 1
-      invalid_data.class.should_not == Data::Temperature
-      lambda { @result.high = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = Data::Temperature.new
-      valid_data.class.should == Data::Temperature
-      lambda { @result.high = valid_data }.should_not raise_error(ArgumentError)
-    end
-
-    it "only accepts Data::Temperature for low" do
-      invalid_data = 1
-      invalid_data.class.should_not == Data::Temperature
-      lambda { @result.low = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = Data::Temperature.new
-      valid_data.class.should == Data::Temperature
-      lambda { @result.low = valid_data }.should_not raise_error(ArgumentError)
     end
 
     it "only accepts Fixnum for pop" do

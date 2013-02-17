@@ -7,38 +7,18 @@ module Barometer
   # conditions.
   #
   class Measurement::Result
+    include Barometer::DataTypes
 
     attr_reader :current_at, :updated_at
     attr_reader :valid_start_date, :valid_end_date, :date
     attr_reader :humidity, :icon, :condition
-    attr_reader :temperature, :dew_point, :heat_index, :wind_chill
-    attr_reader :low, :high, :pop
+    attr_reader :pop
     attr_reader :wind, :sun, :pressure, :visibility
     attr_accessor :metric, :description
 
+    temperature :temperature, :dew_point, :heat_index, :wind_chill, :high, :low
+
     def initialize(metric=true); @metric = metric; end
-
-    # accessors (with input checking)
-    #
-    def temperature=(temperature)
-      raise ArgumentError unless temperature.is_a?(Data::Temperature)
-      @temperature = temperature
-    end
-
-    def dew_point=(dew_point)
-      raise ArgumentError unless dew_point.is_a?(Data::Temperature)
-      @dew_point = dew_point
-    end
-
-    def heat_index=(heat_index)
-      raise ArgumentError unless heat_index.is_a?(Data::Temperature)
-      @heat_index = heat_index
-    end
-
-    def wind_chill=(wind_chill)
-      raise ArgumentError unless wind_chill.is_a?(Data::Temperature)
-      @wind_chill = wind_chill
-    end
 
     def pressure=(pressure)
       raise ArgumentError unless pressure.is_a?(Data::Pressure)
@@ -75,16 +55,6 @@ module Barometer
     def valid_end_date=(date)
       raise ArgumentError unless date.is_a?(Data::LocalDateTime)
       @valid_end_date = date
-    end
-
-    def high=(high)
-      raise ArgumentError unless high.is_a?(Data::Temperature)
-      @high = high
-    end
-
-    def low=(low)
-      raise ArgumentError unless low.is_a?(Data::Temperature)
-      @low = low
     end
 
     def pop=(pop)
