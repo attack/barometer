@@ -72,7 +72,7 @@ module Barometer
       elsif string.is_a?(String)
         begin
           datetime = if format
-            Time.strptime(string, format)
+            DateTime.strptime(string, format)
           else
             DateTime.parse(string)
           end
