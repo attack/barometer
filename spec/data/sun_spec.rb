@@ -1,9 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "Data::Sun" do
-
+describe Data::Sun do
   describe "when initialized" do
-
     before(:each) do
       @sun = Data::Sun.new
       @local_time_rise = Data::LocalTime.new.parse(Time.now)
@@ -43,11 +41,9 @@ describe "Data::Sun" do
       sun = Data::Sun.new(@local_time_rise, @local_time_set)
       sun.nil?.should be_false
     end
-
   end
 
   describe "comparisons" do
-
     before(:each) do
       now = Time.local(2009,5,5,11,40,00)
       @mid_time = Data::LocalTime.new.parse(now)
@@ -56,7 +52,6 @@ describe "Data::Sun" do
     end
 
     describe "after_rise?" do
-
       it "requires a LocalTime object" do
         sun = Data::Sun.new(@early_time,@late_time)
         lambda { sun.after_rise? }.should raise_error(ArgumentError)
@@ -73,11 +68,9 @@ describe "Data::Sun" do
         sun = Data::Sun.new(@mid_time,@late_time)
         sun.after_rise?(@early_time).should be_false
       end
-
     end
 
     describe "before_set?" do
-
       it "requires a LocalTime object" do
         sun = Data::Sun.new(@early_time,@late_time)
         lambda { sun.before_set? }.should raise_error(ArgumentError)
@@ -94,9 +87,44 @@ describe "Data::Sun" do
         sun = Data::Sun.new(@early_time,@mid_time)
         sun.before_set?(@late_time).should be_false
       end
-
     end
-
   end
 
+  describe "#rise=" do
+    let(:sun) { Data::Sun.new }
+    let(:local_time) { Data::LocalTime.new.parse(Time.now + (60*60*8)) }
+
+    it "requires Data::LocalTime" do
+      lambda { sun.rise = "" }.should raise_error(ArgumentError)
+      lambda { sun.rise = local_time }.should_not raise_error(ArgumentError)
+    end
+
+    it "allows nil" do
+      lambda { sun.rise = nil }.should_not raise_error(ArgumentError)
+    end
+
+    it "sets the rise time" do
+      sun.rise = local_time
+      sun.rise.should == local_time
+    end
+  end
+
+  describe "#set=" do
+    let(:sun) { Data::Sun.new }
+    let(:local_time) { Data::LocalTime.new.parse(Time.now + (60*60*8)) }
+
+    it "requires Data::LocalTime" do
+      lambda { sun.set = "" }.should raise_error(ArgumentError)
+      lambda { sun.set = local_time }.should_not raise_error(ArgumentError)
+    end
+
+    it "allows nil" do
+      lambda { sun.set = nil }.should_not raise_error(ArgumentError)
+    end
+
+    it "sets the set time" do
+      sun.set = local_time
+      sun.set.should == local_time
+    end
+  end
 end
