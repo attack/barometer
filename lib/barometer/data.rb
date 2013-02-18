@@ -1,9 +1,8 @@
 $:.unshift(File.dirname(__FILE__))
 
+require 'utility/payload'
 require 'utility/data_types'
 
-# units
-#
 require 'data/zone'
 require 'data/sun'
 require 'data/geo'
@@ -16,8 +15,6 @@ require 'data/pressure'
 require 'data/local_time'
 require 'data/local_datetime'
 
-# measurements
-#
 require 'measurements/measurement'
 require 'measurements/result'
 require 'measurements/result_array'
