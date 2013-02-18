@@ -116,7 +116,7 @@ module Barometer
     #
     def humidity(do_average=true); average("humidity",do_average); end
     def temperature(do_average=true); average("temperature",do_average,"Temperature"); end
-    def wind(do_average=true); average("wind",do_average,"Speed"); end
+    def wind(do_average=true); average("wind",do_average,"Vector"); end
     def pressure(do_average=true); average("pressure",do_average,"Pressure"); end
     def dew_point(do_average=true); average("dew_point",do_average,"Temperature"); end
     def heat_index(do_average=true); average("heat_index",do_average,"Temperature"); end

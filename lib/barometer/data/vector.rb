@@ -1,22 +1,12 @@
 module Barometer
   #
-  # A simple Speed class
-  #
-  # Think of this like the Integer class. Enhancement
-  # is that you can create a number (in a certain unit), then
-  # get that number back already converted to another unit.
-  #
-  # Speed is a vector, thus it has a perticular direction, although
-  # the direction is independent of the units
-  #
-  # All comparison operations will be done in metric
+  # A simple Vector class
   #
   # NOTE: this currently only supports the scale of
   #       kilometers (km) and miles (m) per hour.  There is currently
   #       no way to scale to smaller units (eg km -> m -> mm)
   #
-  class Data::Speed < Data::Units
-
+  class Data::Vector < Data::Units
     METRIC_UNITS = "kph"
     IMPERIAL_UNITS = "mph"
 
@@ -33,6 +23,10 @@ module Barometer
 
     def metric_default=(value); self.kph = value; end
     def imperial_default=(value); self.mph = value; end
+
+    def speed=(value)
+      self << value
+    end
 
     #
     # CONVERTERS
@@ -57,7 +51,7 @@ module Barometer
     def kph=(kph)
       return if !kph || !(kph.is_a?(Integer) || kph.is_a?(Float))
       @kilometers = kph.to_f
-      self.update_miles(kph.to_f)
+      update_miles(kph.to_f)
     end
 
     # store miles per hour
@@ -65,7 +59,7 @@ module Barometer
     def mph=(mph)
       return if !mph || !(mph.is_a?(Integer) || mph.is_a?(Float))
       @miles = mph.to_f
-      self.update_kilometers(mph.to_f)
+      update_kilometers(mph.to_f)
     end
 
     def direction=(direction)
@@ -81,14 +75,14 @@ module Barometer
     # return the stored kilometers or convert from miles
     #
     def kph(as_integer=true)
-      km = (@kilometers || Data::Speed.m_to_km(@miles))
+      km = (@kilometers || Data::Vector.m_to_km(@miles))
       km ? (as_integer ? km.to_i : (100*km).round/100.0) : nil
     end
 
     # return the stored miles or convert from kilometers
     #
     def mph(as_integer=true)
-      m = (@miles || Data::Speed.km_to_m(@kilometers))
+      m = (@miles || Data::Vector.km_to_m(@kilometers))
       m ? (as_integer ? m.to_i : (100*m).round/100.0) : nil
     end
 
@@ -97,7 +91,7 @@ module Barometer
     #
 
     def <=>(other)
-      self.kph <=> other.kph
+      kph <=> other.kph
     end
 
     #
@@ -107,25 +101,31 @@ module Barometer
     # will just return the value (no units)
     #
     def to_i(metric=nil)
-      (metric || (metric.nil? && self.metric?)) ? self.kph : self.mph
+      (metric || (metric.nil? && metric?)) ? kph : mph
     end
 
     # will just return the value (no units) with more precision
     #
     def to_f(metric=nil)
-      (metric || (metric.nil? && self.metric?)) ? self.kph(false) : self.mph(false)
+      (metric || (metric.nil? && metric?)) ? kph(false) : mph(false)
     end
 
     # will return the value with units
     #
     def to_s(metric=nil)
-      (metric || (metric.nil? && self.metric?)) ? "#{self.kph} #{METRIC_UNITS}" : "#{self.mph} #{IMPERIAL_UNITS}"
+      output = (metric || (metric.nil? && metric?)) ? "#{kph} #{METRIC_UNITS}" : "#{mph} #{IMPERIAL_UNITS}"
+      if direction
+        output += " #{direction}"
+      else
+        output += " @ #{degrees} degrees" if degrees
+      end
+      output
     end
 
     # will just return the units (no value)
     #
     def units(metric=nil)
-      (metric || (metric.nil? && self.metric?)) ? METRIC_UNITS : IMPERIAL_UNITS
+      (metric || (metric.nil? && metric?)) ? METRIC_UNITS : IMPERIAL_UNITS
     end
 
     # when we set miles, it is possible the a non-equivalent value of
@@ -133,7 +133,7 @@ module Barometer
     #
     def update_kilometers(m)
       return unless @kilometers
-      difference = Data::Speed.m_to_km(m.to_f) - @kilometers
+      difference = Data::Vector.m_to_km(m.to_f) - @kilometers
       # only clear kilometers if the stored kilometers is off be more then 1 unit
       # then the conversion of miles
       @kilometers = nil unless difference.abs <= 1.0
@@ -144,7 +144,7 @@ module Barometer
     #
     def update_miles(km)
       return unless @miles
-      difference = Data::Speed.km_to_m(km.to_f) - @miles
+      difference = Data::Vector.km_to_m(km.to_f) - @miles
       # only clear miles if the stored miles is off be more then 1 unit
       # then the conversion of kilometers
       @miles = nil unless difference.abs <= 1.0
@@ -153,6 +153,5 @@ module Barometer
     def nil?
       (@kilometers || @miles) ? false : true
     end
-
   end
 end
