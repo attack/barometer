@@ -16,7 +16,7 @@ module Barometer
         when :datetime
           /^\d{1,4}-\d{1,2}-\d{1,2}$/i
         when :optional_string
-          /^[\w ]+$/i
+          /^[\w ]*$/i
         when :string
           /^[\w ]{2,}$/i
         when :number
@@ -24,7 +24,7 @@ module Barometer
         when :float
           /^[\d\.]{1,5}$/i
         when :temperature
-          /^\d{1,3}[ ]?[cfCF]?$/i
+          /^-?\d{1,3}[ ]?[cfCF]?$/i
         when :pressure
           /^\d{1,4}[ ]?[a-zA-Z]{0,3}$/i
         when :vector
