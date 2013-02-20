@@ -4,208 +4,108 @@ include Barometer
 describe Barometer::WeatherService::WeatherBug, :vcr => {
   :cassette_name => "WeatherService::WeatherBug"
 } do
-  before(:each) do
-    @accepted_formats = [:short_zipcode, :coordinates]
-  end
 
   it "auto-registers this weather service as :weather_bug" do
     Barometer::WeatherService.source(:weather_bug).should == Barometer::WeatherService::WeatherBug
   end
 
-  describe "the class methods" do
-    it "defines accepted_formats" do
-      WeatherService::WeatherBug._accepted_formats.should == @accepted_formats
+  describe ".call" do
+    context "when no keys provided" do
+      let(:query) { double(:query) }
+      subject { WeatherService::WeatherBug.call(query) }
+
+      it { should_not be_success }
+      its(:source) { should == :weather_bug }
+      its(:error_message) { should == "missing keys" }
     end
 
-    it "defines source_name" do
-      WeatherService::WeatherBug._source_name.should == :weather_bug
-    end
+    context "when keys are provided and the query format is not accepted" do
+      let(:query) { double(:query, :convert! => nil) }
+      let(:config) { {:keys => {:code => WEATHERBUG_CODE}} }
+      subject { WeatherService::WeatherBug.call(query, config) }
 
-    it "defines fetch_current" do
-      WeatherService::WeatherBug.respond_to?("_fetch_current").should be_true
-    end
-
-    it "defines fetch_forecast" do
-      WeatherService::WeatherBug.respond_to?("_fetch_forecast").should be_true
-    end
-
-    it "defines _requires_keys?" do
-      WeatherService::WeatherBug.respond_to?("_requires_keys?").should be_true
-      WeatherService::WeatherBug._requires_keys?.should be_true
-    end
-
-    it "defines _has_keys?" do
-      WeatherService::WeatherBug.respond_to?("_has_keys?").should be_true
-      WeatherService::WeatherBug._has_keys?.should be_false
-      WeatherService::WeatherBug.keys = { :code => WEATHERBUG_CODE }
-      WeatherService::WeatherBug._has_keys?.should be_true
-    end
-  end
-
-  describe "building the current data" do
-    it "defines the build method" do
-      WeatherService::WeatherBug.respond_to?("_build_current").should be_true
-    end
-
-    it "requires Hash input" do
-      lambda { WeatherService::WeatherBug._build_current }.should raise_error(ArgumentError)
-      lambda { WeatherService::WeatherBug._build_current({}) }.should_not raise_error(ArgumentError)
-    end
-
-    it "returns Measurement::Current object" do
-      current = WeatherService::WeatherBug._build_current({})
-      current.is_a?(Measurement::Result).should be_true
-    end
-  end
-
-  describe "building the forecast data" do
-    it "defines the build method" do
-      WeatherService::WeatherBug.respond_to?("_build_forecast").should be_true
-    end
-
-    it "requires Hash input" do
-      lambda { WeatherService::WeatherBug._build_forecast }.should raise_error(ArgumentError)
-      lambda { WeatherService::WeatherBug._build_forecast({}) }.should_not raise_error(ArgumentError)
-    end
-
-    it "returns Array object" do
-      current = WeatherService::WeatherBug._build_forecast({})
-      current.is_a?(Array).should be_true
-    end
-  end
-
-  describe "building the location data" do
-    it "defines the build method" do
-      WeatherService::WeatherBug.respond_to?("_build_location").should be_true
-    end
-
-    it "requires Hash input" do
-      lambda { WeatherService::WeatherBug._build_location }.should raise_error(ArgumentError)
-      lambda { WeatherService::WeatherBug._build_location({}) }.should_not raise_error(ArgumentError)
-    end
-
-    it "requires Barometer::Geo input" do
-      geo = Data::Geo.new({})
-      lambda { WeatherService::WeatherBug._build_location({}, {}) }.should raise_error(ArgumentError)
-      lambda { WeatherService::WeatherBug._build_location({}, geo) }.should_not raise_error(ArgumentError)
-    end
-
-    it "returns Barometer::Location object" do
-      location = WeatherService::WeatherBug._build_location({})
-      location.is_a?(Data::Location).should be_true
-    end
-  end
-
-  describe "building the sun data" do
-    it "defines the build method" do
-      WeatherService::WeatherBug.respond_to?("_build_sun").should be_true
-    end
-
-    it "requires Hash input" do
-      lambda { WeatherService::WeatherBug._build_sun }.should raise_error(ArgumentError)
-      lambda { WeatherService::WeatherBug._build_sun({}) }.should_not raise_error(ArgumentError)
-    end
-
-    it "returns Barometer::Sun object" do
-      sun = WeatherService::WeatherBug._build_sun({})
-      sun.is_a?(Data::Sun).should be_true
-    end
-  end
-
-  describe "builds other data" do
-    it "defines _build_extra" do
-      WeatherService::WeatherBug.respond_to?("_build_extra").should be_true
-    end
-
-    it "defines _parse_local_time" do
-      WeatherService::WeatherBug.respond_to?("_parse_local_time").should be_true
-    end
-
-    it "defines _build_timezone" do
-      WeatherService::WeatherBug.respond_to?("_build_timezone").should be_true
-    end
-  end
-
-  describe "when measuring" do
-    before(:each) do
-      @query = Barometer::Query.new("90210")
-      @measurement = Barometer::Measurement.new
-    end
-
-    describe "all" do
-      it "responds to _measure" do
-        WeatherService::WeatherBug.respond_to?("_measure").should be_true
+      it "asks the query to convert to accepted formats" do
+        query.should_receive(:convert!).with([:short_zipcode, :coordinates])
+        subject
       end
 
-      it "requires a Barometer::Measurement object" do
-        lambda { WeatherService::WeatherBug._measure(nil, @query) }.should raise_error(ArgumentError)
-        lambda { WeatherService::WeatherBug._measure("invalid", @query) }.should raise_error(ArgumentError)
-
-        lambda { WeatherService::WeatherBug._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
-      end
-
-      it "requires a Barometer::Query query" do
-        lambda { WeatherService::WeatherBug._measure }.should raise_error(ArgumentError)
-        lambda { WeatherService::WeatherBug._measure(@measurement, 1) }.should raise_error(ArgumentError)
-
-        lambda { WeatherService::WeatherBug._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns a Barometer::Measurement object" do
-        result = WeatherService::WeatherBug._measure(@measurement, @query)
-        result.is_a?(Barometer::Measurement).should be_true
-        result.current.is_a?(Measurement::Result).should be_true
-        result.forecast.is_a?(Measurement::ResultArray).should be_true
-      end
-    end
-  end
-
-  describe "response" do
-    let(:query) { Barometer::Query.new("90210") }
-
-    subject do
-      WeatherService::WeatherBug.keys = { :code => WEATHERBUG_CODE }
-      WeatherService::WeatherBug._measure(Barometer::Measurement.new, query)
+      it { should_not be_success }
+      its(:source) { should == :weather_bug }
+      its(:error_message) { should == "unacceptable query format" }
     end
 
-    it "has the expected data" do
-      should measure(:current, :humidity).as_format(:number)
-      should measure(:current, :condition).as_format(:optional_string)
-      should measure(:current, :icon).as_format(:number)
-      should measure(:current, :temperature).as_format(:temperature)
-      should measure(:current, :dew_point).as_format(:temperature)
-      should measure(:current, :wind_chill).as_format(:temperature)
-      should measure(:current, :wind).as_format(:wind)
-      should measure(:current, :wind, :direction).as_format(:wind_direction)
-      should measure(:current, :pressure).as_format(:pressure)
-      should measure(:current, :sun, :rise).as_format(:datetime)
-      should measure(:current, :sun, :set).as_format(:datetime)
+    context "when keys are provided and the query format is accepted" do
+      let(:converted_query) { Barometer::Query.new("90210") }
+      let(:query) { double(:query, :convert! => converted_query) }
+      let(:config) { {:keys => {:code => WEATHERBUG_CODE}} }
+      subject { WeatherService::WeatherBug.call(query, config) }
 
-      should measure(:station, :id).as_value("LSNGN")
-      should measure(:station, :name).as_value("Alexander Hamilton Senior HS")
-      should measure(:station, :city).as_value("Los Angeles")
-      should measure(:station, :state_code).as_value("CA")
-      should measure(:station, :country).as_value("USA")
-      should measure(:station, :zip_code).as_value("90034")
-      should measure(:station, :latitude).as_value(34.0336112976074)
-      should measure(:station, :longitude).as_value(-118.389999389648)
+      it { should be_success }
+      it { should be_a Barometer::Measurement }
+      its(:source) { should == :weather_bug }
+      its(:query) { should == "90210" }
+      its(:format) { should == :short_zipcode }
 
-      should measure(:location, :city).as_value("Beverly Hills")
-      should measure(:location, :state_code).as_value("CA")
-      should measure(:location, :zip_code).as_value("90210")
+      it "includes the expected data" do
+        should have_data(:current, :humidity).as_format(:float)
+        should have_data(:current, :condition).as_format(:string)
+        should have_data(:current, :icon).as_format(:number)
+        should have_data(:current, :temperature).as_format(:temperature)
+        should have_data(:current, :dew_point).as_format(:temperature)
+        should have_data(:current, :wind_chill).as_format(:temperature)
+        should have_data(:current, :wind).as_format(:vector)
+        should have_data(:current, :pressure).as_format(:pressure)
+        should have_data(:current, :sun, :rise).as_format(:time)
+        should have_data(:current, :sun, :set).as_format(:time)
 
-      should measure(:measured_at).as_format(:datetime)
-      should measure(:current, :current_at).as_format(:datetime)
-      should measure(:timezone, :code).as_format(/^P[DS]T$/i)
+        should have_data(:station, :id).as_value("LSNGN")
+        should have_data(:station, :name).as_value("Alexander Hamilton Senior HS")
+        should have_data(:station, :city).as_value("Los Angeles")
+        should have_data(:station, :state_code).as_value("CA")
+        should have_data(:station, :country).as_value("USA")
+        should have_data(:station, :zip_code).as_value("90034")
+        should have_data(:station, :latitude).as_value(34.0336112976074)
+        should have_data(:station, :longitude).as_value(-118.389999389648)
 
-      subject.forecast.size.should == 7
-      should forecast(:date).as_format(:date)
-      should forecast(:condition).as_format(:optional_string)
-      should forecast(:icon).as_format(:number)
-      should forecast(:high).as_format(:temperature)
-      should forecast(:low).as_format(:temperature)
-      should forecast(:sun, :rise).as_format(:datetime)
-      should forecast(:sun, :set).as_format(:datetime)
+        should have_data(:location, :city).as_value("Beverly Hills")
+        should have_data(:location, :state_code).as_value("CA")
+        should have_data(:location, :zip_code).as_value("90210")
+
+        should have_data(:measured_at).as_format(:datetime)
+        should have_data(:current, :current_at).as_format(:datetime)
+        should have_data(:timezone, :code).as_format(/^P[DS]T$/i)
+
+        subject.forecast.size.should == 7
+        should have_forecast(:date).as_format(:date)
+        should have_forecast(:condition).as_format(:string)
+        should have_forecast(:icon).as_format(:number)
+        should have_forecast(:high).as_format(:temperature)
+        should have_forecast(:low).as_format(:temperature)
+      end
+
+      context "when the query already has geo data" do
+        let(:geo) do
+          double(:geo,
+            :locality => "locality",
+            :region => "region",
+            :country => "country",
+            :country_code => "country_code",
+            :latitude => "latitude",
+            :longitude => "longitude",
+          )
+        end
+
+        before { converted_query.stub(:geo => geo) }
+
+        it "uses the query geo data for 'location'" do
+          should have_data(:location, :city).as_value("locality")
+          should have_data(:location, :state_code).as_value("region")
+          should have_data(:location, :country).as_value("country")
+          should have_data(:location, :country_code).as_value("country_code")
+          should have_data(:location, :latitude).as_value("latitude")
+          should have_data(:location, :longitude).as_value("longitude")
+        end
+      end
     end
   end
 end
