@@ -37,6 +37,12 @@ describe Barometer::Payload do
       parser = Barometer::Payload.new(hash)
       parser.fetch(:one).should == "one"
     end
+
+    it "returns nil when the value is NA" do
+      hash = {:one => "NA"}
+      parser = Barometer::Payload.new(hash)
+      parser.fetch(:one).should be_nil
+    end
   end
 
   describe "#using" do

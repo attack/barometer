@@ -19,7 +19,10 @@ module Barometer
       end
 
       result = _apply_regex(result)
-      result.respond_to?(:strip) ? result.strip : result
+      result = _cleanup(result)
+      result = _convert_alternate_nil_values(result)
+
+      result
     end
 
     private
@@ -29,6 +32,18 @@ module Barometer
         result = matched[1] if matched[1]
       end
       result
+    end
+
+    def _cleanup(result)
+      result.respond_to?(:strip) ? result.strip : result
+    end
+
+    def _convert_alternate_nil_values(result)
+      if result == "NA"
+        nil
+      else
+        result
+      end
     end
   end
 end
