@@ -6,7 +6,16 @@ module Barometer
 
     module ClassMethods
       def temperature *names
-        attr_reader *names
+        names.each do |name|
+          send :define_method, name do
+            value = instance_variable_get("@#{name}".to_sym)
+            unless value
+              value = Data::Temperature.new
+              instance_variable_set "@#{name}".to_sym, value
+            end
+            value
+          end
+        end
 
         names.each do |name|
           send :define_method, "#{name}=" do |data|

@@ -26,11 +26,6 @@ describe Barometer::DataTypes do
         subject.temperature = nil
         subject.temperature.should be_nil
       end
-
-      it "prints nothing" do
-        subject.temperature = nil
-        subject.temperature.to_s.should == ""
-      end
     end
 
     context "when setting with data of exact values" do
@@ -42,6 +37,24 @@ describe Barometer::DataTypes do
       it "prints correctly" do
         subject.temperature = 12
         subject.temperature.to_s.should == "12 C"
+      end
+    end
+
+    context "when setting to multiple values" do
+      it "initializes Data::Temperature" do
+        subject.temperature << [12, 53]
+        subject.temperature.should be_a(Data::Temperature)
+      end
+
+      it "prints correctly (as metric)" do
+        subject.temperature << [12, 53]
+        subject.temperature.to_s.should == "12 C"
+      end
+
+      it "prints correctly (as imperial)" do
+        subject.temperature << [12, 53]
+        subject.temperature.metric = false
+        subject.temperature.to_s.should == "53 F"
       end
     end
   end
