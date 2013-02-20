@@ -4,132 +4,96 @@ include Barometer
 describe Barometer::WeatherService::Yahoo, :vcr => {
   :cassette_name => "WeatherService::Yahoo"
 } do
-  before(:each) do
-    @accepted_formats = [:zipcode, :weather_id, :woe_id]
-  end
 
   it "auto-registers this weather service as :yahoo" do
     Barometer::WeatherService.source(:yahoo).should == Barometer::WeatherService::Yahoo
   end
 
-  describe "the class methods" do
-    it "defines accepted_formats" do
-      WeatherService::Yahoo._accepted_formats.should == @accepted_formats
-    end
+  describe ".call" do
+    context "when the query format is not accepted" do
+      let(:query) { double(:query, :convert! => nil) }
+      let(:config) { {} }
+      subject { WeatherService::Yahoo.call(query, config) }
 
-    it "defines source_name" do
-      WeatherService::Yahoo._source_name.should == :yahoo
-    end
-
-    it "defines get_all" do
-      WeatherService::Yahoo.respond_to?("_fetch").should be_true
-    end
-  end
-
-  describe "building the current data" do
-    it "defines the build method" do
-      WeatherService::Yahoo.respond_to?("_build_current").should be_true
-    end
-
-    it "requires Hash input" do
-      lambda { WeatherService::Yahoo._build_current }.should raise_error(ArgumentError)
-      lambda { WeatherService::Yahoo._build_current({}) }.should_not raise_error(ArgumentError)
-    end
-
-    it "returns Barometer::CurrentMeasurement object" do
-      current = WeatherService::Yahoo._build_current({})
-      current.is_a?(Measurement::Result).should be_true
-    end
-  end
-
-  describe "building the forecast data" do
-    it "defines the build method" do
-      WeatherService::Yahoo.respond_to?("_build_forecast").should be_true
-    end
-
-    it "requires Hash input" do
-      lambda { WeatherService::Yahoo._build_forecast }.should raise_error(ArgumentError)
-      lambda { WeatherService::Yahoo._build_forecast({}) }.should_not raise_error(ArgumentError)
-    end
-
-    it "returns Array object" do
-      current = WeatherService::Yahoo._build_forecast({})
-      current.is_a?(Array).should be_true
-    end
-  end
-
-  describe "building the location data" do
-    it "defines the build method" do
-      WeatherService::Yahoo.respond_to?("_build_location").should be_true
-    end
-
-    it "requires Hash input" do
-      lambda { WeatherService::Yahoo._build_location }.should raise_error(ArgumentError)
-      lambda { WeatherService::Yahoo._build_location({}) }.should_not raise_error(ArgumentError)
-    end
-
-    it "requires Barometer::Geo input" do
-      geo = Data::Geo.new({})
-      lambda { WeatherService::Yahoo._build_location({}, {}) }.should raise_error(ArgumentError)
-      lambda { WeatherService::Yahoo._build_location({}, geo) }.should_not raise_error(ArgumentError)
-    end
-
-    it "returns Barometer::Location object" do
-      location = WeatherService::Yahoo._build_location({})
-      location.is_a?(Data::Location).should be_true
-    end
-  end
-
-  describe "when measuring" do
-    before(:each) do
-      @query = Barometer::Query.new("90210")
-      @measurement = Barometer::Measurement.new
-    end
-
-    describe "all" do
-      it "responds to _measure" do
-        WeatherService::Yahoo.respond_to?("_measure").should be_true
+      it "asks the query to convert to accepted formats" do
+        query.should_receive(:convert!).with([:zipcode, :weather_id, :woe_id])
+        subject
       end
 
-      it "requires a Barometer::Measurement object" do
-        lambda { WeatherService::Yahoo._measure(nil, @query) }.should raise_error(ArgumentError)
-        lambda { WeatherService::Yahoo._measure("invlaid", @query) }.should raise_error(ArgumentError)
-
-        lambda { WeatherService::Yahoo._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
-      end
-
-      it "requires a Barometer::Query query" do
-        lambda { WeatherService::Yahoo._measure }.should raise_error(ArgumentError)
-        lambda { WeatherService::Yahoo._measure(@measurement, 1) }.should raise_error(ArgumentError)
-
-        lambda { WeatherService::Yahoo._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns a Barometer::Measurement object" do
-        result = WeatherService::Yahoo._measure(@measurement, @query)
-        result.is_a?(Barometer::Measurement).should be_true
-        result.current.is_a?(Measurement::Result).should be_true
-        result.forecast.is_a?(Array).should be_true
-      end
-    end
-  end
-
-  describe "response" do
-    let(:query) { Barometer::Query.new("90210") }
-
-    subject do
-      WeatherService::Yahoo._measure(Barometer::Measurement.new, query)
+      it { should_not be_success }
+      its(:source) { should == :yahoo }
+      its(:error_message) { should == "unacceptable query format" }
     end
 
-    it "has the expected data" do
-      should measure(:current, :sun, :rise).as_format(:datetime)
-      should measure(:current, :sun, :set).as_format(:datetime)
-      should measure(:location, :city).as_value("Beverly Hills")
+    context "when the query format is accepted" do
+      let(:converted_query) { Barometer::Query.new("90210") }
+      let(:query) { double(:query, :convert! => converted_query) }
+      let(:config) { {} }
+      subject { WeatherService::Yahoo.call(query, config) }
 
-      should forecast(:condition).as_format(:optional_string)
-      should forecast(:icon).as_format(:number)
-      should forecast(:sun, :rise).as_format(:datetime)
-      should forecast(:sun, :set).as_format(:datetime)
+      before { converted_query.format = :zipcode }
+
+      it { should be_success }
+      it { should be_a Barometer::Measurement }
+      its(:source) { should == :yahoo }
+      its(:query) { should == "90210" }
+      its(:format) { should == :zipcode }
+
+      it "includes the expected data" do
+        should have_data(:current, :humidity).as_format(:float)
+        should have_data(:current, :condition).as_format(:string)
+        should have_data(:current, :icon).as_format(:number)
+        should have_data(:current, :temperature).as_format(:temperature)
+        should have_data(:current, :wind_chill).as_format(:temperature)
+        # should have_data(:current, :wind).as_format(:vector) # wind format needs to accept degrees
+        should have_data(:current, :pressure).as_format(:pressure)
+        # should have_data(:current, :visibility).as_format(:distance) # need to add :distance format
+        should have_data(:current, :sun, :rise).as_format(:time)
+        should have_data(:current, :sun, :set).as_format(:time)
+
+        should have_data(:location, :city).as_value("Beverly Hills")
+        should have_data(:location, :state_code).as_value("CA")
+        should have_data(:location, :country_code).as_value("US")
+        should have_data(:location, :latitude).as_value(34.08)
+        should have_data(:location, :longitude).as_value(-118.4)
+
+        should have_data(:measured_at).as_format(:datetime)
+        should have_data(:current, :current_at).as_format(:datetime)
+        should have_data(:timezone, :code).as_format(/^P[DS]T$/i)
+
+        subject.forecast.size.should == 2
+        should have_forecast(:date).as_format(:date) # date needs a lot of work
+        should have_forecast(:icon).as_format(:number)
+        should have_forecast(:condition).as_format(:string)
+        should have_forecast(:high).as_format(:temperature)
+        should have_forecast(:low).as_format(:temperature)
+        # should forecast(:sun, :rise).as_format(:datetime)
+        # should forecast(:sun, :set).as_format(:datetime)
+      end
+
+      context "when the query already has geo data" do
+        let(:geo) do
+          double(:geo,
+            :locality => "locality",
+            :region => "region",
+            :country => "country",
+            :country_code => "country_code",
+            :latitude => "latitude",
+            :longitude => "longitude",
+          )
+        end
+
+        before { converted_query.stub(:geo => geo) }
+
+        it "uses the query geo data for 'location'" do
+          should have_data(:location, :city).as_value("locality")
+          should have_data(:location, :state_code).as_value("region")
+          should have_data(:location, :country).as_value("country")
+          should have_data(:location, :country_code).as_value("country_code")
+          should have_data(:location, :latitude).as_value("latitude")
+          should have_data(:location, :longitude).as_value("longitude")
+        end
+      end
     end
   end
 end
