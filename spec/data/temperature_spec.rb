@@ -1,9 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "Data::Temperature" do
-
+describe Data::Temperature do
   describe "when initialized" do
-
     it "defines METRIC_UNITS" do
       Data::Temperature.const_defined?("METRIC_UNITS").should be_true
       Data::Temperature::METRIC_UNITS.should == "C"
@@ -43,11 +41,9 @@ describe "Data::Temperature" do
       @temp.c = 5
       @temp.nil?.should be_false
     end
-
   end
 
   describe "conversion" do
-
     # For all conversions
     # 20.0 C = 293.15 K = 68.0 F
     before(:each) do
@@ -99,11 +95,9 @@ describe "Data::Temperature" do
     it "converts K to F" do
       Data::Temperature.k_to_f(@k).should == @f
     end
-
   end
 
   describe "updating" do
-
     before(:each) do
       @temp = Data::Temperature.new
       @f = 68.0
@@ -149,11 +143,9 @@ describe "Data::Temperature" do
       @temp.fahrenheit.should be_nil
       @temp.celsius.should be_nil
     end
-
   end
 
   describe "storing" do
-
     before(:each) do
       @temp = Data::Temperature.new
       @f = 68.0
@@ -214,11 +206,9 @@ describe "Data::Temperature" do
       @temp.fahrenheit.should == @f
       @temp.kelvin.should == @k
     end
-
   end
 
   describe "retrieving" do
-
     before(:each) do
       @temp = Data::Temperature.new
       @f = 68.0
@@ -283,11 +273,9 @@ describe "Data::Temperature" do
       @temp.fahrenheit.should == f
       @temp.f(false).should == 68.12
     end
-
   end
 
   describe "operators" do
-
     before(:each) do
       @f = 68.0
       @c = 20.0
@@ -342,11 +330,9 @@ describe "Data::Temperature" do
       @temp_high.should >= @temp_low
       @temp.should >= @temp_same
     end
-
   end
 
   describe "changing units" do
-
     before(:each) do
       @c = 20.5
       @f = Data::Temperature.c_to_f(@c)
@@ -390,7 +376,17 @@ describe "Data::Temperature" do
       @temp.metric?.should be_false
       @temp.units.should == Data::Temperature::IMPERIAL_UNITS
     end
-
   end
 
+  describe "#to_s" do
+    it "returns the value and units when a value exists" do
+      subject << 10
+      subject.to_s.should == "10 C"
+    end
+
+    it "returns nothing when no value exists" do
+      subject << nil
+      subject.to_s.should == ""
+    end
+  end
 end

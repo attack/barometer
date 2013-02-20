@@ -52,7 +52,7 @@ module Barometer
     def self.f_to_k(f)
       return nil unless f && (f.is_a?(Integer) || f.is_a?(Float))
       c = self.f_to_c(f.to_f)
-      self.c_to_k(c)
+      c_to_k(c)
     end
 
     def self.k_to_c(k)
@@ -63,7 +63,7 @@ module Barometer
     def self.k_to_f(k)
       return nil unless k && (k.is_a?(Integer) || k.is_a?(Float))
       c = self.k_to_c(k.to_f)
-      self.c_to_f(c)
+      c_to_f(c)
     end
 
     #
@@ -76,7 +76,7 @@ module Barometer
       return if !c || !(c.is_a?(Integer) || c.is_a?(Float))
       @celsius = c.to_f
       @kelvin = Data::Temperature.c_to_k(c.to_f)
-      self.update_fahrenheit(c.to_f)
+      update_fahrenheit(c.to_f)
     end
 
     # store fahrenheit and kelvin
@@ -85,7 +85,7 @@ module Barometer
       return if !f || !(f.is_a?(Integer) || f.is_a?(Float))
       @fahrenheit = f.to_f
       @kelvin = Data::Temperature.f_to_k(f.to_f)
-      self.update_celsius(f.to_f)
+      update_celsius(f.to_f)
     end
 
     # store kelvin, convert to all
@@ -126,25 +126,29 @@ module Barometer
     # will just return the value (no units)
     #
     def to_i(metric=nil)
-      (metric || (metric.nil? && self.metric?)) ? self.c : self.f
+      (metric || (metric.nil? && metric?)) ? c : f
     end
 
     # will just return the value (no units) with more precision
     #
     def to_f(metric=nil)
-      (metric || (metric.nil? && self.metric?)) ? self.c(false) : self.f(false)
+      (metric || (metric.nil? && metric?)) ? c(false) : f(false)
     end
 
     # will return the value with units
     #
     def to_s(metric=nil)
-      (metric || (metric.nil? && self.metric?)) ? "#{self.c} #{METRIC_UNITS}" : "#{self.f} #{IMPERIAL_UNITS}"
+      if c || f
+        (metric || (metric.nil? && metric?)) ? "#{c} #{METRIC_UNITS}" : "#{f} #{IMPERIAL_UNITS}"
+      else
+        ""
+      end
     end
 
     # will just return the units (no value)
     #
     def units(metric=nil)
-      (metric || (metric.nil? && self.metric?)) ? METRIC_UNITS : IMPERIAL_UNITS
+      (metric || (metric.nil? && metric?)) ? METRIC_UNITS : IMPERIAL_UNITS
     end
 
     # when we set fahrenheit, it is possible the a non-equivalent value of
