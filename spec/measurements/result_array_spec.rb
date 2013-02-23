@@ -1,149 +1,80 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Barometer::Measurement::ResultArray do
-  describe "instance methods" do
-    before(:each) do
-      @array = Barometer::Measurement::ResultArray.new
+  describe "#<<" do
+    it "raises an error with invalid data" do
+      expect {
+        subject << "invalid"
+      }.to raise_error(ArgumentError)
     end
 
-    describe "'<<'" do
-      it "requires Barometer::Measurement::Result" do
-        lambda { @array << "invalid" }.should raise_error(ArgumentError)
-      end
-
-      it "adds ForecastMeasurement" do
-        @array.size.should == 0
-        forecast = Barometer::Measurement::Result.new
-        @array << forecast
-        @array.size.should == 1
-      end
-    end
-
-    describe "when searching forecasts using 'for'" do
-      before(:each) do
-        1.upto(4) do |i|
-          forecast_measurement = Barometer::Measurement::Result.new
-          forecast_measurement.date = Date.parse((Time.now + (i * 60 * 60 * 24)).to_s)
-          @array << forecast_measurement
-        end
-        @array.size.should == 4
-
-        @tommorrow = (Time.now + (60 * 60 * 24))
-      end
-
-      it "returns nil when there are no forecasts" do
-        @array = Barometer::Measurement::ResultArray.new
-        @array.size.should == 0
-        @array.for(@tommorrow).should be_nil
-      end
-
-      it "finds the date using a String" do
-        tommorrow = @tommorrow.to_s
-        tommorrow.class.should == String
-        @array.for(tommorrow).should == @array.first
-      end
-
-      it "finds the date using a Date" do
-        tommorrow = Date.parse(@tommorrow.to_s)
-        tommorrow.class.should == Date
-        @array.for(tommorrow).should == @array.first
-      end
-
-      it "finds the date using a DateTime" do
-        tommorrow = DateTime.parse(@tommorrow.to_s)
-        tommorrow.class.should == DateTime
-        @array.for(tommorrow).should == @array.first
-      end
-
-      it "finds the date using a Time" do
-        @tommorrow.class.should == Time
-        @array.for(@tommorrow).should == @array.first
-      end
-
-      it "finds the date using Data::LocalDateTime" do
-        tommorrow = Data::LocalDateTime.parse(@tommorrow.to_s)
-        tommorrow.class.should == Data::LocalDateTime
-        @array.for(tommorrow).should == @array.first
-      end
-
-      it "finds nothing when there is not a match" do
-        yesterday = (Time.now - (60 * 60 * 24))
-        yesterday.class.should == Time
-        @array.for(yesterday).should be_nil
-      end
-
-      it "finds using '[]'" do
-        tommorrow = @tommorrow.to_s
-        tommorrow.class.should == String
-        @array[tommorrow].should == @array.first
-      end
+    it "adds Measurement::Result" do
+      expect {
+        subject <<  Barometer::Measurement::Result.new
+      }.to change{ subject.count }.by(1)
     end
   end
 
-  describe "simple questions" do
-    before(:each) do
-      @array = Barometer::Measurement::ResultArray.new
-      @now = Time.utc(2009,5,5,10,30,25)
+  describe "#[]" do
+    let(:result) { Barometer::Measurement::Result.new }
+    before { subject << result }
 
-      @sun_icons = %w(sunny)
+    it "finds result by index when passed a number" do
+      subject[0].should == result
+    end
 
-      0.upto(1) do |i|
-        forecast_measurement = Barometer::Measurement::Result.new
-        forecast_measurement.date = Date.parse((@now + (i * 60 * 60 * 24)).to_s)
-        wind = Data::Speed.new
-        wind << (i * 5)
-        forecast_measurement.wind = wind
-        forecast_measurement.sun = Data::Sun.new(
-          Data::LocalTime.parse("9:00 am"), Data::LocalTime.parse("3:00 pm"))
-        forecast_measurement.icon = "sunny"
-        forecast_measurement.pop = 40
-        forecast_measurement.humidity = 95
-        @array << forecast_measurement
+    it "finds result by using #for when not passed a number" do
+      index = double(:index)
+      subject.should_receive(:for).with(index)
+
+      subject[index]
+    end
+  end
+
+  describe "#for" do
+    context "when there are no forecasts" do
+      it "returns nil when there are no forecasts" do
+        subject.size.should == 0
+        subject.for(@tommorrow).should be_nil
       end
-      @array.size.should == 2
-      @tommorrow = (@now + (60 * 60 * 24))
-      @yesterday = (@now - (60 * 60 * 24))
-      @earlier = (@now - (60 * 60 * 3))
-      @later = (@now + (60 * 60 * 6))
     end
 
-    it "answers windy?" do
-      @array.windy?(@tommorrow).should be_false
-      @array.windy?(@tommorrow,1).should be_true
-      @array.windy?(@yesterday).should be_nil
-    end
+    context "when there are forecasts" do
+      let(:tommorrow) { Date.today + 1 }
 
-    it "answers day?" do
-      @array.day?(@yesterday).should be_nil
-      @array.day?(@earlier).should be_false
-      @array.day?(@later).should be_false
-      @array.day?(@tommorrow).should be_true
-      @array.day?(@now).should be_true
-    end
+      before do
+        today = Date.today
 
-    it "answers sunny?" do
-      @array.sunny?(@tommorrow,%w(rain)).should be_false
-      @array.sunny?(@tommorrow,@sun_icons).should be_true
-      @array.sunny?(@yesterday).should be_nil
-    end
-
-    describe "wet?" do
-      it "answers via pop" do
-        @array.wet?(@tommorrow).should be_false
-        @array.wet?(@tommorrow,nil,50).should be_false
-        @array.wet?(@tommorrow,nil,30).should be_true
+        0.upto(3) do |i|
+          forecast_measurement = Barometer::Measurement::Result.new
+          forecast_measurement.date = today + i
+          subject << forecast_measurement
+        end
       end
 
-      it "answers via humidity" do
-        @array.wet?(@tommorrow).should be_false
-        @array.wet?(@tommorrow,nil,50,99).should be_false
-        @array.wet?(@tommorrow,nil,50,90).should be_true
+      it "finds the date using a String" do
+        subject.for(tommorrow.to_s).should == subject[1]
       end
 
-      it "answers via icon" do
-        @array.wet?(@tommorrow,%w(rain)).should be_false
-        # pretend that "sun" means wet
-        @array.wet?(@tommorrow,@sun_icons).should be_true
+      it "finds the date using a Date" do
+        subject.for(tommorrow).should == subject[1]
+      end
+
+      it "finds the date using a DateTime" do
+        subject.for(tommorrow.to_datetime).should == subject[1]
+      end
+
+      it "finds the date using a Time" do
+        subject.for(tommorrow.to_time).should == subject[1]
+      end
+
+      it "finds the date using Data::LocalDateTime" do
+        local_datetime = Data::LocalDateTime.parse(tommorrow.to_s)
+        subject.for(local_datetime).should == subject[1]
+      end
+
+      it "finds nothing when there is not a match" do
+        subject.for(Date.today - 1).should be_nil
       end
     end
   end
