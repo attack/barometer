@@ -15,16 +15,15 @@ module Barometer
     def initialize(query, config={})
       @query = query
       @converted_query = nil
-      @measurement = Measurement.new(:wunderground)
+      @measurement = Measurement.new
     end
 
     def measure!
-      return @measurement unless validate_query!
+      validate_query!
 
       fetch_and_parse_current
       fetch_and_parse_forecast
 
-      @measurement.success = true
       @measurement
     end
 
@@ -36,10 +35,8 @@ module Barometer
       if @converted_query && self.class.accepted_formats.include?(@converted_query.format)
         @measurement.query = @converted_query.q
         @measurement.format = @converted_query.format
-        true
       else
-        @measurement.error_message = "unacceptable query format"
-        @measurement.success = false
+        raise Barometer::Query::ConversionNotPossible
       end
     end
 
