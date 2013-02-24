@@ -5,11 +5,6 @@ module Barometer
     attr_accessor :metric
 
     def initialize(metric=true); @metric = metric; end
-
-    #
-    # HELPERS
-    #
-
     def metric?; @metric; end
     def metric!; @metric=true; end
     def imperial!; @metric=false; end
@@ -19,7 +14,6 @@ module Barometer
     def <<(value)
       return unless value
 
-      # these values can be treated like 'nil'
       nil_values = ["NA", "N/A", ""]
 
       begin
@@ -40,10 +34,7 @@ module Barometer
         self.imperial_default = value_i || value_b
     end
 
-    # stubs
-    #
     def metric_default=(value); raise NotImplementedError; end
     def imperial_default=(value); raise NotImplementedError; end
-
   end
 end
