@@ -1,3 +1,4 @@
+language: ruby
 rvm:
   - 1.9.3
   - 1.9.2
@@ -5,3 +6,6 @@ rvm:
   - rbx-19mode
   - ree
 script: "rake"
+branches:
+  only:
+    - master
