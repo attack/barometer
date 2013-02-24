@@ -24,6 +24,7 @@ VCR.configure do |config|
   config.default_cassette_options = { :record => :none, :serialize_with => :json }
 
   config.filter_sensitive_data('WEATHERBUG_CODE') { WEATHERBUG_CODE.to_s }
+  # weather bug uses api as host name.  this is downcased when the request it made
   config.filter_sensitive_data('WEATHERBUG_CODE') { downcased_weatherbug_code }
   config.filter_sensitive_data('<YAHOO_KEY>') { YAHOO_KEY.to_s }
   config.filter_sensitive_data('<PLACEMAKER_KEY>') { Barometer.yahoo_placemaker_app_id.to_s }
