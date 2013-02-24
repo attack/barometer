@@ -11,3 +11,4 @@ coverage
 .rspec
 .bundle
 Gemfile.lock
+.ruby-version
