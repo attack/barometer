@@ -25,7 +25,6 @@ Gem::Specification.new do |s|
   s.add_dependency %q<tzinfo>, ">= 0.3.14"
   s.add_dependency "nokogiri"
   s.add_dependency "yajl-ruby"
-  s.add_dependency "crack"
   s.add_dependency "nori"
 
   s.add_development_dependency "rspec"
