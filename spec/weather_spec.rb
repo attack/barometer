@@ -1,9 +1,21 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Barometer::Weather do
+  describe "#success?" do
+    it "returns true if one measurement is successful" do
+      successful_measurement = double(:measurement, :success? => true)
+      subject.measurements = [successful_measurement]
+      subject.should be_success
+    end
+
+    it "returns false if no measurements are successful" do
+      unsuccessful_measurement = double(:measurement, :success? => false)
+      subject.measurements = [unsuccessful_measurement]
+      subject.should_not be_success
+    end
+  end
 
   describe "when initialized" do
-
     before(:each) do
       @weather = Barometer::Weather.new
     end
@@ -31,20 +43,21 @@ describe Barometer::Weather do
     it "responds to for" do
       @weather.respond_to?("for").should be_true
     end
-
   end
 
   describe "with measurements" do
-
     before(:each) do
       @weather = Barometer::Weather.new
-      @wunderground = Barometer::Measurement.new(:wunderground)
+      @wunderground = Barometer::Measurement.new
+      @wunderground.source = :wunderground
       @wunderground.stub!(:success).and_return(true)
       @wunderground.stub!(:success?).and_return(true)
-      @yahoo = Barometer::Measurement.new(:yahoo)
+      @yahoo = Barometer::Measurement.new
+      @yahoo.source = :yahoo
       @yahoo.stub!(:success).and_return(true)
       @yahoo.stub!(:success?).and_return(true)
-      @google = Barometer::Measurement.new(:google)
+      @google = Barometer::Measurement.new
+      @google.source = :google
       @weather.measurements << @wunderground
       @weather.measurements << @yahoo
       @weather.measurements << @google
@@ -72,22 +85,23 @@ describe Barometer::Weather do
     it "returns the default source" do
       @weather.default.should == @wunderground
     end
-
   end
 
   describe "when calculating averages" do
-
     before(:each) do
       @weather = Barometer::Weather.new
-      @wunderground = Barometer::Measurement.new(:wunderground)
+      @wunderground = Barometer::Measurement.new
+      @wunderground.source = :wunderground
       @wunderground.current = Barometer::Measurement::Result.new
       @wunderground.stub!(:success).and_return(true)
       @wunderground.stub!(:success?).and_return(true)
-      @yahoo = Barometer::Measurement.new(:yahoo)
+      @yahoo = Barometer::Measurement.new
+      @yahoo.source = :yahoo
       @yahoo.current = Barometer::Measurement::Result.new
       @yahoo.stub!(:success).and_return(true)
       @yahoo.stub!(:success?).and_return(true)
-      @google = Barometer::Measurement.new(:google)
+      @google = Barometer::Measurement.new
+      @google.source = :google
       @weather.measurements << @wunderground
       @weather.measurements << @yahoo
       @weather.measurements << @google
@@ -117,7 +131,6 @@ describe Barometer::Weather do
     end
 
     describe "for temperature" do
-
       before(:each) do
         @weather.source(:wunderground).current.temperature = Data::Temperature.new
         @weather.source(:wunderground).current.temperature.c = 10
@@ -132,15 +145,13 @@ describe Barometer::Weather do
       it "returns default when disabled" do
         @weather.temperature(false).c.should == 10
       end
-
     end
 
     describe "for wind" do
-
       before(:each) do
-        @weather.source(:wunderground).current.wind = Data::Speed.new
+        @weather.source(:wunderground).current.wind = Data::Vector.new
         @weather.source(:wunderground).current.wind.kph = 10
-        @weather.source(:yahoo).current.wind = Data::Speed.new
+        @weather.source(:yahoo).current.wind = Data::Vector.new
         @weather.source(:yahoo).current.wind.kph = 6
       end
 
@@ -151,11 +162,9 @@ describe Barometer::Weather do
       it "returns default when disabled" do
         @weather.wind(false).kph.should == 10
       end
-
     end
 
     describe "for humidity" do
-
       before(:each) do
         @weather.source(:wunderground).current.humidity = 10
         @weather.source(:yahoo).current.humidity = 6
@@ -168,11 +177,9 @@ describe Barometer::Weather do
       it "returns default when disabled" do
         @weather.humidity(false).should == 10
       end
-
     end
 
     describe "for pressure" do
-
       before(:each) do
         @weather.source(:wunderground).current.pressure = Data::Pressure.new
         @weather.source(:wunderground).current.pressure.mb = 10
@@ -187,11 +194,9 @@ describe Barometer::Weather do
       it "returns default when disabled" do
         @weather.pressure(false).mb.should == 10
       end
-
     end
 
     describe "for dew_point" do
-
       before(:each) do
         @weather.source(:wunderground).current.dew_point = Data::Temperature.new
         @weather.source(:wunderground).current.dew_point.c = 10
@@ -206,11 +211,9 @@ describe Barometer::Weather do
       it "returns default when disabled" do
         @weather.dew_point(false).c.should == 10
       end
-
     end
 
     describe "for heat_index" do
-
       before(:each) do
         @weather.source(:wunderground).current.heat_index = Data::Temperature.new
         @weather.source(:wunderground).current.heat_index.c = 10
@@ -225,11 +228,9 @@ describe Barometer::Weather do
       it "returns default when disabled" do
         @weather.heat_index(false).c.should == 10
       end
-
     end
 
     describe "for wind_chill" do
-
       before(:each) do
         @weather.source(:wunderground).current.wind_chill = Data::Temperature.new
         @weather.source(:wunderground).current.wind_chill.c = 10
@@ -244,11 +245,9 @@ describe Barometer::Weather do
       it "returns default when disabled" do
         @weather.wind_chill(false).c.should == 10
       end
-
     end
 
     describe "for visibility" do
-
       before(:each) do
         @weather.source(:wunderground).current.visibility = Data::Distance.new
         @weather.source(:wunderground).current.visibility.km = 10
@@ -265,5 +264,4 @@ describe Barometer::Weather do
       end
     end
   end
-
 end

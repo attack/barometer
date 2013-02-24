@@ -1,16 +1,11 @@
 module Barometer
-  #
-  # Weather
-  #
-  # holds all the measurements taken and provdes
-  # methods to interact with the data
-  #
   class Weather
-
     attr_accessor :measurements
     attr_accessor :start_at, :end_at
 
-    def initialize; @measurements = []; end
+    def initialize
+      @measurements = []
+    end
 
     # the default measurement is the first successful measurement
     #
@@ -19,8 +14,6 @@ module Barometer
       self.source(self.sources.first)
     end
 
-    # find the measurement for the given source, if it exists
-    #
     def source(source)
       raise ArgumentError unless (source.is_a?(String) || source.is_a?(Symbol))
       @measurements.each do |measurement|
@@ -29,15 +22,13 @@ module Barometer
       nil
     end
 
-    # list successful sources
-    #
     def sources
       @measurements.collect {|m| m.source.to_sym if m.success?}.compact
     end
 
-    #
-    # Quick access methods
-    #
+    def success?
+      @measurements.any?{ |m| m.success? }
+    end
 
     def metric?; self.default ? self.default.metric? : true; end
     def current; (default = self.default) ? default.current : nil; end
@@ -62,14 +53,6 @@ module Barometer
       default = self.default
       default && default.forecast ? default.for(query) : nil
     end
-
-
-    #
-    # helper methods
-    #
-    # these are handy methods that can average values for successful weather
-    # sources, or answer a simple question (ie: weather.windy?)
-    #
 
     #
     # averages
@@ -112,8 +95,6 @@ module Barometer
       avg
     end
 
-    # average of all values
-    #
     def humidity(do_average=true); average("humidity",do_average); end
     def temperature(do_average=true); average("temperature",do_average,"Temperature"); end
     def wind(do_average=true); average("wind",do_average,"Vector"); end
@@ -123,5 +104,4 @@ module Barometer
     def wind_chill(do_average=true); average("wind_chill",do_average,"Temperature"); end
     def visibility(do_average=true); average("visibility",do_average,"Distance"); end
   end
-
 end
