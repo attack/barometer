@@ -17,6 +17,8 @@ module Barometer
   #   not accept the query string.
   #
   class Query
+    class ConversionNotPossible < StandardError; end
+    class UnsupportedRegion < StandardError; end
 
     # This array defines the order to check a query for the format
     #
