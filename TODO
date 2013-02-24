@@ -17,7 +17,6 @@
 
 == future
 
-- Rdoc compatible documentation
 - add uv, moon, elevation info to current
 - driver: intellicast
 - weather.com simple_questions improve answers (use extra data)
