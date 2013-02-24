@@ -1,70 +1,61 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "Location" do
-
-  describe "when initialized" do
-
-    before(:each) do
-      @location = Data::Location.new
-    end
-
-    it "responds to id" do
-      @location.id.should be_nil
-    end
-
-    it "responds to name" do
-      @location.name.should be_nil
-    end
-
-    it "responds to city" do
-      @location.city.should be_nil
-    end
-
-    it "responds to state_name" do
-      @location.state_name.should be_nil
-    end
-
-    it "responds to state_code" do
-      @location.state_code.should be_nil
-    end
-
-    it "responds to country" do
-      @location.country.should be_nil
-    end
-
-    it "responds to country_code" do
-      @location.country_code.should be_nil
-    end
-
-    it "responds to zip_code" do
-      @location.zip_code.should be_nil
-    end
-
-    it "responds to latitude" do
-      @location.latitude.should be_nil
-    end
-
-    it "responds to longitude" do
-      @location.longitude.should be_nil
-    end
-
-    it "responds to coordinates" do
-      @location.longitude = "99.99"
-      @location.latitude = "88.88"
-      @location.coordinates.should == [@location.latitude, @location.longitude].join(',')
-    end
-
-    it "should print a string" do
-      @location = Data::Location.new
-      @location.to_s.should == ""
-      @location.name = "name"
-      @location.to_s.should == "name"
-      @location.city = "city"
-      @location.to_s.should == "name, city"
-      @location.country_code = "code"
-      @location.to_s.should == "name, city, code"
-    end
-
+describe Data::Location do
+  describe "#new" do
+    its(:id) { should be_nil }
+    its(:name) { should be_nil }
+    its(:city) { should be_nil }
+    its(:state_name) { should be_nil }
+    its(:state_code) { should be_nil }
+    its(:country) { should be_nil }
+    its(:country_code) { should be_nil }
+    its(:zip_code) { should be_nil }
+    its(:latitude) { should be_nil }
+    its(:longitude) { should be_nil }
   end
 
+  describe "#coordinates" do
+    it "joins  longitude and latitude" do
+      subject.longitude = "99.99"
+      subject.latitude = "88.88"
+      subject.coordinates.should == "88.88,99.99"
+    end
+  end
+
+  describe "#nil?" do
+    it "true if nothing is set" do
+      subject.nil?.should be_true
+    end
+
+    it "returns false if anything is set" do
+      subject.name = "name"
+      subject.nil?.should be_false
+    end
+  end
+
+  describe "#to_s" do
+    it "defaults to an empty string" do
+      subject.to_s.should == ""
+    end
+
+    it "compiles a string" do
+      subject.name = "name"
+      subject.to_s.should == "name"
+
+      subject.city = "city"
+      subject.to_s.should == "name, city"
+
+      subject.country_code = "country_code"
+      subject.to_s.should == "name, city, country_code"
+
+      subject.country = "country"
+      subject.to_s.should == "name, city, country"
+
+      subject.state_code = "state_code"
+      subject.to_s.should == "name, city, state_code, country"
+
+      subject.state_name = "state_name"
+      subject.to_s.should == "name, city, state_name, country"
+    end
+  end
 end
