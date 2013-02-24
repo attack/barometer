@@ -134,7 +134,7 @@ module Barometer
         if type_is_a_date? || type_is_a_time?
           false
         else
-          @type.respond_to?(:new) && @type.send(:new).respond_to?(:metric)
+          @type.respond_to?(:new) && @type.new.respond_to?(:metric)
         end
       end
 
