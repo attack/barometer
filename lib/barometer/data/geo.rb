@@ -1,11 +1,5 @@
 module Barometer
-  #
-  # A simple Geo class
-  #
-  # Used to store location data
-  #
   class Data::Geo
-
     attr_accessor :latitude, :longitude, :query
     attr_accessor :locality, :region, :country, :country_code, :address
 
@@ -20,10 +14,10 @@ module Barometer
       return nil unless location
       raise ArgumentError unless location.is_a?(Hash)
 
-      if location["geometry"] && location["geometry"]["location"]
-        @latitude = location["geometry"]["location"]["lat"].to_f
-        @longitude = location["geometry"]["location"]["lng"].to_f
-      end
+      payload = Payload.new(location)
+
+      @latitude = payload.fetch("geometry", "location", "lat").to_f
+      @longitude = payload.fetch("geometry", "location", "lng").to_f
 
       query_parts = []
       if location["address_components"]
@@ -63,6 +57,5 @@ module Barometer
       s.delete("")
       s.compact.join(', ')
     end
-
   end
 end

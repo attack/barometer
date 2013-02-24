@@ -1,91 +1,68 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "Data::Geo" do
+describe Data::Geo do
+  describe "#new" do
+    its(:query) { should be_nil }
+    its(:latitude) { should be_nil }
+    its(:longitude) { should be_nil }
+    its(:country_code) { should be_nil }
+    its(:locality) { should be_nil }
+    its(:region) { should be_nil }
+    its(:country) { should be_nil }
+    its(:address) { should be_nil }
 
-  describe "when initialized" do
-
-    before(:each) do
-      @geo = Data::Geo.new
-    end
-
-    it "responds to query" do
-      @geo.query.should be_nil
-    end
-
-    it "responds to latitude" do
-      @geo.latitude.should be_nil
-    end
-
-    it "responds to longitude" do
-      @geo.longitude.should be_nil
-    end
-
-    it "responds to country_code" do
-      @geo.country_code.should be_nil
-    end
-
-    it "responds to locality" do
-      @geo.locality.should be_nil
-    end
-
-    it "responds to region" do
-      @geo.region.should be_nil
-    end
-
-    it "responds to country" do
-      @geo.country.should be_nil
-    end
-
-    it "responds to address" do
-      @geo.address.should be_nil
-    end
-
-    it "responds to coordinates" do
-      @geo.longitude = "99.99"
-      @geo.latitude = "88.88"
-      @geo.coordinates.should == [@geo.latitude, @geo.longitude].join(',')
-    end
-
-    it "should print a string" do
-      @geo = Data::Geo.new
-      @geo.to_s.should == ""
-      @geo.address = "address"
-      @geo.to_s.should == "address"
-      @geo.locality = "locality"
-      @geo.to_s.should == "address, locality"
-      @geo.country_code = "code"
-      @geo.to_s.should == "address, locality, code"
-    end
-
-    it "requires Hash object" do
-      lambda { Data::Geo.new(1) }.should raise_error(ArgumentError)
-      lambda { Data::Geo.new(Hash.new) }.should_not raise_error(ArgumentError)
+    it "raises an error when not given a Hash" do
+      expect {
+        Data::Geo.new(1)
+      }.to raise_error(ArgumentError)
     end
 
     it "returns a Barometer::Geo object" do
-      geo = Data::Geo.new(Hash.new)
-      geo.is_a?(Data::Geo).should be_true
+      subject = Data::Geo.new(Hash.new)
+      subject.is_a?(Data::Geo).should be_true
     end
-
   end
 
-  describe "when converting" do
-
-    before(:each) do
-      @geo = Data::Geo.new
+  describe "#coordinates" do
+    it "joins latitude and longitude" do
+      subject.longitude = "99.99"
+      subject.latitude = "88.88"
+      subject.coordinates.should == "88.88,99.99"
     end
-
-    describe "from HTTParty" do
-
-      it "accepts HTTParty::Response object" do
-        location = Hash.new
-        lambda { @geo.build_from_hash(1) }.should raise_error(ArgumentError)
-        lambda { @geo.build_from_hash }.should_not raise_error(ArgumentError)
-        lambda { @geo.build_from_hash(location) }.should_not raise_error(ArgumentError)
-      end
-
-    end
-
   end
 
+  describe "#to_s" do
+    it "defaults to blank" do
+      subject.to_s.should == ""
+    end
+
+    it "should print a string" do
+      subject.address = "address"
+      subject.to_s.should == "address"
+      subject.locality = "locality"
+      subject.to_s.should == "address, locality"
+      subject.country_code = "code"
+      subject.to_s.should == "address, locality, code"
+    end
+  end
+
+  describe "#build_from_hash" do
+    it "raises an error with invalid input" do
+      expect {
+        subject.build_from_hash(1)
+      }.to raise_error(ArgumentError)
+    end
+
+    it "accepts no arguements" do
+      expect {
+        subject.build_from_hash
+      }.not_to raise_error(ArgumentError)
+    end
+
+    it "accepts HTTParty::Response object" do
+      expect {
+        subject.build_from_hash(Hash.new)
+      }.not_to raise_error(ArgumentError)
+    end
+  end
 end
