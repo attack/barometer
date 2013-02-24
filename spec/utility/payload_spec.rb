@@ -45,6 +45,58 @@ describe Barometer::Payload do
     end
   end
 
+  describe "#fetch_each" do
+    it "returns a payload for each result found at the key" do
+      hash = {:one => [{:two => 2}, {:two => 2}]}
+      parser = Barometer::Payload.new(hash)
+
+      expect { |b|
+        parser.fetch_each(:one, &b)
+      }.to yield_successive_args(Barometer::Payload, Barometer::Payload)
+    end
+
+    it "returns a payload for each result found at the key" do
+      hash = {:one => [{:two => 2}, {:two => 2}]}
+      parser = Barometer::Payload.new(hash)
+
+      parser.fetch_each(:one) do |each_parser|
+        each_parser.fetch(:two).should == 2
+      end
+    end
+
+    it "raises an error when result is not an array" do
+      hash = {:one => 1}
+      parser = Barometer::Payload.new(hash)
+
+      expect {
+        parser.fetch_each(:one){ |p| nil }
+      }.to raise_error(NoMethodError)
+    end
+  end
+
+  describe "#fetch_each_with_index" do
+    it "returns a payload for each result found at the key" do
+      hash = {:one => [{:two => 2}, {:two => 2}]}
+      parser = Barometer::Payload.new(hash)
+
+      i = 0
+      parser.fetch_each_with_index(:one) do |each_parser, index|
+        each_parser.fetch(:two).should == 2
+        index.should == i
+        i += 1
+      end
+    end
+
+    it "raises an error when result is not an array" do
+      hash = {:one => 1}
+      parser = Barometer::Payload.new(hash)
+
+      expect {
+        parser.fetch_each_with_index(:one){ |p| nil }
+      }.to raise_error(NoMethodError)
+    end
+  end
+
   describe "#using" do
     it "applies the regex to the fetched result" do
       hash = {:one => 'two, three'}
@@ -62,6 +114,13 @@ describe Barometer::Payload do
       hash = {:one => 'two, three'}
       parser = Barometer::Payload.new(hash)
       parser.using(/^.*,.*$/).fetch(:one).should == 'two, three'
+    end
+
+    it "forgets the regex" do
+      hash = {:one => 'two, three'}
+      parser = Barometer::Payload.new(hash)
+      parser.using(/^(.*),/).fetch(:one).should == 'two'
+      parser.fetch(:one).should == 'two, three'
     end
   end
 end

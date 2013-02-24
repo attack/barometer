@@ -25,12 +25,35 @@ module Barometer
       result
     end
 
+    def each(*paths, &block)
+      fetch(*paths).each do |result|
+        result_payload = Barometer::Payload.new(result)
+        block.call(result_payload)
+      end
+    end
+
+    def each_with_index(*paths, &block)
+      fetch(*paths).each_with_index do |result, index|
+        result_payload = Barometer::Payload.new(result)
+        block.call(result_payload, index)
+      end
+    end
+
+    def fetch_each(*paths, &block)
+      each(*paths, &block)
+    end
+
+    def fetch_each_with_index(*paths, &block)
+      each_with_index(*paths, &block)
+    end
+
     private
 
     def _apply_regex(result)
       if @regex && @regex.is_a?(Regexp) && matched = result.to_s.match(@regex)
         result = matched[1] if matched[1]
       end
+      @regex = nil
       result
     end
 
