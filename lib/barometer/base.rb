@@ -1,32 +1,20 @@
 module Barometer
   class Base
-
-    # allow the configuration of specific weather APIs to be used,
-    # and the order in which they would be used
-    #
-    @@config = { 1 => [:wunderground] }
-    def self.config; @@config; end;
-    def self.config=(hash); @@config = hash; end;
-
     attr_reader   :query
-    attr_accessor :weather, :success
+    attr_accessor :weather
 
     def initialize(query=nil)
       @query = Barometer::Query.new(query)
       @weather = Barometer::Weather.new
-      @success = false
     end
 
-    # iterate through all the configured sources and
-    # collect weather data for each one
-    #
     def measure(metric=nil)
       return nil unless @query
       @weather.start_at = Time.now.utc
 
       level = 1
-      until self.success?
-        if sources = @@config[level]
+      until @weather.success?
+        if sources = Barometer.config[level]
           _dig(sources, nil, metric)
         else
           raise OutOfSources
@@ -37,8 +25,6 @@ module Barometer
       @weather.end_at = Time.now.utc
       @weather
     end
-
-    def success?; @success; end
 
     private
 
@@ -67,17 +53,14 @@ module Barometer
       end
     end
 
-    # do that actual source measurement
-    #
-    def _measure(datum, config=nil, metric=nil)
-      Barometer.source(datum.to_sym).keys = config[:keys] if (config && config[:keys])
-      measurement = Barometer.source(datum.to_sym).measure(@query, metric)
-      if config && config[:weight]
-        measurement.weight = config[:weight]
-      end
-      @success = true if measurement.success?
+    def _measure(source, config=nil, metric=nil)
+      options = { :metric => metric }
+      options.merge!({:keys => config[:keys]}) if config
+
+      measurement = Barometer::WeatherService.measure(source.to_sym, @query, options)
+      measurement.weight = config[:weight] if config && config[:weight]
+
       @weather.measurements << measurement
     end
-
   end
 end

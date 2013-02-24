@@ -10,6 +10,9 @@ require 'barometer/formats'
 require 'barometer/key_file_parser'
 
 module Barometer
+  @@config = { 1 => [:wunderground] }
+  def self.config; @@config; end;
+  def self.config=(hash); @@config = hash; end;
 
   @@debug_mode = false
   def self.debug; @@debug_mode; end;
@@ -43,22 +46,5 @@ module Barometer
     Barometer::Base.new(query)
   end
 
-  # update the Barometer configuration
-  #
-  def self.config=(config=nil)
-    Barometer::Base.config = config
-  end
-
-  # shortcut to Barometer::Service.source method
-  # allows Barometer.source(:wunderground)
-  #
-  def self.source(source)
-    Barometer::WeatherService.source(source)
-  end
-
-  # custom errors
-  #
   class OutOfSources < StandardError; end
-
 end
-

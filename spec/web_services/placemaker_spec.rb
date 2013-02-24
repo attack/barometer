@@ -2,6 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Barometer::WebService::Placemaker do
   before(:each) do
+    Barometer.yahoo_placemaker_app_id = YAHOO_KEY
     @coordinates = "40.756054,-73.986951"
     @geocode = "New York, NY"
   end

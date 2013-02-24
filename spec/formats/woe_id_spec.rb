@@ -12,6 +12,7 @@ describe Barometer::Query::Format::WoeID, :vcr => {
   :cassette_name => "Query::Format::WoeID"
 } do
   before(:each) do
+    Barometer.yahoo_placemaker_app_id = YAHOO_KEY
     @short_zipcode = "90210"
     @zipcode = @short_zipcode
     @long_zipcode = "90210-5555"
