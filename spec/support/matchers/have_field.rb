@@ -42,7 +42,7 @@ module Barometer
 
       def allows_nil?
         set_value nil
-        assert value.class == NilClass, "#{@field} does not allow a nil value to be set"
+        assert value.nil?, "#{@field} does not allow a nil value to be set"
       end
 
       def type_casts_as_type?
@@ -50,6 +50,10 @@ module Barometer
           set_value "2013-01-01 10:15:30 am"
         elsif type_is_a_time?
           set_value "10:15:30 am"
+        elsif type_is_sun?
+          rise = Data::LocalDateTime.parse("10:15:30 am")
+          set = Data::LocalDateTime.parse("6:14:56 pm")
+          set_value Data::Sun.new(rise, set)
         else
           set_value 10
         end
@@ -59,10 +63,15 @@ module Barometer
       def sets_value?
         if type_is_a_date?
           set_value "10 15 30 2013 01 01 am", "%H %M %S %Y %m %d %p"
-          assert value.to_s(true) == "2013-01-01 10:15:30 am", "expected value of '2013-01-01 10:15:30 am', got '#{value.to_s(true)}'"
+          assert print_value == "2013-01-01 10:15:30 am", "expected value of '2013-01-01 10:15:30 am', got '#{print_value}'"
         elsif type_is_a_time?
           set_value "10:15:30 am"
-          assert value.to_s(true) == "10:15:30 am", "expected value of '10:15:30 am', got '#{value.to_s(true)}'"
+          assert print_value == "10:15:30 am", "expected value of '10:15:30 am', got '#{print_value}'"
+        elsif type_is_sun?
+          rise = Data::LocalTime.parse("10:15:30 am")
+          set = Data::LocalTime.parse("6:14:56 pm")
+          set_value Data::Sun.new(rise, set)
+          assert print_value == "rise: 10:15 am, set: 06:14 pm", "expected value of 'rise: 10:15 am, set: 06:14 pm'', got '#{print_value}'"
         else
           set_value 10
           assert value.to_i == 10, "expected value of '10', got '#{value.to_i}'"
@@ -99,6 +108,16 @@ module Barometer
         end
       end
 
+      def print_value
+        if @type == Data::LocalDateTime || @type == Data::LocalTime
+          value.to_s(true)
+        elsif @type == DateTime
+          value.strftime("%Y-%m-%d %I:%M:%S %P")
+        else
+          value.to_s
+        end
+      end
+
       def metric_units
         @type.send(:new, true).units
       end
@@ -120,11 +139,15 @@ module Barometer
       end
 
       def type_is_a_date?
-        @type == Data::LocalDateTime
+        @type == Data::LocalDateTime || @type == DateTime
       end
 
       def type_is_a_time?
         @type == Data::LocalTime
+      end
+
+      def type_is_sun?
+        @type == Data::Sun
       end
 
       def assert(test, failure_message)
