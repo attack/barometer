@@ -1,255 +1,59 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Barometer::Measurement do
-  describe "when initialized" do
-    before(:each) do
-      @measurement = Barometer::Measurement.new
+  describe "#new" do
+    its(:forecast) { should be_a Barometer::Measurement::ResultArray }
+    its(:current) { should be_a Barometer::Measurement::Result }
+    its(:metric) { should be_true }
+    its(:weight) { should == 1 }
+    its(:requested_at) { should be_a(Time) }
+  end
+
+  describe "data fields" do
+    it { should have_field(:query).of_type(String) }
+    it { should have_field(:weight).of_type(Integer) }
+    it { should have_field(:status_code).of_type(Integer) }
+    it { should have_field(:published_at).of_type(Data::LocalDateTime) }
+  end
+
+  describe "#success?" do
+    it "returns true if :status_code == 200" do
+      subject.status_code = 200
+      subject.should be_success
     end
 
-    it "responds to source" do
-      @measurement.source.should be_nil
-    end
+    it "returns false if :status_code does not == 200" do
+      subject.status_code = nil
+      subject.should_not be_success
 
-    it "stores the source" do
-      source = :wunderground
-      measurement = Barometer::Measurement.new(source)
-      measurement.source.should_not be_nil
-      measurement.source.should == source
-    end
-
-    it "responds to utc_time_stamp" do
-      @measurement.utc_time_stamp.should be_nil
-    end
-
-    it "responds to current" do
-      @measurement.current.should be_nil
-    end
-
-    it "responds to forecast (and defaults to an empty Array)" do
-      @measurement.forecast.should be_nil
-    end
-
-    it "responds to timezone" do
-      @measurement.timezone.should be_nil
-    end
-
-    it "responds to station" do
-      @measurement.station.should be_nil
-    end
-
-    it "responds to location" do
-      @measurement.location.should be_nil
-    end
-
-    it "responds to success" do
-      @measurement.success.should be_false
-    end
-
-    it "responds to current?" do
-      @measurement.current?.should be_true
-    end
-
-    it "responds to metric" do
-      @measurement.metric.should be_true
-    end
-
-    it "responds to weight" do
-      @measurement.weight.should == 1
-    end
-
-    it "responds to links" do
-      @measurement.links.should == {}
-    end
-
-    it "responds to measured_at" do
-      @measurement.measured_at.should be_nil
+      subject.status_code = 406
+      subject.should_not be_success
     end
   end
 
-  describe "when writing data" do
-    before(:each) do
-      @measurement = Barometer::Measurement.new
+  describe "#complete?" do
+    it "returns true when the current temperature has been set" do
+      subject.current.temperature << 10
+      subject.should be_complete
     end
 
-    it "only accepts Symbol for source" do
-      invalid_data = 1
-      invalid_data.class.should_not == Symbol
-      lambda { @measurement.source = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = :valid
-      valid_data.class.should == Symbol
-      lambda { @measurement.source = valid_data }.should_not raise_error(ArgumentError)
-    end
-
-    it "only accepts Time for utc_time_stamp" do
-      invalid_data = 1
-      invalid_data.class.should_not == Time
-      lambda { @measurement.utc_time_stamp = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = Time.now.utc
-      valid_data.class.should == Time
-      lambda { @measurement.utc_time_stamp = valid_data }.should_not raise_error(ArgumentError)
-    end
-
-    it "only accepts Measurement::Result for current" do
-      invalid_data = "invalid"
-      invalid_data.class.should_not == Barometer::Measurement::Result
-      lambda { @measurement.current = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = Barometer::Measurement::Result.new
-      valid_data.class.should == Barometer::Measurement::Result
-      lambda { @measurement.current = valid_data }.should_not raise_error(ArgumentError)
-    end
-
-    it "only accepts Data::ResultArray for forecast" do
-      invalid_data = 1
-      invalid_data.class.should_not == Barometer::Measurement::ResultArray
-      lambda { @measurement.forecast = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = Barometer::Measurement::ResultArray.new
-      valid_data.class.should == Barometer::Measurement::ResultArray
-      lambda { @measurement.forecast = valid_data }.should_not raise_error(ArgumentError)
-    end
-
-    it "only accepts Data::Zone for timezone" do
-      invalid_data = 1
-      invalid_data.class.should_not == Data::Zone
-      lambda { @measurement.timezone = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = Data::Zone.new("Europe/Paris")
-      valid_data.class.should == Data::Zone
-      lambda { @measurement.timezone = valid_data }.should_not raise_error(ArgumentError)
-    end
-
-    it "only accepts Data::Location for station" do
-      invalid_data = 1
-      invalid_data.class.should_not == Data::Location
-      lambda { @measurement.station = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = Data::Location.new
-      valid_data.class.should == Data::Location
-      lambda { @measurement.station = valid_data }.should_not raise_error(ArgumentError)
-    end
-
-    it "only accepts Data::Location for location" do
-      invalid_data = 1
-      invalid_data.class.should_not == Data::Location
-      lambda { @measurement.location = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = Data::Location.new
-      valid_data.class.should == Data::Location
-      lambda { @measurement.location = valid_data }.should_not raise_error(ArgumentError)
-    end
-
-    it "only accepts Fixnum for weight" do
-      invalid_data = "test"
-      invalid_data.class.should_not == Fixnum
-      lambda { @measurement.weight = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = 1
-      valid_data.class.should == Fixnum
-      lambda { @measurement.weight = valid_data }.should_not raise_error(ArgumentError)
-    end
-
-    it "only accepts Array for links" do
-      invalid_data = 1
-      invalid_data.class.should_not == Hash
-      lambda { @measurement.links = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = {1 => nil}
-      valid_data.class.should == Hash
-      lambda { @measurement.links = valid_data }.should_not raise_error(ArgumentError)
-    end
-
-    it "only accepts Data::LocalTime for measured_at" do
-      invalid_data = 1
-      invalid_data.class.should_not == Data::LocalTime
-      lambda { @measurement.measured_at = invalid_data }.should raise_error(ArgumentError)
-
-      valid_data = Data::LocalTime.new
-      valid_data.class.should == Data::LocalTime
-      lambda { @measurement.measured_at = valid_data }.should_not raise_error(ArgumentError)
+    it "returns true when the current temperature has not been set" do
+      subject.should_not be_complete
     end
   end
 
-  describe "and the helpers" do
-    before(:each) do
-      @measurement = Barometer::Measurement.new
+  describe "#build_forecast" do
+    it "yields a new measurement" do
+      expect { |b|
+        subject.build_forecast(&b)
+      }.to yield_with_args(Barometer::Measurement::Result)
     end
 
-    it "changes state to successful (if successful)" do
-      @measurement.success.should be_false
-      @measurement.success!
-      @measurement.utc_time_stamp.should be_nil
-      @measurement.current.should be_nil
-      @measurement.success.should be_false
-
-      @measurement.current = Barometer::Measurement::Result.new
-      @measurement.current.temperature = Data::Temperature.new
-      @measurement.current.temperature.c = 10
-      @measurement.utc_time_stamp.should_not be_nil
-      @measurement.success!
-      @measurement.success.should be_true
-    end
-
-    it "returns successful state" do
-      @measurement.current = Barometer::Measurement::Result.new
-      @measurement.current.temperature = Data::Temperature.new
-      @measurement.current.temperature.c = 10
-      @measurement.success!
-      @measurement.success.should be_true
-      @measurement.success?.should be_true
-    end
-
-    it "returns non-successful state" do
-      @measurement.success.should be_false
-      @measurement.success?.should be_false
-    end
-
-    it "stamps the utc_time_stamp" do
-      @measurement.utc_time_stamp.should be_nil
-      @measurement.stamp!
-      @measurement.utc_time_stamp.should_not be_nil
-    end
-
-    it "indicates if current" do
-      @measurement.current.should be_nil
-      @measurement.current?.should be_true
-
-      @measurement.current = Barometer::Measurement::Result.new
-      @measurement.current.current_at.should be_nil
-      @measurement.current?.should be_true
-
-      @measurement.current.current_at = Data::LocalTime.new(9,0,0)
-      @measurement.current?.should be_true
-      @measurement.current?("9:00 am").should be_true
-    end
-
-    describe "changing units" do
-      before(:each) do
-        @measurement = Barometer::Measurement.new
-      end
-
-      it "indicates if metric?" do
-        @measurement.metric.should be_true
-        @measurement.metric?.should be_true
-        @measurement.metric = false
-        @measurement.metric.should be_false
-        @measurement.metric?.should be_false
-      end
-
-      it "changes to imperial" do
-        @measurement.metric?.should be_true
-        @measurement.imperial!
-        @measurement.metric?.should be_false
-      end
-
-      it "changes to metric" do
-        @measurement.metric = false
-        @measurement.metric?.should be_false
-        @measurement.metric!
-        @measurement.metric?.should be_true
-      end
+    it "adds the new measurement to forecast array" do
+      expect {
+        subject.build_forecast do
+        end
+      }.to change{ subject.forecast.count }.by(1)
     end
   end
 
@@ -257,9 +61,6 @@ describe Barometer::Measurement do
     before(:each) do
       @measurement = Barometer::Measurement.new
 
-      # create a measurement object with a result array that includes
-      # dates for 4 consecutive days starting with tommorrow
-      @measurement.forecast = Barometer::Measurement::ResultArray.new
       1.upto(4) do |i|
         forecast_measurement = Barometer::Measurement::Result.new
         forecast_measurement.date = Date.parse((Time.now + (i * 60 * 60 * 24)).to_s)
@@ -299,7 +100,7 @@ describe Barometer::Measurement do
       @measurement.for(@tommorrow).should == @measurement.forecast.first
     end
 
-    it "fidns the date using Data::LocalDateTime" do
+    it "finds the date using Data::LocalDateTime" do
       tommorrow = Data::LocalDateTime.parse(@tommorrow.to_s)
       tommorrow.class.should == Data::LocalDateTime
       @measurement.for(tommorrow).should == @measurement.forecast.first

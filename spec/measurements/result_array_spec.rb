@@ -61,11 +61,15 @@ describe Barometer::Measurement::ResultArray do
       end
 
       it "finds the date using a DateTime" do
-        subject.for(tommorrow.to_datetime).should == subject[1]
+        # 1.8.7 - Date does not have to_datetime
+        as_datetime = DateTime.new(tommorrow.year, tommorrow.month, tommorrow.day)
+        subject.for(as_datetime).should == subject[1]
       end
 
       it "finds the date using a Time" do
-        subject.for(tommorrow.to_time).should == subject[1]
+        # 1.8.7 - Date does not have to_time
+        as_time = Time.parse(tommorrow.to_s)
+        subject.for(as_time).should == subject[1]
       end
 
       it "finds the date using Data::LocalDateTime" do

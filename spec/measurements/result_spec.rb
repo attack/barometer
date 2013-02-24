@@ -19,8 +19,6 @@ describe Barometer::Measurement::Result do
     it { should have_field(:condition).of_type(String) }
     it { should have_field(:description).of_type(String) }
 
-    it { should have_field(:current_at).of_type(Data::LocalDateTime) }
-    it { should have_field(:updated_at).of_type(Data::LocalDateTime) }
     it { should have_field(:starts_at).of_type(Data::LocalDateTime) }
     it { should have_field(:ends_at).of_type(Data::LocalDateTime) }
 

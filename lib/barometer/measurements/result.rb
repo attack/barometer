@@ -3,9 +3,7 @@ require 'utility/data_types'
 
 module Barometer
   #
-  # Result Measurement
   # a data class for one period of weather data
-  # eg: current measurement, forecasted measurement
   #
   class Measurement::Result
     include Barometer::DataTypes
@@ -14,9 +12,9 @@ module Barometer
     vector :wind
     pressure :pressure
     distance :visibility
-    number :pop, :humidity
+    float :pop, :humidity
     string :icon, :condition, :description
-    local_datetime :current_at, :updated_at, :starts_at, :ends_at
+    local_datetime :starts_at, :ends_at
     sun :sun
 
     attr_reader :date
@@ -26,7 +24,9 @@ module Barometer
     end
 
     def date=(date)
-      if date.respond_to?(:to_date)
+      if date.is_a?(Date)
+        @date = date
+      elsif date.respond_to?(:to_date)
         @date = date.to_date
       else
         @date = Date.parse(date)
