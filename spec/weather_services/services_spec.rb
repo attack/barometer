@@ -1,29 +1,34 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Barometer::WeatherService, :vcr => {
-  :cassette_name => "WeatherService"
-} do
-  before(:each) do
-    query_term = "Calgary,AB"
-    @query = Barometer::Query.new(query_term)
-    @service = Barometer::WeatherService.source(:wunderground)
-    @time = Time.now
+describe Barometer::WeatherService do
+  before do
+    @services_cache = Barometer::WeatherService.services
+    Barometer::WeatherService.services = {}
   end
 
   describe ".register" do
-    before do
-      @services_cache = Barometer::WeatherService.services
-      Barometer::WeatherService.services = {}
-    end
-
-    after do
-      Barometer::WeatherService.services = @services_cache
-    end
-
     it "adds the weather service to the list of available services" do
       expect {
         Barometer::WeatherService.register(:test_weather, double(:weather_service))
       }.to change { Barometer::WeatherService.services.count }.by(1)
+    end
+
+    it "adds the block as an available weather service" do
+      expect {
+        Barometer::WeatherService.register(:test_weather) do
+          m = Barometer::Measurement.new
+          m.current.temperature = 30
+          m
+        end
+      }.to change { Barometer::WeatherService.services.count }.by(1)
+
+      Barometer::WeatherService.measure(:test_weather, "test").current.temperature.to_i.should == 30
+    end
+
+    it "raises an error if no service or block given" do
+      expect {
+        Barometer::WeatherService.register(:test_weather)
+      }.to raise_error(ArgumentError)
     end
 
     it "allows the serivce to be referenced by key" do
@@ -41,96 +46,108 @@ describe Barometer::WeatherService, :vcr => {
     end
   end
 
-  describe "when initialized" do
-    before(:each) do
-      @service = Barometer::WeatherService.new
-      @measurement = Barometer::Measurement.new
-      @query = Barometer::Query.new("test")
+  describe ".source" do
+    it "returns a registered source" do
+      test_weather = double(:test_weather)
+      Barometer::WeatherService.register(:test_weather, test_weather)
+
+      Barometer::WeatherService.source(:test_weather).should == test_weather
     end
 
-    it "defaults _meets_requirements?" do
-      Barometer::WeatherService.send("_meets_requirements?").should be_true
-    end
-
-    it "stubs _source_name" do
-      lambda { Barometer::WeatherService.send("_source_name") }.should raise_error(NotImplementedError)
-    end
-
-    it "stubs _accepted_formats" do
-      lambda { Barometer::WeatherService.send("_accepted_formats") }.should raise_error(NotImplementedError)
-    end
-
-    it "stubs _measure" do
-      Barometer::WeatherService._measure(@measurement,@query,true).is_a?(Barometer::Measurement).should be_true
-    end
-
-    it "stubs _build_extra" do
-      Barometer::WeatherService._build_extra.should be_nil
-    end
-
-    it "stubs _fetch" do
-      Barometer::WeatherService._fetch.should be_nil
-    end
-
-    it "stubs _build_current" do
-      Barometer::WeatherService._build_current.should be_nil
-    end
-
-    it "stubs _build_forecast" do
-      Barometer::WeatherService._build_forecast.should be_nil
-    end
-
-    it "stubs _build_location" do
-      Barometer::WeatherService._build_location.should be_nil
-    end
-
-    it "stubs _build_sun" do
-      Barometer::WeatherService._build_sun.should be_nil
-    end
-
-    it "stubs _build_links" do
-      Barometer::WeatherService._build_links.should == {}
-    end
-
-    it "defaults _supports_country?" do
-      Barometer::WeatherService._supports_country?.should be_true
-    end
-
-    it "defaults _requires_keys?" do
-      Barometer::WeatherService._requires_keys?.should be_false
-    end
-
-    it "defaults _has_keys?" do
-      lambda { Barometer::WeatherService._has_keys? }.should raise_error(NotImplementedError)
+    it "raises an error if the source does not exist" do
+      expect {
+        Barometer::WeatherService.source(:test_weather)
+      }.to raise_error(Barometer::WeatherService::NotFound)
     end
   end
 
-  describe "when measuring," do
-    it "responds to measure" do
-      Barometer::WeatherService.respond_to?("measure").should be_true
+  describe ".measure" do
+    let(:test_weather) { double(:test_weather) }
+    let(:query) { double(:query) }
+    let(:test_measurement) { Barometer::Measurement.new }
+
+    before do
+      test_weather.stub(:call).and_return(test_measurement)
+      Barometer::WeatherService.register(:test_weather, test_weather)
     end
 
-    # since Barometer::WeatherService defines the measure method, you could actually just
-    # call Barometer::WeatherService.measure ... but this will not invoke a specific
-    # weather API driver.  Make sure this usage raises an error.
-    it "requires an actuall driver" do
-      lambda { Barometer::WeatherService.measure(@query) }.should raise_error(NotImplementedError)
+    it "calls the requested weather service" do
+      test_weather.should_receive(:call)
+      Barometer::WeatherService.measure(:test_weather, query)
     end
 
-    it "requires a Barometer::Query object" do
-      lambda { Barometer::WeatherService.measure("invalid") }.should raise_error(ArgumentError)
-      @query.is_a?(Barometer::Query).should be_true
-      lambda { Barometer::WeatherService.measure(@query) }.should_not raise_error(ArgumentError)
+    it "passes along query and options" do
+      test_weather.should_receive(:call).with(query)
+      Barometer::WeatherService.measure(:test_weather, query)
     end
 
-    it "returns a Barometer::Measurement object" do
-      @service.measure(@query).is_a?(Barometer::Measurement).should be_true
+    describe "timing information" do
+      it "adds measurement_started_at" do
+        measurement = Barometer::WeatherService.measure(:test_weather, query)
+        measurement.measurement_started_at.should_not be_nil
+        measurement.measurement_started_at.should be_a(Time)
+      end
+
+      it "adds measurement_ended_at" do
+        measurement = Barometer::WeatherService.measure(:test_weather, query)
+        measurement.measurement_ended_at.should_not be_nil
+        measurement.measurement_ended_at.should be_a(Time)
+      end
     end
 
-    it "returns current and future" do
-      measurement = @service.measure(@query)
-      measurement.current.is_a?(Barometer::Measurement::Result).should be_true
-      measurement.forecast.is_a?(Array).should be_true
+    describe "source information" do
+      it "adds the source" do
+        measurement = Barometer::WeatherService.measure(:test_weather, query)
+        measurement.source.should == :test_weather
+      end
     end
+
+    describe "error handling" do
+      it "adds code 200 if no errors" do
+        test_measurement.stub(:complete? => true)
+
+        measurement = Barometer::WeatherService.measure(:test_weather, query)
+        measurement.status_code.should == 200
+      end
+
+      it "adds code 204 if service has no data" do
+        test_measurement.stub(:complete? => false)
+
+        measurement = Barometer::WeatherService.measure(:test_weather, query)
+        measurement.status_code.should == 204
+      end
+
+      it "adds code 401 if required key not provided" do
+        test_weather.stub(:call).and_raise(Barometer::WeatherService::KeyRequired)
+
+        measurement = Barometer::WeatherService.measure(:test_weather, query)
+        measurement.status_code.should == 401
+      end
+
+      it "adds code 406 if query format unsupported" do
+        test_weather.stub(:call).and_raise(Barometer::Query::ConversionNotPossible)
+
+        measurement = Barometer::WeatherService.measure(:test_weather, query)
+        measurement.status_code.should == 406
+      end
+
+      it "adds code 406 if query region unsupported" do
+        test_weather.stub(:call).and_raise(Barometer::Query::UnsupportedRegion)
+
+        measurement = Barometer::WeatherService.measure(:test_weather, query)
+        measurement.status_code.should == 406
+      end
+
+      it "adds code 408 if service unavailable (timeout)" do
+        test_weather.stub(:call).and_raise(Timeout::Error)
+
+        measurement = Barometer::WeatherService.measure(:test_weather, query)
+        measurement.status_code.should == 408
+      end
+    end
+  end
+
+  after do
+    Barometer::WeatherService.services = @services_cache
   end
 end
