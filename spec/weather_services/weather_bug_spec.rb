@@ -11,42 +11,45 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
 
   describe ".call" do
     context "when no keys provided" do
-      let(:query) { double(:query) }
-      subject { WeatherService::WeatherBug.call(query) }
-
-      it { should_not be_success }
-      its(:source) { should == :weather_bug }
-      its(:error_message) { should == "missing keys" }
+      it "raises error" do
+        expect {
+          WeatherService::WeatherBug.call(nil)
+        }.to raise_error(Barometer::WeatherService::KeyRequired)
+      end
     end
 
     context "when keys are provided and the query format is not accepted" do
       let(:query) { double(:query, :convert! => nil) }
       let(:config) { {:keys => {:code => WEATHERBUG_CODE}} }
-      subject { WeatherService::WeatherBug.call(query, config) }
 
       it "asks the query to convert to accepted formats" do
         query.should_receive(:convert!).with([:short_zipcode, :coordinates])
-        subject
+        begin
+          WeatherService::WeatherBug.call(query, config)
+        rescue
+        end
       end
 
-      it { should_not be_success }
-      its(:source) { should == :weather_bug }
-      its(:error_message) { should == "unacceptable query format" }
+      it "raises error" do
+        expect {
+          WeatherService::WeatherBug.call(query, config)
+        }.to raise_error(Barometer::Query::ConversionNotPossible)
+      end
     end
 
     context "when keys are provided and the query format is accepted" do
       let(:converted_query) { Barometer::Query.new("90210") }
       let(:query) { double(:query, :convert! => converted_query) }
       let(:config) { {:keys => {:code => WEATHERBUG_CODE}} }
+
       subject { WeatherService::WeatherBug.call(query, config) }
 
-      it { should be_success }
-      it { should be_a Barometer::Measurement }
-      its(:source) { should == :weather_bug }
-      its(:query) { should == "90210" }
-      its(:format) { should == :short_zipcode }
-
       it "includes the expected data" do
+        should be_a Barometer::Measurement
+        subject.query.should == "90210"
+        subject.format.should == :short_zipcode
+
+        should have_data(:current, :starts_at).as_format(:datetime)
         should have_data(:current, :humidity).as_format(:float)
         should have_data(:current, :condition).as_format(:string)
         should have_data(:current, :icon).as_format(:number)
@@ -71,12 +74,13 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
         should have_data(:location, :state_code).as_value("CA")
         should have_data(:location, :zip_code).as_value("90210")
 
-        should have_data(:measured_at).as_format(:datetime)
-        should have_data(:current, :current_at).as_format(:datetime)
+        should have_data(:published_at).as_format(:datetime)
         should have_data(:timezone, :code).as_format(/^P[DS]T$/i)
 
         subject.forecast.size.should == 7
         should have_forecast(:date).as_format(:date)
+        should have_forecast(:starts_at).as_format(:datetime)
+        should have_forecast(:ends_at).as_format(:datetime)
         should have_forecast(:condition).as_format(:string)
         should have_forecast(:icon).as_format(:number)
         should have_forecast(:high).as_format(:temperature)
@@ -91,7 +95,7 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
             :country => "country",
             :country_code => "country_code",
             :latitude => "latitude",
-            :longitude => "longitude",
+            :longitude => "longitude"
           )
         end
 

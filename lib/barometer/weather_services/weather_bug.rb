@@ -15,7 +15,7 @@ module Barometer
     def initialize(query, config={})
       @query = query
       @converted_query = nil
-      @measurement = Measurement.new(:weather_bug)
+      @measurement = Measurement.new
 
       if config[:keys]
         @api_code = config[:keys][:code]
@@ -23,24 +23,20 @@ module Barometer
     end
 
     def measure!
-      return @measurement unless validate_key!
-      return @measurement unless validate_query!
+      validate_key!
+      validate_query!
 
       fetch_and_parse_current
       fetch_and_parse_forecast
 
-      @measurement.success = true
       @measurement
     end
 
     private
 
     def validate_key!
-      if @api_code && !@api_code.empty?
-        true
-      else
-        @measurement.error_message = "missing keys"
-        @measurement.success = false
+      unless @api_code && !@api_code.empty?
+        raise Barometer::WeatherService::KeyRequired
       end
     end
 
@@ -50,10 +46,8 @@ module Barometer
       if @converted_query && self.class.accepted_formats.include?(@converted_query.format)
         @measurement.query = @converted_query.q
         @measurement.format = @converted_query.format
-        true
       else
-        @measurement.error_message = "unacceptable query format"
-        @measurement.success = false
+        raise Barometer::Query::ConversionNotPossible
       end
     end
 
