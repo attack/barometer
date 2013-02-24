@@ -1,6 +1,7 @@
 # barometer
 
 [![Build Status](https://travis-ci.org/attack/barometer.png?branch=master)](https://travis-ci.org/attack/barometer)
+[![Gem Version](https://badge.fury.io/rb/barometer.png)](http://badge.fury.io/rb/barometer)
 
 A multi API consuming weather forecasting superstar.
 
@@ -15,36 +16,39 @@ same query can be used for all (or most) services, even if they don't
 support the query directly. See the "Query" section for more information on
 this.
 
-## version
+## key features
 
-Version 0.8.0 is the current release of this gem. The gem is available from
-[rubygems](http://rubygems.org/gems/barometer).
-It is fully functional for many weather service APIs.
+* works with ruby 1.8.7, 1.9.x, Rubinius, REE (see
+  [Travis CI status](https://travis-ci.org/attack/barometer) to confirm)
+* supports 4 weather services, more planned
+* the same query can be used with any supported weather service
+* provides a powerful data object to hold the weather information
+* provides a simple plugin api to allow more weather services to be added
+* failover configuration
+* multiple services configuration to provide average values
 
-## status
+# usage
 
-Currently this project has completed initial development and will work for a
-few weather services (wunderground, yahoo, weather_bug).
-Barometer is developed using Ruby 1.9.3 and 1.8.7, but it should work on other versions.
-Checkout the current [Travis CI status](https://travis-ci.org/attack/barometer) to see
-what rubies are currently running the test suite.
+You can use barometer right out of the box, as it is configured to use one
+register-less (no API key required) international weather service
+(wunderground.com).
 
-Features to be added in the future:
-* historical weather data
-* even more weather service drivers (hamweather)
-* icon support
+```ruby
+require 'barometer'
+
+barometer = Barometer.new("Paris")
+weather = barometer.measure
+
+puts weather.current.temperature
+```
+
+*See [detailed usage](#detailed_Usage) further down.*
 
 # dependencies
 
 [![Dependency Status](https://gemnasium.com/attack/barometer.png)](https://gemnasium.com/attack/barometer)
 
-## Google API key
-
-As stated on the
-[Google Geocoding API website](http://code.google.com/apis/maps/documentation/geocoding/),
-Google no longer requires an API key.  Therefore Barometer no longer requires a Google API key.
-
-### other keys
+## api keys
 
 The '~/.barometer' file can hold all your weather service API keys.
 
@@ -113,20 +117,8 @@ then use a query like "denver", this will require a conversion from
 "denver" to its weather.com weather_id.  This conversion is needed for
 both web services but will only happen once and be cached.
 
-# usage
-
-You can use barometer right out of the box, as it is configured to use one
-register-less (no API key required) international weather service
-(wunderground.com).
-
-```ruby
-require 'barometer'
-
-barometer = Barometer.new("Paris")
-weather = barometer.measure
-
-puts weather.current.temperature
-```
+<a name='detailed_Usage'></a>
+# detailed usage
 
 ## sources
 
@@ -135,7 +127,7 @@ The available sources are:
 * Wunderground.com (:wunderground) [default]
 * Yahoo! Weather (:yahoo)
 * WeatherBug.com (:weather_bug) [requires key]
-* NOAA (:noaa) [beta]
+* NOAA (:noaa)
 
 ## source configuration
 
@@ -213,15 +205,6 @@ puts weather.now.temperature.c
 puts weather.tomorrow.high.c
 ```
 
-### by source
-
-```ruby
-weather.source(:wunderground)   # returns measurement for specified source
-weather.sources                 # lists all successful sources
-
-puts weather.source(:wunderground).current.temperature.c
-```
-
 ### by date
 
 ```ruby
@@ -229,9 +212,8 @@ puts weather.source(:wunderground).current.temperature.c
 # user measuring the weather
 date = Date.parse("01-01-2009")
 weather.for(date)       # returns forecast_measurement for default on date 
-weather.source(:wunderground).for(date)   # same as above but specific source
 
-puts weather.source(:wunderground).for(date).high.c
+puts weather.for(date).high.c
 ```
 
 ### by time
@@ -241,9 +223,8 @@ puts weather.source(:wunderground).for(date).high.c
 # user measuring the weather
 time = Time.parse("13:00 01-01-2009")
 weather.for(time)       # returns forecast_measurement for default at time 
-weather.source(:wunderground).for(time)   # same as above but specific source
 
-puts weather.source(:wunderground).for(time).low.f
+puts weather.for(time).low.f
 ```
 
 ## averages
@@ -272,66 +253,6 @@ You can weight the values from a weather service so that the values from that
 web service have more influence then other values.  The weights are set in the
 config ... see the config section
   
-## simple answers
-
-After you have measured the data, Barometer provides several "simple answer"
-methods to help you get answers to some basic questions. All examples assume
-you already have measured the data as shown in the above examples.
-
-All of these questions are ultimately specific to the weather source(s) you
-are configured to use.  All sources that have successfully measured data
-will be asked, but if there is no data that can answer the question then
-there will be no answer.
-
-### is it windy?
-
-  # 1st parameter is the threshold wind speed for being windy
-  # 2nd parameter is the utc_time for which you want to know the answer,
-  #   this defaults to the current time
-  # NOTE: in my example the values are metric, so the threshold is 10 kph
-
-```ruby
-weather.windy?(10)
-```
-
-### is it wet?
-
-  # 1st parameter is the threshold pop (%) for being wet
-  # 2nd parameter is the utc_time for which you want to know the answer,
-  #   this defaults to the current time
-  # NOTE: in my example the threshold is 50 %
-
-```ruby
-weather.wet?(50)
-```
-
-### is it sunny?
-
-  # 1st parameter is the utc_time for which you want to know the answer,
-  #   this defaults to the current time
-
-```ruby
-weather.sunny?
-```
-
-### is it day?
-
-  # 1st parameter is the utc_time for which you want to know the answer,
-  #   this defaults to the current time
-
-```ruby
-weather.day?
-```
-
-### is it night?
-
-  # 1st parameter is the utc_time for which you want to know the answer,
-  #   this defaults to the current time
-
-```ruby
-weather.night?
-```
-
 # design
 
 [![Code Climate](https://codeclimate.com/github/attack/barometer.png)](https://codeclimate.com/github/attack/barometer)
@@ -339,13 +260,11 @@ weather.night?
 * create a Barometer instance
 * supply a query, there are very little restrictions on the format:
   * city, country, specific address (basically anything Google will geocode)
-  * US zip code (skips conversion if weather service accepts this directly)
-  * postal code (skips conversion if weather service accepts this directly)
-  * latitude and longitude (skips conversion if weather service accepts this
-    directly)
+  * US zip code
+  * postal code
+  * latitude and longitude
   * weather.com weather id (even if the service you are using doesn't use it)
-  * international airport code (skips conversion if weather service
-    accepts this directly)
+  * international airport code
 * determine which weather services will be queried (one or multiple)    
 * if query conversion required for specific weather service, convert the query
 * query the weather services
@@ -360,7 +279,7 @@ Please use the provided ones as examples to create more.
 
 # development
 
-Barometer now uses 'bundler'.  You just need to 'git clone' the repo and 'bundle install'.
+Barometer uses 'bundler'.  You just need to 'git clone' the repo and 'bundle install'.
 
 ## Contributions
 
