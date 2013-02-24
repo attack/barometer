@@ -1,9 +1,4 @@
 module Barometer
-  #
-  # A simple Sun class
-  #
-  # Used to store sunrise and sunset information
-  #
   class Data::Sun
     attr_reader :rise, :set
 
@@ -14,8 +9,18 @@ module Barometer
       @set = set
     end
 
+    def rise=(time)
+      raise ArgumentError unless (time.is_a?(Data::LocalTime) || time.nil?)
+      @rise = time
+    end
+
+    def set=(time)
+      raise ArgumentError unless (time.is_a?(Data::LocalTime) || time.nil?)
+      @set = time
+    end
+
     def nil?
-      (@rise || @set) ? false : true
+      !(@rise || @set)
     end
 
     def after_rise?(time)
@@ -28,14 +33,11 @@ module Barometer
       time <= @set
     end
 
-    def rise=(time)
-      raise ArgumentError unless (time.is_a?(Data::LocalTime) || time.nil?)
-      @rise = time
-    end
-
-    def set=(time)
-      raise ArgumentError unless (time.is_a?(Data::LocalTime) || time.nil?)
-      @set = time
+    def to_s
+      output = []
+      output << "rise: #{rise}" if rise
+      output << "set: #{set}" if set
+      output.join(', ')
     end
   end
 end

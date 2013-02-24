@@ -1,130 +1,149 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Data::Sun do
-  describe "when initialized" do
-    before(:each) do
-      @sun = Data::Sun.new
-      @local_time_rise = Data::LocalTime.new.parse(Time.now)
-      @local_time_set = Data::LocalTime.new.parse(Time.now + (60*60*8))
+  let(:local_time_set) { Data::LocalTime.new.parse(Time.now + (60*60*8)) }
+  let(:local_time_rise) { Data::LocalTime.new.parse(Time.now) }
+
+  describe "#new" do
+    it "sets the sunrise" do
+      subject = Data::Sun.new(local_time_rise)
+      subject.rise.should == local_time_rise
     end
 
-    it "responds to rise" do
-      @sun.respond_to?("rise").should be_true
+    it "sets the sunset" do
+      subject = Data::Sun.new(nil, local_time_set)
+      subject.set.should == local_time_set
     end
 
-    it "responds to set" do
-      @sun.respond_to?("set").should be_true
+    it "raises an error if sunrise is invalid" do
+      expect {
+        Data::Sun.new("", local_time_set)
+      }.to raise_error ArgumentError
     end
 
-    it "sets sunrise" do
-      sun = Data::Sun.new(@local_time_rise,@local_time_set)
-      sun.rise.should == @local_time_rise
+    it "raises an error if sunset is invalid" do
+      expect {
+        Data::Sun.new(local_time_rise, "")
+      }.to raise_error ArgumentError
+    end
+  end
+
+  describe "#nil?" do
+    it "returns true if nothing is set" do
+      subject.nil?.should be_true
     end
 
-    it "sets sunset" do
-      sun = Data::Sun.new(@local_time_rise,@local_time_set)
-      sun.set.should == @local_time_set
+    it "returns false if sunrise is set" do
+      subject.rise = local_time_rise
+      subject.nil?.should be_false
     end
 
-    it "requires Data::LocalTime for sunrise" do
-      lambda { Data::Sun.new("",@local_time_set) }.should raise_error(ArgumentError)
-      lambda { Data::Sun.new(@local_time_rise,@local_time_set) }.should_not raise_error(ArgumentError)
-    end
-
-    it "requires Data::LocalTime for sunset" do
-      lambda { Data::Sun.new(@local_time_rise,"") }.should raise_error(ArgumentError)
-      lambda { Data::Sun.new(@local_time_rise,@local_time_set) }.should_not raise_error(ArgumentError)
-    end
-
-    it "responds to nil?" do
-      @sun.nil?.should be_true
-      sun = Data::Sun.new(@local_time_rise, @local_time_set)
-      sun.nil?.should be_false
+    it "returns false if sunset is set" do
+      subject.set = local_time_set
+      subject.nil?.should be_false
     end
   end
 
   describe "comparisons" do
-    before(:each) do
-      now = Time.local(2009,5,5,11,40,00)
-      @mid_time = Data::LocalTime.new.parse(now)
-      @early_time = Data::LocalTime.new.parse(now - (60*60*8))
-      @late_time = Data::LocalTime.new.parse(now + (60*60*8))
-    end
+    let(:now) { Time.local(2009,5,5,11,40,00) }
+    let(:early_time) { Data::LocalTime.new.parse(now - (60*60*8)) }
+    let(:mid_time) { Data::LocalTime.new.parse(now) }
+    let(:late_time) { Data::LocalTime.new.parse(now + (60*60*8)) }
 
-    describe "after_rise?" do
+    describe "#after_rise?" do
       it "requires a LocalTime object" do
-        sun = Data::Sun.new(@early_time,@late_time)
-        lambda { sun.after_rise? }.should raise_error(ArgumentError)
-        lambda { sun.after_rise?("invalid") }.should raise_error(ArgumentError)
-        lambda { sun.after_rise?(@mid_time) }.should_not raise_error(ArgumentError)
+        expect {
+          subject.after_rise?("invalid")
+        }.to raise_error(ArgumentError)
       end
 
       it "returns true when after sun rise" do
-        sun = Data::Sun.new(@early_time,@late_time)
-        sun.after_rise?(@mid_time).should be_true
+        subject = Data::Sun.new(early_time, late_time)
+        subject.after_rise?(mid_time).should be_true
       end
 
       it "returns false when before sun rise" do
-        sun = Data::Sun.new(@mid_time,@late_time)
-        sun.after_rise?(@early_time).should be_false
+        subject = Data::Sun.new(mid_time, late_time)
+        subject.after_rise?(early_time).should be_false
       end
     end
 
-    describe "before_set?" do
+    describe "#before_set?" do
       it "requires a LocalTime object" do
-        sun = Data::Sun.new(@early_time,@late_time)
-        lambda { sun.before_set? }.should raise_error(ArgumentError)
-        lambda { sun.before_set?("invalid") }.should raise_error(ArgumentError)
-        lambda { sun.before_set?(@mid_time) }.should_not raise_error(ArgumentError)
+        expect {
+          subject.before_set?("invalid")
+        }.to raise_error(ArgumentError)
       end
 
       it "returns true when before sun set" do
-        sun = Data::Sun.new(@early_time,@late_time)
-        sun.before_set?(@mid_time).should be_true
+        subject = Data::Sun.new(early_time, late_time)
+        subject.before_set?(mid_time).should be_true
       end
 
       it "returns false when before sun set" do
-        sun = Data::Sun.new(@early_time,@mid_time)
-        sun.before_set?(@late_time).should be_false
+        subject = Data::Sun.new(early_time, mid_time)
+        subject.before_set?(late_time).should be_false
       end
     end
   end
 
   describe "#rise=" do
-    let(:sun) { Data::Sun.new }
-    let(:local_time) { Data::LocalTime.new.parse(Time.now + (60*60*8)) }
-
     it "requires Data::LocalTime" do
-      lambda { sun.rise = "" }.should raise_error(ArgumentError)
-      lambda { sun.rise = local_time }.should_not raise_error(ArgumentError)
+      expect {
+        subject.rise = ""
+      }.to raise_error(ArgumentError)
     end
 
     it "allows nil" do
-      lambda { sun.rise = nil }.should_not raise_error(ArgumentError)
+      expect {
+        subject.rise = nil
+      }.not_to raise_error(ArgumentError)
     end
 
     it "sets the rise time" do
-      sun.rise = local_time
-      sun.rise.should == local_time
+      subject.rise = local_time_rise
+      subject.rise.should == local_time_rise
     end
   end
 
   describe "#set=" do
-    let(:sun) { Data::Sun.new }
-    let(:local_time) { Data::LocalTime.new.parse(Time.now + (60*60*8)) }
-
     it "requires Data::LocalTime" do
-      lambda { sun.set = "" }.should raise_error(ArgumentError)
-      lambda { sun.set = local_time }.should_not raise_error(ArgumentError)
+      expect {
+        subject.set = ""
+      }.to raise_error(ArgumentError)
     end
 
     it "allows nil" do
-      lambda { sun.set = nil }.should_not raise_error(ArgumentError)
+      expect {
+        subject.set = nil
+      }.not_to raise_error(ArgumentError)
     end
 
     it "sets the set time" do
-      sun.set = local_time
-      sun.set.should == local_time
+      subject.set = local_time_set
+      subject.set.should == local_time_set
+    end
+  end
+
+  describe "#to_s" do
+    it "defaults as blank" do
+      subject.to_s.should == ""
+    end
+
+    it "returns the sunrise time" do
+      subject.rise = local_time_rise
+      subject.to_s.should == "rise: #{local_time_rise.to_s}"
+    end
+
+    it "returns the sunset time" do
+      subject.set = local_time_set
+      subject.to_s.should == "set: #{local_time_set.to_s}"
+    end
+
+    it "returns both times" do
+      subject.rise = local_time_rise
+      subject.set = local_time_set
+      subject.to_s.should == "rise: #{local_time_rise.to_s}, set: #{local_time_set.to_s}"
     end
   end
 end
