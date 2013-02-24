@@ -4,171 +4,104 @@ include Barometer
 describe Barometer::WeatherService::Noaa, :vcr => {
   :cassette_name => "WeatherService::Noaa"
 } do
-  before(:each) do
-    @accepted_formats = [:zipcode, :coordinates]
-  end
 
   it "auto-registers this weather service as :noaa" do
     Barometer::WeatherService.source(:noaa).should == Barometer::WeatherService::Noaa
   end
 
-  describe "the class methods" do
-    it "defines accepted_formats" do
-      WeatherService::Noaa._accepted_formats.should == @accepted_formats
-    end
+  describe ".call" do
+    context "when the query format is not accepted" do
+      let(:query) { double(:query, :convert! => nil) }
 
-    it "defines source_name" do
-      WeatherService::Noaa._source_name.should == :noaa
-    end
-
-    it "defines fetch_current" do
-      WeatherService::Noaa.respond_to?("_fetch_current").should be_true
-    end
-
-    it "defines fetch_forecast" do
-      WeatherService::Noaa.respond_to?("_fetch_forecast").should be_true
-    end
-
-    it "defines get_all" do
-      WeatherService::Noaa.respond_to?("_fetch").should be_true
-    end
-
-    describe "acceptable countries" do
-      before(:each) do
-        @query = Barometer::Query.new("90210")
-        @measurement = Barometer::Measurement.new
+      it "asks the query to convert to accepted formats" do
+        query.should_receive(:convert!).with([:zipcode, :coordinates])
+        begin
+          WeatherService::Noaa.call(query)
+        rescue
+        end
       end
 
-      it "accepts nil" do
-        @query.country_code = nil
-        WeatherService::Noaa._supports_country?(@query).should be_true
-      end
-
-      it "accepts blank" do
-        @query.country_code = ""
-        WeatherService::Noaa._supports_country?(@query).should be_true
-      end
-
-      it "accepts US" do
-        @query.country_code = "US"
-        WeatherService::Noaa._supports_country?(@query).should be_true
-      end
-
-      it "rejects other" do
-        @query.country_code = "CA"
-        WeatherService::Noaa._supports_country?(@query).should be_false
+      it "raises error" do
+        expect {
+          WeatherService::Noaa.call(query)
+        }.to raise_error(Barometer::Query::ConversionNotPossible)
       end
     end
-  end
 
-  describe "building the current data" do
-    it "defines the build method" do
-      WeatherService::Noaa.respond_to?("_build_current").should be_true
-    end
+    context "when the query format is accepted" do
+      let(:converted_query) { Barometer::Query.new("90210") }
+      let(:query) { double(:query, :convert! => converted_query) }
+      before { converted_query.format = :zipcode }
 
-    it "requires Hash input" do
-      lambda { WeatherService::Noaa._build_current }.should raise_error(ArgumentError)
-      lambda { WeatherService::Noaa._build_current({}) }.should_not raise_error(ArgumentError)
-    end
+      subject { WeatherService::Noaa.call(query) }
 
-    it "returns Barometer::CurrentMeasurement object" do
-      current = WeatherService::Noaa._build_current({})
-      current.is_a?(Measurement::Result).should be_true
-    end
-  end
+      it "includes the expected data" do
+        should be_a Barometer::Measurement
+        subject.query.should == "90210"
+        subject.format.should == :zipcode
 
-  describe "building the forecast data" do
-    it "defines the build method" do
-      WeatherService::Noaa.respond_to?("_build_forecast").should be_true
-    end
+        should have_data(:current, :starts_at).as_format(:datetime)
+        should have_data(:current, :humidity).as_format(:float)
+        should have_data(:current, :condition).as_format(:string)
+        should have_data(:current, :icon).as_format(:string)
+        should have_data(:current, :temperature).as_format(:temperature)
+        should have_data(:current, :wind_chill).as_format(:temperature)
+        should have_data(:current, :dew_point).as_format(:temperature)
+        should have_data(:current, :wind).as_format(:vector)
+        should have_data(:current, :pressure).as_format(:pressure)
+        should have_data(:current, :visibility).as_format(:distance)
 
-    it "requires Hash input" do
-      lambda { WeatherService::Noaa._build_forecast }.should raise_error(ArgumentError)
-      lambda { WeatherService::Noaa._build_forecast({}) }.should_not raise_error(ArgumentError)
-    end
+        should have_data(:location, :name).as_value("Santa Monica Muni, CA")
+        should have_data(:location, :city).as_value("Santa Monica Muni")
+        should have_data(:location, :state_code).as_value("CA")
+        should have_data(:location, :country_code).as_value("US")
+        should have_data(:location, :latitude).as_value(34.10)
+        should have_data(:location, :longitude).as_value(-118.41)
 
-    it "returns Array object" do
-      current = WeatherService::Noaa._build_forecast({})
-      current.is_a?(Array).should be_true
-    end
-  end
+        should have_data(:station, :id).as_value("KSMO")
+        should have_data(:station, :name).as_value("Santa Monica Muni, CA")
+        should have_data(:station, :city).as_value("Santa Monica Muni")
+        should have_data(:station, :state_code).as_value("CA")
+        should have_data(:station, :country_code).as_value("US")
+        should have_data(:station, :latitude).as_value(34.10)
+        should have_data(:station, :longitude).as_value(-118.41)
 
-  describe "when measuring" do
-    before(:each) do
-      @query = Barometer::Query.new("90210")
-      @measurement = Barometer::Measurement.new
-    end
+        should have_data(:published_at).as_format(:datetime)
+        should have_data(:timezone, :code).as_format(/^P[DS]T$/i)
 
-    describe "all" do
-      it "responds to _measure" do
-        Barometer::WeatherService::Noaa.respond_to?("_measure").should be_true
+        subject.forecast.size.should == 14
+        should have_forecast(:starts_at).as_format(:datetime)
+        should have_forecast(:ends_at).as_format(:datetime)
+        should have_forecast(:icon).as_format(:string)
+        should have_forecast(:condition).as_format(:string)
+        should have_forecast(:pop).as_format(:float)
+        should have_forecast(:high).as_format(:temperature)
+        should have_forecast(:low).as_format(:temperature)
       end
 
-      it "requires a Barometer::Measurement object" do
-        lambda { Barometer::WeatherService::Noaa._measure(nil, @query) }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService::Noaa._measure("invalid", @query) }.should raise_error(ArgumentError)
+      context "when the query already has geo data" do
+        let(:geo) do
+          double(:geo,
+            :locality => "locality",
+            :region => "region",
+            :country => "country",
+            :country_code => "country_code",
+            :latitude => "latitude",
+            :longitude => "longitude"
+          )
+        end
 
-        lambda { Barometer::WeatherService::Noaa._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
+        before { converted_query.stub(:geo => geo) }
+
+        it "uses the query geo data for 'location'" do
+          should have_data(:location, :city).as_value("locality")
+          should have_data(:location, :state_code).as_value("region")
+          should have_data(:location, :country).as_value("country")
+          should have_data(:location, :country_code).as_value("country_code")
+          should have_data(:location, :latitude).as_value(34.10)
+          should have_data(:location, :longitude).as_value(-118.41)
+        end
       end
-
-      it "requires a Barometer::Query query" do
-        lambda { Barometer::WeatherService::Noaa._measure }.should raise_error(ArgumentError)
-        lambda { Barometer::WeatherService::Noaa._measure(@measurement, 1) }.should raise_error(ArgumentError)
-
-        lambda { Barometer::WeatherService::Noaa._measure(@measurement, @query) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns a Barometer::Measurement object" do
-        result = Barometer::WeatherService::Noaa._measure(@measurement, @query)
-        result.is_a?(Barometer::Measurement).should be_true
-        result.current.is_a?(Barometer::Measurement::Result).should be_true
-        result.forecast.is_a?(Barometer::Measurement::ResultArray).should be_true
-      end
-    end
-  end
-
-  describe "response" do
-    let(:query) { Barometer::Query.new("90210") }
-
-    subject do
-      WeatherService::Noaa._measure(Barometer::Measurement.new, query)
-    end
-
-    it "has the expected data" do
-      should measure(:current, :humidity).as_format(:number)
-      should measure(:current, :condition).as_format(:string)
-      should measure(:current, :icon).as_format(:string)
-      should measure(:current, :temperature).as_format(:temperature)
-      should measure(:current, :dew_point).as_format(:temperature)
-      should measure(:current, :wind_chill).as_format(:temperature)
-      should measure(:current, :wind).as_format(:wind)
-      should measure(:current, :wind, :direction).as_format(:wind_direction)
-      should measure(:current, :wind, :degrees).as_format(:number)
-      should measure(:current, :pressure).as_format(:pressure)
-
-      should measure(:station, :id).as_value("KSMO")
-      should measure(:station, :name).as_value("Santa Monica Muni, CA")
-      should measure(:station, :city).as_value("Santa Monica Muni")
-      should measure(:station, :state_code).as_value("CA")
-      should measure(:station, :country_code).as_value("US")
-      should measure(:station, :latitude).as_value(34.03)
-      should measure(:station, :longitude).as_value(-118.45)
-
-      should measure(:location, :city).as_value("Santa Monica Muni")
-      should measure(:location, :state_code).as_value("CA")
-      should measure(:location, :country_code).as_value("US")
-
-      subject.forecast.size.should == 7
-      should forecast(:valid_start_date).as_format(:date)
-      should forecast(:valid_end_date).as_format(:date)
-      should forecast(:condition).as_format(:string)
-      should forecast(:icon).as_format(:string)
-      should forecast(:high).as_format(:temperature)
-      should forecast(:low).as_format(:temperature)
-
-      should measure(:measured_at).as_format(:datetime)
-      should measure(:current, :current_at).as_format(:datetime)
-      should measure(:timezone, :code).as_format(/^P[DS]T$/i)
     end
   end
 end
