@@ -176,9 +176,6 @@ module Barometer
         full_timezone
       elsif query && query.timezone
         query.timezone
-      elsif Barometer.enhance_timezone && location &&
-            location.latitude && location.longitude
-        WebService::Timezone.fetch(location.latitude, location.longitude)
       else
         _build_timezone(result)
       end

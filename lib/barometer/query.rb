@@ -118,18 +118,6 @@ module Barometer
         end
       end
 
-      # enhance timezone?, unless we already did
-      #
-      if Barometer.enhance_timezone && !@timezone
-        if converted_query && converted_query.timezone
-          @geo = converted_query.timezone
-        elsif @geo && @geo.latitude && @geo.longitude
-          puts "enhance timezone: #{@geo.latitude}, #{@geo.longitude}" if Barometer::debug?
-          @timezone = WebService::Timezone.fetch(@geo.latitude,@geo.longitude)
-          converted_query.timezone = @timezone.dup
-        end
-      end
-
       converted_query
     end
 

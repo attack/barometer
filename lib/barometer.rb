@@ -33,11 +33,6 @@ module Barometer
   def self.force_geocode=(value); @@force_geocode = value; end;
   def self.force_geocode!; @@force_geocode = true; end;
 
-  @@enhance_timezone = false
-  def self.enhance_timezone; @@enhance_timezone; end;
-  def self.enhance_timezone=(value); @@enhance_timezone = value; end;
-  def self.enhance_timezone!; @@enhance_timezone = true; end;
-
   # adjust the timeout used when interactind with external web services
   #
   @@timeout = 15
