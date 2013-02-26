@@ -18,7 +18,7 @@ this.
 
 ## key features
 
-* works with ruby 1.8.7, 1.9.x, Rubinius, REE (see
+* works with ruby 1.8.7, 1.9.x, 2.0, Rubinius, REE (see
   [Travis CI status](https://travis-ci.org/attack/barometer) to confirm)
 * supports 4 weather services, more planned
 * the same query can be used with any supported weather service
