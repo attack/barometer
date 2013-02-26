@@ -12,3 +12,4 @@ coverage
 .bundle
 Gemfile.lock
 .ruby-version
+.rbx
