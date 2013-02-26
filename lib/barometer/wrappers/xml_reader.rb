@@ -1,5 +1,6 @@
 require 'nokogiri'
 require 'nori'
+require 'rexml/document'
 
 module Barometer
   module XmlReader
