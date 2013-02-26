@@ -133,6 +133,10 @@ module Barometer
       def value_responds_to_metric?
         if type_is_a_date? || type_is_a_time?
           false
+        elsif @type == Float
+          # rubinius does not like Float.new being called on the next line
+          # so avoid it
+          false
         else
           @type.respond_to?(:new) && @type.new.respond_to?(:metric)
         end
