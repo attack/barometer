@@ -40,7 +40,7 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
     context "when keys are provided and the query format is accepted" do
       let(:converted_query) { Barometer::Query.new("90210") }
       let(:query) { double(:query, :convert! => converted_query) }
-      let(:config) { {:keys => {:code => WEATHERBUG_CODE}} }
+      let(:config) { {:keys => {:code => WEATHERBUG_CODE}, :metric => true} }
 
       subject { WeatherService::WeatherBug.call(query, config) }
 
@@ -48,6 +48,7 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
         should be_a Barometer::Measurement
         subject.query.should == "90210"
         subject.format.should == :short_zipcode
+        subject.metric.should be_true
 
         should have_data(:current, :starts_at).as_format(:datetime)
         should have_data(:current, :humidity).as_format(:float)

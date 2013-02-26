@@ -15,7 +15,9 @@ module Barometer
     def initialize(query, config={})
       @query = query
       @converted_query = nil
-      @measurement = Measurement.new
+      @metric = config.fetch(:metric, true)
+
+      @measurement = Measurement.new(metric)
 
       if config[:keys]
         @api_code = config[:keys][:code]
@@ -26,16 +28,19 @@ module Barometer
       validate_key!
       validate_query!
 
+      @requester = Barometer::Requester::WeatherBug.new(api_code, metric)
       fetch_and_parse_current
       fetch_and_parse_forecast
 
-      @measurement
+      measurement
     end
 
     private
 
+    attr_reader :measurement, :converted_query, :api_code, :metric
+
     def validate_key!
-      unless @api_code && !@api_code.empty?
+      unless api_code && !api_code.empty?
         raise Barometer::WeatherService::KeyRequired
       end
     end
@@ -43,23 +48,23 @@ module Barometer
     def validate_query!
       @converted_query = @query.convert!(self.class.accepted_formats)
 
-      if @converted_query && self.class.accepted_formats.include?(@converted_query.format)
-        @measurement.query = @converted_query.q
-        @measurement.format = @converted_query.format
+      if converted_query && self.class.accepted_formats.include?(converted_query.format)
+        measurement.query = converted_query.q
+        measurement.format = converted_query.format
       else
         raise Barometer::Query::ConversionNotPossible
       end
     end
 
     def fetch_and_parse_current
-      payload = Barometer::Requester::WeatherBug.get_current(@converted_query, @api_code)
-      parser = Barometer::Parser::WeatherBug.new(@measurement, @converted_query)
+      payload = @requester.get_current(converted_query)
+      parser = Barometer::Parser::WeatherBug.new(measurement, converted_query)
       parser.parse_current(payload)
     end
 
     def fetch_and_parse_forecast
-      payload = Barometer::Requester::WeatherBug.get_forecast(@converted_query, @api_code)
-      parser = Barometer::Parser::WeatherBug.new(@measurement, @converted_query)
+      payload = @requester.get_forecast(converted_query)
+      parser = Barometer::Parser::WeatherBug.new(measurement, converted_query)
       parser.parse_forecast(payload)
     end
   end

@@ -5,61 +5,69 @@ module Barometer
     class WeatherBug
       include HTTParty
 
-      def self.get_current(query, api_code, metric=true)
+      def initialize(api_code, metric=true)
+        @api_code = api_code
+        @metric = metric
+      end
+
+      def get_current(query)
         puts "fetch weatherbug current: #{query.q}" if Barometer::debug?
 
-        q = ( query.format.to_sym == :short_zipcode ?
-          { :zipCode => query.q } :
-          { :lat => query.q.split(',')[0], :long => query.q.split(',')[1] })
+        response = _get("getLiveWeatherRSS.aspx", query)
 
-        response = self.get(
-          "http://#{api_code}.api.wxbug.net/getLiveWeatherRSS.aspx",
-          :query => { :ACode => api_code,
-            :OutputType => "1", :UnitType => (metric ? '1' : '0')
-          }.merge(q),
-          :format => :plain,
-          :timeout => Barometer.timeout
-        )
-
-        # WeatherBug uses non-standard XML.  Some nodes have attributes along with text values,
-        # and XML parsers will ignore the attributes.
-        # For a couple cases the the attribute values are needed, so grab them before XML->Hash
-        # conversion and add them as separate nodes.
+        # Some nodes have attributes along with text values, and
+        # XML parsers will ignore the attributes. For a couple
+        # fields the the attribute values are needed, so grab them
+        # before XML->Hash conversion and add them as separate nodes.
         #
         icon_match = response.match(/cond(\d*)\.gif/)
         icon = icon_match[1] if icon_match
-
         zip_match = response.match(/zipcode=\"(\d*)\"/)
         zipcode = zip_match[1] if zip_match
 
         output = Barometer::XmlReader.parse(response, "weather", "ob")
-
         output["barometer:icon"] = icon
         output["barometer:station_zipcode"] = zipcode
 
         Barometer::Payload.new(output)
       end
 
-      def self.get_forecast(query, api_code, metric=true)
+      def get_forecast(query)
         puts "fetch weatherbug forecast: #{query.q}" if Barometer::debug?
 
-        q = ( query.format.to_sym == :short_zipcode ?
-          { :zipCode => query.q } :
-          { :lat => query.q.split(',')[0], :long => query.q.split(',')[1] })
-
-        response = self.get(
-          "http://#{api_code}.api.wxbug.net/getForecastRSS.aspx",
-          :query => { :ACode => api_code,
-            :OutputType => "1", :UnitType => (metric ? '1' : '0')
-          }.merge(q),
-          :format => :plain,
-          :timeout => Barometer.timeout
-        )
-
+        response = _get("getForecastRSS.aspx", query)
         output = Barometer::XmlReader.parse(response, "weather", "forecasts")
         Barometer::Payload.new(output)
       end
 
+      private
+
+      attr_reader :api_code, :metric
+
+      def _get(path, query)
+        self.class.get(
+          "http://#{api_code}.api.wxbug.net/#{path}",
+          :query => _format_request.merge(_format_query(query)),
+          :format => :plain,
+          :timeout => Barometer.timeout
+        )
+      end
+
+      def _format_request
+        { :ACode => api_code, :OutputType => "1", :UnitType => _unit_type }
+      end
+
+      def _format_query(query)
+        if query.format == :short_zipcode
+          { :zipCode => query.q }
+        else
+          { :lat => query.latitude, :long => query.longitude }
+        end
+      end
+
+      def _unit_type
+        metric ? '1' : '0'
+      end
     end
   end
 end
