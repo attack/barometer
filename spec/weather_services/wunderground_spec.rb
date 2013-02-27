@@ -31,13 +31,15 @@ describe Barometer::WeatherService::Wunderground, :vcr => {
     context "when the query format is accepted" do
       let(:converted_query) { Barometer::Query.new("Calgary,AB") }
       let(:query) { double(:query, :convert! => converted_query) }
+      let(:config) { {:metric => true} }
 
-      subject { WeatherService::Wunderground.call(query) }
+      subject { WeatherService::Wunderground.call(query, config) }
 
       it "includes the expected data" do
         should be_a Barometer::Measurement
         subject.query.should == "Calgary,AB"
         subject.format.should == :geocode
+        subject.metric.should be_true
 
         should have_data(:current, :starts_at).as_format(:datetime)
         should have_data(:current, :humidity).as_format(:float)
