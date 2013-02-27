@@ -31,14 +31,16 @@ describe Barometer::WeatherService::Noaa, :vcr => {
     context "when the query format is accepted" do
       let(:converted_query) { Barometer::Query.new("90210") }
       let(:query) { double(:query, :convert! => converted_query) }
+      let(:config) { {:metric => true} }
       before { converted_query.format = :zipcode }
 
-      subject { WeatherService::Noaa.call(query) }
+      subject { WeatherService::Noaa.call(query, config) }
 
       it "includes the expected data" do
         should be_a Barometer::Measurement
         subject.query.should == "90210"
         subject.format.should == :zipcode
+        subject.metric.should be_true
 
         should have_data(:current, :starts_at).as_format(:datetime)
         should have_data(:current, :humidity).as_format(:float)
