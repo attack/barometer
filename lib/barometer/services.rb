@@ -1,5 +1,7 @@
 $:.unshift(File.dirname(__FILE__))
 
+require 'http/address'
+
 require 'wrappers/xml_reader'
 
 # weather services
