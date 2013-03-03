@@ -4,6 +4,7 @@ require 'cgi'
 require 'pry'
 require 'vcr'
 require 'fakefs/spec_helpers'
+require 'webmock/rspec'
 
 $:.unshift((File.join(File.dirname(__FILE__), '..', 'lib')))
 require 'barometer'

@@ -62,13 +62,10 @@ eg. Yahoo! Placemaker
   yahoo:
     app_id: YOUR_APP_ID
 
-## HTTParty
+## httpclient
 
-Why? HTTParty was created and designed specifically for consuming web services.
-I choose to use this over using the Net::HTTP library directly to allow for
-faster development of this project.
-
-It is possible that I will use Net::HTTP in the future.
+[httpclient](https://github.com/nahi/httpclient) is a fast, pure ruby, feature complete 
+library for making http requests.
 
 ## tzinfo
 

@@ -47,4 +47,5 @@ module Barometer
   end
 
   class OutOfSources < StandardError; end
+  class TimeoutError < StandardError; end
 end

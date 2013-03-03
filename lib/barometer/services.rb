@@ -1,6 +1,7 @@
 $:.unshift(File.dirname(__FILE__))
 
 require 'http/address'
+require 'http/requester'
 
 require 'wrappers/xml_reader'
 
