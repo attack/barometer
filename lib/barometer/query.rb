@@ -20,17 +20,37 @@ module Barometer
     class ConversionNotPossible < StandardError; end
     class UnsupportedRegion < StandardError; end
 
-    # This array defines the order to check a query for the format
-    #
-    FORMATS = %w(
-      ShortZipcode Zipcode Postalcode WeatherID Coordinates Icao WoeID Geocode
-    )
-    FORMAT_MAP = {
-      :short_zipcode => "ShortZipcode", :zipcode => "Zipcode",
-      :postalcode => "Postalcode", :weather_id => "WeatherID",
-      :coordinates => "Coordinates", :icao => "Icao",
-      :woe_id => "WoeID", :geocode => "Geocode"
-    }
+    class NotFound < StandardError; end
+
+    @@formats = []
+
+    def self.formats=(formats)
+      @@formats = formats
+    end
+
+    def self.formats
+      @@formats
+    end
+
+    def self.register(key, format)
+      @@formats ||= []
+      @@formats << [ key.to_sym, format ] unless has?(key)
+    end
+
+    def self.has?(key)
+      !@@formats.select{|format| format[0] == key.to_sym}.empty?
+    end
+
+    def self.find(key)
+      @@formats ||= []
+      format = @@formats.select{|format| format[0] == key.to_sym}
+
+      if format && format[0]
+        format[0][1]
+      else
+        raise NotFound
+      end
+    end
 
     attr_writer :q
     attr_accessor :format, :country_code
@@ -44,7 +64,7 @@ module Barometer
     end
 
     def q
-      format ? Barometer::Query::Format.const_get(FORMAT_MAP[format.to_sym].to_s).convert_query(@q) : @q
+      format ? Barometer::Query.find(format).convert_query(@q) : @q
     end
 
     # analyze the saved query to determine the format.
@@ -53,10 +73,10 @@ module Barometer
     #
     def analyze!
       return unless @q
-      FORMATS.each do |format|
-        if Query::Format.const_get(format.to_s).is?(@q)
-          @format = Query::Format.const_get(format.to_s).format
-          @country_code = Query::Format.const_get(format.to_s).country_code(@q)
+      @@formats.each do |format|
+        if format[1].is?(@q)
+          @format = format[0]
+          @country_code = format[1].country_code(@q)
           break
         end
       end
@@ -87,7 +107,7 @@ module Barometer
         converted = false
         converted_query = Barometer::Query.new
         preferred_formats.each do |preferred_format|
-          klass = FORMAT_MAP[preferred_format.to_sym]
+          klass = Barometer::Query.find(preferred_format)
           # if we discover that the format we have is the preferred format, return it
           if preferred_format == @format
             converted = true
@@ -95,16 +115,18 @@ module Barometer
           end
           unless converted
             unless converted_query = get_conversion(preferred_format)
-              converted_query = Query::Format.const_get(klass.to_s).to(self)
+              converted_query = klass.to(self)
             end
             converted = true if converted_query
           end
           if converted
-            converted_query.country_code ||= Query::Format.const_get(klass.to_s).country_code(converted_query.q)
+            converted_query.country_code ||= klass.country_code(converted_query.q)
             post_conversion(converted_query)
             break
           end
         end
+
+        raise ConversionNotPossible unless converted
       end
 
       # force geocode?, unless we already did

@@ -18,31 +18,17 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
       end
     end
 
-    context "when keys are provided and the query format is not accepted" do
-      let(:query) { double(:query, :convert! => nil) }
-      let(:config) { {:keys => {:code => WEATHERBUG_CODE}} }
-
-      it "asks the query to convert to accepted formats" do
-        query.should_receive(:convert!).with([:short_zipcode, :coordinates])
-        begin
-          WeatherService::WeatherBug.call(query, config)
-        rescue
-        end
-      end
-
-      it "raises error" do
-        expect {
-          WeatherService::WeatherBug.call(query, config)
-        }.to raise_error(Barometer::Query::ConversionNotPossible)
-      end
-    end
-
-    context "when keys are provided and the query format is accepted" do
+    context "when keys are provided" do
       let(:converted_query) { Barometer::Query.new("90210") }
       let(:query) { double(:query, :convert! => converted_query) }
       let(:config) { {:keys => {:code => WEATHERBUG_CODE}, :metric => true} }
 
       subject { WeatherService::WeatherBug.call(query, config) }
+
+      it "asks the query to convert to accepted formats" do
+        query.should_receive(:convert!).with([:short_zipcode, :coordinates])
+        subject
+      end
 
       it "includes the expected data" do
         should be_a Barometer::Measurement

@@ -29,3 +29,5 @@ module Barometer
 
   end
 end
+
+Barometer::Query.register(:zipcode, Barometer::Query::Format::Zipcode)

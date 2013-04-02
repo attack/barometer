@@ -148,3 +148,5 @@ module Barometer
 
   end
 end
+
+Barometer::Query.register(:woe_id, Barometer::Query::Format::WoeID)

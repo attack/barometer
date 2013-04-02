@@ -15,3 +15,5 @@ module Barometer
 
   end
 end
+
+Barometer::Query.register(:short_zipcode, Barometer::Query::Format::ShortZipcode)

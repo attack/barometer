@@ -48,12 +48,8 @@ module Barometer
     def validate_query!
       @converted_query = @query.convert!(self.class.accepted_formats)
 
-      if converted_query && self.class.accepted_formats.include?(converted_query.format)
-        measurement.query = converted_query.q
-        measurement.format = converted_query.format
-      else
-        raise Barometer::Query::ConversionNotPossible
-      end
+      measurement.query = converted_query.q
+      measurement.format = converted_query.format
     end
 
     def fetch_and_parse_current
