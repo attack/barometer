@@ -19,8 +19,8 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
     end
 
     context "when keys are provided" do
-      let(:converted_query) { Barometer::Query.new("90210") }
-      let(:query) { double(:query, :convert! => converted_query) }
+      let(:converted_query) { Barometer::ConvertedQuery.new("90210", :short_zipcode) }
+      let(:query) { double(:query, :convert! => converted_query, :geo => nil) }
       let(:config) { {:keys => {:code => WEATHERBUG_CODE}, :metric => true} }
 
       subject { WeatherService::WeatherBug.call(query, config) }
@@ -86,7 +86,7 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
           )
         end
 
-        before { converted_query.stub(:geo => geo) }
+        before { query.stub(:geo => geo) }
 
         it "uses the query geo data for 'location'" do
           should have_data(:location, :city).as_value("locality")

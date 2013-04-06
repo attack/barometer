@@ -16,6 +16,8 @@ module Barometer
   #   the Graticule gem).  Worst case scenario is that the Weather API will
   #   not accept the query string.
   #
+  ConvertedQuery = Struct.new(:q, :format)
+
   class Query
     class ConversionNotPossible < StandardError; end
     class UnsupportedRegion < StandardError; end
@@ -50,6 +52,16 @@ module Barometer
       else
         raise NotFound
       end
+    end
+
+    def add_conversion(key, value)
+      @conversions[key] = value
+    end
+
+    def get_conversion(*formats)
+      format = formats.detect{|format| @conversions.has_key?(format)}
+      puts "found: #{self.format} -> #{format} = #{self.q} -> #{@conversions[format]}" if Barometer::debug? && format
+      Barometer::ConvertedQuery.new(@conversions[format], format) if format
     end
 
     attr_writer :q
@@ -154,20 +166,6 @@ def post_conversion(converted_query)
   return if @conversions.has_key?(converted_query.format.to_sym)
   puts "store: #{self.format} -> #{converted_query.format.to_sym} = #{self.q} -> #{converted_query.q}" if Barometer::debug?
   @conversions[converted_query.format.to_sym] = converted_query.q
-end
-
-def get_conversion(format)
-  return nil unless format && @conversions
-  puts "found: #{self.format} -> #{format.to_sym} = #{self.q} -> #{@conversions[format.to_sym]}" if Barometer::debug? && @conversions.has_key?(format.to_sym)
-  # re-constuct converted query
-  if q = @conversions[format.to_sym]
-    converted_query = self.dup
-    converted_query.q = q
-    converted_query.format = format
-    converted_query
-  else
-    nil
-  end
 end
 
   def latitude

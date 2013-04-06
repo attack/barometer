@@ -26,7 +26,7 @@ module Barometer
 
     def measure!
       validate_key!
-      validate_query!
+      convert_query!
 
       @requester = Barometer::Requester::WeatherBug.new(api_code, metric)
       fetch_and_parse_current
@@ -37,7 +37,7 @@ module Barometer
 
     private
 
-    attr_reader :measurement, :converted_query, :api_code, :metric
+    attr_reader :measurement, :api_code, :metric
 
     def validate_key!
       unless api_code && !api_code.empty?
@@ -45,22 +45,21 @@ module Barometer
       end
     end
 
-    def validate_query!
+    def convert_query!
       @converted_query = @query.convert!(self.class.accepted_formats)
-
-      measurement.query = converted_query.q
-      measurement.format = converted_query.format
+      measurement.query = @converted_query.q
+      measurement.format = @converted_query.format
     end
 
     def fetch_and_parse_current
-      payload = @requester.get_current(converted_query)
-      parser = Barometer::Parser::WeatherBug.new(measurement, converted_query)
+      payload = @requester.get_current(@converted_query)
+      parser = Barometer::Parser::WeatherBug.new(measurement, @query)
       parser.parse_current(payload)
     end
 
     def fetch_and_parse_forecast
-      payload = @requester.get_forecast(converted_query)
-      parser = Barometer::Parser::WeatherBug.new(measurement, converted_query)
+      payload = @requester.get_forecast(@converted_query)
+      parser = Barometer::Parser::WeatherBug.new(measurement, @query)
       parser.parse_forecast(payload)
     end
   end

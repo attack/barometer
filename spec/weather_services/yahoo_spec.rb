@@ -10,10 +10,9 @@ describe Barometer::WeatherService::Yahoo, :vcr => {
   end
 
   describe ".call" do
-    let(:converted_query) { Barometer::Query.new("90210") }
-    let(:query) { double(:query, :convert! => converted_query) }
+    let(:converted_query) { Barometer::ConvertedQuery.new("90210", :zipcode) }
+    let(:query) { double(:query, :convert! => converted_query, :geo => nil) }
     let(:config) { {:metric => true} }
-    before { converted_query.format = :zipcode }
 
     subject { WeatherService::Yahoo.call(query, config) }
 
@@ -73,7 +72,7 @@ describe Barometer::WeatherService::Yahoo, :vcr => {
         )
       end
 
-      before { converted_query.stub(:geo => geo) }
+      before { query.stub(:geo => geo) }
 
       it "uses the query geo data for 'location'" do
         should have_data(:location, :city).as_value("locality")

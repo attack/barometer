@@ -79,6 +79,55 @@ describe Barometer::Query, :vcr => {
     end
   end
 
+  describe "#add_conversion" do
+    let(:query) { Barometer::Query.new('foo') }
+
+    it "adds a new conversion" do
+      expect {
+        query.add_conversion(:geocode, 'Paris')
+      }.to change{ query.conversions[:geocode] }.from(nil).to('Paris')
+    end
+
+    it "overrides an existing conversion" do
+      query.add_conversion(:geocode, 'Paris')
+
+      expect {
+        query.add_conversion(:geocode, 'Berlin')
+      }.to change{ query.conversions[:geocode] }.from('Paris').to('Berlin')
+    end
+  end
+
+  describe "#get_conversion" do
+    let(:query) { Barometer::Query.new('foo') }
+
+    it "returns a saved conversion" do
+      query.add_conversion(:geocode, 'Paris')
+
+      converted_query = query.get_conversion(:geocode)
+      converted_query.q.should == 'Paris'
+      converted_query.format.should == :geocode
+    end
+
+    it "returns one saved conversion, when asked for multiple" do
+      query.add_conversion(:geocode, 'Paris')
+
+      converted_query = query.get_conversion(:zipcode, :geocode)
+      converted_query.format.should == :geocode
+    end
+
+    it "respects preference order" do
+      query.add_conversion(:geocode, 'Paris')
+      query.add_conversion(:woe_id, '615702')
+
+      converted_query = query.get_conversion(:geocode, :woe_id)
+      converted_query.format.should == :geocode
+    end
+
+    it "returns nil if nothing found" do
+      query.get_conversion(:geocode).should be_nil
+    end
+  end
+
   describe "#convert!" do
     before { clear_formats }
     after { reset_formats }
@@ -98,6 +147,21 @@ describe Barometer::Query, :vcr => {
         expect {
           query.convert!([:test_format])
         }.to change{ query.conversions.size }.by(1)
+      end
+
+      it "returns the converted query" do
+        converted_query = Barometer::Query.new('foo')
+        converted_query.format = :test_format
+
+        test_format = double(:test_format, :is? => false, :country_code => nil, :to => converted_query, :convert_query => 'foo')
+        Barometer::Query.register(:test_format, test_format)
+        default_format = double(:default_format, :is? => true, :country_code => nil)
+        Barometer::Query.register(:default_format, default_format)
+        query = Barometer::Query.new('foo')
+
+        result = query.convert!([:test_format])
+        result.q.should == 'foo'
+        result.format.should == :test_format
       end
     end
 
@@ -226,10 +290,6 @@ describe Barometer::Query, :vcr => {
 
     it "responds to timezone" do
       @query.timezone.should be_nil
-    end
-
-    it "responds to conversions" do
-      @query.conversions.should be_nil
     end
 
     it "returns latitude for when recognized as coordinates" do
