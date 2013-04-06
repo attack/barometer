@@ -126,6 +126,26 @@ describe Barometer::Query, :vcr => {
     it "returns nil if nothing found" do
       query.get_conversion(:geocode).should be_nil
     end
+
+    it "includes the current country code value" do
+      query.add_conversion(:geocode, 'Paris')
+
+      query.country_code = nil
+      query.get_conversion(:geocode, :woe_id).country_code.should be_nil
+
+      query.country_code = 'FR'
+      query.get_conversion(:geocode, :woe_id).country_code.should == 'FR'
+    end
+
+    it "includes the current geo value" do
+      query.add_conversion(:geocode, 'Paris')
+
+      query.geo = nil
+      query.get_conversion(:geocode, :woe_id).geo.should be_nil
+
+      query.geo = { :foo => 'bar' }
+      query.get_conversion(:geocode, :woe_id).geo.should == { :foo => 'bar' }
+    end
   end
 
   describe "#convert!" do

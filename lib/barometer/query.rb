@@ -16,7 +16,7 @@ module Barometer
   #   the Graticule gem).  Worst case scenario is that the Weather API will
   #   not accept the query string.
   #
-  ConvertedQuery = Struct.new(:q, :format)
+  ConvertedQuery = Struct.new(:q, :format, :country_code, :geo)
 
   class Query
     class ConversionNotPossible < StandardError; end
@@ -55,13 +55,15 @@ module Barometer
     end
 
     def add_conversion(key, value)
+      @conversions ||= {}
       @conversions[key] = value
+      Barometer::ConvertedQuery.new(value, key, country_code, geo)
     end
 
     def get_conversion(*formats)
       format = formats.detect{|format| @conversions.has_key?(format)}
       puts "found: #{self.format} -> #{format} = #{self.q} -> #{@conversions[format]}" if Barometer::debug? && format
-      Barometer::ConvertedQuery.new(@conversions[format], format) if format
+      Barometer::ConvertedQuery.new(@conversions[format], format, country_code, geo) if format
     end
 
     attr_writer :q
