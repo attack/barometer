@@ -25,31 +25,6 @@ describe Barometer::Query::Format::WoeID, :vcr => {
   end
 
   describe "and class methods" do
-    it "returns a format" do
-      Barometer::Query::Format::WoeID.format.should == :woe_id
-    end
-
-    it "returns a country" do
-      Barometer::Query::Format::WoeID.country_code.should be_nil
-    end
-
-    it "returns a regex" do
-      Barometer::Query::Format::WoeID.regex.should_not be_nil
-      Barometer::Query::Format::WoeID.regex.is_a?(Regexp).should be_true
-    end
-
-    it "returns the convertable_formats" do
-      Barometer::Query::Format::WoeID.convertable_formats.should_not be_nil
-      Barometer::Query::Format::WoeID.convertable_formats.is_a?(Array).should be_true
-      Barometer::Query::Format::WoeID.convertable_formats.include?(:short_zipcode).should be_true
-      Barometer::Query::Format::WoeID.convertable_formats.include?(:zipcode).should be_true
-      Barometer::Query::Format::WoeID.convertable_formats.include?(:postalcode).should be_true
-      Barometer::Query::Format::WoeID.convertable_formats.include?(:weather_id).should be_true
-      Barometer::Query::Format::WoeID.convertable_formats.include?(:coordinates).should be_true
-      Barometer::Query::Format::WoeID.convertable_formats.include?(:icao).should be_true
-      Barometer::Query::Format::WoeID.convertable_formats.include?(:geocode).should be_true
-    end
-
     describe "is?," do
       it "recognizes a valid 4 digit code format" do
         @query = "8775"
@@ -94,19 +69,6 @@ describe Barometer::Query::Format::WoeID, :vcr => {
     end
 
     describe "when reversing lookup" do
-      it "requires a Barometer::Query object" do
-        lambda { Barometer::Query::Format::WoeID.reverse }.should raise_error(ArgumentError)
-        lambda { Barometer::Query::Format::WoeID.reverse("invalid") }.should raise_error(ArgumentError)
-        query = Barometer::Query.new(@woe_id)
-        query.is_a?(Barometer::Query).should be_true
-        lambda { Barometer::Query::Format::WoeID.reverse(original_query) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns a Barometer::Query" do
-        query = Barometer::Query.new(@woe_id)
-        Barometer::Query::Format::WoeID.reverse(query).is_a?(Barometer::Query).should be_true
-      end
-
       it "reverses a valid woe_id (US)" do
         query = Barometer::Query.new(@woe_id)
         new_query = Barometer::Query::Format::WoeID.reverse(query)
@@ -115,27 +77,9 @@ describe Barometer::Query::Format::WoeID, :vcr => {
         new_query.format.should == :geocode
         new_query.geo.should be_nil
       end
-
-      it "doesn't reverse an invalid weather_id" do
-        query = Barometer::Query.new(@zipcode)
-        Barometer::Query::Format::WoeID.reverse(query).should be_nil
-      end
     end
 
     describe "when converting using 'to'," do
-      it "requires a Barometer::Query object" do
-        lambda { Barometer::Query::Format::WoeID.to }.should raise_error(ArgumentError)
-        lambda { Barometer::Query::Format::WoeID.to("invalid") }.should raise_error(ArgumentError)
-        query = Barometer::Query.new(@woe_id)
-        query.is_a?(Barometer::Query).should be_true
-        lambda { Barometer::Query::Format::WoeID.to(original_query) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns a Barometer::Query" do
-        query = Barometer::Query.new(@geocode)
-        Barometer::Query::Format::WoeID.to(query).is_a?(Barometer::Query).should be_true
-      end
-
       it "converts from short_zipcode" do
         query = Barometer::Query.new(@short_zipcode)
         query.format.should == :short_zipcode
@@ -193,7 +137,7 @@ describe Barometer::Query::Format::WoeID, :vcr => {
         query.format.should == :weather_id
         new_query = Barometer::Query::Format::WoeID.to(query)
         new_query.q.should == "2357024"
-        new_query.country_code.should be_nil
+        new_query.country_code.should == "US"
         new_query.format.should == :woe_id
         new_query.geo.should be_nil
       end

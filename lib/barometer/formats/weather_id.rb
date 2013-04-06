@@ -38,7 +38,7 @@ module Barometer
       converted_query
     end
 
-    # reverse lookup, :weather_id -> (:geocode || :coordinates)
+    # reverse lookup, :weather_id -> :geocode
     #
     def self.reverse(original_query)
       raise ArgumentError unless is_a_query?(original_query)
