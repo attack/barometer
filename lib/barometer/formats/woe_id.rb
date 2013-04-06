@@ -78,7 +78,7 @@ module Barometer
       converted_query
     end
 
-    # reverse lookup, :woe_id -> (:geocode || :coordinates)
+    # reverse lookup, :woe_id -> :geocode
     #
     def self.reverse(original_query)
       raise ArgumentError unless is_a_query?(original_query)
@@ -117,8 +117,9 @@ module Barometer
     def self._reverse(query=nil)
       return nil unless query
       raise ArgumentError unless is_a_query?(query)
-      response = Barometer::WebService::Placemaker.reverse(query)
-      _parse_geocode(response)
+
+      converter = Barometer::Converter::FromWoeIdToGeocode.new(query)
+      converter.call(:geocode).conversions[:geocode]
     end
 
     # match the first :woe_id (from search results)
@@ -128,24 +129,6 @@ module Barometer
       return nil unless doc
       Barometer::WebService::Placemaker.parse_woe_id(doc)
     end
-
-    # match the first :woe_id (from search results)
-    #   expects a Nokogiri doc
-    #
-    # def self._parse_woe_from_geomojo(doc)
-    #   return nil unless doc
-    #   WebService::Geomojo.parse_woe_id(doc)
-    # end
-
-    # parse the geo_data
-    #
-    def self._parse_geocode(text)
-      return nil unless text
-      output = [text["city"], text["region"], _fix_country(text["country"])]
-      output.delete("")
-      output.compact.join(', ')
-    end
-
   end
 end
 

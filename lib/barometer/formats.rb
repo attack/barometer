@@ -11,3 +11,5 @@ require 'formats/coordinates'
 require 'formats/icao'
 require 'formats/woe_id'
 require 'formats/geocode'
+
+require 'converters/from_woe_id_to_geocode'
