@@ -49,19 +49,6 @@ describe Barometer::Query::Format::Geocode, :vcr => {
         Barometer.force_geocode = false
       end
 
-      it "requires a Barometer::Query object" do
-        lambda { Barometer::Query::Format::Geocode.to }.should raise_error(ArgumentError)
-        lambda { Barometer::Query::Format::Geocode.to("invalid") }.should raise_error(ArgumentError)
-        query = Barometer::Query.new(@zipcode)
-        query.is_a?(Barometer::Query).should be_true
-        lambda { Barometer::Query::Format::Geocode.to(query) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns a Barometer::Query" do
-        query = Barometer::Query.new(@short_zipcode)
-        Barometer::Query::Format::Geocode.to(query).is_a?(Barometer::Query).should be_true
-      end
-
       it "converts from short_zipcode" do
         query = Barometer::Query.new(@short_zipcode)
         query.format.should == :short_zipcode
@@ -113,38 +100,18 @@ describe Barometer::Query::Format::Geocode, :vcr => {
         new_query.geo.should_not be_nil
       end
 
-      it "does not convert postalcode" do
+      it "converts from postalcode" do
         query = Barometer::Query.new(@postal_code)
         query.format.should == :postalcode
         new_query = Barometer::Query::Format::Geocode.to(query)
-        new_query.should be_nil
-      end
-
-      it "leaves geocode untouched" do
-        query = Barometer::Query.new(@geocode)
-        query.format.should == :geocode
-        new_query = Barometer::Query::Format::Geocode.to(query)
-        new_query.q.should == "New York, NY"
-        new_query.country_code.should be_nil
+        new_query.q.should == "Edmonton, AB, Canada"
+        new_query.country_code.should == "CA"
         new_query.format.should == :geocode
-        new_query.geo.should be_nil
+        new_query.geo.should_not be_nil
       end
     end
 
     describe "when geocoding" do
-      it "requires a Barometer::Query object" do
-        lambda { Barometer::Query::Format::Geocode.geocode }.should raise_error(ArgumentError)
-        lambda { Barometer::Query::Format::Geocode.geocode("invalid") }.should raise_error(ArgumentError)
-        query = Barometer::Query.new(@zipcode)
-        query.is_a?(Barometer::Query).should be_true
-        lambda { Barometer::Query::Format::Geocode.geocode(original_query) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns a Barometer::Query" do
-        query = Barometer::Query.new(@short_zipcode)
-        Barometer::Query::Format::Geocode.geocode(query).is_a?(Barometer::Query).should be_true
-      end
-
       it "converts from short_zipcode" do
         query = Barometer::Query.new(@short_zipcode)
         query.format.should == :short_zipcode

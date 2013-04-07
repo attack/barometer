@@ -16,44 +16,25 @@ module Barometer
       [:short_zipcode, :zipcode, :coordinates, :weather_id, :icao, :woe_id]
     end
 
-    # convert to this format, X -> :geocode
-    #
-    def self.to(original_query)
-      raise ArgumentError unless is_a_query?(original_query)
-      unless converts?(original_query)
-        return (original_query.format == format ? original_query.dup : nil)
-      end
-
-      unless converted_query = original_query.get_conversion(format)
-        converted_query = Barometer::Query.new
-
-        converted_query = case original_query.format
+    def self.to(query)
+      unless converted_query = query.get_conversion(format)
+        case query.format
         when :weather_id
-          Query::Format::WeatherID.reverse(original_query)
+          converter = Barometer::Converter::FromWeatherIdToGeocode.new(query)
+          converter.call
         when :woe_id
-          Query::Format::WoeID.reverse(original_query)
+          converter = Barometer::Converter::FromWoeIdToGeocode.new(query)
+          converter.call
         else
-          geocode(original_query)
+          converter = Barometer::Converter::ToGeocode.new(query)
+          converter.call
         end
-
-        original_query.post_conversion(converted_query) if converted_query
       end
-      converted_query
     end
 
-    # geocode the query
-    #
-    def self.geocode(original_query)
-      raise ArgumentError unless is_a_query?(original_query)
-
-      converted_query = Barometer::Query.new
-      converted_query.geo = Barometer::WebService::Geocode.fetch(original_query)
-      if converted_query.geo
-        converted_query.country_code = converted_query.geo.country_code
-        converted_query.q = converted_query.geo.to_s
-        converted_query.format = format
-      end
-      converted_query
+    def self.geocode(query)
+      converter = Barometer::Converter::ToGeocode.new(query)
+      converter.call
     end
 
   end
