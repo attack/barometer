@@ -23,12 +23,14 @@ module Barometer
     # get the location_date (geocode) for a given weather_id
     #
     def self.reverse(query)
-      puts "reverse weather_id: #{query.q}" if Barometer::debug?
-      return nil unless query
-      raise ArgumentError unless _is_a_query?(query)
+      converted_query = query.get_conversion(:weather_id)
+      puts "reverse weather_id: #{converted_query.q}" if Barometer::debug?
+
+      # lat: ["rss"]["channel"]["item"]["lat"]
+      # long: ["rss"]["channel"]["item"]["long"]
       self.get(
         "http://weather.yahooapis.com/forecastrss",
-        :query => { :p => query.q },
+        :query => { :p => converted_query.q },
         :format => :xml,
         :timeout => Barometer.timeout
       )['rss']['channel']["location"]
