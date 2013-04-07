@@ -14,3 +14,6 @@ require 'formats/geocode'
 
 require 'converters/from_woe_id_to_geocode'
 require 'converters/to_woe_id'
+require 'converters/from_weather_id_to_geocode'
+require 'converters/to_geocode'
+require 'converters/to_coordinates'
