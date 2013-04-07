@@ -100,68 +100,90 @@ module Barometer
       end
     end
 
+    def convert!(*preferred_formats)
+      return self if preferred_formats.include?(format)
+
+      converters = Barometer::Converters.find_all(format, preferred_formats)
+
+      conversion = nil
+      Array(converters).each do |converter|
+        conversion = converter.new(self).call
+      end
+      conversion
+    end
+
     # take a list of acceptable (and ordered by preference) formats and convert
     # the current query (q) into the most preferred and acceptable format. a
     # side effect of the conversions may reveal the country_code, if so save it
     #
-    def convert!(preferred_formats=nil)
-      raise ArgumentError unless (preferred_formats && preferred_formats.size > 0)
+    # def convert!(preferred_formats=nil)
+    #   # we know from_format = q.format
+    #   # we know to_formats = preferred_formats
+    #   #
+    #   # for each to_format, see if we can find converter
+    #   # special case is if to_format != :gecode, see if we can do two steps to get there
+    #   # from_format -> :geocode -> to_format
+    #   # prefer 1 step over 2 (iterate first looking for 1 steps, then iterate again lloking for 2)
 
-      # why convert if we are already there?
-      # (except in the case that the serivce excepts coordinates and we have a
-      # a geocode ... the google geocode results are superior)
-      #
-      skip_conversion = false
-      unless (@format.to_sym == Query::Format::Geocode.format) &&
-             preferred_formats.include?(Query::Format::Coordinates.format)
-        if preferred_formats.include?(@format.to_sym)
-          skip_conversion = true
-          converted_query = self.dup
-        end
-      end
+    #   # raise ConversionNotPossible unless converted
 
-      unless skip_conversion
-        # go through each acceptable format and try to convert to that
-        converted = false
-        converted_query = Barometer::Query.new
-        preferred_formats.each do |preferred_format|
-          klass = Barometer::Query.find(preferred_format)
-          # if we discover that the format we have is the preferred format, return it
-          if preferred_format == @format
-            converted = true
-            converted_query = Barometer::Query.new(@q)
-          end
-          unless converted
-            unless converted_query = get_conversion(preferred_format)
-              converted_query = klass.to(self)
-            end
-            converted = true if converted_query
-          end
-          if converted
-            converted_query.country_code ||= klass.country_code(converted_query.q)
-            post_conversion(converted_query)
-            break
-          end
-        end
+    #   raise ArgumentError unless (preferred_formats && preferred_formats.size > 0)
 
-        raise ConversionNotPossible unless converted
-      end
+    #   # why convert if we are already there?
+    #   # (except in the case that the serivce excepts coordinates and we have a
+    #   # a geocode ... the google geocode results are superior)
+    #   #
+    #   skip_conversion = false
+    #   unless (@format.to_sym == Query::Format::Geocode.format) &&
+    #          preferred_formats.include?(Query::Format::Coordinates.format)
+    #     if preferred_formats.include?(@format.to_sym)
+    #       skip_conversion = true
+    #       converted_query = self.dup
+    #     end
+    #   end
 
-      # force geocode?, unless we already did
-      #
-      if Barometer.force_geocode && !@geo
-        if converted_query && converted_query.geo
-          @geo = converted_query.geo
-        elsif converted_query
-          puts "enhance geocode: #{converted_query.q}" if Barometer::debug?
-          geo_query = Query::Format::Coordinates.to(converted_query)
-          @geo = geo_query.geo if (geo_query && geo_query.geo)
-          converted_query.geo = @geo.dup
-        end
-      end
+    #   unless skip_conversion
+    #     # go through each acceptable format and try to convert to that
+    #     converted = false
+    #     converted_query = Barometer::Query.new
+    #     preferred_formats.each do |preferred_format|
+    #       klass = Barometer::Query.find(preferred_format)
+    #       # if we discover that the format we have is the preferred format, return it
+    #       if preferred_format == @format
+    #         converted = true
+    #         converted_query = Barometer::Query.new(@q)
+    #       end
+    #       unless converted
+    #         unless converted_query = get_conversion(preferred_format)
+    #           converted_query = klass.to(self)
+    #         end
+    #         converted = true if converted_query
+    #       end
+    #       if converted
+    #         converted_query.country_code ||= klass.country_code(converted_query.q)
+    #         post_conversion(converted_query)
+    #         break
+    #       end
+    #     end
 
-      converted_query
-    end
+    #     raise ConversionNotPossible unless converted
+    #   end
+
+    #   # force geocode?, unless we already did
+    #   #
+    #   if Barometer.force_geocode && !@geo
+    #     if converted_query && converted_query.geo
+    #       @geo = converted_query.geo
+    #     elsif converted_query
+    #       puts "enhance geocode: #{converted_query.q}" if Barometer::debug?
+    #       geo_query = Query::Format::Coordinates.to(converted_query)
+    #       @geo = geo_query.geo if (geo_query && geo_query.geo)
+    #       converted_query.geo = @geo.dup
+    #     end
+    #   end
+
+    #   converted_query
+    # end
 
 # save the important parts of the conversion ... by saving conversion we
 # can avoid doing the same conversion multiple times

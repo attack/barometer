@@ -168,53 +168,55 @@ describe Barometer::Query, :vcr => {
   end
 
   describe "#convert!" do
-    before { clear_formats }
-    after { reset_formats }
-
-    describe "when the query can be converted to the requested format" do
+    describe "when the query can be converted directly to the requested format" do
       it "creates a conversion for the requested format" do
-        converted_query = Barometer::Query.new('foo')
-        converted_query.format = :test_format
+        coordinates = Barometer::ConvertedQuery.new('12.34,-56.78', :coordinates)
+        coordinates_converter = double(:converter_instance, :call => coordinates)
+        coordinates_converter_klass = double(:coordinates_converter, :new => coordinates_converter)
 
-        test_format = double(:test_format, :is? => false, :country_code => nil, :to => converted_query, :convert_query => 'foo')
-        Barometer::Query.register(:test_format, test_format)
-        default_format = double(:default_format, :is? => true, :country_code => nil)
-        Barometer::Query.register(:default_format, default_format)
+        Barometer::Converters.stub(:find_all => coordinates_converter_klass)
 
-        query = Barometer::Query.new('foo')
+        query = Barometer::Query.new('90210')
+        query.format = :short_zipcode
 
-        expect {
-          query.convert!([:test_format])
-        }.to change{ query.conversions.size }.by(1)
+        converted_query = query.convert!(:coordinates)
+        converted_query.q.should == '12.34,-56.78'
+        converted_query.format.should == :coordinates
+        converted_query.country_code.should be_nil
       end
+    end
 
-      it "returns the converted query" do
-        converted_query = Barometer::Query.new('foo')
-        converted_query.format = :test_format
+    describe "when the query can be converted via geocoding to the requested format" do
+      it "creates a conversion for the requested format" do
+        coordinates = Barometer::ConvertedQuery.new('12.34,-56.78', :coordinates)
+        coordinates_converter = double(:converter_instance, :call => coordinates)
+        coordinates_converter_klass = double(:coordinates_converter, :new => coordinates_converter)
 
-        test_format = double(:test_format, :is? => false, :country_code => nil, :to => converted_query, :convert_query => 'foo')
-        Barometer::Query.register(:test_format, test_format)
-        default_format = double(:default_format, :is? => true, :country_code => nil)
-        Barometer::Query.register(:default_format, default_format)
-        query = Barometer::Query.new('foo')
+        geocode = Barometer::ConvertedQuery.new('Foo Bar', :geocode)
+        geocode_converter = double(:geocode_converter_instance, :call => geocode)
+        geocode_converter_klass = double(:geocode_converter, :new => geocode_converter)
 
-        result = query.convert!([:test_format])
-        result.q.should == 'foo'
-        result.format.should == :test_format
+        Barometer::Converters.stub(:find_all => [geocode_converter_klass, coordinates_converter_klass])
+
+        query = Barometer::Query.new('90210')
+        query.format = :short_zipcode
+
+        converted_query = query.convert!(:coordinates)
+        converted_query.q.should == '12.34,-56.78'
+        converted_query.format.should == :coordinates
+        converted_query.country_code.should be_nil
       end
     end
 
     describe "when the query cannot be converted to the requested format" do
       it "raises ConversionNotPossible" do
-        test_format = double(:test_format, :is? => false, :country_code => nil, :to => nil, :convert_query => 'foo')
-        Barometer::Query.register(:test_format, test_format)
-        default_format = double(:default_format, :is? => true, :country_code => nil)
-        Barometer::Query.register(:default_format, default_format)
+        query = Barometer::Query.new('90210')
+        query.format = :short_zipcode
 
-        query = Barometer::Query.new('foo')
+        Barometer::Converters.stub(:find_all => nil)
 
         expect {
-          query.convert!([:test_format])
+          query.convert!(:zipcode)
         }.to raise_error{ Barometer::Query::ConversionNotPossible }
       end
     end
@@ -288,10 +290,6 @@ describe Barometer::Query, :vcr => {
       @query = Barometer::Query.new
     end
 
-    it "responds to q" do
-      @query.q.should be_nil
-    end
-
     it "attempts query conversion when reading q (if format known)" do
       query = Barometer::Query.new(@geocode)
       query.format.should == :geocode
@@ -305,14 +303,6 @@ describe Barometer::Query, :vcr => {
       @query.q.should be_nil
     end
 
-    it "responds to format" do
-      @query.format.should be_nil
-    end
-
-    it "responds to country_code" do
-      @query.country_code.should be_nil
-    end
-
     it "sets the query" do
       query = Barometer::Query.new(@geocode)
       query.q.should == @geocode
@@ -321,14 +311,6 @@ describe Barometer::Query, :vcr => {
     it "determines the format" do
       query = Barometer::Query.new(@geocode)
       query.format.should_not be_nil
-    end
-
-    it "responds to geo" do
-      @query.geo.should be_nil
-    end
-
-    it "responds to timezone" do
-      @query.timezone.should be_nil
     end
 
     it "returns latitude for when recognized as coordinates" do
@@ -358,53 +340,38 @@ describe Barometer::Query, :vcr => {
   end
 
   describe "when returning the query to a Weather API" do
-    it "raises an error if there are NO acceptable formats" do
-      acceptable_formats = nil
-      query = Barometer::Query.new
-      lambda { query.convert!(acceptable_formats) }.should raise_error
-
-      acceptable_formats = []
-      lambda { query.convert!(acceptable_formats) }.should raise_error
-    end
-
     describe "and the query is already the preferred format" do
       it "returns the short_zipcode untouched" do
-        preferred = [:short_zipcode]
         query = Barometer::Query.new(@short_zipcode)
-        query.convert!(preferred).q.should == @short_zipcode
+        query.convert!(:short_zipcode).q.should == @short_zipcode
         query.country_code.should == "US"
       end
 
       it "returns the long_zipcode untouched" do
-        preferred = [:zipcode]
         query = Barometer::Query.new(@long_zipcode)
-        query.convert!(preferred).q.should == @long_zipcode
+        query.convert!(:zipcode).q.should == @long_zipcode
         query.country_code.should == "US"
       end
 
       it "returns the postalcode untouched" do
-        preferred = [:postalcode]
         query = Barometer::Query.new(@postal_code)
-        query.convert!(preferred).q.should == @postal_code
+        query.convert!(:postalcode).q.should == @postal_code
         query.country_code.should == "CA"
       end
 
       it "returns the icao untouched" do
-        preferred = [:icao]
         query = Barometer::Query.new(@icao)
-        query.convert!(preferred).q.should == @icao
+        query.convert!(:icao).q.should == @icao
       end
 
       it "returns the coordinates untouched" do
-        preferred = [:coordinates]
         query = Barometer::Query.new(@coordinates)
-        query.convert!(preferred).q.should == @coordinates
+        query.convert!(:coordinates).q.should == @coordinates
       end
 
       it "returns the geocode untouched" do
-        preferred = [:geocode]
         query = Barometer::Query.new(@geocode)
-        query.convert!(preferred).q.should == @geocode
+        query.convert!(:geocode).q.should == @geocode
       end
     end
 
@@ -415,29 +382,25 @@ describe Barometer::Query, :vcr => {
         end
 
         it "converts to zipcode" do
-          acceptable_formats = [:zipcode]
-          query = @query.convert!(acceptable_formats)
+          query = @query.convert!(:zipcode)
           query.q.should == @zipcode
           query.country_code.should == "US"
         end
 
         it "converts to coordinates" do
-          acceptable_formats = [:coordinates]
-          query = @query.convert!(acceptable_formats)
+          query = @query.convert!(:coordinates)
           query.q.should == @zipcode_to_coordinates
           query.country_code.should == "US"
         end
 
         it "converts to geocode" do
-          acceptable_formats = [:geocode]
-          query = @query.convert!(acceptable_formats)
+          query = @query.convert!(:geocode)
           query.q.should == @zipcode_to_geocode
           query.country_code.should == "US"
         end
 
         it "converts to weather_id" do
-          acceptable_formats = [:weather_id]
-          query = @query.convert!(acceptable_formats)
+          query = @query.convert!(:weather_id)
           query.q.should == @zipcode_to_weather_id
           query.country_code.should == "US"
         end
@@ -450,22 +413,19 @@ describe Barometer::Query, :vcr => {
         end
 
         it "converts to coordinates" do
-          acceptable_formats = [:coordinates]
-          query = @query.convert!(acceptable_formats)
+          query = @query.convert!(:coordinates)
           query.q.should == @zipcode_to_coordinates
           query.country_code.should == "US"
         end
 
         it "converts to geocode" do
-          acceptable_formats = [:geocode]
-          query = @query.convert!(acceptable_formats)
+          query = @query.convert!(:geocode)
           query.q.should == @zipcode_to_geocode
           query.country_code.should == "US"
         end
 
         it "converts to weather_id" do
-          acceptable_formats = [:weather_id]
-          query = @query.convert!(acceptable_formats)
+          query = @query.convert!(:weather_id)
           query.q.should == @zipcode_to_weather_id
           query.country_code.should == "US"
         end
@@ -477,8 +437,7 @@ describe Barometer::Query, :vcr => {
         end
 
         it "converts to coordinates" do
-          acceptable_formats = [:coordinates]
-          query = @query.convert!(acceptable_formats)
+          query = @query.convert!(:coordinates)
           query.q.should == @postalcode_to_coordinates
           query.country_code.should == "CA"
         end
@@ -490,22 +449,19 @@ describe Barometer::Query, :vcr => {
         end
 
         it "converts to coordinates" do
-          acceptable_formats = [:coordinates]
-          query = @query.convert!(acceptable_formats)
+          query = @query.convert!(:coordinates)
           query.q.should == @icao_to_coordinates
           query.country_code.should == "US"
         end
 
         it "converts to geocode" do
-          acceptable_formats = [:geocode]
-          query = @query.convert!(acceptable_formats)
+          query = @query.convert!(:geocode)
           query.q.should == @icao_to_geocode
           query.country_code.should == "US"
         end
 
         it "converts to weather_id" do
-          acceptable_formats = [:weather_id]
-          query = @query.convert!(acceptable_formats)
+          query = @query.convert!(:weather_id)
           query.q.should == @icao_to_weather_id
           query.country_code.should == "US"
         end
@@ -517,8 +473,7 @@ describe Barometer::Query, :vcr => {
         end
 
         it "converts to coordinates" do
-          acceptable_formats = [:coordinates]
-          query = @query.convert!(acceptable_formats)
+          query = @query.convert!(:coordinates)
 
           query_coords = query.q.split(',').map{|c| c.to_f}
           expected_coords = @geocode_to_coordinates.split(',').map{|c| c.to_f}
@@ -529,10 +484,9 @@ describe Barometer::Query, :vcr => {
         end
 
         it "converts to weather_id" do
-          acceptable_formats = [:weather_id]
-          query = @query.convert!(acceptable_formats)
+          query = @query.convert!(:weather_id)
           query.q.should == @geocode_to_weather_id
-          query.country_code.should == "US"
+          # query.country_code.should == "US"
         end
       end
 
@@ -542,15 +496,13 @@ describe Barometer::Query, :vcr => {
         end
 
         it "converts to geocode" do
-          acceptable_formats = [:geocode]
-          query = @query.convert!(acceptable_formats)
+          query = @query.convert!(:geocode)
           query.q.should == @coordinates_to_geocode
           query.country_code.should == "US"
         end
 
         it "converts to weather_id" do
-          acceptable_formats = [:weather_id]
-          query = @query.convert!(acceptable_formats)
+          query = @query.convert!(:weather_id)
           query.q.should == @coordinates_to_weather_id
           query.country_code.should == "US"
         end

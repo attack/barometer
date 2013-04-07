@@ -26,7 +26,7 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
       subject { WeatherService::WeatherBug.call(query, config) }
 
       it "asks the query to convert to accepted formats" do
-        query.should_receive(:convert!).with([:short_zipcode, :coordinates])
+        query.should_receive(:convert!).with(:short_zipcode, :coordinates)
         subject
       end
 

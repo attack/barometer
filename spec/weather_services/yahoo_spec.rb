@@ -17,7 +17,7 @@ describe Barometer::WeatherService::Yahoo, :vcr => {
     subject { WeatherService::Yahoo.call(query, config) }
 
     it "asks the query to convert to accepted formats" do
-      query.should_receive(:convert!).with([:zipcode, :weather_id, :woe_id])
+      query.should_receive(:convert!).with(:zipcode, :weather_id, :woe_id)
       subject
     end
 

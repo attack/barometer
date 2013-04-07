@@ -1,6 +1,10 @@
 module Barometer
   module Converter
     class ToWoeId
+      def self.from
+        [:geocode, :coordinates, :postalcode]
+      end
+
       def initialize(query)
         @query = query
       end
@@ -15,7 +19,7 @@ module Barometer
       private
 
       def can_convert?
-        !!@query.get_conversion(:geocode, :coordinates, :postalcode)
+        !!@query.get_conversion(*self.class.from)
       end
 
       def format_response(response)
@@ -24,3 +28,5 @@ module Barometer
     end
   end
 end
+
+Barometer::Converters.register(:woe_id, Barometer::Converter::ToWoeId)

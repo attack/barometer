@@ -1,6 +1,10 @@
 module Barometer
   module Converter
     class FromGeocodeToWeatherId
+      def self.from
+        [:geocode]
+      end
+
       def initialize(query)
         @query = query
       end
@@ -16,7 +20,7 @@ module Barometer
       private
 
       def can_convert?
-        !!@query.get_conversion(:geocode)
+        !!@query.get_conversion(*self.class.from)
       end
 
       def format_response(response)
@@ -26,3 +30,5 @@ module Barometer
     end
   end
 end
+
+Barometer::Converters.register(:weather_id, Barometer::Converter::FromGeocodeToWeatherId)

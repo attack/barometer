@@ -1,6 +1,10 @@
 module Barometer
   module Converter
     class FromShortZipcodeToZipcode
+      def self.from
+        [:short_zipcode]
+      end
+
       def initialize(query)
         @query = query
       end
@@ -13,8 +17,10 @@ module Barometer
       private
 
       def can_convert?
-        !!@query.get_conversion(:short_zipcode)
+        !!@query.get_conversion(*self.class.from)
       end
     end
   end
 end
+
+Barometer::Converters.register(:zipcode, Barometer::Converter::FromShortZipcodeToZipcode)

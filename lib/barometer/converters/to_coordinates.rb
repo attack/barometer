@@ -1,6 +1,10 @@
 module Barometer
   module Converter
     class ToCoordinates
+      def self.from
+        [:short_zipcode, :zipcode, :postalcode, :coordinates, :icao, :geocode]
+      end
+
       def initialize(query)
         @query = query
       end
@@ -16,8 +20,10 @@ module Barometer
       private
 
       def can_convert?
-        !!@query.get_conversion(:short_zipcode, :zipcode, :postalcode, :coordinates, :icao, :geocode)
+        !!@query.get_conversion(*self.class.from)
       end
     end
   end
 end
+
+Barometer::Converters.register(:coordinates, Barometer::Converter::ToCoordinates)

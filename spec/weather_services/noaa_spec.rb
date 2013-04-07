@@ -17,7 +17,7 @@ describe Barometer::WeatherService::Noaa, :vcr => {
     subject { WeatherService::Noaa.call(query, config) }
 
     it "asks the query to convert to accepted formats" do
-      query.should_receive(:convert!).with([:zipcode, :coordinates])
+      query.should_receive(:convert!).with(:zipcode, :coordinates)
       subject
     end
 

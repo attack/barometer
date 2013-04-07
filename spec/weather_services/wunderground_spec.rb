@@ -17,7 +17,7 @@ describe Barometer::WeatherService::Wunderground, :vcr => {
     subject { WeatherService::Wunderground.call(query, config) }
 
     it "asks the query to convert to accepted formats" do
-      query.should_receive(:convert!).with([:zipcode, :postalcode, :icao, :coordinates, :geocode])
+      query.should_receive(:convert!).with(:zipcode, :postalcode, :icao, :coordinates, :geocode)
       subject
     end
 

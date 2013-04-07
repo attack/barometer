@@ -12,6 +12,7 @@ require 'formats/icao'
 require 'formats/woe_id'
 require 'formats/geocode'
 
+require 'query/converters'
 require 'converters/from_woe_id_to_geocode'
 require 'converters/to_woe_id'
 require 'converters/from_weather_id_to_geocode'

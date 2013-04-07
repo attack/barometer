@@ -36,7 +36,7 @@ module Barometer
     attr_reader :measurement, :api_code, :metric
 
     def convert_query!
-      @converted_query = @query.convert!(self.class.accepted_formats)
+      @converted_query = @query.convert!(*self.class.accepted_formats)
       measurement.query = @converted_query.q
       measurement.format = @converted_query.format
     end
