@@ -100,6 +100,19 @@ describe Barometer::Query, :vcr => {
   describe "#get_conversion" do
     let(:query) { Barometer::Query.new('foo') }
 
+    context "when the requested format is that of the query" do
+      it "returns self instead of a conversion" do
+        query.q = 'Paris'
+        query.format = :geocode
+
+        query.add_conversion(:geocode, 'Berlin')
+
+        converted_query = query.get_conversion(:geocode)
+        converted_query.q.should == 'Paris'
+        converted_query.format.should == :geocode
+      end
+    end
+
     it "returns a saved conversion" do
       query.add_conversion(:geocode, 'Paris')
 
@@ -142,9 +155,15 @@ describe Barometer::Query, :vcr => {
 
       query.geo = nil
       query.get_conversion(:geocode, :woe_id).geo.should be_nil
+      query.get_conversion(:geocode, :woe_id).latitude.should be_nil
+      query.get_conversion(:geocode, :woe_id).longitude.should be_nil
 
+      query.format = :coordinates
+      query.q = "34.1030032,-118.4104684"
       query.geo = { :foo => 'bar' }
       query.get_conversion(:geocode, :woe_id).geo.should == { :foo => 'bar' }
+      query.get_conversion(:geocode, :woe_id).latitude.should == "34.1030032"
+      query.get_conversion(:geocode, :woe_id).longitude.should == "-118.4104684"
     end
   end
 

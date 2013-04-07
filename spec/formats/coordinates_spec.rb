@@ -56,19 +56,6 @@ describe Barometer::Query::Format::Coordinates, :vcr => {
     end
 
     describe "when converting using 'to'," do
-      it "requires a Query::Format object" do
-        lambda { Barometer::Query::Format::Coordinates.to }.should raise_error(ArgumentError)
-        lambda { Barometer::Query::Format::Coordinates.to("invalid") }.should raise_error(ArgumentError)
-        query = Barometer::Query.new(@zipcode)
-        query.is_a?(Barometer::Query).should be_true
-        lambda { Barometer::Query::Format::Coordinates.to(original_query) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns a Barometer::Query" do
-        query = Barometer::Query.new(@short_zipcode)
-        Barometer::Query::Format::Coordinates.to(query).is_a?(Barometer::Query).should be_true
-      end
-
       it "converts from short_zipcode" do
         query = Barometer::Query.new(@short_zipcode)
         query.format.should == :short_zipcode
@@ -106,8 +93,8 @@ describe Barometer::Query::Format::Coordinates, :vcr => {
         new_query = Barometer::Query::Format::Coordinates.to(query)
 
         new_query_coords = new_query.q.split(',').map{|c| c.to_f}
-        new_query_coords[0].should be_within(0.00001).of(40.7143528)
-        new_query_coords[1].should be_within(0.00001).of(-74.0059731)
+        new_query_coords[0].should be_within(0.0001).of(40.7143528)
+        new_query_coords[1].should be_within(0.0001).of(-74.0059731)
 
         new_query.country_code.should == "US"
         new_query.format.should == :coordinates
@@ -140,8 +127,8 @@ describe Barometer::Query::Format::Coordinates, :vcr => {
         new_query = Barometer::Query::Format::Coordinates.to(query)
 
         new_query_coords = new_query.q.split(',').map{|c| c.to_f}
-        new_query_coords[0].should be_within(0.00001).of(40.7560413)
-        new_query_coords[1].should be_within(0.00001).of(-73.9869192)
+        new_query_coords[0].should be_within(0.0001).of(40.7560413)
+        new_query_coords[1].should be_within(0.0001).of(-73.9869192)
 
         new_query.country_code.should == "US"
         new_query.format.should == :coordinates

@@ -7,17 +7,18 @@ module Barometer
   class WebService::Geocode < WebService
 
     def self.fetch(query)
-      raise ArgumentError unless _is_a_query?(query)
-      puts "geocoding: #{query.q}" if Barometer::debug?
+      converted_query = query.get_conversion(:short_zipcode, :zipcode, :postalcode, :coordinates, :icao, :geocode)
+      return unless converted_query
+      puts "geocoding: #{converted_query.q}" if Barometer::debug?
 
       query_params = {}
-      query_params[:region] = query.country_code
+      query_params[:region] = converted_query.country_code
       query_params[:sensor] = 'false'
 
-      if query.format == :coordinates
-        query_params[:latlng] = query.q
+      if converted_query.format == :coordinates
+        query_params[:latlng] = converted_query.q
       else
-        query_params[:address] = query.q
+        query_params[:address] = converted_query.q
       end
 
       location = self.get(

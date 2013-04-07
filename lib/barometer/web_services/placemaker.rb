@@ -22,8 +22,8 @@ module Barometer
 
       return nil unless query
       return nil unless _has_geocode_key?
-      raise ArgumentError unless _is_a_query?(query)
-      puts "fetch woe_id: #{query.q}" if Barometer::debug?
+
+      converted_query = query.get_conversion(:geocode, :coordinates, :postalcode)
 
       # BUG: httparty doesn't seem to post correctly
       # self.post(
@@ -44,7 +44,7 @@ module Barometer
         {
           'documentType' => 'text/html',
           'outputType' => 'xml',
-          'documentContent' => _adjust_query(query),
+          'documentContent' => _adjust_query(converted_query),
           'appid' => Barometer.yahoo_placemaker_app_id
         }
       )
@@ -55,12 +55,12 @@ module Barometer
     # get the location_data (geocode) for a given woe_id
     #
     def self.reverse(query)
-      puts "reverse woe_id: #{query.q}" if Barometer::debug?
-      return nil unless query
-      raise ArgumentError unless _is_a_query?(query)
+      converted_query = query.get_conversion(:woe_id)
+
+      puts "reverse woe_id: #{converted_query.q}" if Barometer::debug?
       self.get(
         "http://weather.yahooapis.com/forecastrss",
-        :query => { :w => query.q },
+        :query => { :w => converted_query.q },
         :format => :xml,
         :timeout => Barometer.timeout
       )['rss']['channel']["location"]

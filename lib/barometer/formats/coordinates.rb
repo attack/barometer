@@ -17,30 +17,20 @@ module Barometer
 
     # convert to this format, X -> :coordinates
     #
-    def self.to(original_query)
-      raise ArgumentError unless is_a_query?(original_query)
-      return nil unless converts?(original_query)
-      converted_query = Barometer::Query.new
-
-      # pre-convert
-      #
-      pre_query = nil
-      if original_query.format == :weather_id
-        unless pre_query = original_query.get_conversion(Query::Format::Geocode.format)
-          pre_query = Query::Format::WeatherID.reverse(original_query)
-          original_query.post_conversion(pre_query)
-        end
-      elsif original_query.format == :woe_id
-        pre_query = Query::Format::WoeID.reverse(original_query)
+    def self.to(query)
+      if query.format == :weather_id
+        converter = Barometer::Converter::FromWeatherIdToGeocode.new(query)
+        converter.call
       end
 
-      # convert & adjust
-      #
-      converted_query = Query::Format::Geocode.geocode(pre_query || original_query)
-      converted_query.q = converted_query.geo.coordinates if converted_query.geo
-      converted_query.format = format
+      if query.format == :woe_id
+        converter = Barometer::Converter::FromWoeIdToGeocode.new(query)
+        converter.call
+      end
 
-      converted_query
+      converter = Barometer::Converter::ToCoordinates.new(query)
+      converter.call
+      query.get_conversion(:coordinates)
     end
 
     def self.parse_latitude(query)

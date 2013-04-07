@@ -9,14 +9,6 @@ describe Barometer::WebService::Placemaker do
 
   describe "and the class methods" do
     describe "fetch," do
-      it "requires a Query object" do
-        lambda { Barometer::WebService::Placemaker.fetch }.should raise_error(ArgumentError)
-        lambda { Barometer::WebService::Placemaker.fetch("invalid") }.should raise_error(ArgumentError)
-        query = Barometer::Query.new(@coordinates)
-        query.is_a?(Barometer::Query).should be_true
-        lambda { Barometer::WebService::Placemaker.fetch(query) }.should_not raise_error(ArgumentError)
-      end
-
       # it "detects the key" do
       #   query = Barometer::Query.new(@zipcode)
       #   Barometer.google_geocode_key = nil
