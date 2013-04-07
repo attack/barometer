@@ -15,16 +15,9 @@ module Barometer
     def self.regex; /(^[0-9]{5}$)|(^[0-9]{5}-[0-9]{4}$)/; end
     def self.convertable_formats; [:short_zipcode]; end
 
-    # convert to this format, X -> :zipcode
-    #
-    def self.to(original_query)
-      raise ArgumentError unless is_a_query?(original_query)
-      return nil unless converts?(original_query)
-      converted_query = Barometer::Query.new
-      converted_query.q = original_query.q
-      converted_query.format = format
-      converted_query.country_code = country_code(converted_query.q)
-      converted_query
+    def self.to(query)
+      converter = Barometer::Converter::FromShortZipcodeToZipcode.new(query)
+      converter.call
     end
 
   end

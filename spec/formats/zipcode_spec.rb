@@ -49,19 +49,6 @@ describe Barometer::Query::Format::Zipcode do
     end
 
     describe "when converting using 'to'," do
-      it "requires a Barometer::Query object" do
-        lambda { Barometer::Query::Format::Zipcode.to }.should raise_error(ArgumentError)
-        lambda { Barometer::Query::Format::Zipcode.to("invalid") }.should raise_error(ArgumentError)
-        query = Barometer::Query.new(@zipcode)
-        query.is_a?(Barometer::Query).should be_true
-        lambda { Barometer::Query::Format::Zipcode.to(original_query) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns a Barometer::Query" do
-        query = Barometer::Query.new(@short_zipcode)
-        Barometer::Query::Format::Zipcode.to(query).is_a?(Barometer::Query).should be_true
-      end
-
       it "converts from short_zipcode" do
         query = Barometer::Query.new(@short_zipcode)
         query.format.should == :short_zipcode
