@@ -17,13 +17,5 @@ module Barometer
 
     # STUB: define this method to actually retireve the data
     def self.fetch(query=nil); raise NotImplementedError; end
-
-    private
-
-    def self._is_a_query?(object=nil)
-      return false unless object
-      object.is_a?(Barometer::Query)
-    end
-
   end
 end
