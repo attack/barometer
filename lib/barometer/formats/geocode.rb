@@ -9,7 +9,6 @@ module Barometer
   # :geocode, how to convert to :geocode
   #
   class Query::Format::Geocode < Query::Format
-    def self.format; :geocode; end
     def self.is?(query); true; end
   end
 end

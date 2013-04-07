@@ -12,7 +12,6 @@ module Barometer
   #   a WoeID.
   #
   class Query::Format::WoeID < Query::Format
-    def self.format; :woe_id; end
     def self.regex; /(^[0-9]{4}$)|(^[0-9]{6,7}$)|(^w[0-9]{4,7}$)/; end
 
     # remove the 'w' from applicable queries (only needed for detection)

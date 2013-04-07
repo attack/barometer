@@ -197,12 +197,12 @@ def post_conversion(converted_query)
 end
 
   def latitude
-    return nil unless self.format == Query::Format::Coordinates.format
+    return nil unless self.format == :coordinates
     Query::Format::Coordinates.parse_latitude(self.q)
   end
 
   def longitude
-    return nil unless self.format == Query::Format::Coordinates.format
+    return nil unless self.format == :coordinates
     Query::Format::Coordinates.parse_longitude(self.q)
   end
 

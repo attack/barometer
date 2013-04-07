@@ -9,7 +9,6 @@ module Barometer
   # and what the country_code is.
   #
   class Query::Format::WeatherID < Query::Format
-    def self.format; :weather_id; end
     def self.regex; /(^[A-Za-z]{4}[0-9]{4}$)/; end
 
     # the first two letters of the :weather_id is the country_code

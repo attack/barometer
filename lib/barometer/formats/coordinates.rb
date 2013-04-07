@@ -8,12 +8,7 @@ module Barometer
   # :coordinates and how to convert to :coordinates.
   #
   class Query::Format::Coordinates < Query::Format
-    def self.format; :coordinates; end
     def self.regex; /^[-]?[0-9\.]+[,]{1}\s?[-]?[0-9\.]+$/; end
-
-    def self.is?(query=nil)
-      !(query =~ self.regex).nil?
-    end
 
     def self.parse_latitude(query)
       coordinates = query.to_s.split(',')

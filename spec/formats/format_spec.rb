@@ -17,45 +17,8 @@ describe Barometer::Query::Format do
       end
     end
 
-    describe "converts?," do
-      it "requires a Query object" do
-        invalid = 1
-        Barometer::Query::Format.converts?(invalid).should be_false
-
-        valid = Barometer::Query.new
-        valid.is_a?(Barometer::Query).should be_true
-        lambda { Barometer::Query::Format.converts?(valid) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns false" do
-        valid = Barometer::Query.new
-        Barometer::Query::Format.converts?(valid).should be_false
-      end
-    end
-
-    it "detects a Query object" do
-      invalid = 1
-      Barometer::Query::Format.is_a_query?.should be_false
-      Barometer::Query::Format.is_a_query?(invalid).should be_false
-      valid = Barometer::Query.new
-      valid.is_a?(Barometer::Query).should be_true
-      Barometer::Query::Format.is_a_query?(valid).should be_true
-    end
-
-    it "stubs regex" do
-      lambda { Barometer::Query::Format.regex }.should raise_error(NotImplementedError)
-    end
-
-    it "stubs format" do
-      lambda { Barometer::Query::Format.format }.should raise_error(NotImplementedError)
-    end
-
     it "stubs country_code" do
       Barometer::Query::Format.country_code.should be_nil
-    end
-
-    it "stubs convertable_formats" do
-      Barometer::Query::Format.convertable_formats.should == []
     end
   end
 end
