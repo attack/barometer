@@ -9,13 +9,12 @@ module Barometer
     # get the weather_id for a given query
     #
     def self.fetch(query)
-      puts "fetch weather_id: #{query.q}" if Barometer::debug?
-      return nil unless query
-      raise ArgumentError unless _is_a_query?(query)
+      converted_query = query.get_conversion(:geocode)
+      puts "fetch weather_id: #{converted_query.q}" if Barometer::debug?
 
       self.get(
         "http://xoap.weather.com/search/search",
-        :query => { :where => _adjust_query(query.q) }, :format => :plain,
+        :query => { :where => _adjust_query(converted_query.q) }, :format => :plain,
         :timeout => Barometer.timeout
       )
     end

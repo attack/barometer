@@ -22,43 +22,19 @@ module Barometer
       (query && query.size >= 2) ? _fix_country(query[0..1]) : nil
     end
 
-    # convert to this format, X -> :weather_id
-    #
-    def self.to(original_query)
-      return nil unless converts?(original_query)
-      # convert original query to :geocode, as that is the only
-      # format we can convert directly from to weather_id
-      converted_query = Barometer::Query.new
-      converted_query = Query::Format::Geocode.to(original_query)
-      converted_query.q = _search(converted_query)
-      converted_query.format = format
-      converted_query.country_code = country_code(converted_query.q)
-      converted_query
+    def self.to(query)
+      if [:coordinates, :icao, :short_zipcode, :zipcode].include?(query.format)
+        converter = Barometer::Converter::ToGeocode.new(query)
+        converter.call
+      end
+
+      converter = Barometer::Converter::FromGeocodeToWeatherId.new(query)
+      converter.call
     end
 
     def self.reverse(query)
       converter = Barometer::Converter::FromWeatherIdToGeocode.new(query)
-      converted_query = converter.call
-    end
-
-    private
-
-    # :geocode -> :weather_id
-    # search weather.com for the given query
-    #
-    def self._search(query=nil)
-      return nil unless query
-      raise ArgumentError unless is_a_query?(query)
-      response = WebService::WeatherID.fetch(query)
-      _parse_weather_id(response)
-    end
-
-    # match the first :weather_id (from search results)
-    #
-    def self._parse_weather_id(text)
-      return nil unless text
-      match = text.match(/loc id=[\\]?['|""]([0-9a-zA-Z]*)[\\]?['|""]/)
-      match ? match[1] : nil
+      converter.call
     end
   end
 end
