@@ -73,24 +73,11 @@ describe Barometer::Query::Format::WeatherID, :vcr => {
     end
 
     describe "when reversing lookup" do
-      it "requires a Barometer::Query object" do
-        lambda { Barometer::Query::Format::WeatherID.reverse }.should raise_error(ArgumentError)
-        lambda { Barometer::Query::Format::WeatherID.reverse("invalid") }.should raise_error(ArgumentError)
-        query = Barometer::Query.new(@weather_id)
-        query.is_a?(Barometer::Query).should be_true
-        lambda { Barometer::Query::Format::WeatherID.reverse(original_query) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns a Barometer::Query" do
-        query = Barometer::Query.new(@weather_id)
-        Barometer::Query::Format::WeatherID.reverse(query).is_a?(Barometer::Query).should be_true
-      end
-
       it "reverses a valid weather_id (US)" do
         query = Barometer::Query.new(@weather_id)
         new_query = Barometer::Query::Format::WeatherID.reverse(query)
         new_query.q.should == "Atlanta, GA, US"
-        new_query.country_code.should be_nil
+        new_query.country_code.should == 'US'
         new_query.format.should == :geocode
         new_query.geo.should be_nil
       end
@@ -102,19 +89,6 @@ describe Barometer::Query::Format::WeatherID, :vcr => {
     end
 
     describe "when converting using 'to'," do
-      it "requires a Barometer::Query object" do
-        lambda { Barometer::Query::Format::WeatherID.to }.should raise_error(ArgumentError)
-        lambda { Barometer::Query::Format::WeatherID.to("invalid") }.should raise_error(ArgumentError)
-        query = Barometer::Query.new(@zipcode)
-        query.is_a?(Barometer::Query).should be_true
-        lambda { Barometer::Query::Format::WeatherID.to(original_query) }.should_not raise_error(ArgumentError)
-      end
-
-      it "returns a Barometer::Query" do
-        query = Barometer::Query.new(@short_zipcode)
-        Barometer::Query::Format::WeatherID.to(query).is_a?(Barometer::Query).should be_true
-      end
-
       it "converts from short_zipcode" do
         query = Barometer::Query.new(@short_zipcode)
         query.format.should == :short_zipcode

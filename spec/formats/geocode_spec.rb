@@ -88,7 +88,7 @@ describe Barometer::Query::Format::Geocode, :vcr => {
         query.format.should == :weather_id
         new_query = Barometer::Query::Format::Geocode.to(query)
         new_query.q.should == "Atlanta, GA, US"
-        new_query.country_code.should be_nil
+        new_query.country_code.should == 'US'
         new_query.format.should == :geocode
         new_query.geo.should be_nil
       end

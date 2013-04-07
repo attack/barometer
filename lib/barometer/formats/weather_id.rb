@@ -25,9 +25,7 @@ module Barometer
     # convert to this format, X -> :weather_id
     #
     def self.to(original_query)
-      raise ArgumentError unless is_a_query?(original_query)
       return nil unless converts?(original_query)
-
       # convert original query to :geocode, as that is the only
       # format we can convert directly from to weather_id
       converted_query = Barometer::Query.new
@@ -38,15 +36,9 @@ module Barometer
       converted_query
     end
 
-    # reverse lookup, :weather_id -> :geocode
-    #
-    def self.reverse(original_query)
-      raise ArgumentError unless is_a_query?(original_query)
-      return nil unless original_query.format == format
-      converted_query = Barometer::Query.new
-      converted_query.q = _reverse(original_query)
-      converted_query.format = Query::Format::Geocode.format
-      converted_query
+    def self.reverse(query)
+      converter = Barometer::Converter::FromWeatherIdToGeocode.new(query)
+      converted_query = converter.call
     end
 
     private
@@ -61,16 +53,6 @@ module Barometer
       _parse_weather_id(response)
     end
 
-    # :weather_id -> :geocode
-    # query yahoo with :weather_id and parse geo_data
-    #
-    def self._reverse(query=nil)
-      return nil unless query
-      raise ArgumentError unless is_a_query?(query)
-      response = WebService::WeatherID.reverse(query)
-      _parse_geocode(response)
-    end
-
     # match the first :weather_id (from search results)
     #
     def self._parse_weather_id(text)
@@ -78,16 +60,6 @@ module Barometer
       match = text.match(/loc id=[\\]?['|""]([0-9a-zA-Z]*)[\\]?['|""]/)
       match ? match[1] : nil
     end
-
-    # parse the geo_data
-    #
-    def self._parse_geocode(text)
-      return nil unless text
-      output = [text["city"], text["region"], _fix_country(text["country"])]
-      output.delete("")
-      output.compact.join(', ')
-    end
-
   end
 end
 
