@@ -50,25 +50,12 @@ describe Barometer::Query::Format do
       lambda { Barometer::Query::Format.format }.should raise_error(NotImplementedError)
     end
 
-    it "stubs to" do
-      Barometer::Query::Format.to.should be_nil
-    end
-
     it "stubs country_code" do
       Barometer::Query::Format.country_code.should be_nil
     end
 
     it "stubs convertable_formats" do
       Barometer::Query::Format.convertable_formats.should == []
-    end
-
-    it "stubs convert_query" do
-      Barometer::Query::Format.respond_to?(:convert_query).should be_true
-    end
-
-    it "normally does nothing when converting a query" do
-      text = "this is a query"
-      Barometer::Query::Format.convert_query(text).should == text
     end
   end
 end

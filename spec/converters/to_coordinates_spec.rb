@@ -38,7 +38,10 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
     converter = Barometer::Converter::ToCoordinates.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == '40.7143528,-74.00597309999999'
+    converted_query_coords = converted_query.q.split(',').map{|c| c.to_f}
+    converted_query_coords[0].should be_within(0.0001).of(40.7143528)
+    converted_query_coords[1].should be_within(0.0001).of(-74.0059731)
+
     converted_query.format.should == :coordinates
     converted_query.country_code.should == 'US'
     converted_query.geo.should_not be_nil
