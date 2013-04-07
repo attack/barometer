@@ -12,40 +12,14 @@ module Barometer
   #   a WoeID.
   #
   class Query::Format::WoeID < Query::Format
-
     def self.format; :woe_id; end
     def self.regex; /(^[0-9]{4}$)|(^[0-9]{6,7}$)|(^w[0-9]{4,7}$)/; end
-    def self.convertable_formats
-      [:short_zipcode, :zipcode, :weather_id, :coordinates, :icao, :geocode, :postalcode]
-    end
 
     # remove the 'w' from applicable queries (only needed for detection)
     #
     def self.convert_query(text)
       return nil unless text
       text.delete('w')
-    end
-
-    def self.to(original_query)
-      if original_query.format == :weather_id
-        converter = Barometer::Converter::FromWeatherIdToGeocode.new(original_query)
-        converter.call
-      end
-
-      if [:short_zipcode, :zipcode, :icao].include?(original_query.format)
-        converter = Barometer::Converter::ToGeocode.new(original_query)
-        converter.call
-      end
-
-      converter = Barometer::Converter::ToWoeId.new(original_query)
-      converter.call
-
-      original_query.get_conversion(:woe_id)
-    end
-
-    def self.reverse(query)
-      converter = Barometer::Converter::FromWoeIdToGeocode.new(query)
-      converter.call
     end
   end
 end
