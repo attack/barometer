@@ -22,4 +22,4 @@ module Barometer
   end
 end
 
-Barometer::Query.register(:coordinates, Barometer::Query::Format::Coordinates)
+Barometer::Formats.register(:coordinates, Barometer::Query::Format::Coordinates)

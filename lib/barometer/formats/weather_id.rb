@@ -19,4 +19,4 @@ module Barometer
   end
 end
 
-Barometer::Query.register(:weather_id, Barometer::Query::Format::WeatherID)
+Barometer::Formats.register(:weather_id, Barometer::Query::Format::WeatherID)

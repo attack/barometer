@@ -13,4 +13,4 @@ module Barometer
   end
 end
 
-Barometer::Query.register(:geocode, Barometer::Query::Format::Geocode)
+Barometer::Formats.register(:geocode, Barometer::Query::Format::Geocode)

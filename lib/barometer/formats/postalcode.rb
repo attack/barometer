@@ -18,4 +18,4 @@ module Barometer
   end
 end
 
-Barometer::Query.register(:postalcode, Barometer::Query::Format::Postalcode)
+Barometer::Formats.register(:postalcode, Barometer::Query::Format::Postalcode)

@@ -22,36 +22,10 @@ module Barometer
     class ConversionNotPossible < StandardError; end
     class UnsupportedRegion < StandardError; end
 
-    class NotFound < StandardError; end
-
-    @@formats = []
-
-    def self.formats=(formats)
-      @@formats = formats
-    end
-
-    def self.formats
-      @@formats
-    end
-
-    def self.register(key, format)
-      @@formats ||= []
-      @@formats << [ key.to_sym, format ] unless has?(key)
-    end
-
-    def self.has?(key)
-      !@@formats.select{|format| format[0] == key.to_sym}.empty?
-    end
-
-    def self.find(key)
-      @@formats ||= []
-      format = @@formats.select{|format| format[0] == key.to_sym}
-
-      if format && format[0]
-        format[0][1]
-      else
-        raise NotFound
-      end
+    def initialize(query=nil)
+      @q = query
+      self.analyze!
+      @conversions = {}
     end
 
     def add_conversion(key, value)
@@ -74,27 +48,16 @@ module Barometer
     attr_accessor :format, :country_code
     attr_accessor :geo, :timezone, :conversions
 
-    def initialize(query=nil)
-      return unless query
-      @q = query
-      self.analyze!
-      @conversions = {}
-    end
-
     def q
-      format ? Barometer::Query.find(format).convert_query(@q) : @q
+      format ? Barometer::Formats.find(format).convert_query(@q) : @q
     end
 
-    # analyze the saved query to determine the format.
-    # this delegates the detection to each formats class
-    # until th right one is found
-    #
     def analyze!
       return unless @q
-      @@formats.each do |format|
-        if format[1].is?(@q)
-          @format = format[0]
-          @country_code = format[1].country_code(@q)
+      Barometer::Formats.formats.each do |format_key, format_klass|
+        if format_klass.is?(@q)
+          @format = format_key
+          @country_code = format_klass.country_code(@q)
           break
         end
       end
@@ -109,102 +72,26 @@ module Barometer
       Array(converters).each do |converter|
         conversion = converter.new(self).call
       end
-      conversion
+      conversion || raise(Barometer::Query::ConversionNotPossible)
     end
 
-    # take a list of acceptable (and ordered by preference) formats and convert
-    # the current query (q) into the most preferred and acceptable format. a
-    # side effect of the conversions may reveal the country_code, if so save it
-    #
     # def convert!(preferred_formats=nil)
-    #   # we know from_format = q.format
-    #   # we know to_formats = preferred_formats
-    #   #
-    #   # for each to_format, see if we can find converter
-    #   # special case is if to_format != :gecode, see if we can do two steps to get there
-    #   # from_format -> :geocode -> to_format
-    #   # prefer 1 step over 2 (iterate first looking for 1 steps, then iterate again lloking for 2)
-
-    #   # raise ConversionNotPossible unless converted
-
-    #   raise ArgumentError unless (preferred_formats && preferred_formats.size > 0)
-
-    #   # why convert if we are already there?
-    #   # (except in the case that the serivce excepts coordinates and we have a
-    #   # a geocode ... the google geocode results are superior)
-    #   #
-    #   skip_conversion = false
-    #   unless (@format.to_sym == Query::Format::Geocode.format) &&
-    #          preferred_formats.include?(Query::Format::Coordinates.format)
-    #     if preferred_formats.include?(@format.to_sym)
-    #       skip_conversion = true
-    #       converted_query = self.dup
-    #     end
-    #   end
-
-    #   unless skip_conversion
-    #     # go through each acceptable format and try to convert to that
-    #     converted = false
-    #     converted_query = Barometer::Query.new
-    #     preferred_formats.each do |preferred_format|
-    #       klass = Barometer::Query.find(preferred_format)
-    #       # if we discover that the format we have is the preferred format, return it
-    #       if preferred_format == @format
-    #         converted = true
-    #         converted_query = Barometer::Query.new(@q)
-    #       end
-    #       unless converted
-    #         unless converted_query = get_conversion(preferred_format)
-    #           converted_query = klass.to(self)
-    #         end
-    #         converted = true if converted_query
-    #       end
-    #       if converted
-    #         converted_query.country_code ||= klass.country_code(converted_query.q)
-    #         post_conversion(converted_query)
-    #         break
-    #       end
-    #     end
-
-    #     raise ConversionNotPossible unless converted
-    #   end
-
-    #   # force geocode?, unless we already did
-    #   #
     #   if Barometer.force_geocode && !@geo
-    #     if converted_query && converted_query.geo
-    #       @geo = converted_query.geo
-    #     elsif converted_query
-    #       puts "enhance geocode: #{converted_query.q}" if Barometer::debug?
-    #       geo_query = Query::Format::Coordinates.to(converted_query)
-    #       @geo = geo_query.geo if (geo_query && geo_query.geo)
-    #       converted_query.geo = @geo.dup
-    #     end
+    #     puts "enhance geocode: #{converted_query.q}" if Barometer::debug?
+    #     geo_query = Query::Format::Coordinates.to(converted_query)
+    #     @geo = geo_query.geo if (geo_query && geo_query.geo)
+    #     converted_query.geo = @geo.dup
     #   end
-
-    #   converted_query
     # end
 
-# save the important parts of the conversion ... by saving conversion we
-# can avoid doing the same conversion multiple times
-#
-def post_conversion(converted_query)
-  return unless (converted_query && converted_query.q && converted_query.format)
-  @conversions = {} unless @conversions
-  return if @conversions.has_key?(converted_query.format.to_sym)
-  puts "store: #{self.format} -> #{converted_query.format.to_sym} = #{self.q} -> #{converted_query.q}" if Barometer::debug?
-  @conversions[converted_query.format.to_sym] = converted_query.q
-end
+    def latitude
+      return nil unless self.format == :coordinates
+      Query::Format::Coordinates.parse_latitude(self.q)
+    end
 
-  def latitude
-    return nil unless self.format == :coordinates
-    Query::Format::Coordinates.parse_latitude(self.q)
-  end
-
-  def longitude
-    return nil unless self.format == :coordinates
-    Query::Format::Coordinates.parse_longitude(self.q)
-  end
-
+    def longitude
+      return nil unless self.format == :coordinates
+      Query::Format::Coordinates.parse_longitude(self.q)
+    end
   end
 end

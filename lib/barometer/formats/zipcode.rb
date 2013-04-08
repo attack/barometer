@@ -14,4 +14,4 @@ module Barometer
   end
 end
 
-Barometer::Query.register(:zipcode, Barometer::Query::Format::Zipcode)
+Barometer::Formats.register(:zipcode, Barometer::Query::Format::Zipcode)

@@ -2,6 +2,7 @@ $:.unshift(File.dirname(__FILE__))
 
 # query formats
 #
+require 'query/formats'
 require 'formats/format'
 require 'formats/short_zipcode'
 require 'formats/zipcode'

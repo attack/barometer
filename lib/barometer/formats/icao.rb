@@ -32,4 +32,4 @@ module Barometer
   end
 end
 
-Barometer::Query.register(:icao, Barometer::Query::Format::Icao)
+Barometer::Formats.register(:icao, Barometer::Query::Format::Icao)
