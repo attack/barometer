@@ -127,7 +127,7 @@ describe Barometer::Query do
     describe "when the query can be converted directly to the requested format" do
       it "creates a conversion for the requested format" do
         coordinates = Barometer::ConvertedQuery.new('12.34,-56.78', :coordinates)
-        coordinates_converter = double(:converter_instance, :call => coordinates, :to_a => [coordinates_converter])
+        coordinates_converter = double(:converter_instance, :call => coordinates)
         coordinates_converter_klass = double(:coordinates_converter, :new => coordinates_converter)
 
         Barometer::Converters.stub(:find_all => coordinates_converter_klass)

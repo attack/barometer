@@ -45,7 +45,7 @@ module Barometer
 
       converters = Barometer::Converters.find_all(format, preferred_formats)
 
-      Array(converters).map {|converter| converter.new(self).call}.last ||
+      [converters].flatten.map {|converter| converter.new(self).call}.last ||
         raise(Barometer::Query::ConversionNotPossible)
     end
 
