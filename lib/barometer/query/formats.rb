@@ -31,5 +31,14 @@ module Barometer
         raise NotFound
       end
     end
+
+    def self.match?(q)
+      @@formats.detect do |key, klass|
+        if klass.is?(q)
+          yield(key, klass)
+          true
+        end
+      end
+    end
   end
 end

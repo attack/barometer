@@ -7,7 +7,6 @@ describe Barometer::Converter::FromGeocodeToWeatherId, :vcr => {
 
   it "converts :geocode -> :weather_id" do
     query = Barometer::Query.new('New York, NY')
-    query.format = :geocode
 
     converter = Barometer::Converter::FromGeocodeToWeatherId.new(query)
     converted_query = converter.call
@@ -18,7 +17,6 @@ describe Barometer::Converter::FromGeocodeToWeatherId, :vcr => {
 
   it "uses a previous coversion (if needed) on the query" do
     query = Barometer::Query.new('KJFK')
-    query.format = :icao
     query.add_conversion(:geocode, 'New York, NY')
 
     converter = Barometer::Converter::FromGeocodeToWeatherId.new(query)
@@ -30,7 +28,6 @@ describe Barometer::Converter::FromGeocodeToWeatherId, :vcr => {
 
   it "does not convert any other format" do
     query = Barometer::Query.new('KJFK')
-    query.format = :icao
 
     converter = Barometer::Converter::FromGeocodeToWeatherId.new(query)
     converter.call.should be_nil

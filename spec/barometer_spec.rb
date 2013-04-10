@@ -65,12 +65,6 @@ describe Barometer do
       Barometer.timeout.should == 5
     end
   end
-
-  describe ".new" do
-    it "returns a Barometer::Base object" do
-      Barometer.new.should be_a(Barometer::Base)
-    end
-  end
 end
 
 describe Barometer::Base do

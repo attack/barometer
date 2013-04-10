@@ -7,7 +7,6 @@ describe Barometer::Converter::FromWoeIdToGeocode, :vcr => {
 
   it "converts :woe_id -> :geocode" do
     query = Barometer::Query.new('615702')
-    query.format = :woe_id
 
     converter = Barometer::Converter::FromWoeIdToGeocode.new(query)
     converted_query = converter.call
@@ -20,7 +19,6 @@ describe Barometer::Converter::FromWoeIdToGeocode, :vcr => {
 
   it "uses a previous coversion (if needed) on the query" do
     query = Barometer::Query.new('40.697488,-73.979681')
-    query.format = :coordinates
     query.add_conversion(:woe_id, '615702')
 
     converter = Barometer::Converter::FromWoeIdToGeocode.new(query)
@@ -34,7 +32,6 @@ describe Barometer::Converter::FromWoeIdToGeocode, :vcr => {
 
   it "does not convert any other format" do
     query = Barometer::Query.new('90210')
-    query.format = :short_zipcode
 
     converter = Barometer::Converter::FromWoeIdToGeocode.new(query)
     converter.call.should be_nil

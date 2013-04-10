@@ -7,7 +7,6 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
 
   it "converts :short_zipcode -> :coordinates" do
     query = Barometer::Query.new('90210')
-    query.format = :short_zipcode
 
     converter = Barometer::Converter::ToCoordinates.new(query)
     converted_query = converter.call
@@ -20,7 +19,6 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
 
   it "converts :zipcode -> :coordinates" do
     query = Barometer::Query.new('90210-5555')
-    query.format = :zipcode
 
     converter = Barometer::Converter::ToCoordinates.new(query)
     converted_query = converter.call
@@ -33,7 +31,6 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
 
   it "converts :geocode -> :coordinates" do
     query = Barometer::Query.new('New York, NY')
-    query.format = :geocode
 
     converter = Barometer::Converter::ToCoordinates.new(query)
     converted_query = converter.call
@@ -49,7 +46,6 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
 
   it "converts :postalcode -> :coordinates" do
     query = Barometer::Query.new('T5B 4M9')
-    query.format = :postalcode
 
     converter = Barometer::Converter::ToCoordinates.new(query)
     converted_query = converter.call
@@ -62,7 +58,6 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
 
   it "converts :icao -> :coordinates" do
     query = Barometer::Query.new('KSFO')
-    query.format = :icao
 
     converter = Barometer::Converter::ToCoordinates.new(query)
     converted_query = converter.call
@@ -75,7 +70,6 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
 
   it "uses a previous coversion (if needed) on the query" do
     query = Barometer::Query.new('USGA0028')
-    query.format = :weather_id
     query.add_conversion(:icao, 'KSFO')
 
     converter = Barometer::Converter::ToCoordinates.new(query)
@@ -89,7 +83,6 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
 
   it "does not convert :weather_id" do
     query = Barometer::Query.new('USGA0028')
-    query.format = :weather_id
 
     converter = Barometer::Converter::ToCoordinates.new(query)
     converter.call.should be_nil
@@ -97,7 +90,6 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
 
   it "does not convert :woe_id" do
     query = Barometer::Query.new('615702')
-    query.format = :woe_id
 
     converter = Barometer::Converter::ToCoordinates.new(query)
     converter.call.should be_nil

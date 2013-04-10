@@ -9,16 +9,6 @@ module Barometer
   #
   class Query::Format::Coordinates < Query::Format
     def self.regex; /^[-]?[0-9\.]+[,]{1}\s?[-]?[0-9\.]+$/; end
-
-    def self.parse_latitude(query)
-      coordinates = query.to_s.split(',')
-      coordinates ? coordinates[0] : nil
-    end
-
-    def self.parse_longitude(query)
-      coordinates = query.to_s.split(',')
-      coordinates ? coordinates[1] : nil
-    end
   end
 end
 
