@@ -21,12 +21,12 @@ Gem::Specification.new do |s|
 
   s.rdoc_options = ["--charset=UTF-8"]
 
-  s.add_dependency %q<httparty>, ">= 0.4.5"
   s.add_dependency 'httpclient'
   s.add_dependency %q<tzinfo>, ">= 0.3.14"
   s.add_dependency "nokogiri"
   s.add_dependency "yajl-ruby"
   s.add_dependency "nori"
+  s.add_dependency 'multi_json', '~> 1.0'
 
   s.add_development_dependency "rspec"
   s.add_development_dependency "webmock"

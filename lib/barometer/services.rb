@@ -4,6 +4,7 @@ require 'http/address'
 require 'http/requester'
 
 require 'wrappers/xml_reader'
+require 'wrappers/json_reader'
 
 # weather services
 #
