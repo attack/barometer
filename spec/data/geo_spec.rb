@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Data::Geo do
+describe Barometer::Data::Geo do
   describe "#new" do
     its(:query) { should be_nil }
     its(:latitude) { should be_nil }
@@ -13,13 +13,13 @@ describe Data::Geo do
 
     it "raises an error when not given a Hash" do
       expect {
-        Data::Geo.new(1)
+        Barometer::Data::Geo.new(1)
       }.to raise_error(ArgumentError)
     end
 
     it "returns a Barometer::Geo object" do
-      subject = Data::Geo.new(Hash.new)
-      subject.is_a?(Data::Geo).should be_true
+      subject = Barometer::Data::Geo.new(Hash.new)
+      subject.is_a?(Barometer::Data::Geo).should be_true
     end
   end
 

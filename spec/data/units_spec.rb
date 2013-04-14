@@ -1,11 +1,11 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "Units" do
+describe Barometer::Data::Units do
 
   describe "when initialized" do
 
     before(:each) do
-      @units = Data::Units.new
+      @units = Barometer::Data::Units.new
     end
 
     it "responds to metric, defaults to true" do
@@ -15,7 +15,7 @@ describe "Units" do
     it "allows metric to be set" do
       @units.metric.should be_true
 
-      @units2 = Data::Units.new(false)
+      @units2 = Barometer::Data::Units.new(false)
       @units2.metric.should be_false
     end
 
@@ -32,7 +32,7 @@ describe "Units" do
   describe "changing units" do
 
     before(:each) do
-      @units = Data::Units.new
+      @units = Barometer::Data::Units.new
     end
 
     it "indicates if metric?" do
@@ -62,18 +62,20 @@ describe "Units" do
 
     before(:each) do
       module Barometer
-        class Data::Units
-          attr_accessor :a, :b
-          def metric_default=(value)
-            self.a = value
-          end
-          def imperial_default=(value)
-            self.b = value
+        module Data
+          class Units
+            attr_accessor :a, :b
+            def metric_default=(value)
+              self.a = value
+            end
+            def imperial_default=(value)
+              self.b = value
+            end
           end
         end
       end
-      @units_metric = Data::Units.new(true)
-      @units_imperial = Data::Units.new(false)
+      @units_metric = Barometer::Data::Units.new(true)
+      @units_imperial = Barometer::Data::Units.new(false)
       @test_value_a = 5.5
       @test_value_b = 9.9
     end

@@ -1,19 +1,19 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Data::Temperature do
+describe Barometer::Data::Temperature do
   describe "when initialized" do
     it "defines METRIC_UNITS" do
-      Data::Temperature.const_defined?("METRIC_UNITS").should be_true
-      Data::Temperature::METRIC_UNITS.should == "C"
+      Barometer::Data::Temperature.const_defined?("METRIC_UNITS").should be_true
+      Barometer::Data::Temperature::METRIC_UNITS.should == "C"
     end
 
     it "defines IMPERIAL_UNITS" do
-      Data::Temperature.const_defined?("IMPERIAL_UNITS").should be_true
-      Data::Temperature::IMPERIAL_UNITS.should == "F"
+      Barometer::Data::Temperature.const_defined?("IMPERIAL_UNITS").should be_true
+      Barometer::Data::Temperature::IMPERIAL_UNITS.should == "F"
     end
 
     before(:each) do
-      @temp = Data::Temperature.new
+      @temp = Barometer::Data::Temperature.new
     end
 
     it "responds to celcius" do
@@ -53,53 +53,53 @@ describe Data::Temperature do
     end
 
     it "requires a value, that is either Integer or Float" do
-      Data::Temperature.c_to_k(nil).should be_nil
-      Data::Temperature.c_to_f(nil).should be_nil
-      Data::Temperature.f_to_k(nil).should be_nil
-      Data::Temperature.f_to_c(nil).should be_nil
-      Data::Temperature.k_to_c(nil).should be_nil
-      Data::Temperature.k_to_f(nil).should be_nil
+      Barometer::Data::Temperature.c_to_k(nil).should be_nil
+      Barometer::Data::Temperature.c_to_f(nil).should be_nil
+      Barometer::Data::Temperature.f_to_k(nil).should be_nil
+      Barometer::Data::Temperature.f_to_c(nil).should be_nil
+      Barometer::Data::Temperature.k_to_c(nil).should be_nil
+      Barometer::Data::Temperature.k_to_f(nil).should be_nil
 
       not_float_or_integer = "string"
-      Data::Temperature.c_to_k(not_float_or_integer).should be_nil
-      Data::Temperature.c_to_f(not_float_or_integer).should be_nil
-      Data::Temperature.f_to_k(not_float_or_integer).should be_nil
-      Data::Temperature.f_to_c(not_float_or_integer).should be_nil
-      Data::Temperature.k_to_c(not_float_or_integer).should be_nil
-      Data::Temperature.k_to_f(not_float_or_integer).should be_nil
+      Barometer::Data::Temperature.c_to_k(not_float_or_integer).should be_nil
+      Barometer::Data::Temperature.c_to_f(not_float_or_integer).should be_nil
+      Barometer::Data::Temperature.f_to_k(not_float_or_integer).should be_nil
+      Barometer::Data::Temperature.f_to_c(not_float_or_integer).should be_nil
+      Barometer::Data::Temperature.k_to_c(not_float_or_integer).should be_nil
+      Barometer::Data::Temperature.k_to_f(not_float_or_integer).should be_nil
     end
 
     it "converts C to K" do
       # 0 C = 273.15 K
-      Data::Temperature.c_to_k(@c).should == @k
+      Barometer::Data::Temperature.c_to_k(@c).should == @k
     end
 
     it "converts C to F" do
       # Tf = (9/5)*Tc+32
-      Data::Temperature.c_to_f(@c).should == @f
+      Barometer::Data::Temperature.c_to_f(@c).should == @f
     end
 
     it "converts F to C" do
       # Tc = (5/9)*(Tf-32)
-      Data::Temperature.f_to_c(@f).should == @c
+      Barometer::Data::Temperature.f_to_c(@f).should == @c
     end
 
     it "converts F to K" do
-      Data::Temperature.f_to_k(@f).should == @k
+      Barometer::Data::Temperature.f_to_k(@f).should == @k
     end
 
     it "converts K to C" do
-      Data::Temperature.k_to_c(@k).should == @c
+      Barometer::Data::Temperature.k_to_c(@k).should == @c
     end
 
     it "converts K to F" do
-      Data::Temperature.k_to_f(@k).should == @f
+      Barometer::Data::Temperature.k_to_f(@k).should == @f
     end
   end
 
   describe "updating" do
     before(:each) do
-      @temp = Data::Temperature.new
+      @temp = Barometer::Data::Temperature.new
       @f = 68.0
       @c = 20.0
     end
@@ -147,7 +147,7 @@ describe Data::Temperature do
 
   describe "storing" do
     before(:each) do
-      @temp = Data::Temperature.new
+      @temp = Barometer::Data::Temperature.new
       @f = 68.0
       @c = 20.0
       @k = 293.15
@@ -210,7 +210,7 @@ describe Data::Temperature do
 
   describe "retrieving" do
     before(:each) do
-      @temp = Data::Temperature.new
+      @temp = Barometer::Data::Temperature.new
       @f = 68.0
       @c = 20.0
       @k = 293.15
@@ -280,52 +280,52 @@ describe Data::Temperature do
       @f = 68.0
       @c = 20.0
       @k = 293.15
-      @temp_low = Data::Temperature.new
+      @temp_low = Barometer::Data::Temperature.new
       @temp_low.k = (@k - 1.0)
-      @temp_high = Data::Temperature.new
+      @temp_high = Barometer::Data::Temperature.new
       @temp_high.k = (@k + 1.0)
-      @temp = Data::Temperature.new
+      @temp = Barometer::Data::Temperature.new
       @temp.k = @k
-      @temp_same = Data::Temperature.new
+      @temp_same = Barometer::Data::Temperature.new
       @temp_same.k = @k
     end
 
     it "defines <=>" do
-      Data::Temperature.method_defined?("<=>").should be_true
+      Barometer::Data::Temperature.method_defined?("<=>").should be_true
       (@temp_low <=> @temp_high).should == -1
       (@temp_high <=> @temp_low).should == 1
       (@temp <=> @temp_same).should == 0
     end
 
     it "defines <" do
-      Data::Temperature.method_defined?("<").should be_true
+      Barometer::Data::Temperature.method_defined?("<").should be_true
       @temp_low.should < @temp_high
       @temp_high.should_not < @temp_low
       @temp.should_not < @temp_same
     end
 
     it "defines >" do
-      Data::Temperature.method_defined?(">").should be_true
+      Barometer::Data::Temperature.method_defined?(">").should be_true
       @temp_low.should_not > @temp_high
       @temp_high.should > @temp_low
       @temp.should_not > @temp_same
     end
 
     it "defines ==" do
-      Data::Temperature.method_defined?("==").should be_true
+      Barometer::Data::Temperature.method_defined?("==").should be_true
       @temp_low.should_not == @temp_high
       @temp.should == @temp_same
     end
 
     it "defines <=" do
-      Data::Temperature.method_defined?("<=").should be_true
+      Barometer::Data::Temperature.method_defined?("<=").should be_true
       @temp_low.should <= @temp_high
       @temp_high.should_not <= @temp_low
       @temp.should <= @temp_same
     end
 
     it "defines >=" do
-      Data::Temperature.method_defined?(">=").should be_true
+      Barometer::Data::Temperature.method_defined?(">=").should be_true
       @temp_low.should_not >= @temp_high
       @temp_high.should >= @temp_low
       @temp.should >= @temp_same
@@ -335,9 +335,9 @@ describe Data::Temperature do
   describe "changing units" do
     before(:each) do
       @c = 20.5
-      @f = Data::Temperature.c_to_f(@c)
-      @k = Data::Temperature.c_to_k(@c)
-      @temp = Data::Temperature.new
+      @f = Barometer::Data::Temperature.c_to_f(@c)
+      @k = Barometer::Data::Temperature.c_to_k(@c)
+      @temp = Barometer::Data::Temperature.new
       @temp.k = @k
     end
 
@@ -361,20 +361,20 @@ describe Data::Temperature do
 
     it "returns just the integer value with units" do
       @temp.metric?.should be_true
-      @temp.to_s.should == "#{@c.to_i} #{Data::Temperature::METRIC_UNITS}"
+      @temp.to_s.should == "#{@c.to_i} #{Barometer::Data::Temperature::METRIC_UNITS}"
 
       @temp.imperial!
       @temp.metric?.should be_false
-      @temp.to_s.should == "#{@f.to_i} #{Data::Temperature::IMPERIAL_UNITS}"
+      @temp.to_s.should == "#{@f.to_i} #{Barometer::Data::Temperature::IMPERIAL_UNITS}"
     end
 
     it "returns just the units" do
       @temp.metric?.should be_true
-      @temp.units.should == Data::Temperature::METRIC_UNITS
+      @temp.units.should == Barometer::Data::Temperature::METRIC_UNITS
 
       @temp.imperial!
       @temp.metric?.should be_false
-      @temp.units.should == Data::Temperature::IMPERIAL_UNITS
+      @temp.units.should == Barometer::Data::Temperature::IMPERIAL_UNITS
     end
   end
 

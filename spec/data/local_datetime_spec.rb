@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "Data::LocalDateTime" do
+describe Barometer::Data::LocalDateTime do
 
   before(:each) do
     @y = 2009
@@ -14,7 +14,7 @@ describe "Data::LocalDateTime" do
   describe "when initialized" do
 
     before(:each) do
-      @datetime = Data::LocalDateTime.new(@y,@mon,@d)
+      @datetime = Barometer::Data::LocalDateTime.new(@y,@mon,@d)
     end
 
     it "responds to hour" do
@@ -46,11 +46,11 @@ describe "Data::LocalDateTime" do
   describe "conversion" do
 
     before(:each) do
-      @datetime = Data::LocalDateTime.new(@y,@mon,@d,@h,@m,@s)
+      @datetime = Barometer::Data::LocalDateTime.new(@y,@mon,@d,@h,@m,@s)
     end
 
     it "converts to a DateTime object" do
-      @datetime.is_a?(Data::LocalDateTime)
+      @datetime.is_a?(Barometer::Data::LocalDateTime)
       datetime = @datetime.to_dt
       datetime.is_a?(DateTime).should be_true
       datetime.year.should == @y
@@ -62,7 +62,7 @@ describe "Data::LocalDateTime" do
     end
 
     it "converts to a Date object" do
-      @datetime.is_a?(Data::LocalDateTime)
+      @datetime.is_a?(Barometer::Data::LocalDateTime)
       date = @datetime.to_d
       date.is_a?(Date).should be_true
       date.year.should == @y
@@ -71,7 +71,7 @@ describe "Data::LocalDateTime" do
     end
 
     it "converts to a Time object" do
-      @datetime.is_a?(Data::LocalDateTime)
+      @datetime.is_a?(Barometer::Data::LocalDateTime)
       time = @datetime.to_t
       time.is_a?(Time).should be_true
       time.hour.should == @h
@@ -90,7 +90,7 @@ describe "Data::LocalDateTime" do
       @h = 12
       @m = 11
       @s = 10
-      @datetime = Data::LocalDateTime.new(@y,@mon,@d,@h,@m,@s)
+      @datetime = Barometer::Data::LocalDateTime.new(@y,@mon,@d,@h,@m,@s)
     end
 
     it "parses a Time object" do
@@ -136,7 +136,7 @@ describe "Data::LocalDateTime" do
 
     it "parses a String (using class method)" do
       string = "#{@y}-#{@mon}-#{@d} #{@h}:#{@m}:#{@s}"
-      datetime = Data::LocalDateTime.parse(string)
+      datetime = Barometer::Data::LocalDateTime.parse(string)
       datetime.year.should == @y
       datetime.month.should == @mon
       datetime.day.should == @d
@@ -147,7 +147,7 @@ describe "Data::LocalDateTime" do
 
     it "returns nil when string contains no date/time info" do
       string = "Last Updated on , "
-      datetime = Data::LocalDateTime.parse(string)
+      datetime = Barometer::Data::LocalDateTime.parse(string)
       datetime.should be_nil
     end
   end
@@ -155,7 +155,7 @@ describe "Data::LocalDateTime" do
   describe "storing" do
 
     before(:each) do
-      @datetime = Data::LocalDateTime.new(@y,@mon,@d,@h,@m,@s)
+      @datetime = Barometer::Data::LocalDateTime.new(@y,@mon,@d,@h,@m,@s)
     end
 
     it "requires Fixnum (accepts nil)" do
@@ -173,10 +173,10 @@ describe "Data::LocalDateTime" do
     end
 
     it "rejects invalid dates during init" do
-      lambda { Data::LocalDateTime.new(2009,0,1) }.should raise_error(ArgumentError)
-      lambda { Data::LocalDateTime.new(2009,1,0) }.should raise_error(ArgumentError)
-      lambda { Data::LocalDateTime.new(2009,13,1) }.should raise_error(ArgumentError)
-      lambda { Data::LocalDateTime.new(2009,1,32) }.should raise_error(ArgumentError)
+      lambda { Barometer::Data::LocalDateTime.new(2009,0,1) }.should raise_error(ArgumentError)
+      lambda { Barometer::Data::LocalDateTime.new(2009,1,0) }.should raise_error(ArgumentError)
+      lambda { Barometer::Data::LocalDateTime.new(2009,13,1) }.should raise_error(ArgumentError)
+      lambda { Barometer::Data::LocalDateTime.new(2009,1,32) }.should raise_error(ArgumentError)
     end
 
     it "rejects invalid days" do
@@ -203,7 +203,7 @@ describe "Data::LocalDateTime" do
     describe "retrieving" do
 
       before(:each) do
-        @datetime = Data::LocalDateTime.new(@y,@mon,@d,@h,@m,@s)
+        @datetime = Barometer::Data::LocalDateTime.new(@y,@mon,@d,@h,@m,@s)
       end
 
       it "returns pretty string" do
@@ -216,19 +216,19 @@ describe "Data::LocalDateTime" do
   describe "comparators" do
 
     before(:each) do
-      @datetime_low = Data::LocalDateTime.new(2009,5,4,0,0,1)
-      @datetime_mid = Data::LocalDateTime.new(2009,5,5,12,0,0)
-      @datetime_high = Data::LocalDateTime.new(2009,5,6,23,59,59)
+      @datetime_low = Barometer::Data::LocalDateTime.new(2009,5,4,0,0,1)
+      @datetime_mid = Barometer::Data::LocalDateTime.new(2009,5,5,12,0,0)
+      @datetime_high = Barometer::Data::LocalDateTime.new(2009,5,6,23,59,59)
     end
 
     it "counts days" do
-      Data::LocalDateTime.new(0,1,1,0,0,0)._total_days.should == 1
-      Data::LocalDateTime.new(0,2,1,0,0,0)._total_days.should == 32
-      Data::LocalDateTime.new(1,1,1,0,0,0)._total_days.should == 367
+      Barometer::Data::LocalDateTime.new(0,1,1,0,0,0)._total_days.should == 1
+      Barometer::Data::LocalDateTime.new(0,2,1,0,0,0)._total_days.should == 32
+      Barometer::Data::LocalDateTime.new(1,1,1,0,0,0)._total_days.should == 367
     end
 
     it "defines <=>" do
-      Data::LocalDateTime.method_defined?("<=>").should be_true
+      Barometer::Data::LocalDateTime.method_defined?("<=>").should be_true
       (@datetime_low <=> @datetime_high).should == -1
       (@datetime_high <=> @datetime_low).should == 1
       (@datetime_mid <=> @datetime_mid).should == 0
@@ -262,8 +262,8 @@ describe "Data::LocalDateTime" do
       (@datetime_mid <=> time).should == 0
     end
 
-    it "compares to a Data::LocalTime object" do
-      local_time = Data::LocalTime.new(12,0,0)
+    it "compares to a Barometer::Data::LocalTime object" do
+      local_time = Barometer::Data::LocalTime.new(12,0,0)
       (@datetime_low <=> local_time).should == -1
       (@datetime_high <=> local_time).should == 1
       (@datetime_mid <=> local_time).should == 0

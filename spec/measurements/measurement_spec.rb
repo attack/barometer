@@ -13,7 +13,7 @@ describe Barometer::Measurement do
     it { should have_field(:query).of_type(String) }
     it { should have_field(:weight).of_type(Integer) }
     it { should have_field(:status_code).of_type(Integer) }
-    it { should have_field(:published_at).of_type(Data::LocalDateTime) }
+    it { should have_field(:published_at).of_type(Barometer::Data::LocalDateTime) }
   end
 
   describe "#success?" do
@@ -100,9 +100,9 @@ describe Barometer::Measurement do
       @measurement.for(@tommorrow).should == @measurement.forecast.first
     end
 
-    it "finds the date using Data::LocalDateTime" do
-      tommorrow = Data::LocalDateTime.parse(@tommorrow.to_s)
-      tommorrow.class.should == Data::LocalDateTime
+    it "finds the date using Barometer::Data::LocalDateTime" do
+      tommorrow = Barometer::Data::LocalDateTime.parse(@tommorrow.to_s)
+      tommorrow.class.should == Barometer::Data::LocalDateTime
       @measurement.for(tommorrow).should == @measurement.forecast.first
     end
 

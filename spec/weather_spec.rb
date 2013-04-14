@@ -108,21 +108,21 @@ describe Barometer::Weather do
     end
 
     it "doesn't include nil values" do
-      @weather.source(:wunderground).current.temperature = Data::Temperature.new
+      @weather.source(:wunderground).current.temperature = Barometer::Data::Temperature.new
       @weather.source(:wunderground).current.temperature.c = 10
 
       @weather.temperature.c.should == 10
 
-      @weather.source(:yahoo).current.temperature = Data::Temperature.new
+      @weather.source(:yahoo).current.temperature = Barometer::Data::Temperature.new
       @weather.source(:yahoo).current.temperature.c = nil
 
       @weather.temperature.c.should == 10
     end
 
     it "respects the measurement weight" do
-      @weather.source(:wunderground).current.temperature = Data::Temperature.new
+      @weather.source(:wunderground).current.temperature = Barometer::Data::Temperature.new
       @weather.source(:wunderground).current.temperature.c = 10
-      @weather.source(:yahoo).current.temperature = Data::Temperature.new
+      @weather.source(:yahoo).current.temperature = Barometer::Data::Temperature.new
       @weather.source(:yahoo).current.temperature.c = 4
 
       @weather.measurements.first.weight = 2
@@ -132,9 +132,9 @@ describe Barometer::Weather do
 
     describe "for temperature" do
       before(:each) do
-        @weather.source(:wunderground).current.temperature = Data::Temperature.new
+        @weather.source(:wunderground).current.temperature = Barometer::Data::Temperature.new
         @weather.source(:wunderground).current.temperature.c = 10
-        @weather.source(:yahoo).current.temperature = Data::Temperature.new
+        @weather.source(:yahoo).current.temperature = Barometer::Data::Temperature.new
         @weather.source(:yahoo).current.temperature.c = 6
       end
 
@@ -181,9 +181,9 @@ describe Barometer::Weather do
 
     describe "for pressure" do
       before(:each) do
-        @weather.source(:wunderground).current.pressure = Data::Pressure.new
+        @weather.source(:wunderground).current.pressure = Barometer::Data::Pressure.new
         @weather.source(:wunderground).current.pressure.mb = 10
-        @weather.source(:yahoo).current.pressure = Data::Pressure.new
+        @weather.source(:yahoo).current.pressure = Barometer::Data::Pressure.new
         @weather.source(:yahoo).current.pressure.mb = 6
       end
 
@@ -198,9 +198,9 @@ describe Barometer::Weather do
 
     describe "for dew_point" do
       before(:each) do
-        @weather.source(:wunderground).current.dew_point = Data::Temperature.new
+        @weather.source(:wunderground).current.dew_point = Barometer::Data::Temperature.new
         @weather.source(:wunderground).current.dew_point.c = 10
-        @weather.source(:yahoo).current.dew_point = Data::Temperature.new
+        @weather.source(:yahoo).current.dew_point = Barometer::Data::Temperature.new
         @weather.source(:yahoo).current.dew_point.c = 6
       end
 
@@ -215,9 +215,9 @@ describe Barometer::Weather do
 
     describe "for heat_index" do
       before(:each) do
-        @weather.source(:wunderground).current.heat_index = Data::Temperature.new
+        @weather.source(:wunderground).current.heat_index = Barometer::Data::Temperature.new
         @weather.source(:wunderground).current.heat_index.c = 10
-        @weather.source(:yahoo).current.heat_index = Data::Temperature.new
+        @weather.source(:yahoo).current.heat_index = Barometer::Data::Temperature.new
         @weather.source(:yahoo).current.heat_index.c = 6
       end
 
@@ -232,9 +232,9 @@ describe Barometer::Weather do
 
     describe "for wind_chill" do
       before(:each) do
-        @weather.source(:wunderground).current.wind_chill = Data::Temperature.new
+        @weather.source(:wunderground).current.wind_chill = Barometer::Data::Temperature.new
         @weather.source(:wunderground).current.wind_chill.c = 10
-        @weather.source(:yahoo).current.wind_chill = Data::Temperature.new
+        @weather.source(:yahoo).current.wind_chill = Barometer::Data::Temperature.new
         @weather.source(:yahoo).current.wind_chill.c = 6
       end
 
@@ -249,9 +249,9 @@ describe Barometer::Weather do
 
     describe "for visibility" do
       before(:each) do
-        @weather.source(:wunderground).current.visibility = Data::Distance.new
+        @weather.source(:wunderground).current.visibility = Barometer::Data::Distance.new
         @weather.source(:wunderground).current.visibility.km = 10
-        @weather.source(:yahoo).current.visibility = Data::Distance.new
+        @weather.source(:yahoo).current.visibility = Barometer::Data::Distance.new
         @weather.source(:yahoo).current.visibility.km = 6
       end
 

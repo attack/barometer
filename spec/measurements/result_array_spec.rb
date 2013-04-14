@@ -72,8 +72,8 @@ describe Barometer::Measurement::ResultArray do
         subject.for(as_time).should == subject[1]
       end
 
-      it "finds the date using Data::LocalDateTime" do
-        local_datetime = Data::LocalDateTime.parse(tommorrow.to_s)
+      it "finds the date using Barometer::Data::LocalDateTime" do
+        local_datetime = Barometer::Data::LocalDateTime.parse(tommorrow.to_s)
         subject.for(local_datetime).should == subject[1]
       end
 

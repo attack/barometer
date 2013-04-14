@@ -1,17 +1,17 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "Data::Zone" do
+describe Barometer::Data::Zone do
 
   # describe "and class methods" do
   #
   #   it "responds to now and returns Time object" do
-  #     Data::Zone.respond_to?("now").should be_true
-  #     Data::Zone.now.is_a?(Time).should be_true
+  #     Barometer::Data::Zone.respond_to?("now").should be_true
+  #     Barometer::Data::Zone.now.is_a?(Time).should be_true
   #   end
   #
   #   it "responds to today and returns Date object" do
-  #     Data::Zone.respond_to?("today").should be_true
-  #     Data::Zone.today.is_a?(Date).should be_true
+  #     Barometer::Data::Zone.respond_to?("today").should be_true
+  #     Barometer::Data::Zone.today.is_a?(Date).should be_true
   #   end
   #
   # end
@@ -23,7 +23,7 @@ describe "Data::Zone" do
       before(:each) do
         @utc = Time.now.utc
         @timezone = "Europe/Paris"
-        @zone = Data::Zone.new(@timezone)
+        @zone = Barometer::Data::Zone.new(@timezone)
       end
 
       it "responds to zone_full" do
@@ -40,31 +40,31 @@ describe "Data::Zone" do
       end
 
       it "responds to tz" do
-        lambda { Data::Zone.new("invalid timezone") }.should raise_error(ArgumentError)
+        lambda { Barometer::Data::Zone.new("invalid timezone") }.should raise_error(ArgumentError)
 
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.tz.should_not be_nil
       end
 
       it "responds to full" do
         @zone.respond_to?("full").should be_true
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.tz = nil
         zone.tz.should be_nil
         zone.full.should == @timezone
 
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.full.should == @timezone
       end
 
       it "responds to code" do
         @zone.respond_to?("code").should be_true
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.tz = nil
         zone.tz.should be_nil
         zone.code.should be_nil
 
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         # the expected result of this depends on the time of year
         # when summer expect "CEST", otherwise "CET"
         # just let TZINFO handle this
@@ -73,7 +73,7 @@ describe "Data::Zone" do
 
       it "responds to dst?" do
         @zone.respond_to?("dst?").should be_true
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.tz = nil
         zone.tz.should be_nil
         zone.dst?.should be_nil
@@ -131,7 +131,7 @@ describe "Data::Zone" do
       before(:each) do
         @utc = Time.now.utc
         @timezone = "EAST"
-        @zone = Data::Zone.new(@timezone)
+        @zone = Barometer::Data::Zone.new(@timezone)
       end
 
       it "responds to zone_code" do
@@ -148,29 +148,29 @@ describe "Data::Zone" do
       end
 
       it "responds to tz" do
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.tz.should be_nil
       end
 
       it "responds to code" do
         @zone.respond_to?("code").should be_true
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.tz = nil
         zone.tz.should be_nil
         zone.code.should == @timezone
 
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.code.should == @timezone
       end
 
       it "responds to full" do
         @zone.respond_to?("full").should be_true
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.tz = nil
         zone.tz.should be_nil
         zone.full.should be_nil
 
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.full.should be_nil
       end
 
@@ -232,7 +232,7 @@ describe "Data::Zone" do
       before(:each) do
         @utc = Time.now.utc
         @timezone = 8.5
-        @zone = Data::Zone.new(@timezone)
+        @zone = Barometer::Data::Zone.new(@timezone)
       end
 
       it "responds to zone_offset" do
@@ -249,40 +249,40 @@ describe "Data::Zone" do
       end
 
       it "responds to tz" do
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.tz.should be_nil
       end
 
       it "responds to offset" do
         @zone.respond_to?("offset").should be_true
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.tz = nil
         zone.tz.should be_nil
         zone.offset.should == (@timezone * 60 * 60)
 
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.offset.should == (@timezone * 60 * 60)
       end
 
       it "responds to full" do
         @zone.respond_to?("full").should be_true
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.tz = nil
         zone.tz.should be_nil
         zone.full.should be_nil
 
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.full.should be_nil
       end
 
       it "responds to code" do
         @zone.respond_to?("code").should be_true
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.tz = nil
         zone.tz.should be_nil
         zone.code.should be_nil
 
-        zone = Data::Zone.new(@timezone)
+        zone = Barometer::Data::Zone.new(@timezone)
         zone.code.should be_nil
       end
 
@@ -344,21 +344,21 @@ describe "Data::Zone" do
   describe "when detecting zones" do
 
     it "recognozes a full time zone format" do
-      Data::Zone.is_zone_full?("invalid").should be_false
-      Data::Zone.is_zone_full?("America/New York").should be_true
+      Barometer::Data::Zone.is_zone_full?("invalid").should be_false
+      Barometer::Data::Zone.is_zone_full?("America/New York").should be_true
     end
 
     it "matches a zone offset" do
-      Data::Zone.is_zone_offset?("invalid").should be_false
-      Data::Zone.is_zone_offset?("MST").should be_false
-      Data::Zone.is_zone_offset?("10").should be_false
-      Data::Zone.is_zone_offset?(-10).should be_true
+      Barometer::Data::Zone.is_zone_offset?("invalid").should be_false
+      Barometer::Data::Zone.is_zone_offset?("MST").should be_false
+      Barometer::Data::Zone.is_zone_offset?("10").should be_false
+      Barometer::Data::Zone.is_zone_offset?(-10).should be_true
     end
 
     it "matches a zone code" do
-      Data::Zone.is_zone_code?("invalid").should be_false
-      Data::Zone.is_zone_code?("MST").should be_true
-      Data::Zone.is_zone_code?("EAST").should be_true
+      Barometer::Data::Zone.is_zone_code?("invalid").should be_false
+      Barometer::Data::Zone.is_zone_code?("MST").should be_true
+      Barometer::Data::Zone.is_zone_code?("EAST").should be_true
     end
 
   end

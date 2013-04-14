@@ -1,21 +1,21 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "Data::Distance" do
+describe Barometer::Data::Distance do
 
   describe "when initialized" do
 
     it "defines METRIC_UNITS" do
-      Data::Distance.const_defined?("METRIC_UNITS").should be_true
-      Data::Distance::METRIC_UNITS.should == "km"
+      Barometer::Data::Distance.const_defined?("METRIC_UNITS").should be_true
+      Barometer::Data::Distance::METRIC_UNITS.should == "km"
     end
 
     it "defines IMPERIAL_UNITS" do
-      Data::Distance.const_defined?("IMPERIAL_UNITS").should be_true
-      Data::Distance::IMPERIAL_UNITS.should == "m"
+      Barometer::Data::Distance.const_defined?("IMPERIAL_UNITS").should be_true
+      Barometer::Data::Distance::IMPERIAL_UNITS.should == "m"
     end
 
     before(:each) do
-      @distance = Data::Distance.new
+      @distance = Barometer::Data::Distance.new
     end
 
     it "responds to kilometers" do
@@ -52,20 +52,20 @@ describe "Data::Distance" do
     end
 
     it "requires a value, that is either Integer or Float" do
-      Data::Distance.km_to_m(nil).should be_nil
-      Data::Distance.m_to_km(nil).should be_nil
+      Barometer::Data::Distance.km_to_m(nil).should be_nil
+      Barometer::Data::Distance.m_to_km(nil).should be_nil
 
       not_float_or_integer = "string"
-      Data::Distance.km_to_m(not_float_or_integer).should be_nil
-      Data::Distance.m_to_km(not_float_or_integer).should be_nil
+      Barometer::Data::Distance.km_to_m(not_float_or_integer).should be_nil
+      Barometer::Data::Distance.m_to_km(not_float_or_integer).should be_nil
     end
 
     it "converts KM to M" do
-      ((Data::Distance.km_to_m(@km)*10).round/10.0).should == @m
+      ((Barometer::Data::Distance.km_to_m(@km)*10).round/10.0).should == @m
     end
 
     it "converts M to KM" do
-      ((Data::Distance.m_to_km(@m)*10).round/10.0).should == @km
+      ((Barometer::Data::Distance.m_to_km(@m)*10).round/10.0).should == @km
     end
 
   end
@@ -73,7 +73,7 @@ describe "Data::Distance" do
   describe "updating" do
 
     before(:each) do
-      @distance = Data::Distance.new
+      @distance = Barometer::Data::Distance.new
       @m = 26.2
       @km = 42.2
     end
@@ -123,7 +123,7 @@ describe "Data::Distance" do
   describe "storing" do
 
     before(:each) do
-      @distance = Data::Distance.new
+      @distance = Barometer::Data::Distance.new
       @m = 26.2
       @km = 42.2
     end
@@ -165,7 +165,7 @@ describe "Data::Distance" do
   describe "retrieving" do
 
     before(:each) do
-      @distance = Data::Distance.new
+      @distance = Barometer::Data::Distance.new
       @m = 26.2
       @km = 42.16
     end
@@ -233,52 +233,52 @@ describe "Data::Distance" do
     before(:each) do
       @m = 26.2
       @km = 42.16
-      @distance_low = Data::Distance.new
+      @distance_low = Barometer::Data::Distance.new
       @distance_low.km = (@m - 1.0)
-      @distance_high = Data::Distance.new
+      @distance_high = Barometer::Data::Distance.new
       @distance_high.km = (@km + 1.0)
-      @distance = Data::Distance.new
+      @distance = Barometer::Data::Distance.new
       @distance.km = @km
-      @distance_same = Data::Distance.new
+      @distance_same = Barometer::Data::Distance.new
       @distance_same.km = @km
     end
 
     it "defines <=>" do
-      Data::Distance.method_defined?("<=>").should be_true
+      Barometer::Data::Distance.method_defined?("<=>").should be_true
       (@distance_low <=> @distance_high).should == -1
       (@distance_high <=> @distance_low).should == 1
       (@distance <=> @distance_same).should == 0
     end
 
     it "defines <" do
-      Data::Distance.method_defined?("<").should be_true
+      Barometer::Data::Distance.method_defined?("<").should be_true
       @distance_low.should < @distance_high
       @distance_high.should_not < @distance_low
       @distance.should_not < @distance_same
     end
 
     it "defines >" do
-      Data::Distance.method_defined?(">").should be_true
+      Barometer::Data::Distance.method_defined?(">").should be_true
       @distance_low.should_not > @distance_high
       @distance_high.should > @distance_low
       @distance.should_not > @distance_same
     end
 
     it "defines ==" do
-      Data::Distance.method_defined?("==").should be_true
+      Barometer::Data::Distance.method_defined?("==").should be_true
       @distance_low.should_not == @distance_high
       @distance.should == @distance_same
     end
 
     it "defines <=" do
-      Data::Distance.method_defined?("<=").should be_true
+      Barometer::Data::Distance.method_defined?("<=").should be_true
       @distance_low.should <= @distance_high
       @distance_high.should_not <= @distance_low
       @distance.should <= @distance_same
     end
 
     it "defines >=" do
-      Data::Distance.method_defined?(">=").should be_true
+      Barometer::Data::Distance.method_defined?(">=").should be_true
       @distance_low.should_not >= @distance_high
       @distance_high.should >= @distance_low
       @distance.should >= @distance_same
@@ -291,7 +291,7 @@ describe "Data::Distance" do
     before(:each) do
       @m = 26.2
       @km = 42.16
-      @distance = Data::Distance.new
+      @distance = Barometer::Data::Distance.new
       @distance.km = @km
     end
 
@@ -315,20 +315,20 @@ describe "Data::Distance" do
 
     it "returns just the integer value with units" do
       @distance.metric?.should be_true
-      @distance.to_s.should == "#{@km.to_i} #{Data::Distance::METRIC_UNITS}"
+      @distance.to_s.should == "#{@km.to_i} #{Barometer::Data::Distance::METRIC_UNITS}"
 
       @distance.imperial!
       @distance.metric?.should be_false
-      @distance.to_s.should == "#{@m.to_i} #{Data::Distance::IMPERIAL_UNITS}"
+      @distance.to_s.should == "#{@m.to_i} #{Barometer::Data::Distance::IMPERIAL_UNITS}"
     end
 
     it "returns just the units" do
       @distance.metric?.should be_true
-      @distance.units.should == Data::Distance::METRIC_UNITS
+      @distance.units.should == Barometer::Data::Distance::METRIC_UNITS
 
       @distance.imperial!
       @distance.metric?.should be_false
-      @distance.units.should == Data::Distance::IMPERIAL_UNITS
+      @distance.units.should == Barometer::Data::Distance::IMPERIAL_UNITS
     end
 
   end

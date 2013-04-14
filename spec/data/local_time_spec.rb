@@ -1,11 +1,11 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe "Data::LocalTime" do
+describe Barometer::Data::LocalTime do
 
   describe "when initialized" do
 
     before(:each) do
-      @time = Data::LocalTime.new
+      @time = Barometer::Data::LocalTime.new
     end
 
     it "responds to hour" do
@@ -28,11 +28,11 @@ describe "Data::LocalTime" do
       @h = 12
       @m = 11
       @s = 10
-      @time = Data::LocalTime.new(@h,@m,@s)
+      @time = Barometer::Data::LocalTime.new(@h,@m,@s)
     end
 
     it "converts to a Time object" do
-      @time.is_a?(Data::LocalTime)
+      @time.is_a?(Barometer::Data::LocalTime)
       @time.to_t.is_a?(Time).should be_true
       @time.hour.should == @h
       @time.min.should == @m
@@ -47,7 +47,7 @@ describe "Data::LocalTime" do
       @h = 12
       @m = 11
       @s = 10
-      @time = Data::LocalTime.new(@h,@m,@s)
+      @time = Barometer::Data::LocalTime.new(@h,@m,@s)
     end
 
     it "parses a Time object" do
@@ -76,7 +76,7 @@ describe "Data::LocalTime" do
 
     it "parses a String (using class method)" do
       time = "#{@h}:#{@m}:#{@s}"
-      time = Data::LocalTime.parse(time)
+      time = Barometer::Data::LocalTime.parse(time)
       time.hour.should == @h
       time.min.should == @m
       time.sec.should == @s
@@ -90,7 +90,7 @@ describe "Data::LocalTime" do
       @h = 12
       @m = 11
       @s = 10
-      @time = Data::LocalTime.new(@h,@m,@s)
+      @time = Barometer::Data::LocalTime.new(@h,@m,@s)
     end
 
     it "requires Fixnum (accepts nil)" do
@@ -108,33 +108,33 @@ describe "Data::LocalTime" do
     end
 
     it "rolls over seconds" do
-      time = Data::LocalTime.new(0,0,60)
+      time = Barometer::Data::LocalTime.new(0,0,60)
       time.sec.should == 0
       time.min.should == 1
     end
 
     it "rolls over minutes" do
-      time = Data::LocalTime.new(0,60,0)
+      time = Barometer::Data::LocalTime.new(0,60,0)
       time.min.should == 0
       time.hour.should == 1
     end
 
     it "rolls over hours" do
-      time = Data::LocalTime.new(24,0,0)
+      time = Barometer::Data::LocalTime.new(24,0,0)
       time.sec.should == 0
       time.min.should == 0
       time.hour.should == 0
     end
 
     it "rolls over everything" do
-      time = Data::LocalTime.new(50,600,601)
+      time = Barometer::Data::LocalTime.new(50,600,601)
       time.sec.should == 1
       time.min.should == 10
       time.hour.should == 12
     end
 
     it "add seconds" do
-      time = Data::LocalTime.new(0,0,0)
+      time = Barometer::Data::LocalTime.new(0,0,0)
       time = time + 61
       time.sec.should == 1
       time.min.should == 1
@@ -148,7 +148,7 @@ describe "Data::LocalTime" do
       @h = 6
       @m = 30
       @s = 20
-      @time = Data::LocalTime.new(@h,@m,@s)
+      @time = Barometer::Data::LocalTime.new(@h,@m,@s)
     end
 
     it "returns pretty string" do
@@ -161,13 +161,13 @@ describe "Data::LocalTime" do
   describe "comparators" do
 
     before(:each) do
-      @time_low = Data::LocalTime.new(0,0,1)
-      @time_mid = Data::LocalTime.new(12,0,0)
-      @time_high = Data::LocalTime.new(23,59,59)
+      @time_low = Barometer::Data::LocalTime.new(0,0,1)
+      @time_mid = Barometer::Data::LocalTime.new(12,0,0)
+      @time_high = Barometer::Data::LocalTime.new(23,59,59)
     end
 
     it "defines <=>" do
-      Data::LocalTime.method_defined?("<=>").should be_true
+      Barometer::Data::LocalTime.method_defined?("<=>").should be_true
       (@time_low <=> @time_high).should == -1
       (@time_high <=> @time_low).should == 1
       (@time_mid <=> @time_mid).should == 0
@@ -199,39 +199,39 @@ describe "Data::LocalTime" do
   describe "math" do
 
     it "counts the total seconds" do
-      Data::LocalTime.new(0,0,1).total_seconds.should == 1
-      Data::LocalTime.new(0,1,0).total_seconds.should == (1*60)
-      Data::LocalTime.new(1,0,0).total_seconds.should == (1*60*60)
+      Barometer::Data::LocalTime.new(0,0,1).total_seconds.should == 1
+      Barometer::Data::LocalTime.new(0,1,0).total_seconds.should == (1*60)
+      Barometer::Data::LocalTime.new(1,0,0).total_seconds.should == (1*60*60)
     end
 
     it "provides a difference" do
-      a = Data::LocalTime.new(0,0,1)
-      b = Data::LocalTime.new(1,0,0)
+      a = Barometer::Data::LocalTime.new(0,0,1)
+      b = Barometer::Data::LocalTime.new(1,0,0)
       diff = (1*60*60) - 1
       a.diff(b).should == diff
       b.diff(a).should == diff
     end
 
     it "adds time" do
-      a = Data::LocalTime.new(0,0,1)
-      b = Data::LocalTime.new(1,0,0)
+      a = Barometer::Data::LocalTime.new(0,0,1)
+      b = Barometer::Data::LocalTime.new(1,0,0)
       c = (a + b)
-      c.is_a?(Data::LocalTime).should be_true
-      c.should == Data::LocalTime.new(1,0,1)
+      c.is_a?(Barometer::Data::LocalTime).should be_true
+      c.should == Barometer::Data::LocalTime.new(1,0,1)
 
-      b = Data::LocalTime.new(1,0,0)
-      (b + 1).should == Data::LocalTime.new(1,0,1)
+      b = Barometer::Data::LocalTime.new(1,0,0)
+      (b + 1).should == Barometer::Data::LocalTime.new(1,0,1)
     end
 
     it "subtracts time" do
-      a = Data::LocalTime.new(0,0,1)
-      b = Data::LocalTime.new(1,0,0)
+      a = Barometer::Data::LocalTime.new(0,0,1)
+      b = Barometer::Data::LocalTime.new(1,0,0)
       c = (b - a)
-      c.is_a?(Data::LocalTime).should be_true
-      c.should == Data::LocalTime.new(0,59,59)
+      c.is_a?(Barometer::Data::LocalTime).should be_true
+      c.should == Barometer::Data::LocalTime.new(0,59,59)
 
-      b = Data::LocalTime.new(1,0,0)
-      (b - 1).should == Data::LocalTime.new(0,59,59)
+      b = Barometer::Data::LocalTime.new(1,0,0)
+      (b - 1).should == Barometer::Data::LocalTime.new(0,59,59)
     end
 
   end

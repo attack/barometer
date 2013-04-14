@@ -1,29 +1,29 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Data::Sun do
-  let(:local_time_set) { Data::LocalTime.new.parse(Time.now + (60*60*8)) }
-  let(:local_time_rise) { Data::LocalTime.new.parse(Time.now) }
+describe Barometer::Data::Sun do
+  let(:local_time_set) { Barometer::Data::LocalTime.new.parse(Time.now + (60*60*8)) }
+  let(:local_time_rise) { Barometer::Data::LocalTime.new.parse(Time.now) }
 
   describe "#new" do
     it "sets the sunrise" do
-      subject = Data::Sun.new(local_time_rise)
+      subject = Barometer::Data::Sun.new(local_time_rise)
       subject.rise.should == local_time_rise
     end
 
     it "sets the sunset" do
-      subject = Data::Sun.new(nil, local_time_set)
+      subject = Barometer::Data::Sun.new(nil, local_time_set)
       subject.set.should == local_time_set
     end
 
     it "raises an error if sunrise is invalid" do
       expect {
-        Data::Sun.new("", local_time_set)
+        Barometer::Data::Sun.new("", local_time_set)
       }.to raise_error ArgumentError
     end
 
     it "raises an error if sunset is invalid" do
       expect {
-        Data::Sun.new(local_time_rise, "")
+        Barometer::Data::Sun.new(local_time_rise, "")
       }.to raise_error ArgumentError
     end
   end
@@ -46,9 +46,9 @@ describe Data::Sun do
 
   describe "comparisons" do
     let(:now) { Time.local(2009,5,5,11,40,00) }
-    let(:early_time) { Data::LocalTime.new.parse(now - (60*60*8)) }
-    let(:mid_time) { Data::LocalTime.new.parse(now) }
-    let(:late_time) { Data::LocalTime.new.parse(now + (60*60*8)) }
+    let(:early_time) { Barometer::Data::LocalTime.new.parse(now - (60*60*8)) }
+    let(:mid_time) { Barometer::Data::LocalTime.new.parse(now) }
+    let(:late_time) { Barometer::Data::LocalTime.new.parse(now + (60*60*8)) }
 
     describe "#after_rise?" do
       it "requires a LocalTime object" do
@@ -58,12 +58,12 @@ describe Data::Sun do
       end
 
       it "returns true when after sun rise" do
-        subject = Data::Sun.new(early_time, late_time)
+        subject = Barometer::Data::Sun.new(early_time, late_time)
         subject.after_rise?(mid_time).should be_true
       end
 
       it "returns false when before sun rise" do
-        subject = Data::Sun.new(mid_time, late_time)
+        subject = Barometer::Data::Sun.new(mid_time, late_time)
         subject.after_rise?(early_time).should be_false
       end
     end
@@ -76,19 +76,19 @@ describe Data::Sun do
       end
 
       it "returns true when before sun set" do
-        subject = Data::Sun.new(early_time, late_time)
+        subject = Barometer::Data::Sun.new(early_time, late_time)
         subject.before_set?(mid_time).should be_true
       end
 
       it "returns false when before sun set" do
-        subject = Data::Sun.new(early_time, mid_time)
+        subject = Barometer::Data::Sun.new(early_time, mid_time)
         subject.before_set?(late_time).should be_false
       end
     end
   end
 
   describe "#rise=" do
-    it "requires Data::LocalTime" do
+    it "requires Barometer::Data::LocalTime" do
       expect {
         subject.rise = ""
       }.to raise_error(ArgumentError)
@@ -107,7 +107,7 @@ describe Data::Sun do
   end
 
   describe "#set=" do
-    it "requires Data::LocalTime" do
+    it "requires Barometer::Data::LocalTime" do
       expect {
         subject.set = ""
       }.to raise_error(ArgumentError)

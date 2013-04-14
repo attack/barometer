@@ -83,9 +83,9 @@ describe Barometer::DataTypes do
     end
 
     context "when setting with data of exact values" do
-      it "initializes Data::Temperature" do
+      it "initializes Barometer::Data::Temperature" do
         subject.temperature = 12
-        subject.temperature.should be_a(Data::Temperature)
+        subject.temperature.should be_a(Barometer::Data::Temperature)
       end
 
       it "prints correctly" do
@@ -100,21 +100,21 @@ describe Barometer::DataTypes do
       end
     end
 
-    context "when setting with Data::Temperature" do
+    context "when setting with Barometer::Data::Temperature" do
       it "uses the passed in value" do
-        temperature = Data::Temperature.new
+        temperature = Barometer::Data::Temperature.new
         temperature << 12
         subject.temperature = temperature
-        subject.temperature.should be_a(Data::Temperature)
+        subject.temperature.should be_a(Barometer::Data::Temperature)
         subject.temperature.should == temperature
         subject.temperature.object_id.should == temperature.object_id
       end
     end
 
     context "when setting to multiple values" do
-      it "initializes Data::Temperature" do
+      it "initializes Barometer::Data::Temperature" do
         subject.temperature << [12, 53]
-        subject.temperature.should be_a(Data::Temperature)
+        subject.temperature.should be_a(Barometer::Data::Temperature)
       end
 
       it "prints correctly (as metric)" do
@@ -242,9 +242,9 @@ describe Barometer::DataTypes do
     end
 
     context "when setting with data of exact values" do
-      it "initializes Data::Pressure" do
+      it "initializes Barometer::Data::Pressure" do
         subject.pressure = 12
-        subject.pressure.should be_a(Data::Pressure)
+        subject.pressure.should be_a(Barometer::Data::Pressure)
       end
 
       it "prints correctly" do
@@ -260,9 +260,9 @@ describe Barometer::DataTypes do
     end
 
     context "when setting to multiple values" do
-      it "initializes Data::Pressure" do
+      it "initializes Barometer::Data::Pressure" do
         subject.pressure << [1234, 36]
-        subject.pressure.should be_a(Data::Pressure)
+        subject.pressure.should be_a(Barometer::Data::Pressure)
       end
 
       it "prints correctly (as metric)" do
@@ -277,12 +277,12 @@ describe Barometer::DataTypes do
       end
     end
 
-    context "when setting with Data::Pressure" do
+    context "when setting with Barometer::Data::Pressure" do
       it "uses the passed in value" do
-        pressure = Data::Pressure.new
+        pressure = Barometer::Data::Pressure.new
         pressure << 12
         subject.pressure = pressure
-        subject.pressure.should be_a(Data::Pressure)
+        subject.pressure.should be_a(Barometer::Data::Pressure)
         subject.pressure.should == pressure
         subject.pressure.object_id.should == pressure.object_id
       end
@@ -312,9 +312,9 @@ describe Barometer::DataTypes do
     end
 
     context "when setting with data of exact values" do
-      it "initializes Data::Distance" do
+      it "initializes Barometer::Data::Distance" do
         subject.distance = 12
-        subject.distance.should be_a(Data::Distance)
+        subject.distance.should be_a(Barometer::Data::Distance)
       end
 
       it "prints correctly" do
@@ -330,9 +330,9 @@ describe Barometer::DataTypes do
     end
 
     context "when setting to multiple values" do
-      it "initializes Data::Distance" do
+      it "initializes Barometer::Data::Distance" do
         subject.distance << [20, 12]
-        subject.distance.should be_a(Data::Distance)
+        subject.distance.should be_a(Barometer::Data::Distance)
       end
 
       it "prints correctly (as metric)" do
@@ -347,12 +347,12 @@ describe Barometer::DataTypes do
       end
     end
 
-    context "when setting with Data::Distance" do
+    context "when setting with Barometer::Data::Distance" do
       it "uses the passed in value" do
-        distance = Data::Distance.new
+        distance = Barometer::Data::Distance.new
         distance << 12
         subject.distance = distance
-        subject.distance.should be_a(Data::Distance)
+        subject.distance.should be_a(Barometer::Data::Distance)
         subject.distance.should == distance
         subject.distance.object_id.should == distance.object_id
       end
@@ -576,7 +576,7 @@ describe Barometer::DataTypes do
     context "when setting with data to be interpretted as a local_datetime" do
       it "sets the value" do
         subject.local_datetime = 2012, 10, 4, 5, 30, 45
-        subject.local_datetime.should == Data::LocalDateTime.new(2012, 10, 4, 5, 30, 45)
+        subject.local_datetime.should == Barometer::Data::LocalDateTime.new(2012, 10, 4, 5, 30, 45)
       end
 
       it "clears the value" do
@@ -589,22 +589,22 @@ describe Barometer::DataTypes do
     context "when setting with data to parse" do
       it "sets the value" do
         subject.local_datetime = "2012-10-4 5:30:45 pm"
-        subject.local_datetime.should == Data::LocalDateTime.new(2012, 10, 4, 17, 30, 45)
+        subject.local_datetime.should == Barometer::Data::LocalDateTime.new(2012, 10, 4, 17, 30, 45)
       end
     end
 
     context "when setting with data to parse (including format)" do
       it "sets the value" do
         subject.local_datetime = "2012-10-04", "%Y-%d-%m"
-        subject.local_datetime.should == Data::LocalDateTime.new(2012, 4, 10)
+        subject.local_datetime.should == Barometer::Data::LocalDateTime.new(2012, 4, 10)
       end
     end
 
-    context "when setting with Data::LocalDateTime" do
+    context "when setting with Barometer::Data::LocalDateTime" do
       it "uses the passed in value" do
-        local_datetime = Data::LocalDateTime.new(2012, 10, 4, 5, 30, 45)
+        local_datetime = Barometer::Data::LocalDateTime.new(2012, 10, 4, 5, 30, 45)
         subject.local_datetime = local_datetime
-        subject.local_datetime.should be_a(Data::LocalDateTime)
+        subject.local_datetime.should be_a(Barometer::Data::LocalDateTime)
         subject.local_datetime.should == local_datetime
         subject.local_datetime.object_id.should == local_datetime.object_id
       end
@@ -692,7 +692,7 @@ describe Barometer::DataTypes do
     context "when setting with data to be interpretted as a local_time" do
       it "sets the value" do
         subject.local_time = 5, 30, 45
-        subject.local_time.should == Data::LocalTime.new(5, 30, 45)
+        subject.local_time.should == Barometer::Data::LocalTime.new(5, 30, 45)
       end
 
       it "clears the value" do
@@ -705,15 +705,15 @@ describe Barometer::DataTypes do
     context "when setting with data to parse" do
       it "sets the value" do
         subject.local_time = "5:30:45 pm"
-        subject.local_time.should == Data::LocalTime.new(17, 30, 45)
+        subject.local_time.should == Barometer::Data::LocalTime.new(17, 30, 45)
       end
     end
 
-    context "when setting with Data::LocalTime" do
+    context "when setting with Barometer::Data::LocalTime" do
       it "uses the passed in value" do
-        local_time = Data::LocalTime.new(5, 30, 45)
+        local_time = Barometer::Data::LocalTime.new(5, 30, 45)
         subject.local_time = local_time
-        subject.local_time.should be_a(Data::LocalTime)
+        subject.local_time.should be_a(Barometer::Data::LocalTime)
         subject.local_time.should == local_time
         subject.local_time.object_id.should == local_time.object_id
       end
@@ -733,11 +733,11 @@ describe Barometer::DataTypes do
     end
 
     context "when setting with data of exact values" do
-      it "initializes Data::Sun" do
-        rise = Data::LocalTime.new(5, 30, 45)
+      it "initializes Barometer::Data::Sun" do
+        rise = Barometer::Data::LocalTime.new(5, 30, 45)
         subject.sun.rise = rise
 
-        set = Data::LocalTime.new(17, 30, 45)
+        set = Barometer::Data::LocalTime.new(17, 30, 45)
         subject.sun.set = set
 
         subject.sun.rise.should == rise
@@ -745,9 +745,9 @@ describe Barometer::DataTypes do
       end
 
       it "clears the value" do
-        rise = Data::LocalDateTime.new(2013, 02, 10, 6, 0, 0)
-        set = Data::LocalDateTime.new(2013, 02, 10, 6, 0, 0)
-        subject.sun = Data::Sun.new(rise, set)
+        rise = Barometer::Data::LocalDateTime.new(2013, 02, 10, 6, 0, 0)
+        set = Barometer::Data::LocalDateTime.new(2013, 02, 10, 6, 0, 0)
+        subject.sun = Barometer::Data::Sun.new(rise, set)
         subject.sun = nil
         subject.sun.should be_nil
       end
@@ -761,13 +761,13 @@ describe Barometer::DataTypes do
       end
     end
 
-    context "when setting with Data::LocalTime" do
+    context "when setting with Barometer::Data::LocalTime" do
       it "uses the passed in value" do
-        rise = Data::LocalDateTime.new(2013, 02, 10, 6, 0, 0)
-        set = Data::LocalDateTime.new(2013, 02, 10, 6, 0, 0)
-        sun = Data::Sun.new(rise, set)
+        rise = Barometer::Data::LocalDateTime.new(2013, 02, 10, 6, 0, 0)
+        set = Barometer::Data::LocalDateTime.new(2013, 02, 10, 6, 0, 0)
+        sun = Barometer::Data::Sun.new(rise, set)
         subject.sun = sun
-        subject.sun.should be_a(Data::Sun)
+        subject.sun.should be_a(Barometer::Data::Sun)
         subject.sun.should == sun
         subject.sun.object_id.should == sun.object_id
       end
@@ -779,8 +779,8 @@ describe Barometer::DataTypes do
     it { should respond_to :location= }
 
     context "when nothing has been set" do
-      it "returns a Data::Location" do
-        subject.location.should be_a(Data::Location)
+      it "returns a Barometer::Data::Location" do
+        subject.location.should be_a(Barometer::Data::Location)
       end
 
       it "prints correctly" do
@@ -797,9 +797,9 @@ describe Barometer::DataTypes do
     end
 
     context "when setting attributes of location" do
-      it "returns a Data::Location" do
+      it "returns a Barometer::Data::Location" do
         subject.location.name = "foo"
-        subject.location.should be_a(Data::Location)
+        subject.location.should be_a(Barometer::Data::Location)
       end
 
       it "sets the value" do
@@ -814,12 +814,12 @@ describe Barometer::DataTypes do
       end
     end
 
-    context "when setting with Data::Location" do
+    context "when setting with Barometer::Data::Location" do
       it "uses the passed in value" do
-        location = Data::Location.new
+        location = Barometer::Data::Location.new
         location.name = "bar"
         subject.location = location
-        subject.location.should be_a(Data::Location)
+        subject.location.should be_a(Barometer::Data::Location)
         subject.location.should == location
         subject.location.object_id.should == location.object_id
       end
@@ -844,9 +844,9 @@ describe Barometer::DataTypes do
     end
 
     context "when setting with data to be interpretted as a time zone" do
-      it "returns a Data::Zone" do
+      it "returns a Barometer::Data::Zone" do
         subject.timezone = "PDT"
-        subject.timezone.should be_a(Data::Zone)
+        subject.timezone.should be_a(Barometer::Data::Zone)
       end
 
       it "sets the value" do
@@ -861,11 +861,11 @@ describe Barometer::DataTypes do
       end
     end
 
-    context "when setting with Data::Zone" do
+    context "when setting with Barometer::Data::Zone" do
       it "uses the passed in value" do
-        timezone = Data::Zone.new("PDT")
+        timezone = Barometer::Data::Zone.new("PDT")
         subject.timezone = timezone
-        subject.timezone.should be_a(Data::Zone)
+        subject.timezone.should be_a(Barometer::Data::Zone)
         subject.timezone.should == timezone
         subject.timezone.object_id.should == timezone.object_id
       end

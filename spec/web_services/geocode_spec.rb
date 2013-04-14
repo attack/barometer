@@ -11,7 +11,7 @@ describe Barometer::WebService::Geocode, :vcr => {
     describe "fetch," do
       it "returns a Geo object" do
         query = Barometer::Query.new(@zipcode)
-        Barometer::WebService::Geocode.fetch(query).is_a?(Data::Geo).should be_true
+        Barometer::WebService::Geocode.fetch(query).is_a?(Barometer::Data::Geo).should be_true
       end
     end
   end

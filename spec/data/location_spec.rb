@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Data::Location do
+describe Barometer::Data::Location do
   describe "#new" do
     its(:id) { should be_nil }
     its(:name) { should be_nil }
