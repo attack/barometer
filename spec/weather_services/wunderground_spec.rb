@@ -10,7 +10,7 @@ describe Barometer::WeatherService::Wunderground, :vcr => {
   end
 
   describe ".call" do
-    let(:converted_query) { Barometer::ConvertedQuery.new("Calgary,AB", :geocode) }
+    let(:converted_query) { Barometer::ConvertedQuery.new('Calgary,AB', :geocode) }
     let(:query) { double(:query, :convert! => converted_query, :geo => nil) }
     let(:config) { {:metric => true} }
 

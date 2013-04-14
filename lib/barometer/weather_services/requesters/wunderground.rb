@@ -1,10 +1,6 @@
-require 'httparty'
-
 module Barometer
   module Requester
     class Wunderground
-      include HTTParty
-
       def initialize(metric=true)
         @metric = metric
       end
@@ -32,12 +28,11 @@ module Barometer
       attr_reader :metric
 
       def _get(path, query)
-        self.class.get(
+        address = Barometer::Http::Address.new(
           "http://api.wunderground.com/auto/wui/geo/#{path}",
-          :query => {:query => query.q},
-          :format => :plain,
-          :timeout => Barometer.timeout
+          {:query => query.q.dup}
         )
+        Barometer::Http::Requester.get(address)
       end
 
     end

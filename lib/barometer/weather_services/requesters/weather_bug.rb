@@ -1,10 +1,6 @@
-require 'httparty'
-
 module Barometer
   module Requester
     class WeatherBug
-      include HTTParty
-
       def initialize(api_code, metric=true)
         @api_code = api_code
         @metric = metric
@@ -45,12 +41,11 @@ module Barometer
       attr_reader :api_code, :metric
 
       def _get(path, query)
-        self.class.get(
+        address = Barometer::Http::Address.new(
           "http://#{api_code}.api.wxbug.net/#{path}",
-          :query => _format_request.merge(_format_query(query)),
-          :format => :plain,
-          :timeout => Barometer.timeout
+          _format_request.merge(_format_query(query))
         )
+        Barometer::Http::Requester.get(address)
       end
 
       def _format_request

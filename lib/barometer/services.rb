@@ -16,7 +16,6 @@ require 'weather_services/noaa'
 
 # web services (non weather)
 #
-require 'web_services/web_service'
 require 'web_services/geocode'
 require 'web_services/weather_id'
 require 'web_services/timezone'

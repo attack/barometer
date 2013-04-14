@@ -23,7 +23,7 @@ module Barometer
       end
 
       def format_response(response)
-        [response["city"], response["region"], response["country"]].select{|r|!r.empty?}.join(', ')
+        [response["@city"], response["@region"], response["@country"]].select{|r|!r.empty?}.join(', ')
       end
     end
   end

@@ -1,38 +1,40 @@
 module Barometer
-  #
-  # Web Service: Timezone
-  #
-  # uses geonames.org to obtain the full timezone for given coordinates
-  #
-  class WebService::Timezone < WebService
-
-    # get the full timezone for given coordinates
+  module WebService
     #
-    def self.fetch(latitude, longitude)
-      puts "timezone: #{latitude}, #{longitude}"
-      return nil unless latitude && longitude
-      _fetch_via_wunderground(latitude, longitude)
-    end
+    # Web Service: Timezone
+    #
+    # uses geonames.org to obtain the full timezone for given coordinates
+    #
+    class Timezone
 
-    def self._fetch_via_geonames(latitude, longitude)
-      response = self.get(
-        "http://ws.geonames.org/timezone",
-        :query => { :lat => latitude, :lng => longitude },
-        :format => :xml,
-        :timeout => Barometer.timeout
-      )['geonames']['timezone']
-      response ? Data::Zone.new(response['timezoneId']) : nil
-    end
+      # get the full timezone for given coordinates
+      #
+      def self.fetch(latitude, longitude)
+        puts "timezone: #{latitude}, #{longitude}"
+        return nil unless latitude && longitude
+        _fetch_via_wunderground(latitude, longitude)
+      end
 
-    def self._fetch_via_wunderground(latitude, longitude)
-      response = self.get(
-        "http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml",
-        :query => {:query => "#{latitude},#{longitude}"},
-        :format => :xml,
-        :timeout => Barometer.timeout
-      )['forecast']['simpleforecast']['forecastday'].first
-      response ? Data::Zone.new(response['date']['tz_long']) : nil
-    end
+      def self._fetch_via_geonames(latitude, longitude)
+        address =  Barometer::Http::Address.new(
+          'http://ws.geonames.org/timezone',
+          { :lat => latitude, :lng => longitude }
+        )
+        response = Barometer::Http::Requester.get(address)
+        timezoneId = Barometer::JsonReader.parse(response, 'geonames', 'timezone', 'timezoneId')
+        timezoneId ? Data::Zone.new(timezoneId) : nil
+      end
 
+      def self._fetch_via_wunderground(latitude, longitude)
+        address =  Barometer::Http::Address.new(
+          'http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml',
+          {:query => "#{latitude},#{longitude}"}
+        )
+        response = Barometer::Http::Requester.get(address)
+        date = Barometer::JsonReader.parse(response, 'forecast', 'simpleforecast', 'forecastday').first
+        date ? Data::Zone.new(response['date']['tz_long']) : nil
+      end
+
+    end
   end
 end

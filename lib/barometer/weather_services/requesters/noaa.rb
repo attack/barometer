@@ -1,10 +1,6 @@
-require 'httparty'
-
 module Barometer
   module Requester
     class Noaa
-      include HTTParty
-
       def initialize(metric=true)
         @metric = metric
       end
@@ -32,12 +28,10 @@ module Barometer
       attr_reader :metric
 
       def _get(path, query=nil)
-        self.class.get(
-          path,
-          :query => _format_request(query).merge(_format_query(query)),
-          :format => :plain,
-          :timeout => Barometer.timeout
+        address = Barometer::Http::Address.new(
+          path, _format_request(query).merge(_format_query(query))
         )
+        Barometer::Http::Requester.get(address)
       end
 
       def _format_request(query)
