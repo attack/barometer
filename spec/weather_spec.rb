@@ -149,10 +149,8 @@ describe Barometer::Weather do
 
     describe "for wind" do
       before(:each) do
-        @weather.source(:wunderground).current.wind = Data::Vector.new
-        @weather.source(:wunderground).current.wind.kph = 10
-        @weather.source(:yahoo).current.wind = Data::Vector.new
-        @weather.source(:yahoo).current.wind.kph = 6
+        @weather.source(:wunderground).current.wind = Barometer::Data::Vector.new(10, nil, nil)
+        @weather.source(:yahoo).current.wind = Barometer::Data::Vector.new(6, nil, nil)
       end
 
       it "returns averages" do

@@ -35,9 +35,7 @@ module Barometer
           current.dew_point << [payload.fetch('dewpoint_c'), payload.fetch('dewpoint_f')]
           current.wind_chill << [payload.fetch('windchill_c'), payload.fetch('windchill_f')]
           current.heat_index << [payload.fetch('heat_index_c'), payload.fetch('heat_index_f')]
-          current.wind.mph = payload.fetch('wind_mph').to_i
-          current.wind.direction = payload.fetch('wind_dir')
-          current.wind.degrees = payload.fetch('wind_degrees').to_i
+          current.wind = [:imperial, payload.fetch('wind_mph').to_i, payload.fetch('wind_degrees').to_i]
           current.visibility << [payload.fetch('visibility_km'), payload.fetch('visibility_mi')]
           current.pressure << [payload.fetch('pressure_mb'), payload.fetch('pressure_in')]
         end

@@ -31,8 +31,7 @@ module Barometer
           current.visibility = payload.fetch('atmosphere', '@visibility')
 
           current.wind_chill = payload.fetch('wind', '@chill')
-          current.wind.speed = payload.fetch('wind', '@speed')
-          current.wind.degrees = payload.fetch('wind', '@direction').to_f
+          current.wind = [payload.fetch('wind', '@speed'), payload.fetch('wind', '@direction').to_f]
         end
       end
 

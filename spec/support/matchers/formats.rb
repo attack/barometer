@@ -28,7 +28,7 @@ module Barometer
         when :pressure
           /^\d{1,4}[ ]?[a-zA-Z]{0,3}$/i
         when :vector
-          /^\d{1,3} (?:mph|kph) (?:[nesw]{1,3}(?:orth|outh|t|ast)?|@ [0-9\.]{1,5} degrees)$/i
+          /^[0-9\.]{1,5} (?:mph|kph) (?:[nesw]{1,3}(?:orth|outh|t|ast)?|@ [0-9\.]{1,5} degrees)$/i
         when :distance
           /^\d{1,4}[ ]?k?m?$/i
         when Regexp

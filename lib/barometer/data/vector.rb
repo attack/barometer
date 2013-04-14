@@ -1,157 +1,175 @@
 module Barometer
-  #
-  # A simple Vector class
-  #
-  # NOTE: this currently only supports the scale of
-  #       kilometers (km) and miles (m) per hour.  There is currently
-  #       no way to scale to smaller units (eg km -> m -> mm)
-  #
-  class Data::Vector < Data::Units
-    METRIC_UNITS = "kph"
-    IMPERIAL_UNITS = "mph"
+  module Data
+    class Vector #< Units
+      include Comparable
+      # METRIC_UNITS = "kph"
+      # IMPERIAL_UNITS = "mph"
 
-    attr_accessor :kilometers, :miles
-    attr_accessor :degrees, :direction
+      # auto convert magnitude to_f (unless Int), degress to_i (unless Float)
+      # add compass direction output
 
-    def initialize(metric=true)
-      @kilometers = nil
-      @miles = nil
-      @degrees = nil
-      @direction = nil
-      super(metric)
-    end
+      attr_reader :bearing
 
-    def metric_default=(value); self.kph = value; end
-    def imperial_default=(value); self.mph = value; end
-
-    def speed=(value)
-      self << value
-    end
-
-    #
-    # CONVERTERS
-    #
-
-    def self.km_to_m(km)
-      return nil unless km && (km.is_a?(Integer) || km.is_a?(Float))
-      km.to_f * 0.622
-    end
-
-    def self.m_to_km(m)
-      return nil unless m && (m.is_a?(Integer) || m.is_a?(Float))
-      m.to_f * 1.609
-    end
-
-    #
-    # ACCESSORS
-    #
-
-    # store kilometers per hour
-    #
-    def kph=(kph)
-      return if !kph || !(kph.is_a?(Integer) || kph.is_a?(Float))
-      @kilometers = kph.to_f
-      update_miles(kph.to_f)
-    end
-
-    # store miles per hour
-    #
-    def mph=(mph)
-      return if !mph || !(mph.is_a?(Integer) || mph.is_a?(Float))
-      @miles = mph.to_f
-      update_kilometers(mph.to_f)
-    end
-
-    def direction=(direction)
-      return if !direction || !direction.is_a?(String)
-      @direction = direction
-    end
-
-    def degrees=(degrees)
-      return if !degrees || !(degrees.is_a?(Integer) || degrees.is_a?(Float))
-      @degrees = degrees
-    end
-
-    # return the stored kilometers or convert from miles
-    #
-    def kph(as_integer=true)
-      km = (@kilometers || Data::Vector.m_to_km(@miles))
-      km ? (as_integer ? km.to_i : (100*km).round/100.0) : nil
-    end
-
-    # return the stored miles or convert from kilometers
-    #
-    def mph(as_integer=true)
-      m = (@miles || Data::Vector.km_to_m(@kilometers))
-      m ? (as_integer ? m.to_i : (100*m).round/100.0) : nil
-    end
-
-    #
-    # OPERATORS
-    #
-
-    def <=>(other)
-      kph <=> other.kph
-    end
-
-    #
-    # HELPERS
-    #
-
-    # will just return the value (no units)
-    #
-    def to_i(metric=nil)
-      (metric || (metric.nil? && metric?)) ? kph : mph
-    end
-
-    # will just return the value (no units) with more precision
-    #
-    def to_f(metric=nil)
-      (metric || (metric.nil? && metric?)) ? kph(false) : mph(false)
-    end
-
-    # will return the value with units
-    #
-    def to_s(metric=nil)
-      output = (metric || (metric.nil? && metric?)) ? "#{kph} #{METRIC_UNITS}" : "#{mph} #{IMPERIAL_UNITS}"
-      if direction
-        output += " #{direction}"
-      else
-        output += " @ #{degrees} degrees" if degrees
+      def initialize(*args)
+        parse_metric!(args)
+        parse_values!(args)
+        freeze_all
       end
-      output
-    end
 
-    # will just return the units (no value)
-    #
-    def units(metric=nil)
-      (metric || (metric.nil? && metric?)) ? METRIC_UNITS : IMPERIAL_UNITS
-    end
+      def kph
+        kph_or_unknown || kph_from_mph
+      end
 
-    # when we set miles, it is possible the a non-equivalent value of
-    # kilometers remains.  if so, clear it.
-    #
-    def update_kilometers(m)
-      return unless @kilometers
-      difference = Data::Vector.m_to_km(m.to_f) - @kilometers
-      # only clear kilometers if the stored kilometers is off be more then 1 unit
-      # then the conversion of miles
-      @kilometers = nil unless difference.abs <= 1.0
-    end
+      def mph
+        mph_or_unknown || mph_from_kph
+      end
 
-    # when we set kilometers, it is possible the a non-equivalent value of
-    # miles remains.  if so, clear it.
-    #
-    def update_miles(km)
-      return unless @miles
-      difference = Data::Vector.km_to_m(km.to_f) - @miles
-      # only clear miles if the stored miles is off be more then 1 unit
-      # then the conversion of kilometers
-      @miles = nil unless difference.abs <= 1.0
-    end
+      def units
+        metric? ? 'kph' : 'mph'
+      end
 
-    def nil?
-      (@kilometers || @miles) ? false : true
+      def metric?
+        @metric.nil? || !!@metric
+      end
+
+      def metric=(value)
+        if detect_imperial?(value)
+          unknown_becomes_imperial!
+          @metric = false
+        else
+          unknown_becomes_metric!
+          @metric = true
+        end
+      end
+
+      def to_i
+        magnitude.to_i
+      end
+
+      def to_f
+        magnitude.to_f
+      end
+
+      def to_s
+        [magnitude_to_s, bearing_to_s].compact.join(' @ ')
+      end
+
+      def nil?
+        magnitude.nil? && bearing.nil?
+      end
+
+      def <=>(other)
+        kph.to_f <=> other.kph.to_f
+      end
+
+      private
+
+      def parse_metric!(args)
+        unless detect_number?(args.first)
+          self.metric = args.shift
+        end
+      end
+
+      def parse_values!(args)
+        if args.length == 3
+          @kph = args[0]
+          @mph = args[1]
+          @bearing = args[2]
+        else
+          self.unknown = args[0]
+          @bearing = args[1]
+        end
+      end
+
+      def detect_imperial?(value)
+        value == :imperial || value.is_a?(FalseClass)
+      end
+
+      def detect_number?(value)
+        value.nil? || value.is_a?(Numeric) || string_is_number?(value)
+      end
+
+      def string_is_number?(value)
+        value.is_a?(String) &&
+          ((value.to_i.to_s == value) || (value.to_f.to_s == value))
+      end
+
+      def unknown=(value)
+        if @metric.nil?
+          @unknown = value
+        elsif metric?
+          @kph = value
+        else
+          @mph = value
+        end
+        freeze_magnitude
+      end
+
+      def kph_or_unknown
+        @kph || metric_unknown
+      end
+
+      def mph_or_unknown
+        @mph || imperial_unknown
+      end
+
+      def metric_unknown
+        @unknown if metric?
+      end
+
+      def imperial_unknown
+        @unknown unless metric?
+      end
+
+      def unknown_becomes_imperial!
+        if @unknown && !@mph
+          @mph = @unknown
+          @unknown = nil
+        end
+      end
+
+      def unknown_becomes_metric!
+        if @unknown && !@kph
+          @kph = @unknown
+          @unknown = nil
+        end
+      end
+
+      def magnitude
+        metric? ? kph : mph
+      end
+
+      def kph_from_mph
+        return nil unless mph_or_unknown
+        round(mph_or_unknown.to_f * 1.609)
+      end
+
+      def mph_from_kph
+        return nil unless kph_or_unknown
+        round(kph_or_unknown.to_f * 0.622)
+      end
+
+      def round(number)
+        (10*number).round/10.0
+      end
+
+      def magnitude_to_s
+        "#{magnitude} #{units}" unless magnitude.nil?
+      end
+
+      def bearing_to_s
+        "#{bearing} degrees" unless bearing.nil?
+      end
+
+      def freeze_all
+        freeze_magnitude
+        @bearing.freeze
+      end
+
+      def freeze_magnitude
+        @kph.freeze
+        @mph.freeze
+      end
     end
   end
 end

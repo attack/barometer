@@ -84,8 +84,16 @@ module Barometer
     def average(value_name, do_average=true, class_name=nil)
       if class_name
         if do_average
-          avg = Data.const_get(class_name).new(self.metric?)
-          avg << self.current_average(value_name)
+          if class_name == "Vector"
+            if metric?
+              avg = Barometer::Data.const_get(class_name).new(self.metric?, self.current_average(value_name), nil, nil)
+            else
+              avg = Barometer::Data.const_get(class_name).new(self.metric?, nil, self.current_average(value_name), nil)
+            end
+          else
+            avg = Barometer::Data.const_get(class_name).new(self.metric?)
+            avg << self.current_average(value_name)
+          end
         else
           avg = self.now.send(value_name)
         end

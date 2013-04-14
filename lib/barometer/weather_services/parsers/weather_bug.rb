@@ -32,9 +32,7 @@ module Barometer
           current.temperature = payload.fetch('temp')
           current.dew_point = payload.fetch('dew_point')
           current.wind_chill = payload.fetch('feels_like')
-          current.wind.speed = payload.fetch('wind_speed')
-          current.wind.direction = payload.fetch('wind_direction')
-          current.wind.degrees = payload.fetch('wind_direction_degrees')
+          current.wind = [payload.fetch('wind_speed'), payload.fetch('wind_direction_degrees')]
           current.pressure = payload.fetch('pressure')
         end
       end

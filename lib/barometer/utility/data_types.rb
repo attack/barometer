@@ -59,14 +59,42 @@ module Barometer
         end
       end
 
+      def new_pre_set_reader type, *names
+        names.each do |name|
+          send :define_method, name do
+            value = instance_variable_get("@#{name}")
+            type.new(nil, nil, nil) if value.nil?
+            if value.respond_to?(:metric=)
+              value.metric = metric?
+            end
+            value
+          end
+        end
+      end
+
+      def new_pre_set_writer type, *names
+        names.each do |name|
+          send :define_method, "#{name}=" do |data|
+            return unless instance_variable_get("@#{name}").nil?
+            if data.is_a?(type)
+              instance = data
+            else
+              instance = type.new(*data)
+            end
+            instance.metric = metric?
+            instance_variable_set "@#{name}", instance
+          end
+        end
+      end
+
       def temperature *names
         pre_set_reader Data::Temperature, *names
         pre_set_writer Data::Temperature, *names
       end
 
       def vector *names
-        pre_set_reader Data::Vector, *names
-        pre_set_writer Data::Vector, *names
+        new_pre_set_reader Barometer::Data::Vector, *names
+        new_pre_set_writer Barometer::Data::Vector, *names
       end
 
       def pressure *names

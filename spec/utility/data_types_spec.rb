@@ -153,79 +153,41 @@ describe Barometer::DataTypes do
     end
 
     context "when setting with data of exact values" do
-      it "initializes Data::Vector" do
-        subject.vector = 12
-        subject.vector.should be_a(Data::Vector)
+      it "initializes Barometer::Data::Vector" do
+        subject.vector = [12, 270]
+        subject.vector.should be_a(Barometer::Data::Vector)
       end
 
       it "prints correctly" do
-        subject.vector = 12
+        subject.vector = [12]
         subject.vector.to_s.should == "12 kph"
       end
 
-      it "clears the value" do
-        subject.vector = 12
+      it "does not clear the value" do
+        subject.vector = [12]
         subject.vector = nil
-        subject.vector.should be_nil
+        subject.vector.to_s.should == "12 kph"
       end
     end
 
-    context "when setting with Data::Vector" do
+    context "when setting with Barometer::Data::Vector" do
       it "uses the passed in value" do
-        vector = Data::Vector.new
-        vector << 12
+        vector = Barometer::Data::Vector.new(12, 270)
         subject.vector = vector
-        subject.vector.should be_a(Data::Vector)
+        subject.vector.should be_a(Barometer::Data::Vector)
         subject.vector.should == vector
         subject.vector.object_id.should == vector.object_id
-      end
-    end
-
-    context "when setting secondary values" do
-      it "allows the setting of direction" do
-        subject.vector = 12
-        subject.vector.direction = "NW"
-        subject.vector.to_s.should == "12 kph NW"
-      end
-
-      it "allows the setting of degrees" do
-        subject.vector = 12
-        subject.vector.degrees = 190
-        subject.vector.to_s.should == "12 kph @ 190 degrees"
-      end
-
-      it "allows setting of speed" do
-        subject.vector.kph = 12
-        subject.vector.to_s.should == "12 kph"
-      end
-    end
-
-    context "when setting to multiple values" do
-      it "initializes Data::Vector" do
-        subject.vector << [12, 7]
-        subject.vector.should be_a(Data::Vector)
-      end
-
-      it "prints correctly (as metric)" do
-        subject.vector << [12, 7]
-        subject.vector.to_s.should == "12 kph"
-      end
-
-      it "prints correctly (as imperial)" do
-        subject.vector << [12, 7]
-        subject.metric = false
-        subject.vector.to_s.should == "7 mph"
       end
     end
 
     context "when changing metric" do
       it "adjusts correctly" do
         subject.metric = true
-        subject.vector = 12
-        subject.vector.to_s.should == "12 kph"
+        subject.vector = [16.1]
+        subject.vector.to_s.should == "16.1 kph"
 
         subject.metric = false
-        subject.vector.to_s.should == "7 mph"
+        subject.vector.to_s.should == "10.0 mph"
       end
     end
   end
