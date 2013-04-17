@@ -205,35 +205,35 @@ describe Barometer::DataTypes do
 
     context "when setting with data of exact values" do
       it "initializes Barometer::Data::Pressure" do
-        subject.pressure = 12
+        subject.pressure = [12]
         subject.pressure.should be_a(Barometer::Data::Pressure)
       end
 
       it "prints correctly" do
-        subject.pressure = 12
+        subject.pressure = [12]
         subject.pressure.to_s.should == "12 mb"
       end
 
-      it "clears the value" do
-        subject.pressure = 12
+      it "does not clear the value" do
+        subject.pressure = [12]
         subject.pressure = nil
-        subject.pressure.should be_nil
+        subject.pressure.to_s.should == "12 mb"
       end
     end
 
     context "when setting to multiple values" do
       it "initializes Barometer::Data::Pressure" do
-        subject.pressure << [1234, 36]
+        subject.pressure = [1234, 36]
         subject.pressure.should be_a(Barometer::Data::Pressure)
       end
 
       it "prints correctly (as metric)" do
-        subject.pressure << [1234, 36]
+        subject.pressure = [1234, 36]
         subject.pressure.to_s.should == "1234 mb"
       end
 
       it "prints correctly (as imperial)" do
-        subject.pressure << [1234, 36]
+        subject.pressure = [1234, 36]
         subject.metric = false
         subject.pressure.to_s.should == "36 in"
       end
@@ -241,8 +241,7 @@ describe Barometer::DataTypes do
 
     context "when setting with Barometer::Data::Pressure" do
       it "uses the passed in value" do
-        pressure = Barometer::Data::Pressure.new
-        pressure << 12
+        pressure = Barometer::Data::Pressure.new(12)
         subject.pressure = pressure
         subject.pressure.should be_a(Barometer::Data::Pressure)
         subject.pressure.should == pressure
@@ -253,11 +252,11 @@ describe Barometer::DataTypes do
     context "when changing metric" do
       it "adjusts correctly" do
         subject.metric = true
-        subject.pressure = 1234
+        subject.pressure = [1234]
         subject.pressure.to_s.should == "1234 mb"
 
         subject.metric = false
-        subject.pressure.to_s.should == "36 in"
+        subject.pressure.to_s.should == "36.4 in"
       end
     end
   end

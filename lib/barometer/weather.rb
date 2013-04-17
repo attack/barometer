@@ -84,7 +84,7 @@ module Barometer
     def average(value_name, do_average=true, class_name=nil)
       if class_name
         if do_average
-          if %w(Vector Distance).include?(class_name)
+          if %w(Vector Distance Pressure).include?(class_name)
             if metric?
               avg = Barometer::Data.const_get(class_name).new(self.metric?, self.current_average(value_name), nil, nil)
             else

@@ -179,10 +179,8 @@ describe Barometer::Weather do
 
     describe "for pressure" do
       before(:each) do
-        @weather.source(:wunderground).current.pressure = Barometer::Data::Pressure.new
-        @weather.source(:wunderground).current.pressure.mb = 10
-        @weather.source(:yahoo).current.pressure = Barometer::Data::Pressure.new
-        @weather.source(:yahoo).current.pressure.mb = 6
+        @weather.source(:wunderground).current.pressure = Barometer::Data::Pressure.new(10)
+        @weather.source(:yahoo).current.pressure = Barometer::Data::Pressure.new(6)
       end
 
       it "returns averages" do

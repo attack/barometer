@@ -78,7 +78,7 @@ module Barometer
       end
 
       def <=>(other)
-        metric.to_f <=> other.metric.to_f
+        round(metric) <=> round(other.metric)
       end
 
       def metric
@@ -185,7 +185,7 @@ module Barometer
       end
 
       def round(number)
-        (10*number).round/10.0
+        (10*number.to_f).round/10.0
       end
 
       def magnitude_to_s

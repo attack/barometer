@@ -26,7 +26,7 @@ module Barometer
         when :temperature
           /^-?\d{1,3}[ ]?[cfCF]?$/i
         when :pressure
-          /^\d{1,4}[ ]?[a-zA-Z]{0,3}$/i
+          /^[0-9\.]{1,7}[ ]?[a-zA-Z]{0,3}$/i
         when :vector
           /^[0-9\.]{1,5} (?:mph|kph) (?:[nesw]{1,3}(?:orth|outh|t|ast)?|@ [0-9\.]{1,5} degrees)$/i
         when :distance

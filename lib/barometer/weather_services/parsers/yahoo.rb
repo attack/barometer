@@ -27,7 +27,7 @@ module Barometer
           current.temperature = payload.fetch('item', 'condition', '@temp')
 
           current.humidity = payload.fetch('atmosphere', '@humidity')
-          current.pressure = payload.fetch('atmosphere', '@pressure')
+          current.pressure = [payload.fetch('atmosphere', '@pressure')]
           current.visibility = [payload.fetch('atmosphere', '@visibility')]
 
           current.wind_chill = payload.fetch('wind', '@chill')

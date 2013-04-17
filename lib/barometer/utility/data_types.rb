@@ -98,8 +98,8 @@ module Barometer
       end
 
       def pressure *names
-        pre_set_reader Data::Pressure, *names
-        pre_set_writer Data::Pressure, *names
+        new_pre_set_reader Data::Pressure, *names
+        new_pre_set_writer Data::Pressure, *names
       end
 
       def distance *names

@@ -1,336 +1,399 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Barometer::Data::Pressure do
-
-  describe "when initialized" do
-
-    before(:each) do
-      @pressure = Barometer::Data::Pressure.new
-    end
-
-    it "defines METRIC_UNITS" do
-      Barometer::Data::Pressure.const_defined?("METRIC_UNITS").should be_true
-      Barometer::Data::Pressure::METRIC_UNITS.should == "mb"
-    end
-
-    it "defines IMPERIAL_UNITS" do
-      Barometer::Data::Pressure.const_defined?("IMPERIAL_UNITS").should be_true
-      Barometer::Data::Pressure::IMPERIAL_UNITS.should == "in"
-    end
-
-    it "responds to millibars" do
-      @pressure.millibars.should be_nil
-    end
-
-    it "responds to inches" do
-      @pressure.inches.should be_nil
-    end
-
-    it "responds to metric_default" do
-      lambda { @pressure.metric_default = 5 }.should_not raise_error(NotImplementedError)
-    end
-
-    it "responds to imperial_default" do
-      lambda { @pressure.imperial_default = 5 }.should_not raise_error(NotImplementedError)
-    end
-
-    it "responds to nil?" do
-      @pressure.nil?.should be_true
-      @pressure.mb = 5
-      @pressure.nil?.should be_false
-    end
-
-  end
-
-  describe "conversion" do
-
     # For all conversions
     # 721.64 mb = 21.31 in
-    before(:each) do
-      @in = 21.31
-      @mb = 721.64
+    # before(:each) do
+    #   @in = 21.31
+    #   @mb = 721.64 (metric)
+    # end
+    # it "responds to millibars" do
+    # it "responds to inches" do
+describe Barometer::Data::Pressure do
+  describe ".initialize" do
+    it "sets mb" do
+      distance = Barometer::Data::Pressure.new(721.64, nil)
+      distance.mb.should == 721.64
     end
 
-    it "requires a value, that is either Integer or Float" do
-      Barometer::Data::Pressure.mb_to_in(nil).should be_nil
-      Barometer::Data::Pressure.in_to_mb(nil).should be_nil
-
-      not_float_or_integer = "string"
-      Barometer::Data::Pressure.mb_to_in(not_float_or_integer).should be_nil
-      Barometer::Data::Pressure.in_to_mb(not_float_or_integer).should be_nil
+    it "sets in" do
+      distance = Barometer::Data::Pressure.new(nil, 21.31)
+      distance.in.should == 21.31
     end
 
-    it "converts MB to IN" do
-      ((Barometer::Data::Pressure.mb_to_in(@mb)*100).round/100.0).should == @in
+    describe "delays unit selection after init" do
+      context "when initialized with mb only" do
+        it "defaults to metric" do
+          distance = Barometer::Data::Pressure.new(721)
+          distance.to_s.should == "721 mb"
+        end
+
+        it "allows metric to be chosen after" do
+          distance = Barometer::Data::Pressure.new(721)
+          distance.metric = true
+          distance.to_s.should == "721 mb"
+        end
+
+        it "sets the mb the first time, converts the second time" do
+          distance = Barometer::Data::Pressure.new(721.64)
+          distance.metric = true
+          distance.metric = false
+          distance.to_s.should == "21.3 in"
+        end
+      end
+
+      context "when initialized with in only" do
+        it "allows imperial to be chosen after" do
+          distance = Barometer::Data::Pressure.new(21)
+          distance.metric = false
+          distance.to_s.should == "21 in"
+        end
+
+        it "sets the m the first time, converts the second time" do
+          distance = Barometer::Data::Pressure.new(21.31)
+          distance.metric = false
+          distance.metric = true
+          distance.to_s.should == "721.6 mb"
+        end
+      end
     end
 
-    it "converts IN to MB" do
-      ((Barometer::Data::Pressure.in_to_mb(@in)*100).round/100.0).should == @mb
-    end
+    describe "sets unit type when given" do
+      it "defaults to metric" do
+        distance = Barometer::Data::Pressure.new(nil, nil)
+        distance.should be_metric
+      end
 
+      it "sets metric via boolean" do
+        distance = Barometer::Data::Pressure.new(true, nil, nil)
+        distance.should be_metric
+      end
+
+      it "sets metric via symbol" do
+        distance = Barometer::Data::Pressure.new(:metric, nil, nil)
+        distance.should be_metric
+      end
+
+      it "sets imperial via boolean" do
+        distance = Barometer::Data::Pressure.new(false, nil, nil)
+        distance.should_not be_metric
+      end
+
+      it "sets imperial via symbol" do
+        distance = Barometer::Data::Pressure.new(:imperial, nil, nil)
+        distance.should_not be_metric
+      end
+
+      context "when only provided one magnitude" do
+        context "and metric is set" do
+          it "interprets magnitude as mb" do
+            distance = Barometer::Data::Pressure.new(:metric, 721)
+            distance.metric = false
+            distance.metric = true
+            distance.to_s.should == "721 mb"
+          end
+        end
+
+        context "and imperial is set" do
+          it "interprets magnitude as in" do
+            distance = Barometer::Data::Pressure.new(:imperial, 21)
+            distance.metric = true
+            distance.metric = false
+            distance.to_s.should == "21 in"
+          end
+        end
+      end
+    end
   end
 
-  describe "updating" do
-
-    before(:each) do
-      @pressure = Barometer::Data::Pressure.new
-      @in = 21.31
-      @mb = 721.64
+  describe "#in" do
+    it "calculates in from mb" do
+      distance = Barometer::Data::Pressure.new(721.64, nil)
+      distance.in.should == 21.3
     end
 
-    it "nils IN if new MB converts to a IN that changes more then 1 unit" do
-      @pressure.inches = (@in + 1.1)
-      @pressure.update_inches(@mb)
-      @pressure.inches.should be_nil
+    it "returns nil if in is nil" do
+      distance = Barometer::Data::Pressure.new(nil, nil)
+      distance.in.should be_nil
     end
 
-    it "doesn't update IN if new MB converts to a IN that does not change more then 1 unit" do
-      @pressure.inches = (@in + 0.9)
-      @pressure.update_inches(@mb)
-      @pressure.inches.should == (@in + 0.9)
+    it "returns converted unknown value as in" do
+      distance = Barometer::Data::Pressure.new(721.64)
+      distance.in.should == 21.3
     end
 
-    it "doesn't set IN if not already set" do
-      @pressure.inches.should be_nil
-      @pressure.millibars.should be_nil
-      @pressure.update_inches(@mb)
-      @pressure.inches.should be_nil
-      @pressure.millibars.should be_nil
+    it "returns known value as in" do
+      distance = Barometer::Data::Pressure.new(:imperial, 21)
+      distance.in.should == 21
     end
 
-    it "nils MB if new IN converts to a MB that changes more then 1 unit" do
-      @pressure.millibars = (@mb + 1.1)
-      @pressure.update_millibars(@in)
-      @pressure.millibars.should be_nil
+    it "returns converted known value as in" do
+      distance = Barometer::Data::Pressure.new(:metric, 721.64)
+      distance.in.should == 21.3
     end
 
-    it "doesn't update MB if new IN converts to a MB that does not change more then 1 unit" do
-      @pressure.millibars = (@mb + 0.9)
-      @pressure.update_millibars(@in)
-      @pressure.millibars.should == (@mb + 0.9)
-    end
+    # it "keeps integer resolution" do
+    #   distance = Barometer::Data::Pressure.new(:imperial, 10)
+    #   distance.mb.should == 16
+    # end
 
-    it "doesn't set MB if not already set" do
-      @pressure.inches.should be_nil
-      @pressure.millibars.should be_nil
-      @pressure.update_millibars(@in)
-      @pressure.inches.should be_nil
-      @pressure.millibars.should be_nil
-    end
-
+    # it "keeps float resolution" do
+    #   distance = Barometer::Data::Pressure.new(:imperial, 10.0)
+    #   distance.mb.should == 16.1
+    # end
   end
 
-  describe "storing" do
-
-    before(:each) do
-      @pressure = Barometer::Data::Pressure.new
-      @in = 21.31
-      @mb = 721.64
+  describe "#mb" do
+    it "calculates mb from in" do
+      distance = Barometer::Data::Pressure.new(nil, 21.31)
+      distance.mb.should == 721.6
     end
 
-    it "doesn't update MB if nil value (or equivalent)" do
-      @pressure.millibars.should be_nil
-      @pressure.mb = nil
-      @pressure.millibars.should be_nil
-      @pressure.mb = "na"
-      @pressure.millibars.should be_nil
+    it "returns nil if in is nil" do
+      distance = Barometer::Data::Pressure.new(nil, nil)
+      distance.mb.should be_nil
     end
 
-    it "stores MB and resets IN" do
-      @pressure.millibars.should be_nil
-      @pressure.inches = (@in + 1.1)
-      @pressure.mb = @mb
-      @pressure.millibars.should == @mb
-      @pressure.inches.should be_nil
+    it "returns unknown value as mb" do
+      distance = Barometer::Data::Pressure.new(721)
+      distance.mb.should == 721
     end
 
-    it "doesn't update IN if nil value (or equivalent)" do
-      @pressure.inches.should be_nil
-      @pressure.in = nil
-      @pressure.inches.should be_nil
-      @pressure.in = "na"
-      @pressure.inches.should be_nil
+    it "returns known value as mb" do
+      distance = Barometer::Data::Pressure.new(:metric, 721)
+      distance.mb.should == 721
     end
 
-    it "stores IN and resets MB" do
-      @pressure.inches.should be_nil
-      @pressure.millibars = (@mb + 1.1)
-      @pressure.in = @in
-      @pressure.inches.should == @in
-      @pressure.millibars.should be_nil
+    it "returns converted known value as mb" do
+      distance = Barometer::Data::Pressure.new(:imperial, 21.31)
+      distance.mb.should == 721.6
     end
 
+    # it "keeps integer resolution" do
+    #   distance = Barometer::Data::Pressure.new(:imperial, 10)
+    #   distance.mb.should == 16
+    # end
+
+    # it "keeps float resolution" do
+    #   distance = Barometer::Data::Pressure.new(:imperial, 10.0)
+    #   distance.mb.should == 16.1
+    # end
   end
 
-  describe "retrieving" do
+  describe "#<=>" do
+    context "when comparing two metric distances" do
+      it "returns > correctly" do
+        distance1 = Barometer::Data::Pressure.new(:metric, 721, nil)
+        distance2 = Barometer::Data::Pressure.new(:metric, 721.64, nil)
 
-    before(:each) do
-      @pressure = Barometer::Data::Pressure.new
-      @in = 21.31
-      @mb = 721.64
+        distance2.should > distance1
+      end
+
+      it "returns == correctly" do
+        distance1 = Barometer::Data::Pressure.new(:metric, 721, nil)
+        distance2 = Barometer::Data::Pressure.new(:metric, 721.0, nil)
+
+        distance2.should == distance1
+      end
+
+      it "returns < correctly" do
+        distance1 = Barometer::Data::Pressure.new(:metric, 721, nil)
+        distance2 = Barometer::Data::Pressure.new(:metric, 721.64, nil)
+
+        distance1.should < distance2
+      end
     end
 
-    it "returns MB if it exists" do
-      @pressure.mb = @mb
-      @pressure.millibars.should == @mb
-      @pressure.mb(false).should == @mb
+    context "when comparing two imperial distances" do
+      it "returns > correctly" do
+        distance1 = Barometer::Data::Pressure.new(:imperial, nil, 21)
+        distance2 = Barometer::Data::Pressure.new(:imperial, nil, 21.31)
+
+        distance2.should > distance1
+      end
+
+      it "returns == correctly" do
+        distance1 = Barometer::Data::Pressure.new(:imperial, nil, 21)
+        distance2 = Barometer::Data::Pressure.new(:imperial, nil, 21.0)
+
+        distance2.should == distance1
+      end
+
+      it "returns < correctly" do
+        distance1 = Barometer::Data::Pressure.new(:imperial, nil, 21)
+        distance2 = Barometer::Data::Pressure.new(:imperial, nil, 21.31)
+
+        distance1.should < distance2
+      end
     end
 
-    it "auto converts from IN if MB is nil and IN exists" do
-      @pressure.in = @in
-      @pressure.inches.should == @in
-      @pressure.millibars.should be_nil
-      @pressure.mb(false).should == @mb
-    end
+    context "when comparing a metric and an imperial distance" do
+      it "returns > correctly" do
+        distance1 = Barometer::Data::Pressure.new(:metric, 721.0, nil)
+        distance2 = Barometer::Data::Pressure.new(:imperial, nil, 21.31)
 
-    it "allows a float to be returned for MB" do
-      mb = 721.12
-      @pressure.mb = mb
-      @pressure.millibars.should == mb
-      @pressure.mb(true).should == mb.to_i
-      @pressure.mb(false).should == mb.to_f
-    end
+        distance2.should > distance1
+      end
 
-    it "allows only 2 decimal precision for MB" do
-      mb = 721.1234
-      @pressure.mb = mb
-      @pressure.millibars.should == mb
-      @pressure.mb(false).should == 721.12
-    end
+      it "returns == correctly" do
+        distance1 = Barometer::Data::Pressure.new(:metric, 721.64, nil)
+        distance2 = Barometer::Data::Pressure.new(:imperial, nil, 21.31)
 
-    it "returns IN if it exists" do
-      @pressure.in = @in
-      @pressure.inches.should == @in
-      @pressure.in(false).should == @in
-    end
+        distance2.should == distance1
+      end
 
-    it "auto converts from MB if IN is nil and MB exists" do
-      @pressure.mb = @mb
-      @pressure.millibars.should == @mb
-      @pressure.inches.should be_nil
-      @pressure.in(false).should == @in
-    end
+      it "returns < correctly" do
+        distance1 = Barometer::Data::Pressure.new(:metric, 721.9, nil)
+        distance2 = Barometer::Data::Pressure.new(:imperial, nil, 21.31)
 
-    it "allows a float to be returned for IN" do
-      inches = 21.12
-      @pressure.in = inches
-      @pressure.inches.should == inches
-      @pressure.in(true).should == inches.to_i
-      @pressure.in(false).should == inches.to_f
+        distance2.should < distance1
+      end
     end
-
-    it "allows only 2 decimal precision for IN" do
-      inches = 21.1234
-      @pressure.in = inches
-      @pressure.inches.should == inches
-      @pressure.in(false).should == 21.12
-    end
-
   end
 
-  describe "operators" do
-
-    before(:each) do
-      @in = 21.31
-      @mb = 721.64
-      @pressure_low = Barometer::Data::Pressure.new
-      @pressure_low.mb = (@mb - 1.0)
-      @pressure_high = Barometer::Data::Pressure.new
-      @pressure_high.mb = (@mb + 1.0)
-      @pressure = Barometer::Data::Pressure.new
-      @pressure.mb = @mb
-      @pressure_same = Barometer::Data::Pressure.new
-      @pressure_same.mb = @mb
+  describe "#units" do
+    context "when distance is metric" do
+      it "returns mb" do
+        distance = Barometer::Data::Pressure.new(:metric, 721.0, 21.0)
+        distance.units.should == 'mb'
+      end
     end
 
-    it "defines <=>" do
-      Barometer::Data::Pressure.method_defined?("<=>").should be_true
-      (@pressure_low <=> @pressure_high).should == -1
-      (@pressure_high <=> @pressure_low).should == 1
-      (@pressure <=> @pressure_same).should == 0
+    context "when distance is imperial" do
+      it "returns in" do
+        distance = Barometer::Data::Pressure.new(:imperial, 721.0, 21.0)
+        distance.units.should == 'in'
+      end
     end
-
-    it "defines <" do
-      Barometer::Data::Pressure.method_defined?("<").should be_true
-      @pressure_low.should < @pressure_high
-      @pressure_high.should_not < @pressure_low
-      @pressure.should_not < @pressure_same
-    end
-
-    it "defines >" do
-      Barometer::Data::Pressure.method_defined?(">").should be_true
-      @pressure_low.should_not > @pressure_high
-      @pressure_high.should > @pressure_low
-      @pressure.should_not > @pressure_same
-    end
-
-    it "defines ==" do
-      Barometer::Data::Pressure.method_defined?("==").should be_true
-      @pressure_low.should_not == @pressure_high
-      @pressure.should == @pressure_same
-    end
-
-    it "defines <=" do
-      Barometer::Data::Pressure.method_defined?("<=").should be_true
-      @pressure_low.should <= @pressure_high
-      @pressure_high.should_not <= @pressure_low
-      @pressure.should <= @pressure_same
-    end
-
-    it "defines >=" do
-      Barometer::Data::Pressure.method_defined?(">=").should be_true
-      @pressure_low.should_not >= @pressure_high
-      @pressure_high.should >= @pressure_low
-      @pressure.should >= @pressure_same
-    end
-
   end
 
-  describe "changing units" do
+  describe "#to_i" do
+    context "when distance is metric" do
+      it "returns the value of mb" do
+        distance = Barometer::Data::Pressure.new(:metric, 721.0, 21.0)
+        distance.to_i.should == 721
+      end
 
-    before(:each) do
-      @in = 21.31
-      @mb = 721.64
-      @pressure = Barometer::Data::Pressure.new
-      @pressure.mb = @mb
+      it "returns 0 if nothing is set" do
+        distance = Barometer::Data::Pressure.new(:metric, nil, nil)
+        distance.to_i.should == 0
+      end
     end
 
-    it "returns just the integer value (no units)" do
-      @pressure.metric?.should be_true
-      @pressure.to_i.should == @mb.to_i
+    context "when distance is imperial" do
+      it "returns the value of in" do
+        distance = Barometer::Data::Pressure.new(:imperial, 721.0, 21.0)
+        distance.to_i.should == 21
+      end
 
-      @pressure.imperial!
-      @pressure.metric?.should be_false
-      @pressure.to_i.should == @in.to_i
+      it "returns 0 if nothing is set" do
+        distance = Barometer::Data::Pressure.new(:imperial, nil, nil)
+        distance.to_i.should == 0
+      end
     end
-
-    it "returns just the float value (no units)" do
-      @pressure.metric?.should be_true
-      @pressure.to_f.should == @mb.to_f
-
-      @pressure.imperial!
-      @pressure.metric?.should be_false
-      @pressure.to_f.should == @in.to_f
-    end
-
-    it "returns just the integer value with units" do
-      @pressure.metric?.should be_true
-      @pressure.to_s.should == "#{@mb.to_i} #{Barometer::Data::Pressure::METRIC_UNITS}"
-
-      @pressure.imperial!
-      @pressure.metric?.should be_false
-      @pressure.to_s.should == "#{@in.to_i} #{Barometer::Data::Pressure::IMPERIAL_UNITS}"
-    end
-
-    it "returns just the units" do
-      @pressure.metric?.should be_true
-      @pressure.units.should == Barometer::Data::Pressure::METRIC_UNITS
-
-      @pressure.imperial!
-      @pressure.metric?.should be_false
-      @pressure.units.should == Barometer::Data::Pressure::IMPERIAL_UNITS
-    end
-
   end
 
+  describe "#to_f" do
+    context "when distance is metric" do
+      it "returns the value of mb" do
+        distance = Barometer::Data::Pressure.new(:metric, 721, 21)
+        distance.to_f.should == 721.0
+      end
+
+      it "returns 0 if nothing is set" do
+        distance = Barometer::Data::Pressure.new(:metric, nil, nil)
+        distance.to_f.should == 0.0
+      end
+    end
+
+    context "when distance is imperial" do
+      it "returns the value of in" do
+        distance = Barometer::Data::Pressure.new(:imperial, 721, 21)
+        distance.to_f.should == 21.0
+      end
+
+      it "returns 0 if nothing is set" do
+        distance = Barometer::Data::Pressure.new(:imperial, nil, nil)
+        distance.to_f.should == 0.0
+      end
+    end
+  end
+
+  describe "#to_s" do
+    context "when distance is metric" do
+      it "returns mb" do
+        distance = Barometer::Data::Pressure.new(:metric, 721, nil)
+        distance.to_s.should == '721 mb'
+      end
+    end
+
+    context "when distance is imperial" do
+      it "returns in" do
+        distance = Barometer::Data::Pressure.new(:imperial, nil, 21)
+        distance.to_s.should == '21 in'
+      end
+    end
+  end
+
+  describe "#nil?" do
+    it "returns true if nothing is set" do
+      distance = Barometer::Data::Pressure.new(nil, nil)
+      distance.should be_nil
+    end
+
+    it "returns false if only mb set" do
+      distance = Barometer::Data::Pressure.new(721, nil)
+      distance.should_not be_nil
+    end
+
+    it "returns false if only in set" do
+      distance = Barometer::Data::Pressure.new(nil, 21)
+      distance.should_not be_nil
+    end
+  end
+
+  describe "#metric=" do
+    context "when switching from :metric to :imperial" do
+      it "becomes imperial using a boolean" do
+        distance = Barometer::Data::Pressure.new(:metric, 721, 21)
+        distance.metric = false
+
+        distance.should_not be_metric
+        distance.to_i.should == 21
+      end
+
+      it "becomes imperial using a symbol" do
+        distance = Barometer::Data::Pressure.new(:metric, 721, 21)
+        distance.metric = :imperial
+
+        distance.should_not be_metric
+        distance.to_i.should == 21
+      end
+    end
+
+    context "when switching from :imperial to :metric" do
+      it "becomes metric be default" do
+        distance = Barometer::Data::Pressure.new(:imperial, 721, 21)
+        distance.metric = nil
+
+        distance.should be_metric
+        distance.to_i.should == 721
+      end
+
+      it "becomes metric using a boolean" do
+        distance = Barometer::Data::Pressure.new(:imperial, 721, 21)
+        distance.metric = true
+
+        distance.should be_metric
+        distance.to_i.should == 721
+      end
+
+      it "becomes metric using a symbol" do
+        distance = Barometer::Data::Pressure.new(:imperial, 721, 21)
+        distance.metric = :metric
+
+        distance.should be_metric
+        distance.to_i.should == 721
+      end
+    end
+  end
 end
