@@ -103,8 +103,8 @@ module Barometer
       end
 
       def distance *names
-        pre_set_reader Data::Distance, *names
-        pre_set_writer Data::Distance, *names
+        new_pre_set_reader Data::Distance, *names
+        new_pre_set_writer Data::Distance, *names
       end
 
       def float *names

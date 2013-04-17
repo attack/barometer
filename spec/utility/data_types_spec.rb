@@ -275,44 +275,43 @@ describe Barometer::DataTypes do
 
     context "when setting with data of exact values" do
       it "initializes Barometer::Data::Distance" do
-        subject.distance = 12
+        subject.distance = [42.2]
         subject.distance.should be_a(Barometer::Data::Distance)
       end
 
       it "prints correctly" do
-        subject.distance = 12
-        subject.distance.to_s.should == "12 km"
+        subject.distance = [42.2]
+        subject.distance.to_s.should == "42.2 km"
       end
 
-      it "clears the value" do
-        subject.distance = 12
+      it "does not clear the value" do
+        subject.distance = [42.2]
         subject.distance = nil
-        subject.distance.should be_nil
+        subject.distance.to_s.should == "42.2 km"
       end
     end
 
     context "when setting to multiple values" do
       it "initializes Barometer::Data::Distance" do
-        subject.distance << [20, 12]
+        subject.distance = [42.2, 26.2]
         subject.distance.should be_a(Barometer::Data::Distance)
       end
 
       it "prints correctly (as metric)" do
-        subject.distance << [20, 12]
-        subject.distance.to_s.should == "20 km"
+        subject.distance = [42.2, 26.2]
+        subject.distance.to_s.should == "42.2 km"
       end
 
       it "prints correctly (as imperial)" do
-        subject.distance << [20, 12]
+        subject.distance = [42.2, 26.2]
         subject.metric = false
-        subject.distance.to_s.should == "12 m"
+        subject.distance.to_s.should == "26.2 m"
       end
     end
 
     context "when setting with Barometer::Data::Distance" do
       it "uses the passed in value" do
-        distance = Barometer::Data::Distance.new
-        distance << 12
+        distance = Barometer::Data::Distance.new(42.2)
         subject.distance = distance
         subject.distance.should be_a(Barometer::Data::Distance)
         subject.distance.should == distance
@@ -323,11 +322,11 @@ describe Barometer::DataTypes do
     context "when changing metric" do
       it "adjusts correctly" do
         subject.metric = true
-        subject.distance = 20
-        subject.distance.to_s.should == "20 km"
+        subject.distance = [42.2]
+        subject.distance.to_s.should == "42.2 km"
 
         subject.metric = false
-        subject.distance.to_s.should == "12 m"
+        subject.distance.to_s.should == "26.2 m"
       end
     end
   end

@@ -247,10 +247,8 @@ describe Barometer::Weather do
 
     describe "for visibility" do
       before(:each) do
-        @weather.source(:wunderground).current.visibility = Barometer::Data::Distance.new
-        @weather.source(:wunderground).current.visibility.km = 10
-        @weather.source(:yahoo).current.visibility = Barometer::Data::Distance.new
-        @weather.source(:yahoo).current.visibility.km = 6
+        @weather.source(:wunderground).current.visibility = Barometer::Data::Distance.new(10)
+        @weather.source(:yahoo).current.visibility = Barometer::Data::Distance.new(6)
       end
 
       it "returns averages" do

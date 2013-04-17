@@ -105,7 +105,7 @@ describe Barometer::Data::Vector do
   describe "#mph" do
     it "calculates mph from kph" do
       vector = Barometer::Data::Vector.new(16.09, nil, nil)
-      vector.mph.should == 10.00
+      vector.mph.should == 10.0
     end
 
     it "returns nil if mph is nil" do

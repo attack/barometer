@@ -30,7 +30,7 @@ module Barometer
         when :vector
           /^[0-9\.]{1,5} (?:mph|kph) (?:[nesw]{1,3}(?:orth|outh|t|ast)?|@ [0-9\.]{1,5} degrees)$/i
         when :distance
-          /^\d{1,4}[ ]?k?m?$/i
+          /^[0-9\.]{1,5}[ ]?k?m?$/i
         when Regexp
           format
         end

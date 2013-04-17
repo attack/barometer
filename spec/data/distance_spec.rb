@@ -1,336 +1,391 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Barometer::Data::Distance do
-
-  describe "when initialized" do
-
-    it "defines METRIC_UNITS" do
-      Barometer::Data::Distance.const_defined?("METRIC_UNITS").should be_true
-      Barometer::Data::Distance::METRIC_UNITS.should == "km"
+  describe ".initialize" do
+    it "sets km" do
+      distance = Barometer::Data::Distance.new(42.2, nil)
+      distance.km.should == 42.2
     end
 
-    it "defines IMPERIAL_UNITS" do
-      Barometer::Data::Distance.const_defined?("IMPERIAL_UNITS").should be_true
-      Barometer::Data::Distance::IMPERIAL_UNITS.should == "m"
+    it "sets m" do
+      distance = Barometer::Data::Distance.new(nil, 26.2)
+      distance.m.should == 26.2
     end
 
-    before(:each) do
-      @distance = Barometer::Data::Distance.new
+    describe "delays unit selection after init" do
+      context "when initialized with km only" do
+        it "defaults to metric" do
+          distance = Barometer::Data::Distance.new(42)
+          distance.to_s.should == "42 km"
+        end
+
+        it "allows metric to be chosen after" do
+          distance = Barometer::Data::Distance.new(42)
+          distance.metric = true
+          distance.to_s.should == "42 km"
+        end
+
+        it "sets the km the first time, converts the second time" do
+          distance = Barometer::Data::Distance.new(42.2)
+          distance.metric = true
+          distance.metric = false
+          distance.to_s.should == "26.2 m"
+        end
+      end
+
+      context "when initialized with m only" do
+        it "allows imperial to be chosen after" do
+          distance = Barometer::Data::Distance.new(26)
+          distance.metric = false
+          distance.to_s.should == "26 m"
+        end
+
+        it "sets the m the first time, converts the second time" do
+          distance = Barometer::Data::Distance.new(26.2)
+          distance.metric = false
+          distance.metric = true
+          distance.to_s.should == "42.2 km"
+        end
+      end
     end
 
-    it "responds to kilometers" do
-      @distance.kilometers.should be_nil
-    end
+    describe "sets unit type when given" do
+      it "defaults to metric" do
+        distance = Barometer::Data::Distance.new(nil, nil)
+        distance.should be_metric
+      end
 
-    it "responds to miles" do
-      @distance.miles.should be_nil
-    end
+      it "sets metric via boolean" do
+        distance = Barometer::Data::Distance.new(true, nil, nil)
+        distance.should be_metric
+      end
 
-    it "responds to metric_default" do
-      lambda { @distance.metric_default = 5 }.should_not raise_error(NotImplementedError)
-    end
+      it "sets metric via symbol" do
+        distance = Barometer::Data::Distance.new(:metric, nil, nil)
+        distance.should be_metric
+      end
 
-    it "responds to imperial_default" do
-      lambda { @distance.imperial_default = 5 }.should_not raise_error(NotImplementedError)
-    end
+      it "sets imperial via boolean" do
+        distance = Barometer::Data::Distance.new(false, nil, nil)
+        distance.should_not be_metric
+      end
 
-    it "responds to nil?" do
-      @distance.nil?.should be_true
-      @distance.km = 5
-      @distance.nil?.should be_false
-    end
+      it "sets imperial via symbol" do
+        distance = Barometer::Data::Distance.new(:imperial, nil, nil)
+        distance.should_not be_metric
+      end
 
+      context "when only provided one magnitude" do
+        context "and metric is set" do
+          it "interprets magnitude as km" do
+            distance = Barometer::Data::Distance.new(:metric, 42)
+            distance.metric = false
+            distance.metric = true
+            distance.to_s.should == "42 km"
+          end
+        end
+
+        context "and imperial is set" do
+          it "interprets magnitude as m" do
+            distance = Barometer::Data::Distance.new(:imperial, 26)
+            distance.metric = true
+            distance.metric = false
+            distance.to_s.should == "26 m"
+          end
+        end
+      end
+    end
   end
 
-  describe "conversion" do
-
-    # For all conversions
-    # 26.2 M = 42.2 KM
-    before(:each) do
-      @m = 26.2
-      @km = 42.2
+  describe "#m" do
+    it "calculates m from km" do
+      distance = Barometer::Data::Distance.new(42.2, nil)
+      distance.m.should == 26.2
     end
 
-    it "requires a value, that is either Integer or Float" do
-      Barometer::Data::Distance.km_to_m(nil).should be_nil
-      Barometer::Data::Distance.m_to_km(nil).should be_nil
-
-      not_float_or_integer = "string"
-      Barometer::Data::Distance.km_to_m(not_float_or_integer).should be_nil
-      Barometer::Data::Distance.m_to_km(not_float_or_integer).should be_nil
+    it "returns nil if m is nil" do
+      distance = Barometer::Data::Distance.new(nil, nil)
+      distance.m.should be_nil
     end
 
-    it "converts KM to M" do
-      ((Barometer::Data::Distance.km_to_m(@km)*10).round/10.0).should == @m
+    it "returns converted unknown value as m" do
+      distance = Barometer::Data::Distance.new(42.2)
+      distance.m.should == 26.2
     end
 
-    it "converts M to KM" do
-      ((Barometer::Data::Distance.m_to_km(@m)*10).round/10.0).should == @km
+    it "returns known value as m" do
+      distance = Barometer::Data::Distance.new(:imperial, 26)
+      distance.m.should == 26
     end
 
+    it "returns converted known value as m" do
+      distance = Barometer::Data::Distance.new(:metric, 42.2)
+      distance.m.should == 26.2
+    end
+
+    # it "keeps integer resolution" do
+    #   distance = Barometer::Data::Distance.new(:imperial, 10)
+    #   distance.km.should == 16
+    # end
+
+    # it "keeps float resolution" do
+    #   distance = Barometer::Data::Distance.new(:imperial, 10.0)
+    #   distance.km.should == 16.1
+    # end
   end
 
-  describe "updating" do
-
-    before(:each) do
-      @distance = Barometer::Data::Distance.new
-      @m = 26.2
-      @km = 42.2
+  describe "#km" do
+    it "calculates km from m" do
+      distance = Barometer::Data::Distance.new(nil, 26.2)
+      distance.km.should == 42.2
     end
 
-    it "nils M if new KM converts to a M that changes more then 1 unit" do
-      @distance.miles = (@m + 1.1)
-      @distance.update_miles(@km)
-      @distance.miles.should be_nil
+    it "returns nil if m is nil" do
+      distance = Barometer::Data::Distance.new(nil, nil)
+      distance.km.should be_nil
     end
 
-    it "doesn't update M if new KM converts to a M that does not change more then 1 unit" do
-      @distance.miles = (@m + 0.9)
-      @distance.update_miles(@km)
-      @distance.miles.should == (@m + 0.9)
+    it "returns unknown value as km" do
+      distance = Barometer::Data::Distance.new(42)
+      distance.km.should == 42
     end
 
-    it "doesn't set M if not already set" do
-      @distance.miles.should be_nil
-      @distance.kilometers.should be_nil
-      @distance.update_miles(@km)
-      @distance.miles.should be_nil
-      @distance.kilometers.should be_nil
+    it "returns known value as km" do
+      distance = Barometer::Data::Distance.new(:metric, 42)
+      distance.km.should == 42
     end
 
-    it "nils KM if new M converts to a KM that changes more then 1 unit" do
-      @distance.kilometers = (@km + 1.1)
-      @distance.update_kilometers(@m)
-      @distance.kilometers.should be_nil
+    it "returns converted known value as km" do
+      distance = Barometer::Data::Distance.new(:imperial, 26.2)
+      distance.km.should == 42.2
     end
 
-    it "doesn't update KM if new M converts to a KM that does not change more then 1 unit" do
-      @distance.kilometers = (@km + 0.9)
-      @distance.update_kilometers(@m)
-      @distance.kilometers.should == (@km + 0.9)
-    end
+    # it "keeps integer resolution" do
+    #   distance = Barometer::Data::Distance.new(:imperial, 10)
+    #   distance.km.should == 16
+    # end
 
-    it "doesn't set KM if not already set" do
-      @distance.miles.should be_nil
-      @distance.kilometers.should be_nil
-      @distance.update_kilometers(@m)
-      @distance.miles.should be_nil
-      @distance.kilometers.should be_nil
-    end
-
+    # it "keeps float resolution" do
+    #   distance = Barometer::Data::Distance.new(:imperial, 10.0)
+    #   distance.km.should == 16.1
+    # end
   end
 
-  describe "storing" do
+  describe "#<=>" do
+    context "when comparing two metric distances" do
+      it "returns > correctly" do
+        distance1 = Barometer::Data::Distance.new(:metric, 42, nil)
+        distance2 = Barometer::Data::Distance.new(:metric, 42.2, nil)
 
-    before(:each) do
-      @distance = Barometer::Data::Distance.new
-      @m = 26.2
-      @km = 42.2
+        distance2.should > distance1
+      end
+
+      it "returns == correctly" do
+        distance1 = Barometer::Data::Distance.new(:metric, 42, nil)
+        distance2 = Barometer::Data::Distance.new(:metric, 42.0, nil)
+
+        distance2.should == distance1
+      end
+
+      it "returns < correctly" do
+        distance1 = Barometer::Data::Distance.new(:metric, 42, nil)
+        distance2 = Barometer::Data::Distance.new(:metric, 42.2, nil)
+
+        distance1.should < distance2
+      end
     end
 
-    it "doesn't update KM if nil value (or equivalent)" do
-      @distance.kilometers.should be_nil
-      @distance.km = nil
-      @distance.kilometers.should be_nil
-      @distance.km = "na"
-      @distance.kilometers.should be_nil
+    context "when comparing two imperial distances" do
+      it "returns > correctly" do
+        distance1 = Barometer::Data::Distance.new(:imperial, nil, 26)
+        distance2 = Barometer::Data::Distance.new(:imperial, nil, 26.2)
+
+        distance2.should > distance1
+      end
+
+      it "returns == correctly" do
+        distance1 = Barometer::Data::Distance.new(:imperial, nil, 26)
+        distance2 = Barometer::Data::Distance.new(:imperial, nil, 26.0)
+
+        distance2.should == distance1
+      end
+
+      it "returns < correctly" do
+        distance1 = Barometer::Data::Distance.new(:imperial, nil, 26)
+        distance2 = Barometer::Data::Distance.new(:imperial, nil, 26.2)
+
+        distance1.should < distance2
+      end
     end
 
-    it "stores KM and resets M" do
-      @distance.kilometers.should be_nil
-      @distance.miles = (@m + 1.1)
-      @distance.km = @km
-      @distance.kilometers.should == @km
-      @distance.miles.should be_nil
-    end
+    context "when comparing a mtric and an imperial distance" do
+      it "returns > correctly" do
+        distance1 = Barometer::Data::Distance.new(:metric, 42.0, nil)
+        distance2 = Barometer::Data::Distance.new(:imperial, nil, 26.2)
 
-    it "doesn't update M if nil value (or equivalent)" do
-      @distance.miles.should be_nil
-      @distance.m = nil
-      @distance.miles.should be_nil
-      @distance.m = "na"
-      @distance.miles.should be_nil
-    end
+        distance2.should > distance1
+      end
 
-    it "stores M and resets KM" do
-      @distance.miles.should be_nil
-      @distance.kilometers = (@km + 1.1)
-      @distance.m = @m
-      @distance.miles.should == @m
-      @distance.kilometers.should be_nil
-    end
+      it "returns == correctly" do
+        distance1 = Barometer::Data::Distance.new(:metric, 42.2, nil)
+        distance2 = Barometer::Data::Distance.new(:imperial, nil, 26.2)
 
+        distance2.should == distance1
+      end
+
+      it "returns < correctly" do
+        distance1 = Barometer::Data::Distance.new(:metric, 42.3, nil)
+        distance2 = Barometer::Data::Distance.new(:imperial, nil, 26.2)
+
+        distance2.should < distance1
+      end
+    end
   end
 
-  describe "retrieving" do
-
-    before(:each) do
-      @distance = Barometer::Data::Distance.new
-      @m = 26.2
-      @km = 42.16
+  describe "#units" do
+    context "when distance is metric" do
+      it "returns km" do
+        distance = Barometer::Data::Distance.new(:metric, 42.0, 26.0)
+        distance.units.should == 'km'
+      end
     end
 
-    it "returns KM if it exists" do
-      @distance.km = @km
-      @distance.kilometers.should == @km
-      @distance.km(false).should == @km
+    context "when distance is imperial" do
+      it "returns m" do
+        distance = Barometer::Data::Distance.new(:imperial, 42.0, 26.0)
+        distance.units.should == 'm'
+      end
     end
-
-    it "auto converts from M if KM is nil and M exists" do
-      @distance.m = @m
-      @distance.miles.should == @m
-      @distance.kilometers.should be_nil
-      @distance.km(false).should == @km
-    end
-
-    it "allows a float to be returned for KM" do
-      km = 42.12
-      @distance.km = km
-      @distance.kilometers.should == km
-      @distance.km(true).should == km.to_i
-      @distance.km(false).should == km.to_f
-    end
-
-    it "allows only 2 decimal precision for KM" do
-      km = 42.1234
-      @distance.km = km
-      @distance.kilometers.should == km
-      @distance.km(false).should == 42.12
-    end
-
-    it "returns M if it exists" do
-      @distance.m = @m
-      @distance.miles.should == @m
-      @distance.m(false).should == @m
-    end
-
-    it "auto converts from KM if M is nil and KM exists" do
-      @distance.km = @km
-      @distance.kilometers.should == @km
-      @distance.miles.should be_nil
-      ((@distance.m(false)*10).round/10.0).should == @m
-    end
-
-    it "allows a float to be returned for M" do
-      m = 26.12
-      @distance.m = m
-      @distance.miles.should == m
-      @distance.m(true).should == m.to_i
-      @distance.m(false).should == m.to_f
-    end
-
-    it "allows only 2 decimal precision for M" do
-      m = 26.1234
-      @distance.m = m
-      @distance.miles.should == m
-      @distance.m(false).should == 26.12
-    end
-
   end
 
-  describe "operators" do
+  describe "#to_i" do
+    context "when distance is metric" do
+      it "returns the value of km" do
+        distance = Barometer::Data::Distance.new(:metric, 42.0, 26.0)
+        distance.to_i.should == 42
+      end
 
-    before(:each) do
-      @m = 26.2
-      @km = 42.16
-      @distance_low = Barometer::Data::Distance.new
-      @distance_low.km = (@m - 1.0)
-      @distance_high = Barometer::Data::Distance.new
-      @distance_high.km = (@km + 1.0)
-      @distance = Barometer::Data::Distance.new
-      @distance.km = @km
-      @distance_same = Barometer::Data::Distance.new
-      @distance_same.km = @km
+      it "returns 0 if nothing is set" do
+        distance = Barometer::Data::Distance.new(:metric, nil, nil)
+        distance.to_i.should == 0
+      end
     end
 
-    it "defines <=>" do
-      Barometer::Data::Distance.method_defined?("<=>").should be_true
-      (@distance_low <=> @distance_high).should == -1
-      (@distance_high <=> @distance_low).should == 1
-      (@distance <=> @distance_same).should == 0
-    end
+    context "when distance is imperial" do
+      it "returns the value of m" do
+        distance = Barometer::Data::Distance.new(:imperial, 42.0, 26.0)
+        distance.to_i.should == 26
+      end
 
-    it "defines <" do
-      Barometer::Data::Distance.method_defined?("<").should be_true
-      @distance_low.should < @distance_high
-      @distance_high.should_not < @distance_low
-      @distance.should_not < @distance_same
+      it "returns 0 if nothing is set" do
+        distance = Barometer::Data::Distance.new(:imperial, nil, nil)
+        distance.to_i.should == 0
+      end
     end
-
-    it "defines >" do
-      Barometer::Data::Distance.method_defined?(">").should be_true
-      @distance_low.should_not > @distance_high
-      @distance_high.should > @distance_low
-      @distance.should_not > @distance_same
-    end
-
-    it "defines ==" do
-      Barometer::Data::Distance.method_defined?("==").should be_true
-      @distance_low.should_not == @distance_high
-      @distance.should == @distance_same
-    end
-
-    it "defines <=" do
-      Barometer::Data::Distance.method_defined?("<=").should be_true
-      @distance_low.should <= @distance_high
-      @distance_high.should_not <= @distance_low
-      @distance.should <= @distance_same
-    end
-
-    it "defines >=" do
-      Barometer::Data::Distance.method_defined?(">=").should be_true
-      @distance_low.should_not >= @distance_high
-      @distance_high.should >= @distance_low
-      @distance.should >= @distance_same
-    end
-
   end
 
-  describe "changing units" do
+  describe "#to_f" do
+    context "when distance is metric" do
+      it "returns the value of km" do
+        distance = Barometer::Data::Distance.new(:metric, 42, 26)
+        distance.to_f.should == 42.0
+      end
 
-    before(:each) do
-      @m = 26.2
-      @km = 42.16
-      @distance = Barometer::Data::Distance.new
-      @distance.km = @km
+      it "returns 0 if nothing is set" do
+        distance = Barometer::Data::Distance.new(:metric, nil, nil)
+        distance.to_f.should == 0.0
+      end
     end
 
-    it "returns just the integer value (no units)" do
-      @distance.metric?.should be_true
-      @distance.to_i.should == @km.to_i
+    context "when distance is imperial" do
+      it "returns the value of m" do
+        distance = Barometer::Data::Distance.new(:imperial, 42, 26)
+        distance.to_f.should == 26.0
+      end
 
-      @distance.imperial!
-      @distance.metric?.should be_false
-      @distance.to_i.should == @m.to_i
+      it "returns 0 if nothing is set" do
+        distance = Barometer::Data::Distance.new(:imperial, nil, nil)
+        distance.to_f.should == 0.0
+      end
     end
-
-    it "returns just the float value (no units)" do
-      @distance.metric?.should be_true
-      @distance.to_f.should == @km.to_f
-
-      @distance.imperial!
-      @distance.metric?.should be_false
-      ((@distance.to_f*10).round/10.0).should == @m.to_f
-    end
-
-    it "returns just the integer value with units" do
-      @distance.metric?.should be_true
-      @distance.to_s.should == "#{@km.to_i} #{Barometer::Data::Distance::METRIC_UNITS}"
-
-      @distance.imperial!
-      @distance.metric?.should be_false
-      @distance.to_s.should == "#{@m.to_i} #{Barometer::Data::Distance::IMPERIAL_UNITS}"
-    end
-
-    it "returns just the units" do
-      @distance.metric?.should be_true
-      @distance.units.should == Barometer::Data::Distance::METRIC_UNITS
-
-      @distance.imperial!
-      @distance.metric?.should be_false
-      @distance.units.should == Barometer::Data::Distance::IMPERIAL_UNITS
-    end
-
   end
 
+  describe "#to_s" do
+    context "when distance is metric" do
+      it "returns km" do
+        distance = Barometer::Data::Distance.new(:metric, 42, nil)
+        distance.to_s.should == '42 km'
+      end
+    end
+
+    context "when distance is imperial" do
+      it "returns m" do
+        distance = Barometer::Data::Distance.new(:imperial, nil, 26)
+        distance.to_s.should == '26 m'
+      end
+    end
+  end
+
+  describe "#nil?" do
+    it "returns true if nothing is set" do
+      distance = Barometer::Data::Distance.new(nil, nil)
+      distance.should be_nil
+    end
+
+    it "returns false if only km set" do
+      distance = Barometer::Data::Distance.new(42, nil)
+      distance.should_not be_nil
+    end
+
+    it "returns false if only m set" do
+      distance = Barometer::Data::Distance.new(nil, 26)
+      distance.should_not be_nil
+    end
+  end
+
+  describe "#metric=" do
+    context "when switching from :metric to :imperial" do
+      it "becomes imperial using a boolean" do
+        distance = Barometer::Data::Distance.new(:metric, 42, 26)
+        distance.metric = false
+
+        distance.should_not be_metric
+        distance.to_i.should == 26
+      end
+
+      it "becomes imperial using a symbol" do
+        distance = Barometer::Data::Distance.new(:metric, 42, 26)
+        distance.metric = :imperial
+
+        distance.should_not be_metric
+        distance.to_i.should == 26
+      end
+    end
+
+    context "when switching from :imperial to :metric" do
+      it "becomes metric be default" do
+        distance = Barometer::Data::Distance.new(:imperial, 42, 26)
+        distance.metric = nil
+
+        distance.should be_metric
+        distance.to_i.should == 42
+      end
+
+      it "becomes metric using a boolean" do
+        distance = Barometer::Data::Distance.new(:imperial, 42, 26)
+        distance.metric = true
+
+        distance.should be_metric
+        distance.to_i.should == 42
+      end
+
+      it "becomes metric using a symbol" do
+        distance = Barometer::Data::Distance.new(:imperial, 42, 26)
+        distance.metric = :metric
+
+        distance.should be_metric
+        distance.to_i.should == 42
+      end
+    end
+  end
 end
