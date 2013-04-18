@@ -12,18 +12,6 @@ module Barometer
     end
 
     module ClassMethods
-      def metric_reader *names
-        names.each do |name|
-          send :define_method, name do
-            value = instance_variable_get("@#{name}")
-            if value.respond_to?(:metric=)
-              value.metric = metric?
-            end
-            value
-          end
-        end
-      end
-
       def pre_set_reader type, *names
         names.each do |name|
           send :define_method, name do
@@ -36,25 +24,6 @@ module Barometer
               value.metric = metric?
             end
             value
-          end
-        end
-      end
-
-      def pre_set_writer type, *names
-        names.each do |name|
-          send :define_method, "#{name}=" do |data|
-            if data == nil
-              instance = nil
-            elsif data.is_a?(type)
-              instance = data
-              instance.metric = metric?
-            else
-              instance = instance_variable_get("@#{name}")
-              instance ||= type.new
-              instance << data
-              instance.metric = metric?
-            end
-            instance_variable_set "@#{name}", instance
           end
         end
       end
