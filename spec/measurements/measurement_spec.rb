@@ -33,7 +33,7 @@ describe Barometer::Measurement do
 
   describe "#complete?" do
     it "returns true when the current temperature has been set" do
-      subject.current.temperature << 10
+      subject.current.temperature = [10]
       subject.should be_complete
     end
 

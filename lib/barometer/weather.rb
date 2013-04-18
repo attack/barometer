@@ -69,11 +69,11 @@ module Barometer
         if measurement.weight && measurement.weight > 1
           measurement.weight.times do
             values << measurement.current.send(value_name).to_f if measurement.success? &&
-              measurement.current.send(value_name)
+              !measurement.current.send(value_name).nil?
           end
         else
           values << measurement.current.send(value_name).to_f if measurement.success? &&
-            measurement.current.send(value_name)
+            !measurement.current.send(value_name).nil?
         end
       end
       values.compact!
@@ -84,7 +84,7 @@ module Barometer
     def average(value_name, do_average=true, class_name=nil)
       if class_name
         if do_average
-          if %w(Vector Distance Pressure).include?(class_name)
+          if %w(Vector Distance Pressure Temperature).include?(class_name)
             if metric?
               avg = Barometer::Data.const_get(class_name).new(self.metric?, self.current_average(value_name), nil, nil)
             else

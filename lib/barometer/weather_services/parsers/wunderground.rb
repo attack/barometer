@@ -31,10 +31,10 @@ module Barometer
           current.humidity = payload.fetch('relative_humidity')
           current.condition = payload.fetch('weather')
           current.icon = payload.fetch('icon')
-          current.temperature << [payload.fetch('temp_c'), payload.fetch('temp_f')]
-          current.dew_point << [payload.fetch('dewpoint_c'), payload.fetch('dewpoint_f')]
-          current.wind_chill << [payload.fetch('windchill_c'), payload.fetch('windchill_f')]
-          current.heat_index << [payload.fetch('heat_index_c'), payload.fetch('heat_index_f')]
+          current.temperature = [payload.fetch('temp_c'), payload.fetch('temp_f')]
+          current.dew_point = [payload.fetch('dewpoint_c'), payload.fetch('dewpoint_f')]
+          current.wind_chill = [payload.fetch('windchill_c'), payload.fetch('windchill_f')]
+          current.heat_index = [payload.fetch('heat_index_c'), payload.fetch('heat_index_f')]
           current.wind = [:imperial, payload.fetch('wind_mph').to_i, payload.fetch('wind_degrees').to_i]
           current.visibility = [payload.fetch('visibility_km'), payload.fetch('visibility_mi')]
           current.pressure = [payload.fetch('pressure_mb'), payload.fetch('pressure_in')]
@@ -105,8 +105,8 @@ module Barometer
 
             forecast_measurement.icon = forecast_payload.fetch('icon')
             forecast_measurement.pop = forecast_payload.fetch('pop').to_i
-            forecast_measurement.high << [forecast_payload.fetch('high', 'celsius'), forecast_payload.fetch('high', 'fahrenheit')]
-            forecast_measurement.low << [forecast_payload.fetch('low', 'celsius'), forecast_payload.fetch('low', 'fahrenheit')]
+            forecast_measurement.high = [forecast_payload.fetch('high', 'celsius'), forecast_payload.fetch('high', 'fahrenheit')]
+            forecast_measurement.low = [forecast_payload.fetch('low', 'celsius'), forecast_payload.fetch('low', 'fahrenheit')]
             forecast_measurement.sun = @measurement.current.sun
           end
         end

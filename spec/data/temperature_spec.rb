@@ -1,392 +1,391 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Barometer::Data::Temperature do
-  describe "when initialized" do
-    it "defines METRIC_UNITS" do
-      Barometer::Data::Temperature.const_defined?("METRIC_UNITS").should be_true
-      Barometer::Data::Temperature::METRIC_UNITS.should == "C"
+  describe ".initialize" do
+    it "sets C" do
+      temperature = Barometer::Data::Temperature.new(20.0, nil)
+      temperature.c.should == 20.0
     end
 
-    it "defines IMPERIAL_UNITS" do
-      Barometer::Data::Temperature.const_defined?("IMPERIAL_UNITS").should be_true
-      Barometer::Data::Temperature::IMPERIAL_UNITS.should == "F"
+    it "sets F" do
+      temperature = Barometer::Data::Temperature.new(nil, 68.0)
+      temperature.f.should == 68.0
     end
 
-    before(:each) do
-      @temp = Barometer::Data::Temperature.new
+    describe "delays unit selection after init" do
+      context "when initialized with C only" do
+        it "defaults to metric" do
+          temperature = Barometer::Data::Temperature.new(20)
+          temperature.to_s.should == "20 C"
+        end
+
+        it "allows metric to be chosen after" do
+          temperature = Barometer::Data::Temperature.new(20)
+          temperature.metric = true
+          temperature.to_s.should == "20 C"
+        end
+
+        it "sets the C the first time, converts the second time" do
+          temperature = Barometer::Data::Temperature.new(20.0)
+          temperature.metric = true
+          temperature.metric = false
+          temperature.to_s.should == "68.0 F"
+        end
+      end
+
+      context "when initialized with F only" do
+        it "allows imperial to be chosen after" do
+          temperature = Barometer::Data::Temperature.new(68)
+          temperature.metric = false
+          temperature.to_s.should == "68 F"
+        end
+
+        it "sets the m the first time, converts the second time" do
+          temperature = Barometer::Data::Temperature.new(68.0)
+          temperature.metric = false
+          temperature.metric = true
+          temperature.to_s.should == "20.0 C"
+        end
+      end
     end
 
-    it "responds to celcius" do
-      @temp.celsius.should be_nil
-    end
+    describe "sets unit type when given" do
+      it "defaults to metric" do
+        temperature = Barometer::Data::Temperature.new(nil, nil)
+        temperature.should be_metric
+      end
 
-    it "responds to fahrenheit" do
-      @temp.fahrenheit.should be_nil
-    end
+      it "sets metric via boolean" do
+        temperature = Barometer::Data::Temperature.new(true, nil, nil)
+        temperature.should be_metric
+      end
 
-    it "responds to kelvin" do
-      @temp.kelvin.should be_nil
-    end
+      it "sets metric via symbol" do
+        temperature = Barometer::Data::Temperature.new(:metric, nil, nil)
+        temperature.should be_metric
+      end
 
-    it "responds to metric_default" do
-      lambda { @temp.metric_default = 5 }.should_not raise_error(NotImplementedError)
-    end
+      it "sets imperial via boolean" do
+        temperature = Barometer::Data::Temperature.new(false, nil, nil)
+        temperature.should_not be_metric
+      end
 
-    it "responds to imperial_default" do
-      lambda { @temp.imperial_default = 5 }.should_not raise_error(NotImplementedError)
-    end
+      it "sets imperial via symbol" do
+        temperature = Barometer::Data::Temperature.new(:imperial, nil, nil)
+        temperature.should_not be_metric
+      end
 
-    it "responds to nil?" do
-      @temp.nil?.should be_true
-      @temp.c = 5
-      @temp.nil?.should be_false
-    end
-  end
+      context "when only provided one magnitude" do
+        context "and metric is set" do
+          it "interprets magnitude as C" do
+            temperature = Barometer::Data::Temperature.new(:metric, 20)
+            temperature.metric = false
+            temperature.metric = true
+            temperature.to_s.should == "20 C"
+          end
+        end
 
-  describe "conversion" do
-    # For all conversions
-    # 20.0 C = 293.15 K = 68.0 F
-    before(:each) do
-      @f = 68.0
-      @c = 20.0
-      @k = 293.15
-    end
-
-    it "requires a value, that is either Integer or Float" do
-      Barometer::Data::Temperature.c_to_k(nil).should be_nil
-      Barometer::Data::Temperature.c_to_f(nil).should be_nil
-      Barometer::Data::Temperature.f_to_k(nil).should be_nil
-      Barometer::Data::Temperature.f_to_c(nil).should be_nil
-      Barometer::Data::Temperature.k_to_c(nil).should be_nil
-      Barometer::Data::Temperature.k_to_f(nil).should be_nil
-
-      not_float_or_integer = "string"
-      Barometer::Data::Temperature.c_to_k(not_float_or_integer).should be_nil
-      Barometer::Data::Temperature.c_to_f(not_float_or_integer).should be_nil
-      Barometer::Data::Temperature.f_to_k(not_float_or_integer).should be_nil
-      Barometer::Data::Temperature.f_to_c(not_float_or_integer).should be_nil
-      Barometer::Data::Temperature.k_to_c(not_float_or_integer).should be_nil
-      Barometer::Data::Temperature.k_to_f(not_float_or_integer).should be_nil
-    end
-
-    it "converts C to K" do
-      # 0 C = 273.15 K
-      Barometer::Data::Temperature.c_to_k(@c).should == @k
-    end
-
-    it "converts C to F" do
-      # Tf = (9/5)*Tc+32
-      Barometer::Data::Temperature.c_to_f(@c).should == @f
-    end
-
-    it "converts F to C" do
-      # Tc = (5/9)*(Tf-32)
-      Barometer::Data::Temperature.f_to_c(@f).should == @c
-    end
-
-    it "converts F to K" do
-      Barometer::Data::Temperature.f_to_k(@f).should == @k
-    end
-
-    it "converts K to C" do
-      Barometer::Data::Temperature.k_to_c(@k).should == @c
-    end
-
-    it "converts K to F" do
-      Barometer::Data::Temperature.k_to_f(@k).should == @f
-    end
-  end
-
-  describe "updating" do
-    before(:each) do
-      @temp = Barometer::Data::Temperature.new
-      @f = 68.0
-      @c = 20.0
-    end
-
-    it "nils F if new C converts to a F that changes more then 1 degree" do
-      @temp.fahrenheit = (@f + 1.1)
-      @temp.update_fahrenheit(@c)
-      @temp.fahrenheit.should be_nil
-    end
-
-    it "doesn't update F if new C converts to a F that does not change more then 1 degree" do
-      @temp.fahrenheit = (@f + 0.9)
-      @temp.update_fahrenheit(@c)
-      @temp.fahrenheit.should == (@f + 0.9)
-    end
-
-    it "doesn't set F if not already set" do
-      @temp.fahrenheit.should be_nil
-      @temp.celsius.should be_nil
-      @temp.update_fahrenheit(@c)
-      @temp.fahrenheit.should be_nil
-      @temp.celsius.should be_nil
-    end
-
-    it "nils C if new F converts to a C that changes more then 1 degree" do
-      @temp.celsius = (@c + 1.1)
-      @temp.update_celsius(@f)
-      @temp.celsius.should be_nil
-    end
-
-    it "doesn't update C if new F converts to a C that does not change more then 1 degree" do
-      @temp.celsius = (@c + 0.9)
-      @temp.update_celsius(@f)
-      @temp.celsius.should == (@c + 0.9)
-    end
-
-    it "doesn't set C if not already set" do
-      @temp.fahrenheit.should be_nil
-      @temp.celsius.should be_nil
-      @temp.update_celsius(@f)
-      @temp.fahrenheit.should be_nil
-      @temp.celsius.should be_nil
+        context "and imperial is set" do
+          it "interprets magnitude as m" do
+            temperature = Barometer::Data::Temperature.new(:imperial, 68)
+            temperature.metric = true
+            temperature.metric = false
+            temperature.to_s.should == "68 F"
+          end
+        end
+      end
     end
   end
 
-  describe "storing" do
-    before(:each) do
-      @temp = Barometer::Data::Temperature.new
-      @f = 68.0
-      @c = 20.0
-      @k = 293.15
+  describe "#m" do
+    it "calculates m from C" do
+      temperature = Barometer::Data::Temperature.new(20.0, nil)
+      temperature.f.should == 68.0
     end
 
-    it "doesn't update C if nil value (or equivalent)" do
-      @temp.celsius.should be_nil
-      @temp.c = nil
-      @temp.celsius.should be_nil
-      @temp.c = "na"
-      @temp.celsius.should be_nil
+    it "returns nil if F is nil" do
+      temperature = Barometer::Data::Temperature.new(nil, nil)
+      temperature.f.should be_nil
     end
 
-    it "stores C, convert to K and reset F" do
-      @temp.celsius.should be_nil
-      @temp.fahrenheit = (@f + 1.1)
-      @temp.kelvin.should be_nil
-      @temp.c = @c
-      @temp.celsius.should == @c
-      @temp.kelvin.should == @k
-      @temp.fahrenheit.should be_nil
+    it "returns converted unknown value as F" do
+      temperature = Barometer::Data::Temperature.new(20.0)
+      temperature.f.should == 68.0
     end
 
-    it "doesn't update F if nil value (or equivalent)" do
-      @temp.fahrenheit.should be_nil
-      @temp.f = nil
-      @temp.fahrenheit.should be_nil
-      @temp.f = "na"
-      @temp.fahrenheit.should be_nil
+    it "returns known value as F" do
+      temperature = Barometer::Data::Temperature.new(:imperial, 68)
+      temperature.f.should == 68
     end
 
-    it "stores F, convert to K and reset C" do
-      @temp.fahrenheit.should be_nil
-      @temp.celsius = (@c + 1.1)
-      @temp.kelvin.should be_nil
-      @temp.f = @f
-      @temp.fahrenheit.should == @f
-      @temp.kelvin.should == @k
-      @temp.celsius.should be_nil
+    it "returns converted known value as F" do
+      temperature = Barometer::Data::Temperature.new(:metric, 20.0)
+      temperature.f.should == 68.0
     end
 
-    it "doesn't update K if nil value (or equivalent)" do
-      @temp.kelvin.should be_nil
-      @temp.k = nil
-      @temp.kelvin.should be_nil
-      @temp.k = "na"
-      @temp.kelvin.should be_nil
+    # it "keeps integer resolution" do
+    #   temperature = Barometer::Data::Temperature.new(:imperial, 10)
+    #   temperature.c.should == 16
+    # end
+
+    # it "keeps float resolution" do
+    #   temperature = Barometer::Data::Temperature.new(:imperial, 10.0)
+    #   temperature.c.should == 16.1
+    # end
+  end
+
+  describe "#c" do
+    it "calculates C from F" do
+      temperature = Barometer::Data::Temperature.new(nil, 68.0)
+      temperature.c.should == 20.0
     end
 
-    it "stores K, convert to F and C" do
-      @temp.celsius.should be_nil
-      @temp.fahrenheit.should be_nil
-      @temp.kelvin.should be_nil
-      @temp.k = @k
-      @temp.celsius.should == @c
-      @temp.fahrenheit.should == @f
-      @temp.kelvin.should == @k
+    it "returns nil if F is nil" do
+      temperature = Barometer::Data::Temperature.new(nil, nil)
+      temperature.c.should be_nil
+    end
+
+    it "returns unknown value as C" do
+      temperature = Barometer::Data::Temperature.new(20)
+      temperature.c.should == 20
+    end
+
+    it "returns known value as C" do
+      temperature = Barometer::Data::Temperature.new(:metric, 20)
+      temperature.c.should == 20
+    end
+
+    it "returns converted known value as C" do
+      temperature = Barometer::Data::Temperature.new(:imperial, 68.0)
+      temperature.c.should == 20.0
+    end
+
+    # it "keeps integer resolution" do
+    #   temperature = Barometer::Data::Temperature.new(:imperial, 10)
+    #   temperature.c.should == 16
+    # end
+
+    # it "keeps float resolution" do
+    #   temperature = Barometer::Data::Temperature.new(:imperial, 10.0)
+    #   temperature.c.should == 16.1
+    # end
+  end
+
+  describe "#<=>" do
+    context "when comparing two metric temperatures" do
+      it "returns > correctly" do
+        temperature1 = Barometer::Data::Temperature.new(:metric, 20, nil)
+        temperature2 = Barometer::Data::Temperature.new(:metric, 20.2, nil)
+
+        temperature2.should > temperature1
+      end
+
+      it "returns == correctly" do
+        temperature1 = Barometer::Data::Temperature.new(:metric, 20, nil)
+        temperature2 = Barometer::Data::Temperature.new(:metric, 20.0, nil)
+
+        temperature2.should == temperature1
+      end
+
+      it "returns < correctly" do
+        temperature1 = Barometer::Data::Temperature.new(:metric, 20, nil)
+        temperature2 = Barometer::Data::Temperature.new(:metric, 20.2, nil)
+
+        temperature1.should < temperature2
+      end
+    end
+
+    context "when comparing two imperial temperatures" do
+      it "returns > correctly" do
+        temperature1 = Barometer::Data::Temperature.new(:imperial, nil, 68)
+        temperature2 = Barometer::Data::Temperature.new(:imperial, nil, 68.2)
+
+        temperature2.should > temperature1
+      end
+
+      it "returns == correctly" do
+        temperature1 = Barometer::Data::Temperature.new(:imperial, nil, 68)
+        temperature2 = Barometer::Data::Temperature.new(:imperial, nil, 68.0)
+
+        temperature2.should == temperature1
+      end
+
+      it "returns < correctly" do
+        temperature1 = Barometer::Data::Temperature.new(:imperial, nil, 68)
+        temperature2 = Barometer::Data::Temperature.new(:imperial, nil, 68.2)
+
+        temperature1.should < temperature2
+      end
+    end
+
+    context "when comparing a mtric and an imperial temperature" do
+      it "returns > correctly" do
+        temperature1 = Barometer::Data::Temperature.new(:metric, 20.0, nil)
+        temperature2 = Barometer::Data::Temperature.new(:imperial, nil, 68.2)
+
+        temperature2.should > temperature1
+      end
+
+      it "returns == correctly" do
+        temperature1 = Barometer::Data::Temperature.new(:metric, 20.0, nil)
+        temperature2 = Barometer::Data::Temperature.new(:imperial, nil, 68.0)
+
+        temperature2.should == temperature1
+      end
+
+      it "returns < correctly" do
+        temperature1 = Barometer::Data::Temperature.new(:metric, 20.3, nil)
+        temperature2 = Barometer::Data::Temperature.new(:imperial, nil, 68.0)
+
+        temperature2.should < temperature1
+      end
     end
   end
 
-  describe "retrieving" do
-    before(:each) do
-      @temp = Barometer::Data::Temperature.new
-      @f = 68.0
-      @c = 20.0
-      @k = 293.15
+  describe "#units" do
+    context "when temperature is metric" do
+      it "returns C" do
+        temperature = Barometer::Data::Temperature.new(:metric, 20.0, 68.0)
+        temperature.units.should == 'C'
+      end
     end
 
-    it "returns C if it exists" do
-      @temp.c = @c
-      @temp.celsius.should == @c
-      @temp.c.should == @c
-    end
-
-    it "auto converts from K if C is nil and K exists" do
-      @temp.f = @f
-      @temp.fahrenheit.should == @f
-      @temp.kelvin.should == @k
-      @temp.celsius.should be_nil
-      @temp.c.should == @c
-    end
-
-    it "allows a float to be returned for C" do
-      c = 20.12
-      @temp.c = c
-      @temp.celsius.should == c
-      @temp.c(true).should == c.to_i
-      @temp.c(false).should == c.to_f
-    end
-
-    it "allows only 2 decimal precision for C" do
-      c = 20.1234
-      @temp.c = c
-      @temp.celsius.should == c
-      @temp.c(false).should == 20.12
-    end
-
-    it "returns F if it exists" do
-      @temp.f = @f
-      @temp.fahrenheit.should == @f
-      @temp.f.should == @f
-    end
-
-    it "auto converts from K if F is nil and K exists" do
-      @temp.c = @c
-      @temp.celsius.should == @c
-      @temp.kelvin.should == @k
-      @temp.fahrenheit.should be_nil
-      @temp.f.should == @f
-    end
-
-    it "allows a float to be returned for F" do
-      f = 68.12
-      @temp.f = f
-      @temp.fahrenheit.should == f
-      @temp.f(true).should == f.to_i
-      @temp.f(false).should == f.to_f
-    end
-
-    it "allows only 2 decimal precision for F" do
-      f = 68.1234
-      @temp.f = f
-      @temp.fahrenheit.should == f
-      @temp.f(false).should == 68.12
+    context "when temperature is imperial" do
+      it "returns F" do
+        temperature = Barometer::Data::Temperature.new(:imperial, 20.0, 68.0)
+        temperature.units.should == 'F'
+      end
     end
   end
 
-  describe "operators" do
-    before(:each) do
-      @f = 68.0
-      @c = 20.0
-      @k = 293.15
-      @temp_low = Barometer::Data::Temperature.new
-      @temp_low.k = (@k - 1.0)
-      @temp_high = Barometer::Data::Temperature.new
-      @temp_high.k = (@k + 1.0)
-      @temp = Barometer::Data::Temperature.new
-      @temp.k = @k
-      @temp_same = Barometer::Data::Temperature.new
-      @temp_same.k = @k
+  describe "#to_i" do
+    context "when temperature is metric" do
+      it "returns the value of C" do
+        temperature = Barometer::Data::Temperature.new(:metric, 20.0, 68.0)
+        temperature.to_i.should == 20
+      end
+
+      it "returns 0 if nothing is set" do
+        temperature = Barometer::Data::Temperature.new(:metric, nil, nil)
+        temperature.to_i.should == 0
+      end
     end
 
-    it "defines <=>" do
-      Barometer::Data::Temperature.method_defined?("<=>").should be_true
-      (@temp_low <=> @temp_high).should == -1
-      (@temp_high <=> @temp_low).should == 1
-      (@temp <=> @temp_same).should == 0
-    end
+    context "when temperature is imperial" do
+      it "returns the value of F" do
+        temperature = Barometer::Data::Temperature.new(:imperial, 20.0, 68.0)
+        temperature.to_i.should == 68
+      end
 
-    it "defines <" do
-      Barometer::Data::Temperature.method_defined?("<").should be_true
-      @temp_low.should < @temp_high
-      @temp_high.should_not < @temp_low
-      @temp.should_not < @temp_same
-    end
-
-    it "defines >" do
-      Barometer::Data::Temperature.method_defined?(">").should be_true
-      @temp_low.should_not > @temp_high
-      @temp_high.should > @temp_low
-      @temp.should_not > @temp_same
-    end
-
-    it "defines ==" do
-      Barometer::Data::Temperature.method_defined?("==").should be_true
-      @temp_low.should_not == @temp_high
-      @temp.should == @temp_same
-    end
-
-    it "defines <=" do
-      Barometer::Data::Temperature.method_defined?("<=").should be_true
-      @temp_low.should <= @temp_high
-      @temp_high.should_not <= @temp_low
-      @temp.should <= @temp_same
-    end
-
-    it "defines >=" do
-      Barometer::Data::Temperature.method_defined?(">=").should be_true
-      @temp_low.should_not >= @temp_high
-      @temp_high.should >= @temp_low
-      @temp.should >= @temp_same
+      it "returns 0 if nothing is set" do
+        temperature = Barometer::Data::Temperature.new(:imperial, nil, nil)
+        temperature.to_i.should == 0
+      end
     end
   end
 
-  describe "changing units" do
-    before(:each) do
-      @c = 20.5
-      @f = Barometer::Data::Temperature.c_to_f(@c)
-      @k = Barometer::Data::Temperature.c_to_k(@c)
-      @temp = Barometer::Data::Temperature.new
-      @temp.k = @k
+  describe "#to_f" do
+    context "when temperature is metric" do
+      it "returns the value of C" do
+        temperature = Barometer::Data::Temperature.new(:metric, 20, 68)
+        temperature.to_f.should == 20.0
+      end
+
+      it "returns 0 if nothing is set" do
+        temperature = Barometer::Data::Temperature.new(:metric, nil, nil)
+        temperature.to_f.should == 0.0
+      end
     end
 
-    it "returns just the integer value (no units)" do
-      @temp.metric?.should be_true
-      @temp.to_i.should == @c.to_i
+    context "when temperature is imperial" do
+      it "returns the value of F" do
+        temperature = Barometer::Data::Temperature.new(:imperial, 20, 68)
+        temperature.to_f.should == 68.0
+      end
 
-      @temp.imperial!
-      @temp.metric?.should be_false
-      @temp.to_i.should == @f.to_i
-    end
-
-    it "returns just the float value (no units)" do
-      @temp.metric?.should be_true
-      @temp.to_f.should == @c.to_f
-
-      @temp.imperial!
-      @temp.metric?.should be_false
-      @temp.to_f.should == @f.to_f
-    end
-
-    it "returns just the integer value with units" do
-      @temp.metric?.should be_true
-      @temp.to_s.should == "#{@c.to_i} #{Barometer::Data::Temperature::METRIC_UNITS}"
-
-      @temp.imperial!
-      @temp.metric?.should be_false
-      @temp.to_s.should == "#{@f.to_i} #{Barometer::Data::Temperature::IMPERIAL_UNITS}"
-    end
-
-    it "returns just the units" do
-      @temp.metric?.should be_true
-      @temp.units.should == Barometer::Data::Temperature::METRIC_UNITS
-
-      @temp.imperial!
-      @temp.metric?.should be_false
-      @temp.units.should == Barometer::Data::Temperature::IMPERIAL_UNITS
+      it "returns 0 if nothing is set" do
+        temperature = Barometer::Data::Temperature.new(:imperial, nil, nil)
+        temperature.to_f.should == 0.0
+      end
     end
   end
 
   describe "#to_s" do
-    it "returns the value and units when a value exists" do
-      subject << 10
-      subject.to_s.should == "10 C"
+    context "when temperature is metric" do
+      it "returns C" do
+        temperature = Barometer::Data::Temperature.new(:metric, 20, nil)
+        temperature.to_s.should == '20 C'
+      end
     end
 
-    it "returns nothing when no value exists" do
-      subject << nil
-      subject.to_s.should == ""
+    context "when temperature is imperial" do
+      it "returns F" do
+        temperature = Barometer::Data::Temperature.new(:imperial, nil, 68)
+        temperature.to_s.should == '68 F'
+      end
+    end
+  end
+
+  describe "#nil?" do
+    it "returns true if nothing is set" do
+      temperature = Barometer::Data::Temperature.new(nil, nil)
+      temperature.should be_nil
+    end
+
+    it "returns false if only C set" do
+      temperature = Barometer::Data::Temperature.new(20, nil)
+      temperature.should_not be_nil
+    end
+
+    it "returns false if only F set" do
+      temperature = Barometer::Data::Temperature.new(nil, 68)
+      temperature.should_not be_nil
+    end
+  end
+
+  describe "#metric=" do
+    context "when switching from :metric to :imperial" do
+      it "becomes imperial using a boolean" do
+        temperature = Barometer::Data::Temperature.new(:metric, 20, 68)
+        temperature.metric = false
+
+        temperature.should_not be_metric
+        temperature.to_i.should == 68
+      end
+
+      it "becomes imperial using a symbol" do
+        temperature = Barometer::Data::Temperature.new(:metric, 20, 68)
+        temperature.metric = :imperial
+
+        temperature.should_not be_metric
+        temperature.to_i.should == 68
+      end
+    end
+
+    context "when switching from :imperial to :metric" do
+      it "becomes metric be default" do
+        temperature = Barometer::Data::Temperature.new(:imperial, 20, 68)
+        temperature.metric = nil
+
+        temperature.should be_metric
+        temperature.to_i.should == 20
+      end
+
+      it "becomes metric using a boolean" do
+        temperature = Barometer::Data::Temperature.new(:imperial, 20, 68)
+        temperature.metric = true
+
+        temperature.should be_metric
+        temperature.to_i.should == 20
+      end
+
+      it "becomes metric using a symbol" do
+        temperature = Barometer::Data::Temperature.new(:imperial, 20, 68)
+        temperature.metric = :metric
+
+        temperature.should be_metric
+        temperature.to_i.should == 20
+      end
     end
   end
 end

@@ -88,8 +88,8 @@ module Barometer
       end
 
       def temperature *names
-        pre_set_reader Data::Temperature, *names
-        pre_set_writer Data::Temperature, *names
+        new_pre_set_reader Data::Temperature, *names
+        new_pre_set_writer Data::Temperature, *names
       end
 
       def vector *names

@@ -34,7 +34,7 @@ describe Barometer::WeatherService::Wunderground, :vcr => {
       should have_data(:current, :temperature).as_format(:temperature)
       should have_data(:current, :dew_point).as_format(:temperature)
       should have_data(:current, :wind_chill).as_format(:temperature)
-      should have_data(:current, :heat_index).as_format(:optional_string)
+      # should have_data(:current, :heat_index).as_format(:optional_string)
       should have_data(:current, :wind).as_format(:vector)
       should have_data(:current, :visibility).as_format(:distance)
       should have_data(:current, :pressure).as_format(:pressure)

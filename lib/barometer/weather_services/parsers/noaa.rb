@@ -99,8 +99,8 @@ module Barometer
         high_temps.each_with_index do |high_temp, index|
           @measurement.build_forecast do |forecast_measurement|
             forecast_measurement.pop = pops[index*2]
-            forecast_measurement.high.f = high_temp
-            forecast_measurement.low.f = low_temps[index]
+            forecast_measurement.high = [:imperial, high_temp]
+            forecast_measurement.low = [:imperial, low_temps[index]]
             forecast_measurement.condition = summaries[index]
             forecast_measurement.icon = icons[index]
             forecast_measurement.starts_at = p12h_start_times[index*2]
@@ -109,8 +109,8 @@ module Barometer
 
           @measurement.build_forecast do |forecast_measurement|
             forecast_measurement.pop = pops[index*2 + 1]
-            forecast_measurement.high = high_temp
-            forecast_measurement.low = low_temps[index]
+            forecast_measurement.high = [:imperial, high_temp]
+            forecast_measurement.low = [:imperial, low_temps[index]]
             forecast_measurement.condition = summaries[index]
             forecast_measurement.icon = icons[index]
             forecast_measurement.starts_at = p12h_start_times[index*2 + 1]

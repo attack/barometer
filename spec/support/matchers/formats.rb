@@ -24,7 +24,7 @@ module Barometer
         when :float
           /^[\d\.]{1,5}$/i
         when :temperature
-          /^-?\d{1,3}[ ]?[cfCF]?$/i
+          /^-?[0-9\.]{1,5}[ ]?[cfCF]?$/i
         when :pressure
           /^[0-9\.]{1,7}[ ]?[a-zA-Z]{0,3}$/i
         when :vector

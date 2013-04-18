@@ -29,9 +29,9 @@ module Barometer
           current.humidity = payload.fetch('humidity')
           current.condition = payload.fetch('current_condition')
           current.icon = payload.fetch('barometer:icon')
-          current.temperature = payload.fetch('temp')
-          current.dew_point = payload.fetch('dew_point')
-          current.wind_chill = payload.fetch('feels_like')
+          current.temperature = [payload.fetch('temp')]
+          current.dew_point = [payload.fetch('dew_point')]
+          current.wind_chill = [payload.fetch('feels_like')]
           current.wind = [payload.fetch('wind_speed'), payload.fetch('wind_direction_degrees')]
           current.pressure = [payload.fetch('pressure')]
         end
@@ -102,8 +102,8 @@ module Barometer
             forecast_measurement.icon = forecast_payload.using(/cond0*([1-9][0-9]*)\.gif$/).fetch('image')
             forecast_measurement.date = start_date + index
             forecast_measurement.condition = forecast_payload.fetch('short_prediction')
-            forecast_measurement.high = forecast_payload.fetch('high')
-            forecast_measurement.low = forecast_payload.fetch('low')
+            forecast_measurement.high = [forecast_payload.fetch('high')]
+            forecast_measurement.low = [forecast_payload.fetch('low')]
           end
         end
       end

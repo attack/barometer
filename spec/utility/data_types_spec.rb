@@ -84,26 +84,25 @@ describe Barometer::DataTypes do
 
     context "when setting with data of exact values" do
       it "initializes Barometer::Data::Temperature" do
-        subject.temperature = 12
+        subject.temperature = [12]
         subject.temperature.should be_a(Barometer::Data::Temperature)
       end
 
       it "prints correctly" do
-        subject.temperature = 12
+        subject.temperature = [12]
         subject.temperature.to_s.should == "12 C"
       end
 
-      it "clears the value" do
-        subject.temperature = 12
+      it "does not clear the value" do
+        subject.temperature = [12]
         subject.temperature = nil
-        subject.temperature.should be_nil
+        subject.temperature.to_s.should == "12 C"
       end
     end
 
     context "when setting with Barometer::Data::Temperature" do
       it "uses the passed in value" do
-        temperature = Barometer::Data::Temperature.new
-        temperature << 12
+        temperature = Barometer::Data::Temperature.new(12)
         subject.temperature = temperature
         subject.temperature.should be_a(Barometer::Data::Temperature)
         subject.temperature.should == temperature
@@ -113,17 +112,17 @@ describe Barometer::DataTypes do
 
     context "when setting to multiple values" do
       it "initializes Barometer::Data::Temperature" do
-        subject.temperature << [12, 53]
+        subject.temperature = [12, 53]
         subject.temperature.should be_a(Barometer::Data::Temperature)
       end
 
       it "prints correctly (as metric)" do
-        subject.temperature << [12, 53]
+        subject.temperature = [12, 53]
         subject.temperature.to_s.should == "12 C"
       end
 
       it "prints correctly (as imperial)" do
-        subject.temperature << [12, 53]
+        subject.temperature = [12, 53]
         subject.metric = false
         subject.temperature.to_s.should == "53 F"
       end
@@ -132,7 +131,7 @@ describe Barometer::DataTypes do
     context "when changing metric" do
       it "adjusts correctly" do
         subject.metric = true
-        subject.temperature << [12, 53]
+        subject.temperature = [12, 53]
         subject.temperature.to_s.should == "12 C"
 
         subject.metric = false
