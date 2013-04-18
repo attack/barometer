@@ -1,6 +1,6 @@
 module Barometer
   module Data
-    class Temperature < BasicUnits
+    class Temperature < ConvertableUnits
       # METRIC_UNITS = "C"
       # IMPERIAL_UNITS = "F"
 

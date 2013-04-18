@@ -1,6 +1,6 @@
 module Barometer
   module Data
-    class Vector < BasicUnits
+    class Vector < ConvertableUnits
       # METRIC_UNITS = "kph"
       # IMPERIAL_UNITS = "mph"
 

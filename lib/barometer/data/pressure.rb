@@ -1,6 +1,6 @@
 module Barometer
   module Data
-    class Pressure < BasicUnits
+    class Pressure < ConvertableUnits
       # METRIC_UNITS = "mb"
       # IMPERIAL_UNITS = "in"
 

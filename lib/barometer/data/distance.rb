@@ -1,6 +1,6 @@
 module Barometer
   module Data
-    class Distance < BasicUnits
+    class Distance < ConvertableUnits
       # METRIC_UNITS = "km"
       # IMPERIAL_UNITS = "m"
 
