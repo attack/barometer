@@ -20,9 +20,6 @@ module Barometer
               value = type.new
               instance_variable_set "@#{name}", value
             end
-            if value.respond_to?(:metric=)
-              value.metric = metric?
-            end
             value
           end
         end
@@ -32,7 +29,6 @@ module Barometer
         names.each do |name|
           send :define_method, name do
             value = instance_variable_get("@#{name}")
-            type.new(nil, nil, nil) if value.nil?
             if value.respond_to?(:metric=)
               value.metric = metric?
             end

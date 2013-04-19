@@ -14,7 +14,7 @@ module Barometer
 
         response = WebService::WeatherID.fetch(@query)
         weather_id = format_response(response)
-        @query.add_conversion(:weather_id, weather_id) if weather_id
+        @query.add_conversion(:weather_id, weather_id)
       end
 
       private
