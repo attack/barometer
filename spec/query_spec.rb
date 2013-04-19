@@ -61,6 +61,11 @@ describe Barometer::Query do
       query.add_conversion(:geocode, 'Berlin')
       query.get_conversion(:geocode).q.should == 'Berlin'
     end
+
+    it "does not add a nil conversion" do
+      query.add_conversion(:geocode, nil)
+      query.get_conversion(:geocode).should be_nil
+    end
   end
 
   describe "#get_conversion" do

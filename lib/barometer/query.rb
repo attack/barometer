@@ -24,6 +24,8 @@ module Barometer
     end
 
     def add_conversion(format, q)
+      return unless q
+
       @conversions[format] = q
       converted_query(q, format)
     end
