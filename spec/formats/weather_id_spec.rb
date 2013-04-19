@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Barometer::Query::Format::WeatherID do
   it ".country_code" do
-    Barometer::Query::Format::WeatherID.country_code.should be_nil
+    Barometer::Query::Format::WeatherID.country_code(nil).should be_nil
     Barometer::Query::Format::WeatherID.country_code("i").should be_nil
     Barometer::Query::Format::WeatherID.country_code("USGA0000").should == "US"
     Barometer::Query::Format::WeatherID.country_code("CAAB0000").should == "CA"

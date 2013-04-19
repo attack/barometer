@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Barometer::Query::Format::Zipcode do
   it ".country_code" do
-    Barometer::Query::Format::Zipcode.country_code.should == "US"
+    Barometer::Query::Format::Zipcode.country_code(nil).should == "US"
     Barometer::Query::Format::Zipcode.country_code("ignored").should == "US"
   end
 

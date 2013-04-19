@@ -18,7 +18,7 @@ describe Barometer::Query::Format do
     end
 
     it "stubs country_code" do
-      Barometer::Query::Format.country_code.should be_nil
+      Barometer::Query::Format.country_code(nil).should be_nil
     end
   end
 end

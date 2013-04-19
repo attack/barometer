@@ -1,11 +1,7 @@
 module Barometer
   #
-  # Format: ICAO (International Civil Aviation Organization)
-  #
+  # ICAO (International Civil Aviation Organization)
   # eg. KLAX (Los Angeles Airport)
-  #
-  # This class is used to determine if a query is a
-  # :icao and what the country_code is.
   #
   class Query::Format::Icao < Query::Format
     @@codes_file = File.expand_path(
@@ -21,7 +17,7 @@ module Barometer
 
     # in some cases the first letter can designate the country
     #
-    def self.country_code(query=nil)
+    def self.country_code(query)
       return unless query && query.is_a?(String)
       $:.unshift(File.dirname(__FILE__))
       @@codes ||= YAML.load_file(@@codes_file)

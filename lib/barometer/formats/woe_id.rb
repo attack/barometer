@@ -1,8 +1,6 @@
 module Barometer
   #
-  # Format: WOEID
-  #   "Where on Earth" ID (by Yahoo!)
-  #
+  # WOEID: "Where on Earth" ID (by Yahoo!)
   # eg. 2459115, 615702 or w90210
   #
   # NOTE: zipcodes and WoeIDs can look exactly the same when the WoeID

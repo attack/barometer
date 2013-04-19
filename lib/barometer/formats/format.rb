@@ -14,9 +14,9 @@ module Barometer
     @@fixes = nil
 
     def self.regex; raise NotImplementedError; end
-    def self.country_code(query=nil); nil; end
+    def self.country_code(query); nil; end
 
-    def self.is?(query=nil)
+    def self.is?(query)
       raise ArgumentError unless query.is_a?(String)
       return !(query =~ self.regex).nil?
     end
