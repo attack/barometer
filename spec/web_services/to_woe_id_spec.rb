@@ -1,0 +1,51 @@
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+
+require "addressable/uri"
+
+params_in_body = lambda do |request_1, request_2|
+  a1 = Addressable::URI.parse("?#{request_1.body}")
+  a2 = Addressable::URI.parse("?#{request_2.body}")
+  a1.query_values == a2.query_values
+end
+
+describe Barometer::WebService::ToWoeId, :vcr => {
+  :match_requests_on => [:method, :uri, params_in_body],
+  :cassette_name => "WebService::ToWoeId"
+} do
+  describe ".call," do
+    before { Barometer.yahoo_placemaker_app_id = YAHOO_KEY }
+
+    it "returns nothing if the Placemaker#app_id is missing" do
+      Barometer.yahoo_placemaker_app_id = nil
+      query = Barometer::Query.new("90210")
+      Barometer::WebService::ToWoeId.call(query).should be_nil
+    end
+
+    it "returns nothing if query doesn't have geocode format" do
+      query = Barometer::Query.new("90210")
+      Barometer::WebService::ToWoeId.call(query).should be_nil
+    end
+
+    it "returns a weather_id if the query is format geocode" do
+      query = Barometer::Query.new("New York, NY")
+      Barometer::WebService::ToWoeId.call(query).should == "2459115"
+    end
+
+    it "returns a weather_id if the query is format coordinates" do
+      query = Barometer::Query.new("40.756054,-73.986951")
+      Barometer::WebService::ToWoeId.call(query).should == "12589342"
+    end
+
+    it "returns a weather_id if the query is format postal code" do
+      query = Barometer::Query.new("T5B 4M9")
+      Barometer::WebService::ToWoeId.call(query).should == "8676"
+    end
+
+    it "returns a weather_id if the query has a converted geocode" do
+      query = Barometer::Query.new("10001")
+      query.add_conversion(:geocode, "New York, NY")
+
+      Barometer::WebService::ToWoeId.call(query).should == "2459115"
+    end
+  end
+end

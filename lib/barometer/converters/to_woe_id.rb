@@ -12,18 +12,14 @@ module Barometer
       def call
         return unless can_convert?
 
-        response = Barometer::WebService::Placemaker.fetch(@query)
-        @query.add_conversion(:woe_id, format_response(response))
+        woe_id = Barometer::WebService::ToWoeId.call(@query)
+        @query.add_conversion(:woe_id, woe_id)
       end
 
       private
 
       def can_convert?
         !!@query.get_conversion(*self.class.from)
-      end
-
-      def format_response(response)
-        Barometer::WebService::Placemaker.parse_woe_id(response)
       end
     end
   end
