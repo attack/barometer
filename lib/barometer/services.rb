@@ -2,6 +2,7 @@ $:.unshift(File.dirname(__FILE__))
 
 require 'http/address'
 require 'http/requester'
+require 'http/get'
 
 require 'wrappers/xml_reader'
 require 'wrappers/json_reader'

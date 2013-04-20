@@ -41,11 +41,10 @@ module Barometer
       attr_reader :api_code, :metric
 
       def _get(path, query)
-        address = Barometer::Http::Address.new(
+        Barometer::Http::Get.call(
           "http://#{api_code}.api.wxbug.net/#{path}",
           _format_request.merge(_format_query(query))
         )
-        Barometer::Http::Requester.get(address)
       end
 
       def _format_request

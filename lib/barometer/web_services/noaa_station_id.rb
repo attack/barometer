@@ -16,11 +16,10 @@ module Barometer
       end
 
       def self._fetch_via_noaa(converted_query)
-        address =  Barometer::Http::Address.new(
+        response =  Barometer::Http::Get.call(
           'http://forecast.weather.gov/MapClick.php?',
           _format_params(converted_query)
         )
-        response = Barometer::Http::Requester.get(address)
         _parse_station_id(response)
       end
 

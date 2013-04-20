@@ -13,11 +13,10 @@ module Barometer
         converted_query = query.get_conversion(:geocode)
         puts "fetch weather_id: #{converted_query.q}" if Barometer::debug?
 
-        address =  Barometer::Http::Address.new(
+        Barometer::Http::Get.call(
           'http://xoap.weather.com/search/search',
           { :where => _adjust_query(converted_query.q) }
         )
-        location = Barometer::Http::Requester.get(address)
       end
 
       # get the location_date (geocode) for a given weather_id
@@ -28,11 +27,10 @@ module Barometer
 
         # lat: ["rss"]["channel"]["item"]["lat"]
         # long: ["rss"]["channel"]["item"]["long"]
-        address =  Barometer::Http::Address.new(
+        response =  Barometer::Http::Get.call(
           'http://weather.yahooapis.com/forecastrss',
           { :p => converted_query.q }
         )
-        response = Barometer::Http::Requester.get(address)
         Barometer::XmlReader.parse(response, 'rss', 'channel', 'location')
       end
 

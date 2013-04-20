@@ -6,11 +6,11 @@ module Barometer
         return unless converted_query
         puts "geocoding: #{converted_query.q}" if Barometer::debug?
 
-        address =  Barometer::Http::Address.new(
+        location =  Barometer::Http::Get.call(
           'http://maps.googleapis.com/maps/api/geocode/json',
           _format_params(converted_query)
         )
-        location = Barometer::Http::Requester.get(address)
+
         Barometer::JsonReader.parse(location, 'results') do |result|
           Data::Geo.new(result.first)
         end

@@ -19,11 +19,10 @@ module Barometer
       attr_reader :metric
 
       def _get(query)
-        address = Barometer::Http::Address.new(
+        Barometer::Http::Get.call(
           "http://weather.yahooapis.com/forecastrss",
           _format_request(query)
         )
-        Barometer::Http::Requester.get(address)
       end
 
       def _format_request(query)

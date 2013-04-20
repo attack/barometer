@@ -59,11 +59,10 @@ module Barometer
         converted_query = query.get_conversion(:woe_id)
         puts "reverse woe_id: #{converted_query.q}" if Barometer::debug?
 
-        address =  Barometer::Http::Address.new(
+        response =  Barometer::Http::Get.call(
           'http://weather.yahooapis.com/forecastrss',
           { :w => converted_query.q }
         )
-        response = Barometer::Http::Requester.get(address)
         Barometer::XmlReader.parse(response, 'rss', 'channel', 'location')
       end
 
