@@ -26,8 +26,7 @@ module Barometer
 
       @requester = Barometer::Requester::Noaa.new(metric)
       fetch_and_parse_forecast
-      station_id = _convert_query_to_station_id
-      fetch_and_parse_current(station_id)
+      fetch_and_parse_current
 
       measurement
     end
@@ -48,17 +47,13 @@ module Barometer
       forecast_parser.parse(payload)
     end
 
-    def fetch_and_parse_current(station_id)
-      payload = @requester.get_current(station_id)
+    def fetch_and_parse_current
+      # this conversion is delayed until after forecast has been parsed
+      converted_query = @query.convert!(:noaa_station_id)
+
+      payload = @requester.get_current(converted_query)
       current_parser = Barometer::Parser::NoaaCurrent.new(measurement, @query)
       current_parser.parse(payload)
-    end
-
-    def _convert_query_to_station_id
-      station_id = Barometer::WebService::NoaaStation.fetch(
-        measurement.location.latitude,
-        measurement.location.longitude
-      )
     end
   end
 end

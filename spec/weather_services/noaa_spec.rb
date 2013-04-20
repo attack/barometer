@@ -1,5 +1,4 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
-include Barometer
 
 describe Barometer::WeatherService::Noaa, :vcr => {
   :cassette_name => "WeatherService::Noaa"
@@ -10,14 +9,28 @@ describe Barometer::WeatherService::Noaa, :vcr => {
   end
 
   describe ".call" do
-    let(:converted_query) { Barometer::ConvertedQuery.new("90210", :zipcode) }
-    let(:query) { double(:query, :convert! => converted_query, :geo => nil) }
+    let(:query) { double(:query, :geo => nil, :add_conversion => nil) }
     let(:config) { {:metric => true} }
 
-    subject { WeatherService::Noaa.call(query, config) }
+    subject { Barometer::WeatherService::Noaa.call(query, config) }
+
+    before do
+      query.stub(:convert!).and_return do |*formats|
+        if formats.include?(:noaa_station_id)
+          Barometer::ConvertedQuery.new("KSMO", :station_id)
+        elsif formats.include?(:zipcode)
+          Barometer::ConvertedQuery.new("90210", :zipcode)
+        end
+      end
+    end
 
     it "asks the query to convert to accepted formats" do
       query.should_receive(:convert!).with(:zipcode, :coordinates)
+      subject
+    end
+
+    it "adds a coordinate conversion to the query" do
+      query.should_receive(:add_conversion).with(:coordinates, '34.10,-118.41')
       subject
     end
 

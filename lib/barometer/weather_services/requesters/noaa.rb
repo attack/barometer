@@ -5,10 +5,10 @@ module Barometer
         @metric = metric
       end
 
-      def get_current(station_id)
-        puts "fetch NOAA current weather: #{station_id}" if Barometer::debug?
+      def get_current(query)
+        puts "fetch NOAA current weather: #{query.q}" if Barometer::debug?
 
-        response = _get("http://w1.weather.gov/xml/current_obs/#{station_id}.xml")
+        response = _get("http://w1.weather.gov/xml/current_obs/#{query.q}.xml")
 
         output = Barometer::XmlReader.parse(response, "current_observation")
         Barometer::Payload.new(output)

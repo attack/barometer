@@ -16,14 +16,19 @@ module Barometer
       private
 
       def _parse_forecast_location(payload)
+        latitude = payload.fetch('location', 'point', '@latitude')
+        longitude = payload.fetch('location', 'point', '@longitude')
+
+        @query.add_conversion(:coordinates, "#{latitude},#{longitude}")
+
         @measurement.location.tap do |location|
-          location.latitude = payload.fetch('location', 'point', '@latitude')
-          location.longitude = payload.fetch('location', 'point', '@longitude')
+          location.latitude = latitude
+          location.longitude = longitude
         end
 
         @measurement.station.tap do |station|
-          station.latitude = payload.fetch('location', 'point', '@latitude')
-          station.longitude = payload.fetch('location', 'point', '@longitude')
+          station.latitude = latitude
+          station.longitude = longitude
         end
       end
 
