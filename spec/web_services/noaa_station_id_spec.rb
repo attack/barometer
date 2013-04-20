@@ -3,31 +3,21 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Barometer::WebService::NoaaStation, :vcr => {
   :cassette_name => "WebService::NoaaStation"
 } do
-  before(:each) do
-    @latitude = "34.10"
-    @longitude = "-118.41"
-  end
+  describe ".fetch," do
+    it "returns nohing if query doesn't have coordinates format" do
+      query = Barometer::Query.new("90210")
+      Barometer::WebService::NoaaStation.fetch(query).should be_nil
+    end
 
-  describe "and the class methods" do
-    describe "fetch," do
-      it "requires latitude" do
-        Barometer::WebService::NoaaStation.should_receive("_fetch").never
-        Barometer::WebService::NoaaStation.fetch(nil,@longitude)
-      end
+    it "returns a station_id if the query is format coordinates" do
+      query = Barometer::Query.new("34.10,-118.41")
+      Barometer::WebService::NoaaStation.fetch(query).should == "KSMO"
+    end
 
-      it "requires longitude" do
-        Barometer::WebService::NoaaStation.should_receive("_fetch").never
-        Barometer::WebService::NoaaStation.fetch(@latitude,nil)
-      end
-
-      it "queries" do
-        Barometer::WebService::NoaaStation.fetch(@latitude,@longitude).should_not be_nil
-      end
-
-      it "returns a string" do
-        Barometer::WebService::NoaaStation.fetch(@latitude,@longitude).is_a?(String).should be_true
-        Barometer::WebService::NoaaStation.fetch(@latitude,@longitude).should == "KSMO"
-      end
+    it "returns a station_id if the query has a corrdinates conversion" do
+      query = Barometer::Query.new("90210")
+      query.add_conversion(:coordinates, "34.10,-118.41")
+      Barometer::WebService::NoaaStation.fetch(query).should == "KSMO"
     end
   end
 end
