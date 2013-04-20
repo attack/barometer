@@ -1,5 +1,6 @@
 $:.unshift(File.dirname(__FILE__))
-require 'parsers/noaa'
+require 'parsers/noaa_current'
+require 'parsers/noaa_forecast'
 require 'requesters/noaa'
 
 module Barometer
@@ -43,14 +44,14 @@ module Barometer
 
     def fetch_and_parse_forecast
       payload = @requester.get_forecast(@converted_query)
-      parser = Barometer::Parser::Noaa.new(measurement, @query)
-      parser.parse_forecast(payload)
+      forecast_parser = Barometer::Parser::NoaaForecast.new(measurement, @query)
+      forecast_parser.parse(payload)
     end
 
     def fetch_and_parse_current(station_id)
       payload = @requester.get_current(station_id)
-      parser = Barometer::Parser::Noaa.new(measurement, @query)
-      parser.parse_current(payload)
+      current_parser = Barometer::Parser::NoaaCurrent.new(measurement, @query)
+      current_parser.parse(payload)
     end
 
     def _convert_query_to_station_id
