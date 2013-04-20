@@ -1,8 +1,11 @@
 module Barometer
   module Converter
-    class FromWeatherIdToGeocode
+    class FromWoeOrWeatherIdToGeocode
+      #
+      # yes, Yahoo! Weather knows Weather.com IDs
+      #
       def self.from
-        [:weather_id]
+        [:woe_id, :weather_id]
       end
 
       def initialize(query)
@@ -26,4 +29,4 @@ module Barometer
   end
 end
 
-Barometer::Converters.register(:geocode, Barometer::Converter::FromWeatherIdToGeocode)
+Barometer::Converters.register(:geocode, Barometer::Converter::FromWoeOrWeatherIdToGeocode)

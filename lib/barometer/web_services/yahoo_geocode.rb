@@ -28,6 +28,7 @@ module Barometer
         if query.format == :woe_id
           { :w => query.q }
         else
+          puts "[WARNING] - converting #{query.format} -> geocode is deprecated by Yahoo! Weather" if Barometer::debug?
           { :p => query.q }
         end
       end
