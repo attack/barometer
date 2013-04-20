@@ -2,24 +2,19 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 describe Barometer::Http::Get do
   describe ".call" do
-    let(:url) { double(:url) }
-    let(:params) { double(:params) }
+    it "gets http content from a given address" do
+      stub_request(:get, "www.example.com?foo=bar").to_return(:body => "Hello World")
 
-    it "creates an Address" do
-      Barometer::Http::Requester.stub(:get => nil)
-
-      Barometer::Http::Address.should_receive(:new).with(url, params)
-
-      Barometer::Http::Get.call(url, params)
+      content = Barometer::Http::Get.call('www.example.com', :foo => :bar)
+      content.should include('Hello World')
     end
 
-    it "calls Requester#get" do
-      address = double(:address)
-      Barometer::Http::Address.stub(:new => address)
+    it "raises Barometer::TimeoutError when it times out" do
+      stub_request(:get, "www.example.com").to_timeout
 
-      Barometer::Http::Requester.should_receive(:get).with(address)
-
-      Barometer::Http::Get.call(url, params)
+      expect {
+        Barometer::Http::Get.call('www.example.com')
+      }.to raise_error(Barometer::TimeoutError)
     end
   end
 end

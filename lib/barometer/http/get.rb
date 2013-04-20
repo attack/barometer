@@ -1,9 +1,16 @@
+require 'httpclient'
+
 module Barometer
   module Http
     module Get
       def self.call(url, query={})
         address = Barometer::Http::Address.new(url, query)
-        Barometer::Http::Requester.get(address)
+
+        http = HTTPClient.new
+        http.receive_timeout = Barometer.timeout
+        http.get(address).content
+      rescue HTTPClient::TimeoutError
+        raise Barometer::TimeoutError
       end
     end
   end
