@@ -143,7 +143,6 @@ class App
       @options.sources << :wunderground if @options.default
       @options.sources = @options.sources.uniq
       Barometer.force_geocode =  @options.geocode
-      Barometer.enhance_timezone =  @options.timezone
       if @options.sources.include?(:weather_bug)
         @options.sources.delete(:weather_bug)
         @options.sources << config_weather_bug
@@ -263,12 +262,6 @@ def pretty_summary(s)
       "dew_point" => s.dew_point, "heat_index" => s.heat_index,
       "wind_chill" => s.wind_chill, "visibility" => s.visibility })
   end
-  section("SUMMARY#{ " (@ #{@options.at})" if @options.at }") do
-    pretty_hash({
-      "day?" => s.day?(@options.at), "sunny?" => s.sunny?(@options.at),
-      "windy?" => s.windy?(@options.at, @options.metric ? @options.windy_m : @options.windy_i),
-      "wet?" => s.wet?(@options.at, @options.pop) })
-  end
 end
 
 def pretty_query(q)
@@ -325,14 +318,12 @@ def pretty_current(c)
   return unless c
   section("CURRENT", 2) do
     pretty_hash({
-      "Measured at" => c.current_at, "Updated at" => c.updated_at.to_s(true),
       "Humidity" => c.humidity, "Icon" => c.icon,
       "Condition" => c.condition, "Temperature" => c.temperature,
       "Dew Point" => c.dew_point, "Heat Index" => c.heat_index,
       "Pressure" => c.pressure, "Visibility" => c.visibility,
       "Wind Chill" => c.wind_chill })
-    pretty_hash({ "Wind" => c.wind, "Wind Direction" => c.wind.direction,
-      "Wind Degrees" => c.wind.degrees }) if c.wind
+    pretty_hash({ "Wind" => c.wind.to_s }) if c.wind
     pretty_hash({ "Sun Rise" => c.sun.rise, "Sun Set" => c.sun.set }) if c.sun
   end
 end
@@ -341,13 +332,12 @@ def pretty_forecast(f)
   return unless f
   section("FOR: #{f.date}", 3) do
     pretty_hash({
-      "Valid From" => f.valid_start_date.to_s(true),
-      "Valid Until" => f.valid_end_date.to_s(true),
+      "Valid From" => f.starts_at.to_s(true),
+      "Valid Until" => f.ends_at.to_s(true),
       "Icon" => f.icon, "Description" => f.description,
       "Condition" => f.condition, "High" => f.high,
       "Low" => f.low, "POP" => f.pop, "Humidity" => f.humidity })
-    pretty_hash({ "Wind" => f.wind, "Wind Direction" => f.wind.direction,
-      "Wind Degrees" => f.wind.degrees }) if f.wind
+    pretty_hash({ "Wind" => f.wind.to_s }) if f.wind
     pretty_hash({ "Sun Rise" => f.sun.rise, "Sun Set" => f.sun.set }) if f.sun
   end
 end
@@ -366,10 +356,10 @@ def pretty_measurement(m)
   return unless m
   section(m.source.to_s, 1) do
     pretty_hash({
-      "Measured At" => m.measured_at,
-      "Source" => m.source, "Time Stamp" => m.utc_time_stamp,
+      "Source" => m.source,
       "Metric" => m.metric?, "Success" => m.success?,
-      "Service Time" => "#{(m.end_at - m.start_at)} s" })
+      "Service Time" => "#{(m.measurement_ended_at - m.measurement_started_at)} s"
+    })
   end
   section("MODIFIED QUERY", 2) do
     pretty_hash({ "Query" => m.query, "Format" => m.format })
