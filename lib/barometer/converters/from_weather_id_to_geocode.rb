@@ -12,18 +12,15 @@ module Barometer
       def call
         return unless can_convert?
 
-        response = WebService::WeatherID.reverse(@query)
-        @query.add_conversion(:geocode, format_response(response))
+        response = WebService::FromWeatherId.call(@query)
+        @query.add_conversion(:coordinates, WebService::FromWeatherId.parse_coordinates(response))
+        @query.add_conversion(:geocode, WebService::FromWeatherId.parse_geocode(response))
       end
 
       private
 
       def can_convert?
         !!@query.get_conversion(*self.class.from)
-      end
-
-      def format_response(response)
-        [response["@city"], response["@region"], response["@country"]].select{|r|!r.empty?}.join(', ')
       end
     end
   end

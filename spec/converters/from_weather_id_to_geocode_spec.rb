@@ -17,6 +17,17 @@ describe Barometer::Converter::FromWeatherIdToGeocode, :vcr => {
     converted_query.geo.should be_nil
   end
 
+  it "converts :weather_id -> :coordinates at the same time" do
+    query = Barometer::Query.new('USGA0028')
+
+    converter = Barometer::Converter::FromWeatherIdToGeocode.new(query)
+    converted_query = converter.call
+
+    coordinate_conversion = query.get_conversion(:coordinates)
+    coordinate_conversion.q.should == '33.75,-84.39'
+    coordinate_conversion.format.should == :coordinates
+  end
+
   it "uses a previous coversion (if needed) on the query" do
     query = Barometer::Query.new('30301')
     query.add_conversion(:weather_id, 'USGA0028')
