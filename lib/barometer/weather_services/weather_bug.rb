@@ -1,5 +1,6 @@
 $:.unshift(File.dirname(__FILE__))
-require 'parsers/weather_bug'
+require 'parsers/weather_bug_current'
+require 'parsers/weather_bug_forecast'
 require 'requesters/weather_bug'
 
 module Barometer
@@ -53,14 +54,14 @@ module Barometer
 
     def fetch_and_parse_current
       payload = @requester.get_current(@converted_query)
-      parser = Barometer::Parser::WeatherBug.new(measurement, @query)
-      parser.parse_current(payload)
+      current_parser = Barometer::Parser::WeatherBugCurrent.new(measurement, @query)
+      current_parser.parse(payload)
     end
 
     def fetch_and_parse_forecast
       payload = @requester.get_forecast(@converted_query)
-      parser = Barometer::Parser::WeatherBug.new(measurement, @query)
-      parser.parse_forecast(payload)
+      forecast_parser = Barometer::Parser::WeatherBugForecast.new(measurement, @query)
+      forecast_parser.parse(payload)
     end
   end
 end
