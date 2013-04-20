@@ -1,5 +1,6 @@
 $:.unshift(File.dirname(__FILE__))
-require 'parsers/wunderground'
+require 'parsers/wunderground_current'
+require 'parsers/wunderground_forecast'
 require 'requesters/wunderground'
 
 module Barometer
@@ -41,14 +42,14 @@ module Barometer
 
     def fetch_and_parse_current
       payload = @requester.get_current(@converted_query)
-      parser = Barometer::Parser::Wunderground.new(measurement, @query)
-      parser.parse_current(payload)
+      current_parser = Barometer::Parser::WundergroundCurrent.new(measurement, @query)
+      current_parser.parse(payload)
     end
 
     def fetch_and_parse_forecast
       payload = @requester.get_forecast(@converted_query)
-      parser = Barometer::Parser::Wunderground.new(measurement, @query)
-      parser.parse_forecast(payload)
+      forecast_parser = Barometer::Parser::WundergroundForecast.new(measurement, @query)
+      forecast_parser.parse(payload)
     end
   end
 end
