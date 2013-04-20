@@ -18,7 +18,7 @@ module Barometer
 
     def self.is?(query)
       raise ArgumentError unless query.is_a?(String)
-      return !(query =~ self.regex).nil?
+      !(query =~ self.regex).nil?
     end
 
     private
@@ -31,6 +31,5 @@ module Barometer
       @@fixes ||= YAML.load_file(@@fixes_file)
       @@fixes[country_code.upcase.to_s] || country_code
     end
-
   end
 end
