@@ -12,9 +12,9 @@ module Barometer
       def call
         return unless can_convert?
 
-        response = WebService::FromWeatherId.call(@query)
-        @query.add_conversion(:coordinates, WebService::FromWeatherId.parse_coordinates(response))
-        @query.add_conversion(:geocode, WebService::FromWeatherId.parse_geocode(response))
+        response = Barometer::WebService::YahooGeocode.call(@query)
+        @query.add_conversion(:coordinates, Barometer::WebService::YahooGeocode.parse_coordinates(response))
+        @query.add_conversion(:geocode, Barometer::WebService::YahooGeocode.parse_geocode(response))
       end
 
       private
