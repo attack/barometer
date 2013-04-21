@@ -22,7 +22,7 @@ module Barometer
       private
 
       def self._parse_woe_id(doc)
-        doc.search('woeid').first.content
+        doc.search('woeid').group_by(&:content).max_by{|woeid,occurances| occurances.count}[0]
       end
 
       def self._construct_body(query)

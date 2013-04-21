@@ -33,6 +33,7 @@ module Barometer
         if query.format == :woe_id
           { :w => query.q }
         else
+          puts "[WARNING] - using Yahoo Weather! with #{query.format} is deprecated" if Barometer::debug?
           { :p => query.q }
         end
       end

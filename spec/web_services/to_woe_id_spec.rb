@@ -33,12 +33,12 @@ describe Barometer::WebService::ToWoeId, :vcr => {
 
     it "returns a weather_id if the query is format coordinates" do
       query = Barometer::Query.new("40.756054,-73.986951")
-      Barometer::WebService::ToWoeId.call(query).should == "12589342"
+      Barometer::WebService::ToWoeId.call(query).should == "12761367"
     end
 
     it "returns a weather_id if the query is format postal code" do
       query = Barometer::Query.new("T5B 4M9")
-      Barometer::WebService::ToWoeId.call(query).should == "8676"
+      Barometer::WebService::ToWoeId.call(query).should == "24354344"
     end
 
     it "returns a weather_id if the query has a converted geocode" do
