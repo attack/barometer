@@ -1,22 +1,22 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Barometer::Helpers::Time do
+describe Barometer::Utils::Time do
   describe ".parse" do
     it "accepts nil, does nothing" do
-      time = Barometer::Helpers::Time.parse
+      time = Barometer::Utils::Time.parse
       time.should be_nil
     end
 
     it "parses a Time object" do
       t = Time.now.utc
-      time = Barometer::Helpers::Time.parse(t)
+      time = Barometer::Utils::Time.parse(t)
 
       assert_times_are_equal(time, t)
     end
 
     it "parses a DateTime object" do
       t = DateTime.now
-      time = Barometer::Helpers::Time.parse(t)
+      time = Barometer::Utils::Time.parse(t)
 
       assert_times_are_equal(time, ::Time.now)
     end
@@ -24,7 +24,7 @@ describe Barometer::Helpers::Time do
     it "calls to_time on object, if it can" do
       utc = Time.now.utc
       t = double(:foo, :to_time => utc)
-      time = Barometer::Helpers::Time.parse(t)
+      time = Barometer::Utils::Time.parse(t)
 
       assert_times_are_equal(time, utc)
     end
@@ -32,7 +32,7 @@ describe Barometer::Helpers::Time do
     it "parses a String (with no format), assumes UTC" do
       t = "March 15, 10:36 AM 2013"
 
-      time = Barometer::Helpers::Time.parse(t)
+      time = Barometer::Utils::Time.parse(t)
       assert_times_are_equal(time, Time.utc(2013, 3, 15, 10, 36, 0))
     end
 
@@ -40,7 +40,7 @@ describe Barometer::Helpers::Time do
       format = "%B %e, %l:%M %p %Y"
       t = "March 15, 10:36 AM 2013"
 
-      time = Barometer::Helpers::Time.parse(t, format)
+      time = Barometer::Utils::Time.parse(t, format)
       assert_times_are_equal(time, Time.utc(2013, 3, 15, 10, 36, 0))
     end
 
@@ -48,12 +48,12 @@ describe Barometer::Helpers::Time do
       format = "%B %e, %l:%M %p %z %Y"
       t = "March 15, 10:36 AM -0800 2013"
 
-      time = Barometer::Helpers::Time.parse(t, format)
+      time = Barometer::Utils::Time.parse(t, format)
       assert_times_are_equal(time, Time.utc(2013, 3, 15, 18, 36, 0))
     end
 
     it "accepts an array of values, creating a UTC time" do
-      time = Barometer::Helpers::Time.parse(2013, 3, 15, 18, 36, 0)
+      time = Barometer::Utils::Time.parse(2013, 3, 15, 18, 36, 0)
       assert_times_are_equal(time, Time.utc(2013, 3, 15, 18, 36, 0))
     end
   end

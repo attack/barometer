@@ -18,7 +18,7 @@ module Barometer
       when Date
         Time.utc(time.year,time.month,time.day,12,0,0)
       else
-        Barometer::Helpers::Time.parse(time)
+        Barometer::Utils::Time.parse(time)
       end
 
       detect { |forecast| forecast.for_time?(time) }

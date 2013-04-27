@@ -27,7 +27,7 @@ describe Barometer::Parser::WundergroundCurrent do
   end
 
   it "parses sun timezones correctly" do
-    measurement.current.observed_at = Barometer::Helpers::Time.parse("May 18, 10:46 AM PDT")
+    measurement.current.observed_at = Barometer::Utils::Time.parse("May 18, 10:46 AM PDT")
     payload = Barometer::Payload.new({
       "simpleforecast" => { "forecastday" => [
         {

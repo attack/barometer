@@ -1,5 +1,5 @@
 module Barometer
-  module Helpers
+  module Utils
     module Time
       def self.parse(*args)
         return unless args.compact.size > 0

@@ -37,14 +37,14 @@ module Barometer
       end
 
       def _parse_sun(payload)
-        rise_local = Barometer::Helpers::Time.parse(payload.fetch("astronomy", "@sunrise"))
-        set_local = Barometer::Helpers::Time.parse(payload.fetch("astronomy", "@sunset"))
+        rise_local = Barometer::Utils::Time.parse(payload.fetch("astronomy", "@sunrise"))
+        set_local = Barometer::Utils::Time.parse(payload.fetch("astronomy", "@sunset"))
         return if rise_local.nil? || set_local.nil?
 
-        rise_utc = Barometer::Helpers::Time.utc_from_base_plus_local_time(
+        rise_utc = Barometer::Utils::Time.utc_from_base_plus_local_time(
           @measurement.timezone, @measurement.current.observed_at, rise_local.hour, rise_local.min
         )
-        set_utc = Barometer::Helpers::Time.utc_from_base_plus_local_time(
+        set_utc = Barometer::Utils::Time.utc_from_base_plus_local_time(
           @measurement.timezone, @measurement.current.observed_at, set_local.hour, set_local.min
         )
 
@@ -83,10 +83,10 @@ module Barometer
             forecast_measurement.high = forecast_payload.fetch('@high')
             forecast_measurement.low = forecast_payload.fetch('@low')
 
-            rise_utc = Barometer::Helpers::Time.utc_merge_base_plus_time(
+            rise_utc = Barometer::Utils::Time.utc_merge_base_plus_time(
               forecast_measurement.starts_at, @measurement.current.sun.rise
             )
-            set_utc = Barometer::Helpers::Time.utc_merge_base_plus_time(
+            set_utc = Barometer::Utils::Time.utc_merge_base_plus_time(
               forecast_measurement.ends_at, @measurement.current.sun.set
             )
             forecast_measurement.sun = Data::Sun.new(rise_utc, set_utc)

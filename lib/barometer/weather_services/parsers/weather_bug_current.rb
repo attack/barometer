@@ -52,7 +52,7 @@ module Barometer
       def _parse_time(payload)
         @measurement.timezone = payload.fetch('ob_date', 'time_zone', '@abbrv')
         @measurement.current.observed_at = _time(payload, 'ob_date')
-        @measurement.current.stale_at = Barometer::Helpers::Time.add_one_hour(@measurement.current.observed_at)
+        @measurement.current.stale_at = Barometer::Utils::Time.add_one_hour(@measurement.current.observed_at)
       end
 
       def _time(payload, key)
@@ -65,7 +65,7 @@ module Barometer
           payload.fetch(key, 'second', '@number')
         ]
 
-        local_time = Barometer::Helpers::Time.parse(*values)
+        local_time = Barometer::Utils::Time.parse(*values)
         return unless local_time
         @measurement.timezone.local_to_utc(local_time)
       end

@@ -120,7 +120,7 @@ module Barometer
             data = [data] unless data.is_a?(Array)
             return unless data && data.first
 
-            time = Barometer::Helpers::Time.parse(*data)
+            time = Barometer::Utils::Time.parse(*data)
             instance_variable_set "@#{name}", time
           end
         end

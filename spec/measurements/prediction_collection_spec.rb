@@ -73,7 +73,7 @@ describe Barometer::Measurement::PredictionCollection do
       end
 
       it "finds the date using Data::Time" do
-        time = Barometer::Helpers::Time.parse(tommorrow.to_s)
+        time = Barometer::Utils::Time.parse(tommorrow.to_s)
         subject.for(time).should == subject[1]
       end
 

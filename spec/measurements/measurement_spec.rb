@@ -98,7 +98,7 @@ describe Barometer::Measurement do
     end
 
     it "finds the date using Data::Time" do
-      tommorrow = Barometer::Helpers::Time.parse(@tommorrow.to_s)
+      tommorrow = Barometer::Utils::Time.parse(@tommorrow.to_s)
       @measurement.for(tommorrow).should == @measurement.forecast.first
     end
 
