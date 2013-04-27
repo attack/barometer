@@ -32,7 +32,6 @@ module Barometer
         date = Barometer::JsonReader.parse(response, 'forecast', 'simpleforecast', 'forecastday').first
         date ? Data::Zone.new(response['date']['tz_long']) : nil
       end
-
     end
   end
 end

@@ -5,6 +5,7 @@ module Barometer
   #
   class Query::Format::NoaaStationId < Query::Format
     def self.regex; /!./; end
+    def self.is?(query); false; end
   end
 end
 

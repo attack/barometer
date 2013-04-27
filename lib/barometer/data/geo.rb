@@ -8,7 +8,6 @@ module Barometer
         return unless location
         raise ArgumentError unless location.is_a?(Hash)
         self.build_from_hash(location)
-        self
       end
 
       def build_from_hash(location=nil)

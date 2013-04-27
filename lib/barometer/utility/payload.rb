@@ -26,9 +26,12 @@ module Barometer
     end
 
     def each(*paths, &block)
-      fetch(*paths).each do |result|
-        result_payload = Barometer::Payload.new(result)
-        block.call(result_payload)
+      path = fetch(*paths)
+      if path
+        path.each do |result|
+          result_payload = Barometer::Payload.new(result)
+          block.call(result_payload)
+        end
       end
     end
 
