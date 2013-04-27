@@ -7,9 +7,9 @@ module Barometer
       end
 
       def parse(payload)
+        _parse_time(payload)
         _parse_current(payload)
         _parse_station(payload)
-        _parse_time(payload)
         _parse_location(payload)
 
         @measurement
@@ -17,9 +17,15 @@ module Barometer
 
       private
 
+      def _parse_time(payload)
+        @measurement.timezone = payload.using(/ ([A-Z]*)$/).fetch('observation_time')
+      end
+
       def _parse_current(payload)
         @measurement.current.tap do |current|
-          current.starts_at = payload.fetch('observation_time_rfc822'), '%a, %d %b %Y %H:%M:%S %z'
+          current.observed_at = payload.fetch('observation_time_rfc822'), '%a, %d %b %Y %H:%M:%S %z'
+          current.stale_at = current.observed_at + (60 * 60 * 1) if current.observed_at
+
           current.humidity = payload.fetch('relative_humidity')
           current.condition = payload.fetch('weather')
           current.icon = payload.using(/(.*).(jpg|png)$/).fetch('icon_url_name')
@@ -58,11 +64,6 @@ module Barometer
             location.country_code = 'US'
           end
         end
-      end
-
-      def _parse_time(payload)
-        @measurement.timezone = payload.using(/ ([A-Z]*)$/).fetch('observation_time')
-        @measurement.published_at = payload.fetch('observation_time_rfc822'), '%a, %d %b %Y %H:%M:%S %z'
       end
     end
   end

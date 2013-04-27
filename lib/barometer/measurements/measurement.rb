@@ -8,7 +8,6 @@ module Barometer
     integer :weight, :status_code
     symbol :source, :format
     time :measurement_started_at, :measurement_ended_at, :requested_at
-    local_datetime :published_at
 
     attr_accessor :current, :forecast
 

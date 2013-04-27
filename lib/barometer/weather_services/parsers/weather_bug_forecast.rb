@@ -37,8 +37,9 @@ module Barometer
 
         payload.fetch_each_with_index("forecast") do |forecast_payload, index|
           @measurement.build_forecast do |forecast_measurement|
+            forecast_measurement.date = (start_date + index), @measurement.timezone
+
             forecast_measurement.icon = forecast_payload.using(/cond0*([1-9][0-9]*)\.gif$/).fetch('image')
-            forecast_measurement.date = start_date + index
             forecast_measurement.condition = forecast_payload.fetch('short_prediction')
             forecast_measurement.high = [forecast_payload.fetch('high')]
             forecast_measurement.low = [forecast_payload.fetch('low')]

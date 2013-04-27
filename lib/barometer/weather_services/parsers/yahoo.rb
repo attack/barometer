@@ -6,12 +6,12 @@ module Barometer
         @query = query
       end
 
-      def parse_weather(payload)
+      def parse(payload)
         _parse_time(payload)
         _parse_current(payload)
+        _parse_sun(payload)
         _build_forecasts(payload)
         _parse_location(payload)
-        _parse_sun(payload)
 
         @measurement
       end
@@ -20,7 +20,8 @@ module Barometer
 
       def _parse_current(payload)
         @measurement.current.tap do |current|
-          current.starts_at = payload.fetch('item', 'pubDate'), "%a, %d %b %Y %l:%M %P %Z"
+          current.observed_at = payload.fetch('item', 'pubDate'), "%a, %d %b %Y %l:%M %P %Z"
+          current.stale_at = (current.observed_at + (60 * 60 * 1)) if current.observed_at
 
           current.condition = payload.fetch('item', 'condition', '@text')
           current.icon = payload.fetch('item', 'condition', '@code')
@@ -71,18 +72,24 @@ module Barometer
 
       def _parse_time(payload)
         @measurement.timezone = payload.using(/ ([A-Z]+)$/).fetch('item', 'pubDate')
-        @measurement.published_at = payload.fetch('item', 'pubDate'), "%a, %d %b %Y %l:%M %P %Z"
       end
 
       def _build_forecasts(payload)
         payload.fetch_each("item", "forecast") do |forecast_payload|
           @measurement.build_forecast do |forecast_measurement|
-            forecast_measurement.date = Date.parse(forecast_payload.fetch('@date'))
+            forecast_measurement.date = forecast_payload.fetch('@date'), @measurement.timezone
             forecast_measurement.icon = forecast_payload.fetch('@code')
             forecast_measurement.condition = forecast_payload.fetch('@text')
             forecast_measurement.high = forecast_payload.fetch('@high')
             forecast_measurement.low = forecast_payload.fetch('@low')
-            forecast_measurement.sun = @measurement.current.sun
+
+            rise_utc = Barometer::Helpers::Time.utc_merge_base_plus_time(
+              forecast_measurement.starts_at, @measurement.current.sun.rise
+            )
+            set_utc = Barometer::Helpers::Time.utc_merge_base_plus_time(
+              forecast_measurement.ends_at, @measurement.current.sun.set
+            )
+            forecast_measurement.sun = Data::Sun.new(rise_utc, set_utc)
           end
         end
       end

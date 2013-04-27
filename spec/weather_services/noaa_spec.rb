@@ -40,7 +40,9 @@ describe Barometer::WeatherService::Noaa, :vcr => {
       subject.format.should == :zipcode
       subject.metric.should be_true
 
-      should have_data(:current, :starts_at).as_format(:datetime)
+      should have_data(:current, :observed_at).as_format(:time)
+      should have_data(:current, :stale_at).as_format(:time)
+
       should have_data(:current, :humidity).as_format(:float)
       should have_data(:current, :condition).as_format(:string)
       should have_data(:current, :icon).as_format(:string)

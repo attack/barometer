@@ -47,10 +47,13 @@ module Barometer
             forecast_measurement.ends_at = Helpers::Time.add_one_day(forecast_measurement.starts_at)
 
             forecast_measurement.icon = forecast_payload.fetch('icon')
-            forecast_measurement.pop = forecast_payload.fetch('pop').to_i
+            forecast_measurement.pop = forecast_payload.fetch('pop')
             forecast_measurement.high = [forecast_payload.fetch('high', 'celsius'), forecast_payload.fetch('high', 'fahrenheit')]
             forecast_measurement.low = [forecast_payload.fetch('low', 'celsius'), forecast_payload.fetch('low', 'fahrenheit')]
-            forecast_measurement.sun = @measurement.current.sun
+
+            rise_utc = Helpers::Time.utc_merge_base_plus_time(forecast_measurement.starts_at, @measurement.current.sun.rise)
+            set_utc = Helpers::Time.utc_merge_base_plus_time(forecast_measurement.ends_at, @measurement.current.sun.set)
+            forecast_measurement.sun = Data::Sun.new(rise_utc, set_utc)
           end
         end
       end

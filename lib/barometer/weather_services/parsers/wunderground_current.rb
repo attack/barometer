@@ -19,7 +19,8 @@ module Barometer
 
       def _parse_current(payload)
         @measurement.current.tap do |current|
-          current.starts_at = payload.fetch('local_time'), "%B %e, %l:%M %p %Z"
+          current.observed_at = payload.fetch('local_time'), "%B %e, %l:%M %p %Z"
+          _parse_stale_at
 
           current.humidity = payload.fetch('relative_humidity')
           current.condition = payload.fetch('weather')
@@ -70,11 +71,18 @@ module Barometer
 
       def _parse_time(payload)
         @measurement.timezone = payload.using(/ (\w*)$/).fetch('local_time')
-        @measurement.published_at = payload.fetch('observation_time_rfc822'), "%a, %d %b %Y %H:%M:%S %Z"
       end
 
-      def _parse_zone(payload)
-        @measurement.timezone = payload.fetch('date', 'tz_long')
+      # Wunderground syas they update their data on the hour, every hour
+      def _parse_stale_at
+        if @measurement.current.observed_at
+          utc_observed_at = @measurement.current.observed_at.utc
+          utc_next_update = Time.utc(
+            utc_observed_at.year, utc_observed_at.month, utc_observed_at.day,
+            utc_observed_at.hour + 1, 0, 0
+          )
+          @measurement.current.stale_at = utc_next_update
+        end
       end
     end
   end

@@ -535,13 +535,13 @@ describe Barometer::DataTypes do
         subject.time = 2012, 10, 4, 5, 30, 45
 
         # 1.8.7 & 1.9.3 compatable
-        subject.time.should == Time.local(2012, 10, 4, 5, 30, 45)
+        subject.time.should == Time.utc(2012, 10, 4, 5, 30, 45)
       end
 
       it "clears the value" do
         subject.time = 2012, 10, 4, 5, 30, 45
         subject.time = nil
-        subject.time.should be_nil
+        subject.time.should_not be_nil
       end
     end
 
@@ -559,7 +559,7 @@ describe Barometer::DataTypes do
         subject.time = "2012-10-04", "%Y-%d-%m"
 
         # 1.8.7 & 1.9.3 compatable
-        subject.time.should == Time.local(2012, 4, 10)
+        subject.time.should == Time.utc(2012, 4, 10)
       end
     end
 
@@ -579,8 +579,7 @@ describe Barometer::DataTypes do
 
     context "when setting to nil" do
       it "equals nil" do
-        subject.sun.rise = nil
-        subject.sun.set = nil
+        subject.sun = nil
         subject.sun.should be_nil
       end
     end

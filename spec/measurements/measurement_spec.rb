@@ -59,6 +59,9 @@ describe Barometer::Measurement do
     before(:each) do
       @measurement = Barometer::Measurement.new
 
+      now = Time.now
+      local_now = Time.utc(now.year, now.month, now.day, now.hour, now.min, now.sec)
+
       1.upto(4) do |i|
         forecast_measurement = Barometer::Measurement::Prediction.new
         forecast_measurement.date = Date.parse((local_now + (i * 60 * 60 * 24)).to_s)
@@ -66,7 +69,7 @@ describe Barometer::Measurement do
       end
       @measurement.forecast.size.should == 4
 
-      @tommorrow = (Time.now + (60 * 60 * 24))
+      @tommorrow = (local_now + (60 * 60 * 24))
     end
 
     it "returns nil when there are no forecasts" do
