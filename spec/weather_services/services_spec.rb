@@ -85,13 +85,13 @@ describe Barometer::WeatherService do
       it "adds measurement_started_at" do
         measurement = Barometer::WeatherService.measure(:test_weather, query)
         measurement.measurement_started_at.should_not be_nil
-        measurement.measurement_started_at.should be_a(Time)
+        measurement.measurement_started_at.should be_a(::Time)
       end
 
       it "adds measurement_ended_at" do
         measurement = Barometer::WeatherService.measure(:test_weather, query)
         measurement.measurement_ended_at.should_not be_nil
-        measurement.measurement_ended_at.should be_a(Time)
+        measurement.measurement_ended_at.should be_a(::Time)
       end
     end
 

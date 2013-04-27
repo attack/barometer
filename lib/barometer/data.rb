@@ -13,8 +13,6 @@ require 'data/temperature'
 require 'data/distance'
 require 'data/vector'
 require 'data/pressure'
-require 'data/local_time'
-require 'data/local_datetime'
 
 require 'measurements/measurement'
 require 'measurements/current'

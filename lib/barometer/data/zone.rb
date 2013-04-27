@@ -57,17 +57,17 @@ module Barometer
       # is the current timezone in daylights savings mode?
       def dst?
         return nil unless @tz
-        @tz.period_for_utc(Time.now.utc).dst?
+        @tz.period_for_utc(::Time.now.utc).dst?
       end
 
       # return Time.now.utc for the set timezone
-      def now(convert=false)
+      def now
         if @zone_full
           now = @tz.utc_to_local(Time.now.utc)
         elsif @zone_offset || @zone_code
           now = Time.now.utc + self.offset
         end
-        convert ? Data::LocalTime.parse(now) : now
+        now
       end
 
       # return Date.today for the set timezone

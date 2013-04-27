@@ -12,7 +12,11 @@ module Barometer
         paths.each do |path|
           path_value = path_value.send(path)
         end
-        path_value.to_s
+        if path_value.respond_to?(:strftime)
+          path_value.strftime("%Y-%m-%d %H:%M:%S %z")
+        else
+          path_value.to_s
+        end
       end
     end
   end

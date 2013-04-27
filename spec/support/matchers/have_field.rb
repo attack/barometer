@@ -46,13 +46,11 @@ module Barometer
       end
 
       def type_casts_as_type?
-        if type_is_a_date?
+        if type_is_time?
           set_value "2013-01-01 10:15:30 am"
-        elsif type_is_a_time?
-          set_value "10:15:30 am"
         elsif type_is_sun?
-          rise = Data::LocalDateTime.parse("10:15:30 am")
-          set = Data::LocalDateTime.parse("6:14:56 pm")
+          rise = Time.utc(2013,1,1,10,15,30)
+          set = Time.utc(2013,1,1,18,14,56)
           set_value Data::Sun.new(rise, set)
         else
           set_value 10
@@ -61,17 +59,14 @@ module Barometer
       end
 
       def sets_value?
-        if type_is_a_date?
+        if type_is_time?
           set_value "10 15 30 2013 01 01 am", "%H %M %S %Y %m %d %p"
-          assert print_value == "2013-01-01 10:15:30 am", "expected value of '2013-01-01 10:15:30 am', got '#{print_value}'"
-        elsif type_is_a_time?
-          set_value "10:15:30 am"
-          assert print_value == "10:15:30 am", "expected value of '10:15:30 am', got '#{print_value}'"
+          assert value.to_i == Time.utc(2013,01,01,10,15,30).to_i, "expected value of '2013-01-01 10:15:30 am', got '#{print_value}'"
         elsif type_is_sun?
-          rise = Data::LocalTime.parse("10:15:30 am")
-          set = Data::LocalTime.parse("6:14:56 pm")
+          rise = Time.utc(2013,1,1,10,15,30)
+          set = Time.utc(2013,1,1,18,14,56)
           set_value Data::Sun.new(rise, set)
-          assert print_value == "rise: 10:15 am, set: 06:14 pm", "expected value of 'rise: 10:15 am, set: 06:14 pm'', got '#{print_value}'"
+          assert print_value == "rise: 10:15, set: 18:14", "expected value of 'rise: 10:15, set: 18:14'', got '#{print_value}'"
         else
           set_value 10
           assert value.to_i == 10, "expected value of '10', got '#{value.to_i}'"
@@ -101,7 +96,7 @@ module Barometer
       end
 
       def set_value(*value)
-        if type_is_a_date? || type_is_a_time?
+        if type_is_time?
           @subject.send("#{@field}=", value)
         else
           @subject.send("#{@field}=", *value)
@@ -109,13 +104,13 @@ module Barometer
       end
 
       def print_value
-        if @type == Data::LocalDateTime || @type == Data::LocalTime
-          value.to_s(true)
-        elsif @type == DateTime
-          value.strftime("%Y-%m-%d %I:%M:%S %P")
-        else
+        # if @type == Data::Time
+          # value.to_s
+        # elsif @type == ::DateTime
+        #   value.strftime("%Y-%m-%d %I:%M:%S %P")
+        # else
           value.to_s
-        end
+        # end
       end
 
       def metric_units
@@ -131,7 +126,7 @@ module Barometer
       end
 
       def value_responds_to_metric?
-        if type_is_a_date? || type_is_a_time?
+        if type_is_time?
           false
         elsif @type == Float
           # rubinius does not like Float.new being called on the next line
@@ -142,12 +137,8 @@ module Barometer
         end
       end
 
-      def type_is_a_date?
-        @type == Data::LocalDateTime || @type == DateTime
-      end
-
-      def type_is_a_time?
-        @type == Data::LocalTime
+      def type_is_time?
+        @type == Time
       end
 
       def type_is_sun?

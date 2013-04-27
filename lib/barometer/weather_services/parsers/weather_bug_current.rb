@@ -31,15 +31,9 @@ module Barometer
       end
 
       def _parse_sun(payload)
-        rise_h = payload.fetch('sunrise', 'hour', '@hour_24').to_i
-        rise_m = payload.fetch('sunrise', 'minute', '@number').to_i
-        rise_s = payload.fetch('sunrise', 'second', '@number').to_i
-        @measurement.current.sun.rise = Data::LocalTime.new(rise_h, rise_m, rise_s)
-
-        set_h = payload.fetch('sunset', 'hour', '@hour_24').to_i
-        set_m = payload.fetch('sunset', 'minute', '@number').to_i
-        set_s = payload.fetch('sunset', 'second', '@number').to_i
-        @measurement.current.sun.set = Data::LocalTime.new(set_h, set_m, set_s)
+        @measurement.current.sun = Barometer::Data::Sun.new(
+          _time(payload, 'sunrise'), _time(payload, 'sunset')
+        )
       end
 
       def _parse_station(payload)

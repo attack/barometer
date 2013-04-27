@@ -75,38 +75,32 @@ describe Barometer::Measurement do
       @measurement.for.should be_nil
     end
 
+    it "finds the date using a Time" do
+      @measurement.for(@tommorrow).should == @measurement.forecast.first
+    end
+
     it "finds the date using a String" do
       tommorrow = @tommorrow.to_s
-      tommorrow.class.should == String
       @measurement.for(tommorrow).should == @measurement.forecast.first
     end
 
     it "finds the date using a Date" do
       tommorrow = Date.parse(@tommorrow.to_s)
-      tommorrow.class.should == Date
       @measurement.for(tommorrow).should == @measurement.forecast.first
     end
 
     it "finds the date using a DateTime" do
       tommorrow = DateTime.parse(@tommorrow.to_s)
-      tommorrow.class.should == DateTime
       @measurement.for(tommorrow).should == @measurement.forecast.first
     end
 
-    it "finds the date using a Time" do
-      @tommorrow.class.should == Time
-      @measurement.for(@tommorrow).should == @measurement.forecast.first
-    end
-
-    it "finds the date using Barometer::Data::LocalDateTime" do
-      tommorrow = Barometer::Data::LocalDateTime.parse(@tommorrow.to_s)
-      tommorrow.class.should == Barometer::Data::LocalDateTime
+    it "finds the date using Data::Time" do
+      tommorrow = Barometer::Helpers::Time.parse(@tommorrow.to_s)
       @measurement.for(tommorrow).should == @measurement.forecast.first
     end
 
     it "finds nothing when there is not a match" do
-      yesterday = (Time.now - (60 * 60 * 24))
-      yesterday.class.should == Time
+      yesterday = (@tommorrow - (60 * 60 * 24 * 2))
       @measurement.for(yesterday).should be_nil
     end
   end

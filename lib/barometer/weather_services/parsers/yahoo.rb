@@ -36,8 +36,18 @@ module Barometer
       end
 
       def _parse_sun(payload)
-        @measurement.current.sun.rise = Data::LocalTime.parse(payload.fetch("astronomy", "@sunrise"))
-        @measurement.current.sun.set = Data::LocalTime.parse(payload.fetch("astronomy", "@sunset"))
+        rise_local = Barometer::Helpers::Time.parse(payload.fetch("astronomy", "@sunrise"))
+        set_local = Barometer::Helpers::Time.parse(payload.fetch("astronomy", "@sunset"))
+        return if rise_local.nil? || set_local.nil?
+
+        rise_utc = Barometer::Helpers::Time.utc_from_base_plus_local_time(
+          @measurement.timezone, @measurement.current.observed_at, rise_local.hour, rise_local.min
+        )
+        set_utc = Barometer::Helpers::Time.utc_from_base_plus_local_time(
+          @measurement.timezone, @measurement.current.observed_at, set_local.hour, set_local.min
+        )
+
+        @measurement.current.sun = Data::Sun.new(rise_utc, set_utc)
       end
 
       def _parse_location(payload)

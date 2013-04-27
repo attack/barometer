@@ -36,7 +36,10 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
         subject.format.should == :short_zipcode
         subject.metric.should be_true
 
-        should have_data(:current, :starts_at).as_format(:datetime)
+        should have_data(:current, :observed_at).as_format(:time)
+        # specifics about when?
+        should have_data(:current, :stale_at).as_format(:time)
+
         should have_data(:current, :humidity).as_format(:float)
         should have_data(:current, :condition).as_format(:string)
         should have_data(:current, :icon).as_format(:number)
@@ -61,13 +64,11 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
         should have_data(:location, :state_code).as_value("CA")
         should have_data(:location, :zip_code).as_value("90210")
 
-        should have_data(:published_at).as_format(:datetime)
         should have_data(:timezone, :code).as_format(/^P[DS]T$/i)
 
         subject.forecast.size.should == 7
-        should have_forecast(:date).as_format(:date)
-        should have_forecast(:starts_at).as_format(:datetime)
-        should have_forecast(:ends_at).as_format(:datetime)
+        should have_forecast(:starts_at).as_format(:time)
+        should have_forecast(:ends_at).as_format(:time)
         should have_forecast(:condition).as_format(:string)
         should have_forecast(:icon).as_format(:number)
         should have_forecast(:high).as_format(:temperature)

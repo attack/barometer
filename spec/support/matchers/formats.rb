@@ -10,11 +10,7 @@ module Barometer
       def _find_regex(format)
         case format
         when :time
-          /^\d{1,2}:\d{1,2}[ ]?[apmAPM]{0,2}$/i
-        when :date
-          /^\d{1,4}-\d{1,2}-\d{1,2}$/i
-        when :datetime
-          /^\d{1,4}-\d{1,2}-\d{1,2}$/i
+          /^\d{1,4}-\d{1,2}-\d{1,2} \d{2}:\d{2}:\d{2} [\-\+\d]{5}$/i
         when :optional_string
           /^[\w ]*$/i
         when :string

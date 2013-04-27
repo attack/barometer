@@ -10,8 +10,6 @@ class TestClass
   float :float
   integer :integer
   string :string
-  local_datetime :local_datetime
-  local_time :local_time
   time :time
   sun :sun
   location :location
@@ -515,61 +513,6 @@ describe Barometer::DataTypes do
     end
   end
 
-  describe "local_datetime" do
-    it { should respond_to :local_datetime }
-    it { should respond_to :local_datetime= }
-
-    context "when nothing has been set" do
-      it "returns nil" do
-        subject.local_datetime.should be_nil
-      end
-    end
-
-    context "when setting to nil" do
-      it "returns nil" do
-        subject.local_datetime = nil
-        subject.local_datetime.should be_nil
-      end
-    end
-
-    context "when setting with data to be interpretted as a local_datetime" do
-      it "sets the value" do
-        subject.local_datetime = 2012, 10, 4, 5, 30, 45
-        subject.local_datetime.should == Barometer::Data::LocalDateTime.new(2012, 10, 4, 5, 30, 45)
-      end
-
-      it "clears the value" do
-        subject.local_datetime = 2012, 10, 4, 5, 30, 45
-        subject.local_datetime = nil
-        subject.local_datetime.should be_nil
-      end
-    end
-
-    context "when setting with data to parse" do
-      it "sets the value" do
-        subject.local_datetime = "2012-10-4 5:30:45 pm"
-        subject.local_datetime.should == Barometer::Data::LocalDateTime.new(2012, 10, 4, 17, 30, 45)
-      end
-    end
-
-    context "when setting with data to parse (including format)" do
-      it "sets the value" do
-        subject.local_datetime = "2012-10-04", "%Y-%d-%m"
-        subject.local_datetime.should == Barometer::Data::LocalDateTime.new(2012, 4, 10)
-      end
-    end
-
-    context "when setting with Barometer::Data::LocalDateTime" do
-      it "uses the passed in value" do
-        local_datetime = Barometer::Data::LocalDateTime.new(2012, 10, 4, 5, 30, 45)
-        subject.local_datetime = local_datetime
-        subject.local_datetime.should be_a(Barometer::Data::LocalDateTime)
-        subject.local_datetime.should == local_datetime
-        subject.local_datetime.object_id.should == local_datetime.object_id
-      end
-    end
-  end
-
   describe "time" do
     it { should respond_to :time }
     it { should respond_to :time= }
@@ -620,61 +563,12 @@ describe Barometer::DataTypes do
       end
     end
 
-    context "when setting with DateTime" do
+    context "when setting with Time" do
       it "uses the passed in value" do
         time = Time.now.utc
         subject.time = time
         subject.time.should be_a(Time)
         subject.time.should == time
-        subject.time.object_id.should == time.object_id
-      end
-    end
-  end
-
-  describe "local_time" do
-    it { should respond_to :local_time }
-    it { should respond_to :local_time= }
-
-    context "when nothing has been set" do
-      it "returns nil" do
-        subject.local_time.should be_nil
-      end
-    end
-
-    context "when setting to nil" do
-      it "equals nil" do
-        subject.local_time = nil
-        subject.local_time.should be_nil
-      end
-    end
-
-    context "when setting with data to be interpretted as a local_time" do
-      it "sets the value" do
-        subject.local_time = 5, 30, 45
-        subject.local_time.should == Barometer::Data::LocalTime.new(5, 30, 45)
-      end
-
-      it "clears the value" do
-        subject.local_time = 5, 30, 45
-        subject.local_time = nil
-        subject.local_time.should be_nil
-      end
-    end
-
-    context "when setting with data to parse" do
-      it "sets the value" do
-        subject.local_time = "5:30:45 pm"
-        subject.local_time.should == Barometer::Data::LocalTime.new(17, 30, 45)
-      end
-    end
-
-    context "when setting with Barometer::Data::LocalTime" do
-      it "uses the passed in value" do
-        local_time = Barometer::Data::LocalTime.new(5, 30, 45)
-        subject.local_time = local_time
-        subject.local_time.should be_a(Barometer::Data::LocalTime)
-        subject.local_time.should == local_time
-        subject.local_time.object_id.should == local_time.object_id
       end
     end
   end
@@ -691,24 +585,23 @@ describe Barometer::DataTypes do
       end
     end
 
-    context "when setting with data of exact values" do
-      it "initializes Barometer::Data::Sun" do
-        rise = Barometer::Data::LocalTime.new(5, 30, 45)
-        subject.sun.rise = rise
+    context "when setting with pre-typed data" do
+      it "accepts Data::Sun" do
+        rise = Time.utc(2013, 02, 10, 5, 30, 45)
+        set = Time.utc(2013, 02, 10, 17, 30, 45)
+        sun = Barometer::Data::Sun.new(rise, set)
 
-        set = Barometer::Data::LocalTime.new(17, 30, 45)
-        subject.sun.set = set
+        subject.sun = sun
 
-        subject.sun.rise.should == rise
-        subject.sun.set.should == set
+        subject.sun.should == sun
       end
 
-      it "clears the value" do
-        rise = Barometer::Data::LocalDateTime.new(2013, 02, 10, 6, 0, 0)
-        set = Barometer::Data::LocalDateTime.new(2013, 02, 10, 6, 0, 0)
+      it "does not clear the value" do
+        rise = Time.utc(2013, 02, 10, 6, 0, 0)
+        set = Time.utc(2013, 02, 10, 6, 0, 0)
         subject.sun = Barometer::Data::Sun.new(rise, set)
         subject.sun = nil
-        subject.sun.should be_nil
+        subject.sun.should_not be_nil
       end
     end
 
@@ -720,10 +613,10 @@ describe Barometer::DataTypes do
       end
     end
 
-    context "when setting with Barometer::Data::LocalTime" do
+    context "when setting with Barometer::Data::Time" do
       it "uses the passed in value" do
-        rise = Barometer::Data::LocalDateTime.new(2013, 02, 10, 6, 0, 0)
-        set = Barometer::Data::LocalDateTime.new(2013, 02, 10, 6, 0, 0)
+        rise = Time.utc(2013, 02, 10, 6, 0, 0)
+        set = Time.utc(2013, 02, 10, 6, 0, 0)
         sun = Barometer::Data::Sun.new(rise, set)
         subject.sun = sun
         subject.sun.should be_a(Barometer::Data::Sun)
@@ -878,5 +771,4 @@ describe Barometer::DataTypes do
       end
     end
   end
-
 end

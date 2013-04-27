@@ -27,7 +27,9 @@ describe Barometer::WeatherService::Yahoo, :vcr => {
       subject.format.should == :zipcode
       subject.metric.should be_true
 
-      should have_data(:current, :starts_at).as_format(:datetime)
+      should have_data(:current, :observed_at).as_format(:time)
+      should have_data(:current, :stale_at).as_format(:time)
+
       should have_data(:current, :humidity).as_format(:float)
       should have_data(:current, :condition).as_format(:string)
       should have_data(:current, :icon).as_format(:number)
@@ -45,13 +47,11 @@ describe Barometer::WeatherService::Yahoo, :vcr => {
       should have_data(:location, :latitude).as_value(34.08)
       should have_data(:location, :longitude).as_value(-118.4)
 
-      should have_data(:published_at).as_format(:datetime)
       should have_data(:timezone, :code).as_format(/^P[DS]T$/i)
 
       subject.forecast.size.should == 2
-      should have_forecast(:date).as_format(:date)
-      should have_forecast(:starts_at).as_format(:datetime)
-      should have_forecast(:ends_at).as_format(:datetime)
+      should have_forecast(:starts_at).as_format(:time)
+      should have_forecast(:ends_at).as_format(:time)
       should have_forecast(:icon).as_format(:number)
       should have_forecast(:condition).as_format(:string)
       should have_forecast(:high).as_format(:temperature)

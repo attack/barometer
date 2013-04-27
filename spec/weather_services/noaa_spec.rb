@@ -66,12 +66,11 @@ describe Barometer::WeatherService::Noaa, :vcr => {
       should have_data(:station, :latitude).as_value(34.10)
       should have_data(:station, :longitude).as_value(-118.41)
 
-      should have_data(:published_at).as_format(:datetime)
       should have_data(:timezone, :code).as_format(/^P[DS]T$/i)
 
       subject.forecast.size.should == 14
-      should have_forecast(:starts_at).as_format(:datetime)
-      should have_forecast(:ends_at).as_format(:datetime)
+      should have_forecast(:starts_at).as_format(:time)
+      should have_forecast(:ends_at).as_format(:time)
       should have_forecast(:icon).as_format(:string)
       should have_forecast(:condition).as_format(:string)
       should have_forecast(:pop).as_format(:float)

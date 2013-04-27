@@ -27,7 +27,9 @@ describe Barometer::WeatherService::Wunderground, :vcr => {
       subject.format.should == :geocode
       subject.metric.should be_true
 
-      should have_data(:current, :starts_at).as_format(:datetime)
+      should have_data(:current, :observed_at).as_format(:time)
+      should have_data(:current, :stale_at).as_format(:time)
+
       should have_data(:current, :humidity).as_format(:float)
       should have_data(:current, :condition).as_format(:string)
       should have_data(:current, :icon).as_format(:string)
@@ -58,14 +60,15 @@ describe Barometer::WeatherService::Wunderground, :vcr => {
       should have_data(:location, :latitude).as_value(51.11999893)
       should have_data(:location, :longitude).as_value(-114.01999664)
 
-      should have_data(:published_at).as_format(:datetime)
       should have_data(:timezone, :code).as_format(/^M[DS]T$/i)
       should have_data(:timezone, :zone_full).as_value('America/Edmonton')
       should have_data(:timezone, :current).as_value('America/Edmonton')
 
       subject.forecast.size.should == 6
-      should have_forecast(:starts_at).as_format(:datetime)
-      should have_forecast(:ends_at).as_format(:datetime)
+      should have_forecast(:starts_at).as_format(:time)
+      should have_forecast(:ends_at).as_format(:time)
+
+      subject.forecast[0].ends_at.to_i.should == (subject.forecast[0].starts_at + (60 * 60 * 24 - 1)).to_i
       should have_forecast(:pop).as_format(:float)
       should have_forecast(:icon).as_format(:string)
       should have_forecast(:high).as_format(:temperature)

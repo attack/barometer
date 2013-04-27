@@ -143,69 +143,10 @@ module Barometer
         names.each do |name|
           send :define_method, "#{name}=" do |data|
             data = [data] unless data.is_a?(Array)
+            return unless data && data.first
 
-            if data.compact.empty?
-              time = nil
-            elsif data.size == 1 && data.first.is_a?(Time)
-              time = data.first
-            elsif data.size == 1 && data.first.respond_to?(:to_time)
-              time = data.first.to_time
-            elsif data.size == 1
-              time = Time.parse(*data)
-            elsif data.size == 2
-              if Time.respond_to?(:strptime)
-                # 1.9.x
-                time = Time.strptime(*data)
-              else
-                # 1.8.7
-                datetime = DateTime.strptime(*data)
-                time = Time.local(
-                  datetime.year, datetime.month, datetime.day,
-                  datetime.hour, datetime.min, datetime.sec
-                )
-              end
-            else
-              time = Time.local(*data)
-            end
+            time = Barometer::Helpers::Time.parse(*data)
             instance_variable_set "@#{name}", time
-          end
-        end
-      end
-
-      def local_datetime *names
-        attr_reader *names
-
-        names.each do |name|
-          send :define_method, "#{name}=" do |data|
-            data = Array(data)
-
-            if data.compact.empty?
-              local_datetime = nil
-            elsif data.size <= 2
-              local_datetime = Data::LocalDateTime.parse(*data)
-            else
-              local_datetime = Data::LocalDateTime.new(*data)
-            end
-            instance_variable_set "@#{name}", local_datetime
-          end
-        end
-      end
-
-      def local_time *names
-        attr_reader *names
-
-        names.each do |name|
-          send :define_method, "#{name}=" do |data|
-            data = Array(data)
-
-            if data.compact.empty?
-              local_time = nil
-            elsif data.size <= 1
-              local_time = Data::LocalTime.parse(*data)
-            else
-              local_time = Data::LocalTime.new(*data)
-            end
-            instance_variable_set "@#{name}", local_time
           end
         end
       end
@@ -215,9 +156,8 @@ module Barometer
 
         names.each do |name|
           send :define_method, "#{name}=" do |data|
-            if data == nil
-              instance_variable_set "@#{name}", nil
-            elsif data.is_a?(Data::Sun)
+            return if data.nil?
+            if data.is_a?(Data::Sun)
               instance_variable_set "@#{name}", data
             else
               raise ArgumentError
