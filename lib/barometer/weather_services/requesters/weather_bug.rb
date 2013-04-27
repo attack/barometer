@@ -21,7 +21,7 @@ module Barometer
         zip_match = response.match(/zipcode=\"(\d*)\"/)
         zipcode = zip_match[1] if zip_match
 
-        output = Barometer::XmlReader.parse(response, "weather", "ob")
+        output = Barometer::Utils::XmlReader.parse(response, "weather", "ob")
         output["barometer:icon"] = icon
         output["barometer:station_zipcode"] = zipcode
 
@@ -32,7 +32,7 @@ module Barometer
         puts "fetch weatherbug forecast: #{query.q}" if Barometer::debug?
 
         response = _get("getForecastRSS.aspx", query)
-        output = Barometer::XmlReader.parse(response, "weather", "forecasts")
+        output = Barometer::Utils::XmlReader.parse(response, "weather", "forecasts")
         Barometer::Utils::Payload.new(output)
       end
 

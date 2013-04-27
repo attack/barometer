@@ -11,7 +11,7 @@ module Barometer
             'http://weather.yahooapis.com/forecastrss',
             _format_query(converted_query)
           )
-          Barometer::XmlReader.parse(response, 'rss', 'channel')
+          Barometer::Utils::XmlReader.parse(response, 'rss', 'channel')
         end
 
         def self.parse_geocode(response)

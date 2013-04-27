@@ -10,7 +10,7 @@ module Barometer
 
         response = _get("http://w1.weather.gov/xml/current_obs/#{query.q}.xml")
 
-        output = Barometer::XmlReader.parse(response, "current_observation")
+        output = Barometer::Utils::XmlReader.parse(response, "current_observation")
         Barometer::Utils::Payload.new(output)
       end
 
@@ -19,7 +19,7 @@ module Barometer
 
         response = _get("http://graphical.weather.gov/xml/sample_products/browser_interface/ndfdBrowserClientByDay.php", query)
 
-        output = Barometer::XmlReader.parse(response, "dwml", "data")
+        output = Barometer::Utils::XmlReader.parse(response, "dwml", "data")
         Barometer::Utils::Payload.new(output)
       end
 

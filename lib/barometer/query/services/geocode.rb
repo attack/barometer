@@ -12,7 +12,7 @@ module Barometer
             _format_params(converted_query)
           )
 
-          Barometer::JsonReader.parse(location, 'results') do |result|
+          Barometer::Utils::JsonReader.parse(location, 'results') do |result|
             Data::Geo.new(result.first)
           end
         end
