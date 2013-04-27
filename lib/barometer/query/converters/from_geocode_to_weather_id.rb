@@ -13,7 +13,7 @@ module Barometer
         def call
           return unless can_convert?
 
-          weather_id = WebService::ToWeatherId.call(@query)
+          weather_id = Service::ToWeatherId.call(@query)
           @query.add_conversion(:weather_id, weather_id)
         end
 

@@ -13,7 +13,7 @@ module Barometer
         def call
           return unless can_convert?
 
-          station_id = Barometer::WebService::NoaaStation.fetch(@query)
+          station_id = Service::NoaaStation.fetch(@query)
           @query.add_conversion(:noaa_station_id, station_id)
         end
 

@@ -13,7 +13,7 @@ module Barometer
         def call
           return unless can_convert?
 
-          @query.geo = Barometer::WebService::Geocode.fetch(@query)
+          @query.geo = Service::Geocode.fetch(@query)
           @query.country_code = @query.geo.country_code
           @query.add_conversion(:coordinates, @query.geo.coordinates)
         end

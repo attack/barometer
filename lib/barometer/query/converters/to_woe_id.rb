@@ -13,7 +13,7 @@ module Barometer
         def call
           return unless can_convert?
 
-          woe_id = Barometer::WebService::ToWoeId.call(@query)
+          woe_id = Service::ToWoeId.call(@query)
           @query.add_conversion(:woe_id, woe_id)
         end
 
