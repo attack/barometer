@@ -11,8 +11,8 @@ require 'barometer'
 
 Dir["./spec/support/**/*.rb"].sort.each {|f| require f}
 
-WEATHERBUG_CODE = Barometer::KeyFileParser.find(:weather_bug, :code) || 'weatherbug'
-YAHOO_KEY = Barometer::KeyFileParser.find(:yahoo, :app_id) || 'yahoo'
+WEATHERBUG_CODE = Barometer::Utils::KeyFileParser.find(:weather_bug, :code) || 'weatherbug'
+YAHOO_KEY = Barometer::Utils::KeyFileParser.find(:yahoo, :app_id) || 'yahoo'
 downcased_weatherbug_code = WEATHERBUG_CODE.to_s
 downcased_weatherbug_code[0] = WEATHERBUG_CODE.to_s[0..0].downcase
 

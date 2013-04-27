@@ -7,7 +7,6 @@ require 'barometer/weather'
 require 'barometer/services'
 require 'barometer/utils'
 require 'barometer/data'
-require 'barometer/key_file_parser'
 
 module Barometer
   @@config = { 1 => [:wunderground] }
