@@ -1,14 +1,14 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 require 'time'
 
-describe Barometer::Measurement do
+describe Barometer::Response::Base do
   it { should have_field(:query).of_type(String) }
   it { should have_field(:weight).of_type(Integer) }
   it { should have_field(:status_code).of_type(Integer) }
 
   describe ".new" do
-    its(:forecast) { should be_a Barometer::Measurement::PredictionCollection }
-    its(:current) { should be_a Barometer::Measurement::Current }
+    its(:forecast) { should be_a Barometer::Response::PredictionCollection }
+    its(:current) { should be_a Barometer::Response::Current }
     its(:metric) { should be_true }
     its(:weight) { should == 1 }
     its(:requested_at) { should be_a(Time) }
@@ -41,13 +41,13 @@ describe Barometer::Measurement do
   end
 
   describe "#build_forecast" do
-    it "yields a new measurement" do
+    it "yields a new response" do
       expect { |b|
         subject.build_forecast(&b)
-      }.to yield_with_args(Barometer::Measurement::Prediction)
+      }.to yield_with_args(Barometer::Response::Prediction)
     end
 
-    it "adds the new measurement to forecast array" do
+    it "adds the new response to forecast array" do
       expect {
         subject.build_forecast do
         end
@@ -57,54 +57,54 @@ describe Barometer::Measurement do
 
   describe "when searching forecasts using 'for'" do
     before(:each) do
-      @measurement = Barometer::Measurement.new
+      @response = Barometer::Response::Base.new
 
       now = Time.now
       local_now = Time.utc(now.year, now.month, now.day, now.hour, now.min, now.sec)
 
       1.upto(4) do |i|
-        forecast_measurement = Barometer::Measurement::Prediction.new
-        forecast_measurement.date = Date.parse((local_now + (i * 60 * 60 * 24)).to_s)
-        @measurement.forecast << forecast_measurement
+        forecast_response = Barometer::Response::Prediction.new
+        forecast_response.date = Date.parse((local_now + (i * 60 * 60 * 24)).to_s)
+        @response.forecast << forecast_response
       end
-      @measurement.forecast.size.should == 4
+      @response.forecast.size.should == 4
 
       @tommorrow = (local_now + (60 * 60 * 24))
     end
 
     it "returns nil when there are no forecasts" do
-      @measurement.forecast = Barometer::Measurement::PredictionCollection.new
-      @measurement.forecast.size.should == 0
-      @measurement.for.should be_nil
+      @response.forecast = Barometer::Response::PredictionCollection.new
+      @response.forecast.size.should == 0
+      @response.for.should be_nil
     end
 
     it "finds the date using a Time" do
-      @measurement.for(@tommorrow).should == @measurement.forecast.first
+      @response.for(@tommorrow).should == @response.forecast.first
     end
 
     it "finds the date using a String" do
       tommorrow = @tommorrow.to_s
-      @measurement.for(tommorrow).should == @measurement.forecast.first
+      @response.for(tommorrow).should == @response.forecast.first
     end
 
     it "finds the date using a Date" do
       tommorrow = Date.parse(@tommorrow.to_s)
-      @measurement.for(tommorrow).should == @measurement.forecast.first
+      @response.for(tommorrow).should == @response.forecast.first
     end
 
     it "finds the date using a DateTime" do
       tommorrow = DateTime.parse(@tommorrow.to_s)
-      @measurement.for(tommorrow).should == @measurement.forecast.first
+      @response.for(tommorrow).should == @response.forecast.first
     end
 
     it "finds the date using Data::Time" do
       tommorrow = Barometer::Utils::Time.parse(@tommorrow.to_s)
-      @measurement.for(tommorrow).should == @measurement.forecast.first
+      @response.for(tommorrow).should == @response.forecast.first
     end
 
     it "finds nothing when there is not a match" do
       yesterday = (@tommorrow - (60 * 60 * 24 * 2))
-      @measurement.for(yesterday).should be_nil
+      @response.for(yesterday).should be_nil
     end
   end
 end

@@ -4,9 +4,10 @@ require 'barometer/version'
 require 'barometer/base'
 require 'barometer/query'
 require 'barometer/weather'
+require 'barometer/data'
+require 'barometer/response'
 require 'barometer/weather_service'
 require 'barometer/utils'
-require 'barometer/data'
 
 module Barometer
   @@config = { 1 => [:wunderground] }

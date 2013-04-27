@@ -19,7 +19,7 @@ module Barometer
         @converted_query = nil
         @metric = config.fetch(:metric, true)
 
-        @measurement = Measurement.new(metric)
+        @response = Response.new(metric)
       end
 
       def measure!
@@ -29,22 +29,22 @@ module Barometer
         fetch_and_parse_forecast
         fetch_and_parse_current
 
-        measurement
+        response
       end
 
       private
 
-      attr_reader :measurement, :api_code, :metric
+      attr_reader :response, :api_code, :metric
 
       def convert_query!
         @converted_query = @query.convert!(*self.class.accepted_formats)
-        measurement.query = @converted_query.q
-        measurement.format = @converted_query.format
+        response.query = @converted_query.q
+        response.format = @converted_query.format
       end
 
       def fetch_and_parse_forecast
         payload = @requester.get_forecast(@converted_query)
-        forecast_parser = Barometer::Parser::NoaaForecast.new(measurement, @query)
+        forecast_parser = Barometer::Parser::NoaaForecast.new(response, @query)
         forecast_parser.parse(payload)
       end
 
@@ -53,7 +53,7 @@ module Barometer
         converted_query = @query.convert!(:noaa_station_id)
 
         payload = @requester.get_current(converted_query)
-        current_parser = Barometer::Parser::NoaaCurrent.new(measurement, @query)
+        current_parser = Barometer::Parser::NoaaCurrent.new(response, @query)
         current_parser.parse(payload)
       end
     end

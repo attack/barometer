@@ -1,8 +1,8 @@
 module Barometer
   module Parser
     class WundergroundCurrent
-      def initialize(measurement, query)
-        @measurement = measurement
+      def initialize(response, query)
+        @response = response
         @query = query
       end
 
@@ -12,13 +12,13 @@ module Barometer
         _parse_location(payload)
         _parse_time(payload)
 
-        @measurement
+        @response
       end
 
       private
 
       def _parse_current(payload)
-        @measurement.current.tap do |current|
+        @response.current.tap do |current|
           current.observed_at = payload.fetch('local_time'), "%B %e, %l:%M %p %Z"
           _parse_stale_at
 
@@ -36,7 +36,7 @@ module Barometer
       end
 
       def _parse_station(payload)
-        @measurement.station.tap do |station|
+        @response.station.tap do |station|
           station.id = payload.fetch('station_id')
           station.name = payload.fetch('observation_location', 'full')
           station.city = payload.fetch('observation_location', 'city')
@@ -48,7 +48,7 @@ module Barometer
       end
 
       def _parse_location(payload)
-        @measurement.location.tap do |location|
+        @response.location.tap do |location|
           if geo = @query.geo
             location.city = geo.locality
             location.state_code = geo.region
@@ -70,18 +70,18 @@ module Barometer
       end
 
       def _parse_time(payload)
-        @measurement.timezone = payload.using(/ (\w*)$/).fetch('local_time')
+        @response.timezone = payload.using(/ (\w*)$/).fetch('local_time')
       end
 
       # Wunderground syas they update their data on the hour, every hour
       def _parse_stale_at
-        if @measurement.current.observed_at
-          utc_observed_at = @measurement.current.observed_at.utc
+        if @response.current.observed_at
+          utc_observed_at = @response.current.observed_at.utc
           utc_next_update = Time.utc(
             utc_observed_at.year, utc_observed_at.month, utc_observed_at.day,
             utc_observed_at.hour + 1, 0, 0
           )
-          @measurement.current.stale_at = utc_next_update
+          @response.current.stale_at = utc_next_update
         end
       end
     end

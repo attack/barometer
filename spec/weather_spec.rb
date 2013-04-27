@@ -2,15 +2,15 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Barometer::Weather do
   describe "#success?" do
-    it "returns true if one measurement is successful" do
-      successful_measurement = double(:measurement, :success? => true)
-      subject.measurements = [successful_measurement]
+    it "returns true if one response is successful" do
+      successful_response = double(:response, :success? => true)
+      subject.responses = [successful_response]
       subject.should be_success
     end
 
-    it "returns false if no measurements are successful" do
-      unsuccessful_measurement = double(:measurement, :success? => false)
-      subject.measurements = [unsuccessful_measurement]
+    it "returns false if no responses are successful" do
+      unsuccessful_response = double(:response, :success? => false)
+      subject.responses = [unsuccessful_response]
       subject.should_not be_success
     end
   end
@@ -20,8 +20,8 @@ describe Barometer::Weather do
       @weather = Barometer::Weather.new
     end
 
-    it "responds to measurements (and sets default value)" do
-      @weather.measurements.should == []
+    it "responds to responses (and sets default value)" do
+      @weather.responses.should == []
     end
 
     it "responds to current" do
@@ -45,25 +45,25 @@ describe Barometer::Weather do
     end
   end
 
-  describe "with measurements" do
+  describe "with responses" do
     before(:each) do
       @weather = Barometer::Weather.new
-      @wunderground = Barometer::Measurement.new
+      @wunderground = Barometer::Response.new
       @wunderground.source = :wunderground
       @wunderground.stub!(:success).and_return(true)
       @wunderground.stub!(:success?).and_return(true)
-      @yahoo = Barometer::Measurement.new
+      @yahoo = Barometer::Response.new
       @yahoo.source = :yahoo
       @yahoo.stub!(:success).and_return(true)
       @yahoo.stub!(:success?).and_return(true)
-      @google = Barometer::Measurement.new
+      @google = Barometer::Response.new
       @google.source = :google
-      @weather.measurements << @wunderground
-      @weather.measurements << @yahoo
-      @weather.measurements << @google
+      @weather.responses << @wunderground
+      @weather.responses << @yahoo
+      @weather.responses << @google
     end
 
-    it "retrieves a source measurement" do
+    it "retrieves a source response" do
       lambda { @weather.source(1) }.should raise_error(ArgumentError)
       lambda { @weather.source("valid") }.should_not raise_error(ArgumentError)
       lambda { @weather.source(:valid) }.should_not raise_error(ArgumentError)
@@ -71,7 +71,7 @@ describe Barometer::Weather do
       @weather.source(:wunderground).should == @wunderground
     end
 
-    it "lists the sources of measurements (that were successful)" do
+    it "lists the sources of responses (that were successful)" do
       sources = @weather.sources
       sources.should_not be_nil
       @wunderground.success?.should be_true
@@ -90,18 +90,18 @@ describe Barometer::Weather do
   describe "when calculating averages" do
     before(:each) do
       @weather = Barometer::Weather.new
-      @wunderground = Barometer::Measurement.new
+      @wunderground = Barometer::Response.new
       @wunderground.source = :wunderground
-      @wunderground.current = Barometer::Measurement::Current.new
+      @wunderground.current = Barometer::Response::Current.new
       @wunderground.stub!(:success).and_return(true)
       @wunderground.stub!(:success?).and_return(true)
-      @yahoo = Barometer::Measurement.new
+      @yahoo = Barometer::Response.new
       @yahoo.source = :yahoo
-      @yahoo.current = Barometer::Measurement::Current.new
+      @yahoo.current = Barometer::Response::Current.new
       @yahoo.stub!(:success).and_return(true)
       @yahoo.stub!(:success?).and_return(true)
-      @weather.measurements << @wunderground
-      @weather.measurements << @yahoo
+      @weather.responses << @wunderground
+      @weather.responses << @yahoo
     end
 
     it "doesn't include nil values" do
@@ -112,11 +112,11 @@ describe Barometer::Weather do
       @weather.temperature.c.should == 10
     end
 
-    it "respects the measurement weight" do
+    it "respects the response weight" do
       @weather.source(:wunderground).current.temperature = Barometer::Data::Temperature.new(10)
       @weather.source(:yahoo).current.temperature = Barometer::Data::Temperature.new(4)
 
-      @weather.measurements.first.weight = 2
+      @weather.responses.first.weight = 2
 
       @weather.temperature.c.should == 8
     end

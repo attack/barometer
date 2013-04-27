@@ -25,37 +25,37 @@ module Barometer
     end
 
     def self.measure(key, query, metric=true)
-      measurement_started_at = Time.now.utc
+      response_started_at = Time.now.utc
 
       begin
-        measurement = source(key).call(query)
-        if measurement.complete?
-          measurement.status_code = 200
+        response = source(key).call(query)
+        if response.complete?
+          response.status_code = 200
         else
-          measurement.status_code = 204
+          response.status_code = 204
         end
 
       rescue Barometer::WeatherService::KeyRequired
-        measurement = Barometer::Measurement.new
-        measurement.status_code = 401
+        response = Barometer::Response.new
+        response.status_code = 401
 
       rescue Barometer::Query::ConversionNotPossible
-        measurement = Barometer::Measurement.new
-        measurement.status_code = 406
+        response = Barometer::Response.new
+        response.status_code = 406
 
       rescue Barometer::Query::UnsupportedRegion
-        measurement = Barometer::Measurement.new
-        measurement.status_code = 406
+        response = Barometer::Response.new
+        response.status_code = 406
 
       rescue Timeout::Error
-        measurement = Barometer::Measurement.new
-        measurement.status_code = 408
+        response = Barometer::Response.new
+        response.status_code = 408
       end
 
-      measurement.measurement_started_at = measurement_started_at
-      measurement.measurement_ended_at = Time.now.utc
-      measurement.source = key
-      measurement
+      response.response_started_at = response_started_at
+      response.response_ended_at = Time.now.utc
+      response.source = key
+      response
     end
 
     class KeyRequired < StandardError; end

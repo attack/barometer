@@ -1,8 +1,8 @@
 module Barometer
   module Parser
     class WeatherBugForecast
-      def initialize(measurement, query)
-        @measurement = measurement
+      def initialize(response, query)
+        @response = response
         @query = query
       end
 
@@ -10,13 +10,13 @@ module Barometer
         _build_forecasts(payload)
         _parse_location(payload)
 
-        @measurement
+        @response
       end
 
       private
 
       def _parse_location(payload)
-        @measurement.location.tap do |location|
+        @response.location.tap do |location|
           if geo = @query.geo
             location.city = geo.locality
             location.state_code = geo.region
@@ -36,13 +36,13 @@ module Barometer
         start_date = Date.strptime(payload.fetch('@date'), "%m/%d/%Y %H:%M:%S %p")
 
         payload.fetch_each_with_index("forecast") do |forecast_payload, index|
-          @measurement.build_forecast do |forecast_measurement|
-            forecast_measurement.date = (start_date + index), @measurement.timezone
+          @response.build_forecast do |forecast_response|
+            forecast_response.date = (start_date + index), @response.timezone
 
-            forecast_measurement.icon = forecast_payload.using(/cond0*([1-9][0-9]*)\.gif$/).fetch('image')
-            forecast_measurement.condition = forecast_payload.fetch('short_prediction')
-            forecast_measurement.high = [forecast_payload.fetch('high')]
-            forecast_measurement.low = [forecast_payload.fetch('low')]
+            forecast_response.icon = forecast_payload.using(/cond0*([1-9][0-9]*)\.gif$/).fetch('image')
+            forecast_response.condition = forecast_payload.fetch('short_prediction')
+            forecast_response.high = [forecast_payload.fetch('high')]
+            forecast_response.low = [forecast_payload.fetch('low')]
           end
         end
       end

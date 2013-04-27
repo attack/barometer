@@ -1,8 +1,8 @@
 module Barometer
   module Parser
     class Yahoo
-      def initialize(measurement, query)
-        @measurement = measurement
+      def initialize(response, query)
+        @response = response
         @query = query
       end
 
@@ -13,13 +13,13 @@ module Barometer
         _build_forecasts(payload)
         _parse_location(payload)
 
-        @measurement
+        @response
       end
 
       private
 
       def _parse_current(payload)
-        @measurement.current.tap do |current|
+        @response.current.tap do |current|
           current.observed_at = payload.fetch('item', 'pubDate'), "%a, %d %b %Y %l:%M %P %Z"
           current.stale_at = (current.observed_at + (60 * 60 * 1)) if current.observed_at
 
@@ -42,17 +42,17 @@ module Barometer
         return if rise_local.nil? || set_local.nil?
 
         rise_utc = Barometer::Utils::Time.utc_from_base_plus_local_time(
-          @measurement.timezone, @measurement.current.observed_at, rise_local.hour, rise_local.min
+          @response.timezone, @response.current.observed_at, rise_local.hour, rise_local.min
         )
         set_utc = Barometer::Utils::Time.utc_from_base_plus_local_time(
-          @measurement.timezone, @measurement.current.observed_at, set_local.hour, set_local.min
+          @response.timezone, @response.current.observed_at, set_local.hour, set_local.min
         )
 
-        @measurement.current.sun = Data::Sun.new(rise_utc, set_utc)
+        @response.current.sun = Data::Sun.new(rise_utc, set_utc)
       end
 
       def _parse_location(payload)
-        @measurement.location.tap do |location|
+        @response.location.tap do |location|
           if geo = @query.geo
             location.city = geo.locality
             location.state_code = geo.region
@@ -71,25 +71,25 @@ module Barometer
       end
 
       def _parse_time(payload)
-        @measurement.timezone = payload.using(/ ([A-Z]+)$/).fetch('item', 'pubDate')
+        @response.timezone = payload.using(/ ([A-Z]+)$/).fetch('item', 'pubDate')
       end
 
       def _build_forecasts(payload)
         payload.fetch_each("item", "forecast") do |forecast_payload|
-          @measurement.build_forecast do |forecast_measurement|
-            forecast_measurement.date = forecast_payload.fetch('@date'), @measurement.timezone
-            forecast_measurement.icon = forecast_payload.fetch('@code')
-            forecast_measurement.condition = forecast_payload.fetch('@text')
-            forecast_measurement.high = forecast_payload.fetch('@high')
-            forecast_measurement.low = forecast_payload.fetch('@low')
+          @response.build_forecast do |forecast_response|
+            forecast_response.date = forecast_payload.fetch('@date'), @response.timezone
+            forecast_response.icon = forecast_payload.fetch('@code')
+            forecast_response.condition = forecast_payload.fetch('@text')
+            forecast_response.high = forecast_payload.fetch('@high')
+            forecast_response.low = forecast_payload.fetch('@low')
 
             rise_utc = Barometer::Utils::Time.utc_merge_base_plus_time(
-              forecast_measurement.starts_at, @measurement.current.sun.rise
+              forecast_response.starts_at, @response.current.sun.rise
             )
             set_utc = Barometer::Utils::Time.utc_merge_base_plus_time(
-              forecast_measurement.ends_at, @measurement.current.sun.set
+              forecast_response.ends_at, @response.current.sun.set
             )
-            forecast_measurement.sun = Data::Sun.new(rise_utc, set_utc)
+            forecast_response.sun = Data::Sun.new(rise_utc, set_utc)
           end
         end
       end

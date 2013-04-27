@@ -19,7 +19,7 @@ module Barometer
         @converted_query = nil
         @metric = config.fetch(:metric, true)
 
-        @measurement = Measurement.new(metric)
+        @response = Response.new(metric)
 
         if config[:keys]
           @api_code = config[:keys][:code]
@@ -34,12 +34,12 @@ module Barometer
         fetch_and_parse_current
         fetch_and_parse_forecast
 
-        measurement
+        response
       end
 
       private
 
-      attr_reader :measurement, :api_code, :metric
+      attr_reader :response, :api_code, :metric
 
       def validate_key!
         unless api_code && !api_code.empty?
@@ -49,19 +49,19 @@ module Barometer
 
       def convert_query!
         @converted_query = @query.convert!(*self.class.accepted_formats)
-        measurement.query = @converted_query.q
-        measurement.format = @converted_query.format
+        response.query = @converted_query.q
+        response.format = @converted_query.format
       end
 
       def fetch_and_parse_current
         payload = @requester.get_current(@converted_query)
-        current_parser = Barometer::Parser::WeatherBugCurrent.new(measurement, @query)
+        current_parser = Barometer::Parser::WeatherBugCurrent.new(response, @query)
         current_parser.parse(payload)
       end
 
       def fetch_and_parse_forecast
         payload = @requester.get_forecast(@converted_query)
-        forecast_parser = Barometer::Parser::WeatherBugForecast.new(measurement, @query)
+        forecast_parser = Barometer::Parser::WeatherBugForecast.new(response, @query)
         forecast_parser.parse(payload)
       end
     end

@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Barometer::Measurement::PredictionCollection do
+describe Barometer::Response::PredictionCollection do
   describe "#<<" do
     it "raises an error with invalid data" do
       expect {
@@ -8,15 +8,15 @@ describe Barometer::Measurement::PredictionCollection do
       }.to raise_error(ArgumentError)
     end
 
-    it "adds Measurement::Prediction" do
+    it "adds Response::Prediction" do
       expect {
-        subject <<  Barometer::Measurement::Prediction.new
+        subject <<  Barometer::Response::Prediction.new
       }.to change{ subject.count }.by(1)
     end
   end
 
   describe "#[]" do
-    let(:result) { Barometer::Measurement::Prediction.new }
+    let(:result) { Barometer::Response::Prediction.new }
     before { subject << result }
 
     it "finds result by index when passed a number" do
@@ -46,9 +46,9 @@ describe Barometer::Measurement::PredictionCollection do
         today = Date.today
 
         0.upto(3) do |i|
-          forecast_measurement = Barometer::Measurement::Prediction.new
-          forecast_measurement.date = today + i
-          subject << forecast_measurement
+          forecast_response = Barometer::Response::Prediction.new
+          forecast_response.date = today + i
+          subject << forecast_response
         end
       end
 

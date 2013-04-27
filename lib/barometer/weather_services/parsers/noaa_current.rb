@@ -1,8 +1,8 @@
 module Barometer
   module Parser
     class NoaaCurrent
-      def initialize(measurement, query)
-        @measurement = measurement
+      def initialize(response, query)
+        @response = response
         @query = query
       end
 
@@ -12,17 +12,17 @@ module Barometer
         _parse_station(payload)
         _parse_location(payload)
 
-        @measurement
+        @response
       end
 
       private
 
       def _parse_time(payload)
-        @measurement.timezone = payload.using(/ ([A-Z]*)$/).fetch('observation_time')
+        @response.timezone = payload.using(/ ([A-Z]*)$/).fetch('observation_time')
       end
 
       def _parse_current(payload)
-        @measurement.current.tap do |current|
+        @response.current.tap do |current|
           current.observed_at = payload.fetch('observation_time_rfc822'), '%a, %d %b %Y %H:%M:%S %z'
           current.stale_at = current.observed_at + (60 * 60 * 1) if current.observed_at
 
@@ -39,7 +39,7 @@ module Barometer
       end
 
       def _parse_station(payload)
-        @measurement.station.tap do |station|
+        @response.station.tap do |station|
           station.id = payload.fetch('station_id')
           station.name = payload.fetch('location')
           station.city = payload.using(/^(.*?),/).fetch('location')
@@ -49,7 +49,7 @@ module Barometer
       end
 
       def _parse_location(payload)
-        @measurement.location.tap do |location|
+        @response.location.tap do |location|
           if geo = @query.geo
             location.city = geo.locality
             location.state_code = geo.region

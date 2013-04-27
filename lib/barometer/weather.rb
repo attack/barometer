@@ -1,13 +1,13 @@
 module Barometer
   class Weather
-    attr_accessor :measurements
+    attr_accessor :responses
     attr_accessor :start_at, :end_at
 
     def initialize
-      @measurements = []
+      @responses = []
     end
 
-    # the default measurement is the first successful measurement
+    # the default response is the first successful response
     #
     def default
       return nil unless self.sources
@@ -16,18 +16,18 @@ module Barometer
 
     def source(source)
       raise ArgumentError unless (source.is_a?(String) || source.is_a?(Symbol))
-      @measurements.each do |measurement|
-        return measurement if measurement.source == source.to_sym
+      @responses.each do |response|
+        return response if response.source == source.to_sym
       end
       nil
     end
 
     def sources
-      @measurements.collect {|m| m.source.to_sym if m.success?}.compact
+      @responses.collect {|m| m.source.to_sym if m.success?}.compact
     end
 
     def success?
-      @measurements.any?{ |m| m.success? }
+      @responses.any?{ |m| m.success? }
     end
 
     def metric?; self.default ? self.default.metric? : true; end
@@ -45,8 +45,8 @@ module Barometer
       default && default.forecast ? default.forecast[1] : nil
     end
 
-    # measurement search
-    # this will search the default measurements forecasts looking for
+    # response search
+    # this will search the default responses forecasts looking for
     # the matching date
     #
     def for(query)
@@ -61,19 +61,19 @@ module Barometer
     # this assumes calculating for current, and that "to_f" for a value
     # will return the value needed
     # value_name = the name of the value we are averaging
-    # if a measurement has weighting, it will respect that
+    # if a response has weighting, it will respect that
     #
     def current_average(value_name)
       values = []
-      @measurements.each do |measurement|
-        if measurement.weight && measurement.weight > 1
-          measurement.weight.times do
-            values << measurement.current.send(value_name).to_f if measurement.success? &&
-              !measurement.current.send(value_name).nil?
+      @responses.each do |response|
+        if response.weight && response.weight > 1
+          response.weight.times do
+            values << response.current.send(value_name).to_f if response.success? &&
+              !response.current.send(value_name).nil?
           end
         else
-          values << measurement.current.send(value_name).to_f if measurement.success? &&
-            !measurement.current.send(value_name).nil?
+          values << response.current.send(value_name).to_f if response.success? &&
+            !response.current.send(value_name).nil?
         end
       end
       values.compact!

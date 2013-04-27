@@ -9,8 +9,3 @@ require 'data/temperature'
 require 'data/distance'
 require 'data/vector'
 require 'data/pressure'
-
-require 'measurements/measurement'
-require 'measurements/current'
-require 'measurements/prediction'
-require 'measurements/prediction_collection'

@@ -1,8 +1,8 @@
 module Barometer
   module Parser
     class WeatherBugCurrent
-      def initialize(measurement, query)
-        @measurement = measurement
+      def initialize(response, query)
+        @response = response
         @query = query
       end
 
@@ -12,13 +12,13 @@ module Barometer
         _parse_sun(payload)
         _parse_station(payload)
 
-        @measurement
+        @response
       end
 
       private
 
       def _parse_current(payload)
-        @measurement.current.tap do |current|
+        @response.current.tap do |current|
           current.humidity = payload.fetch('humidity')
           current.condition = payload.fetch('current_condition')
           current.icon = payload.fetch('barometer:icon')
@@ -31,13 +31,13 @@ module Barometer
       end
 
       def _parse_sun(payload)
-        @measurement.current.sun = Barometer::Data::Sun.new(
+        @response.current.sun = Barometer::Data::Sun.new(
           _time(payload, 'sunrise'), _time(payload, 'sunset')
         )
       end
 
       def _parse_station(payload)
-        @measurement.station.tap do |station|
+        @response.station.tap do |station|
           station.id = payload.fetch('station_id')
           station.name = payload.fetch('station')
           station.city = payload.using(/^([\w ]*?),/).fetch('city_state')
@@ -50,9 +50,9 @@ module Barometer
       end
 
       def _parse_time(payload)
-        @measurement.timezone = payload.fetch('ob_date', 'time_zone', '@abbrv')
-        @measurement.current.observed_at = _time(payload, 'ob_date')
-        @measurement.current.stale_at = Barometer::Utils::Time.add_one_hour(@measurement.current.observed_at)
+        @response.timezone = payload.fetch('ob_date', 'time_zone', '@abbrv')
+        @response.current.observed_at = _time(payload, 'ob_date')
+        @response.current.stale_at = Barometer::Utils::Time.add_one_hour(@response.current.observed_at)
       end
 
       def _time(payload, key)
@@ -67,7 +67,7 @@ module Barometer
 
         local_time = Barometer::Utils::Time.parse(*values)
         return unless local_time
-        @measurement.timezone.local_to_utc(local_time)
+        @response.timezone.local_to_utc(local_time)
       end
     end
   end

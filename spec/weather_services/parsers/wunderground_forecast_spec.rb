@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Barometer::Parser::WundergroundCurrent do
-  let(:measurement) { Barometer::Measurement.new }
+  let(:response) { Barometer::Response.new }
   let(:query) { double(:query) }
 
   it "parses the timezones correctly" do
@@ -15,19 +15,19 @@ describe Barometer::Parser::WundergroundCurrent do
         }
       ]}
     })
-    parser = Barometer::Parser::WundergroundForecast.new(measurement, query)
+    parser = Barometer::Parser::WundergroundForecast.new(response, query)
     parser.parse(payload)
 
     utc_starts_at = Time.utc(2013,5,19,5,46,0)
     utc_ends_at = Time.utc(2013,5,20,5,45,59)
 
-    measurement.forecast[0].starts_at.utc.should == utc_starts_at
-    measurement.forecast[0].ends_at.utc.should == utc_ends_at
-    measurement.timezone.full.should == 'America/Los_Angeles'
+    response.forecast[0].starts_at.utc.should == utc_starts_at
+    response.forecast[0].ends_at.utc.should == utc_ends_at
+    response.timezone.full.should == 'America/Los_Angeles'
   end
 
   it "parses sun timezones correctly" do
-    measurement.current.observed_at = Barometer::Utils::Time.parse("May 18, 10:46 AM PDT")
+    response.current.observed_at = Barometer::Utils::Time.parse("May 18, 10:46 AM PDT")
     payload = Barometer::Utils::Payload.new({
       "simpleforecast" => { "forecastday" => [
         {
@@ -46,7 +46,7 @@ describe Barometer::Parser::WundergroundCurrent do
         }
       }
     })
-    parser = Barometer::Parser::WundergroundForecast.new(measurement, query)
+    parser = Barometer::Parser::WundergroundForecast.new(response, query)
     parser.parse(payload)
 
     utc_current_sun_rise = Time.utc(2013,5,18,14,59,0)
@@ -54,9 +54,9 @@ describe Barometer::Parser::WundergroundCurrent do
     utc_forecast_sun_rise = Time.utc(2013,5,19,14,59,0)
     utc_forecast_sun_set = Time.utc(2013,5,20,0,42,0)
 
-    measurement.current.sun.rise.utc.should == utc_current_sun_rise
-    measurement.current.sun.set.utc.should == utc_current_sun_set
-    measurement.forecast[0].sun.rise.utc.should == utc_forecast_sun_rise
-    measurement.forecast[0].sun.set.utc.should == utc_forecast_sun_set
+    response.current.sun.rise.utc.should == utc_current_sun_rise
+    response.current.sun.set.utc.should == utc_current_sun_set
+    response.forecast[0].sun.rise.utc.should == utc_forecast_sun_rise
+    response.forecast[0].sun.set.utc.should == utc_forecast_sun_set
   end
 end

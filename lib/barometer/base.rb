@@ -57,10 +57,10 @@ module Barometer
       options = { :metric => metric }
       options.merge!({:keys => config[:keys]}) if config
 
-      measurement = Barometer::WeatherService.measure(source.to_sym, @query, options)
-      measurement.weight = config[:weight] if config && config[:weight]
+      response = Barometer::WeatherService.measure(source.to_sym, @query, options)
+      response.weight = config[:weight] if config && config[:weight]
 
-      @weather.measurements << measurement
+      @weather.responses << response
     end
   end
 end

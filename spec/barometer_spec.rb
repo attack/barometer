@@ -61,15 +61,15 @@ describe Barometer::Base do
 
   describe "#measure" do
     let(:keys) { {:code => "ABC123"} }
-    let(:measurement) { Barometer::Measurement.new }
-    let(:weather_service) { double(:weather_service, :call => measurement) }
+    let(:response) { Barometer::Response.new }
+    let(:weather_service) { double(:weather_service, :call => response) }
 
     before do
       @cached_config = Barometer.config
       Barometer.config = { 1 => {:test => {:keys => keys} } }
       Barometer::WeatherService.register(:test, weather_service)
 
-      measurement.stub(:complete? => true)
+      response.stub(:complete? => true)
     end
 
     after do
@@ -82,22 +82,22 @@ describe Barometer::Base do
 
     it "calls measure on WeatherService, including metric and keys" do
       metric = double(:boolean)
-      measurement.stub(:success? => true)
+      response.stub(:success? => true)
 
       Barometer::WeatherService.should_receive(:measure).
         with(:test, subject.query, {:metric => metric, :keys => keys}).
-        and_return(measurement)
+        and_return(response)
 
       subject.measure(metric)
     end
 
-    it "adds service results to weather.measurements" do
+    it "adds service results to weather.responses" do
       subject.measure
-      subject.weather.measurements.should include(measurement)
+      subject.weather.responses.should include(response)
     end
 
     it "raises an error if no sources are successful" do
-      measurement.stub(:success? => false)
+      response.stub(:success? => false)
 
       expect {
         subject.measure
@@ -107,7 +107,7 @@ describe Barometer::Base do
     it "sets the weight" do
       Barometer.config = { 1 => {:test => {:weight => 2} } }
       subject.measure
-      subject.weather.measurements.first.weight.should == 2
+      subject.weather.responses.first.weight.should == 2
     end
   end
 end

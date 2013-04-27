@@ -18,7 +18,7 @@ module Barometer
         @query = query
         @metric = config.fetch(:metric, true)
 
-        @measurement = Measurement.new(metric)
+        @response = Response.new(metric)
       end
 
       def measure!
@@ -28,28 +28,28 @@ module Barometer
         fetch_and_parse_current
         fetch_and_parse_forecast
 
-        measurement
+        response
       end
 
       private
 
-      attr_reader :measurement, :metric
+      attr_reader :response, :metric
 
       def convert_query!
         @converted_query = @query.convert!(*self.class.accepted_formats)
-        measurement.query = @converted_query.q
-        measurement.format = @converted_query.format
+        response.query = @converted_query.q
+        response.format = @converted_query.format
       end
 
       def fetch_and_parse_current
         payload = @requester.get_current(@converted_query)
-        current_parser = Barometer::Parser::WundergroundCurrent.new(measurement, @query)
+        current_parser = Barometer::Parser::WundergroundCurrent.new(response, @query)
         current_parser.parse(payload)
       end
 
       def fetch_and_parse_forecast
         payload = @requester.get_forecast(@converted_query)
-        forecast_parser = Barometer::Parser::WundergroundForecast.new(measurement, @query)
+        forecast_parser = Barometer::Parser::WundergroundForecast.new(response, @query)
         forecast_parser.parse(payload)
       end
     end

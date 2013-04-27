@@ -16,7 +16,7 @@ describe Barometer::WeatherService do
     it "adds the block as an available weather service" do
       expect {
         Barometer::WeatherService.register(:test_weather) do
-          m = Barometer::Measurement.new
+          m = Barometer::Response.new
           m.current.temperature = 30
           m
         end
@@ -64,10 +64,10 @@ describe Barometer::WeatherService do
   describe ".measure" do
     let(:test_weather) { double(:test_weather) }
     let(:query) { double(:query) }
-    let(:test_measurement) { Barometer::Measurement.new }
+    let(:test_response) { Barometer::Response.new }
 
     before do
-      test_weather.stub(:call).and_return(test_measurement)
+      test_weather.stub(:call).and_return(test_response)
       Barometer::WeatherService.register(:test_weather, test_weather)
     end
 
@@ -82,67 +82,67 @@ describe Barometer::WeatherService do
     end
 
     describe "timing information" do
-      it "adds measurement_started_at" do
-        measurement = Barometer::WeatherService.measure(:test_weather, query)
-        measurement.measurement_started_at.should_not be_nil
-        measurement.measurement_started_at.should be_a(::Time)
+      it "adds response_started_at" do
+        response = Barometer::WeatherService.measure(:test_weather, query)
+        response.response_started_at.should_not be_nil
+        response.response_started_at.should be_a(::Time)
       end
 
-      it "adds measurement_ended_at" do
-        measurement = Barometer::WeatherService.measure(:test_weather, query)
-        measurement.measurement_ended_at.should_not be_nil
-        measurement.measurement_ended_at.should be_a(::Time)
+      it "adds response_ended_at" do
+        response = Barometer::WeatherService.measure(:test_weather, query)
+        response.response_ended_at.should_not be_nil
+        response.response_ended_at.should be_a(::Time)
       end
     end
 
     describe "source information" do
       it "adds the source" do
-        measurement = Barometer::WeatherService.measure(:test_weather, query)
-        measurement.source.should == :test_weather
+        response = Barometer::WeatherService.measure(:test_weather, query)
+        response.source.should == :test_weather
       end
     end
 
     describe "error handling" do
       it "adds code 200 if no errors" do
-        test_measurement.stub(:complete? => true)
+        test_response.stub(:complete? => true)
 
-        measurement = Barometer::WeatherService.measure(:test_weather, query)
-        measurement.status_code.should == 200
+        response = Barometer::WeatherService.measure(:test_weather, query)
+        response.status_code.should == 200
       end
 
       it "adds code 204 if service has no data" do
-        test_measurement.stub(:complete? => false)
+        test_response.stub(:complete? => false)
 
-        measurement = Barometer::WeatherService.measure(:test_weather, query)
-        measurement.status_code.should == 204
+        response = Barometer::WeatherService.measure(:test_weather, query)
+        response.status_code.should == 204
       end
 
       it "adds code 401 if required key not provided" do
         test_weather.stub(:call).and_raise(Barometer::WeatherService::KeyRequired)
 
-        measurement = Barometer::WeatherService.measure(:test_weather, query)
-        measurement.status_code.should == 401
+        response = Barometer::WeatherService.measure(:test_weather, query)
+        response.status_code.should == 401
       end
 
       it "adds code 406 if query format unsupported" do
         test_weather.stub(:call).and_raise(Barometer::Query::ConversionNotPossible)
 
-        measurement = Barometer::WeatherService.measure(:test_weather, query)
-        measurement.status_code.should == 406
+        response = Barometer::WeatherService.measure(:test_weather, query)
+        response.status_code.should == 406
       end
 
       it "adds code 406 if query region unsupported" do
         test_weather.stub(:call).and_raise(Barometer::Query::UnsupportedRegion)
 
-        measurement = Barometer::WeatherService.measure(:test_weather, query)
-        measurement.status_code.should == 406
+        response = Barometer::WeatherService.measure(:test_weather, query)
+        response.status_code.should == 406
       end
 
       it "adds code 408 if service unavailable (timeout)" do
         test_weather.stub(:call).and_raise(Timeout::Error)
 
-        measurement = Barometer::WeatherService.measure(:test_weather, query)
-        measurement.status_code.should == 408
+        response = Barometer::WeatherService.measure(:test_weather, query)
+        response.status_code.should == 408
       end
     end
   end

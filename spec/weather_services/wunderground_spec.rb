@@ -22,7 +22,6 @@ describe Barometer::WeatherService::Wunderground, :vcr => {
     end
 
     it "includes the expected data" do
-      should be_a Barometer::Measurement
       subject.query.should == "Calgary,AB"
       subject.format.should == :geocode
       subject.metric.should be_true

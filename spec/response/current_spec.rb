@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Barometer::Measurement::Current do
+describe Barometer::Response::Current do
   it { should have_field(:observed_at).of_type(Time) }
   it { should have_field(:stale_at).of_type(Time) }
   it { should have_field(:temperature).of_type(Barometer::Data::Temperature) }
@@ -17,12 +17,12 @@ describe Barometer::Measurement::Current do
 
   describe ".new" do
     it "initializes as metric" do
-      result = Barometer::Measurement::Current.new
+      result = Barometer::Response::Current.new
       result.should be_metric
     end
 
     it "initializes as imperial" do
-      result = Barometer::Measurement::Current.new(false)
+      result = Barometer::Response::Current.new(false)
       result.should_not be_metric
     end
   end

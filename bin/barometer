@@ -347,13 +347,13 @@ def pretty_forecasts(forecasts)
   end
 end
 
-def pretty_measurement(m)
+def pretty_response(m)
   return unless m
   section(m.source.to_s, 1) do
     pretty_hash({
       "Source" => m.source,
       "Metric" => m.metric?, "Success" => m.success?,
-      "Service Time" => "#{(m.measurement_ended_at - m.measurement_started_at)} s"
+      "Service Time" => "#{(m.response_ended_at - m.response_started_at)} s"
     })
   end
   section("MODIFIED QUERY", 2) do
@@ -366,12 +366,12 @@ def pretty_measurement(m)
   pretty_forecasts(m.forecast)
 end
 
-def pretty_measurements(w)
+def pretty_responses(w)
   return unless w
   section("MEASUREMENTS", 1) do
     blank
-    w.measurements.each do |m|
-      pretty_measurement(m)
+    w.responses.each do |m|
+      pretty_response(m)
     end
   end
 end
@@ -394,7 +394,7 @@ def pretty_output(barometer)
     blank
     pretty_summary(weather)
     pretty_query(barometer.query)
-    pretty_measurements(weather)
+    pretty_responses(weather)
     pretty_info(weather)
     div("-")
   end
