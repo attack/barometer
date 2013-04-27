@@ -17,7 +17,7 @@ module Barometer
         end
 
         def self._fetch_via_noaa(converted_query)
-          response =  Barometer::Http::Get.call(
+          response =  Barometer::Utils::Get.call(
             'http://forecast.weather.gov/MapClick.php?',
             _format_params(converted_query)
           )

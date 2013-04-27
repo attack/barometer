@@ -7,7 +7,7 @@ module Barometer
           return unless converted_query
           puts "reverse #{converted_query.format}: #{converted_query.q}" if Barometer::debug?
 
-          response =  Barometer::Http::Get.call(
+          response =  Barometer::Utils::Get.call(
             'http://weather.yahooapis.com/forecastrss',
             _format_query(converted_query)
           )

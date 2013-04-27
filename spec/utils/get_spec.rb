@@ -1,11 +1,11 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Barometer::Http::Get do
+describe Barometer::Utils::Get do
   describe ".call" do
     it "gets http content from a given address" do
       stub_request(:get, "www.example.com?foo=bar").to_return(:body => "Hello World")
 
-      content = Barometer::Http::Get.call('www.example.com', :foo => :bar)
+      content = Barometer::Utils::Get.call('www.example.com', :foo => :bar)
       content.should include('Hello World')
     end
 
@@ -13,7 +13,7 @@ describe Barometer::Http::Get do
       stub_request(:get, "www.example.com").to_timeout
 
       expect {
-        Barometer::Http::Get.call('www.example.com')
+        Barometer::Utils::Get.call('www.example.com')
       }.to raise_error(Barometer::TimeoutError)
     end
   end

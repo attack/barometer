@@ -1,7 +1,7 @@
 require 'httpclient'
 
 module Barometer
-  module Http
+  module Utils
     module Post
       def self.call(url, params={})
         http = HTTPClient.new

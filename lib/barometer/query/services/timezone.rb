@@ -17,7 +17,7 @@ module Barometer
         end
 
         def self._fetch_via_geonames(latitude, longitude)
-          response =  Barometer::Http::Get.call(
+          response =  Barometer::Utils::Get.call(
             'http://ws.geonames.org/timezone',
             { :lat => latitude, :lng => longitude }
           )
@@ -26,7 +26,7 @@ module Barometer
         end
 
         def self._fetch_via_wunderground(latitude, longitude)
-          response =  Barometer::Http::Get.call(
+          response =  Barometer::Utils::Get.call(
             'http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml',
             {:query => "#{latitude},#{longitude}"}
           )

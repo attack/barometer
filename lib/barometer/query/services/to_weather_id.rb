@@ -7,7 +7,7 @@ module Barometer
           return unless converted_query
           puts "fetch weather_id: #{converted_query.q}" if Barometer::debug?
 
-          response = Barometer::Http::Get.call(
+          response = Barometer::Utils::Get.call(
             'http://xoap.weather.com/search/search',
             { :where => _format_query(converted_query.q) }
           )

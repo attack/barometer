@@ -28,7 +28,7 @@ module Barometer
       attr_reader :metric
 
       def _get(path, query)
-        Barometer::Http::Get.call(
+        Barometer::Utils::Get.call(
           "http://api.wunderground.com/auto/wui/geo/#{path}",
           {:query => query.q.dup}
         )

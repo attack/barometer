@@ -10,7 +10,7 @@ module Barometer
           converted_query = query.get_conversion(:geocode, :coordinates, :postalcode)
           return unless converted_query
 
-          response = Barometer::Http::Post.call(
+          response = Barometer::Utils::Post.call(
             'http://wherein.yahooapis.com/v1/document', {
               'documentContent' => _construct_body(converted_query),
               'appid' => Barometer.yahoo_placemaker_app_id

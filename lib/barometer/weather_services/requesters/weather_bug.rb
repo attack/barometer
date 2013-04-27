@@ -41,7 +41,7 @@ module Barometer
       attr_reader :api_code, :metric
 
       def _get(path, query)
-        Barometer::Http::Get.call(
+        Barometer::Utils::Get.call(
           "http://#{api_code}.api.wxbug.net/#{path}",
           _format_request.merge(_format_query(query))
         )

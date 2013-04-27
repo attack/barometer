@@ -19,7 +19,7 @@ module Barometer
       attr_reader :metric
 
       def _get(query)
-        Barometer::Http::Get.call(
+        Barometer::Utils::Get.call(
           "http://weather.yahooapis.com/forecastrss",
           _format_request(query)
         )

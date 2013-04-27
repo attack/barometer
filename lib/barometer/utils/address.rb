@@ -1,7 +1,7 @@
 require 'addressable/uri'
 
 module Barometer
-  module Http
+  module Utils
     class Address
       def initialize(url, query={})
         @address = Addressable::URI.parse(url)

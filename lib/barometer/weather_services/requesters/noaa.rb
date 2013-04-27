@@ -28,7 +28,7 @@ module Barometer
       attr_reader :metric
 
       def _get(path, query=nil)
-        Barometer::Http::Get.call(
+        Barometer::Utils::Get.call(
           path, _format_request(query).merge(_format_query(query))
         )
       end
