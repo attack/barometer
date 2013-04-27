@@ -1,46 +1,46 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Barometer::Query do
+describe Barometer::Query::Base do
   describe ".initialize" do
     describe "detecting the query format" do
       it "detects :short_zipcode" do
-        query = Barometer::Query.new("90210")
+        query = Barometer::Query::Base.new("90210")
         query.format.should == :short_zipcode
         query.country_code.should == "US"
       end
 
       it "detects :zipcode" do
-        query = Barometer::Query.new("90210-5555")
+        query = Barometer::Query::Base.new("90210-5555")
         query.format.should == :zipcode
         query.country_code.should == "US"
       end
 
       it "detects :postalcode" do
-        query = Barometer::Query.new("T5B 4M9")
+        query = Barometer::Query::Base.new("T5B 4M9")
         query.format.should == :postalcode
         query.country_code.should == "CA"
       end
 
       it "detects :icao" do
-        query = Barometer::Query.new("KSFO")
+        query = Barometer::Query::Base.new("KSFO")
         query.format.should == :icao
         query.country_code.should == "US"
       end
 
       it "detects :weather_id" do
-        query = Barometer::Query.new("USGA0028")
+        query = Barometer::Query::Base.new("USGA0028")
         query.format.should == :weather_id
         query.country_code.should == "US"
       end
 
       it "detects :coordinates" do
-        query = Barometer::Query.new("40.756054,-73.986951")
+        query = Barometer::Query::Base.new("40.756054,-73.986951")
         query.format.should == :coordinates
         query.country_code.should be_nil
       end
 
       it "defaults to :geocode" do
-        query = Barometer::Query.new("New York, NY")
+        query = Barometer::Query::Base.new("New York, NY")
         query.format.should == :geocode
         query.country_code.should be_nil
       end
@@ -48,7 +48,7 @@ describe Barometer::Query do
   end
 
   describe "#add_conversion" do
-    let(:query) { Barometer::Query.new('foo') }
+    let(:query) { Barometer::Query::Base.new('foo') }
 
     it "adds a new conversion" do
       query.add_conversion(:geocode, 'Paris')
@@ -69,11 +69,11 @@ describe Barometer::Query do
   end
 
   describe "#get_conversion" do
-    let(:query) { Barometer::Query.new('foo') }
+    let(:query) { Barometer::Query::Base.new('foo') }
 
     context "when the requested format is that of the query" do
       it "returns self instead of a conversion" do
-        query = Barometer::Query.new('Paris')
+        query = Barometer::Query::Base.new('Paris')
 
         query.add_conversion(:geocode, 'Berlin')
 
@@ -121,7 +121,7 @@ describe Barometer::Query do
     end
 
     it "includes the current geo value" do
-      query = Barometer::Query.new('34.1030032,-118.4104684')
+      query = Barometer::Query::Base.new('34.1030032,-118.4104684')
       query.add_conversion(:geocode, 'Paris')
       query.geo = { :foo => 'bar' }
       query.get_conversion(:geocode, :woe_id).geo.should == { :foo => 'bar' }
@@ -137,7 +137,7 @@ describe Barometer::Query do
 
         Barometer::Query::Converter.stub(:find_all => coordinates_converter_klass)
 
-        query = Barometer::Query.new('90210')
+        query = Barometer::Query::Base.new('90210')
 
         converted_query = query.convert!(:coordinates)
         converted_query.q.should == '12.34,-56.78'
@@ -158,7 +158,7 @@ describe Barometer::Query do
 
         Barometer::Query::Converter.stub(:find_all => [geocode_converter_klass, coordinates_converter_klass])
 
-        query = Barometer::Query.new('90210')
+        query = Barometer::Query::Base.new('90210')
 
         converted_query = query.convert!(:coordinates)
         converted_query.q.should == '12.34,-56.78'
@@ -169,7 +169,7 @@ describe Barometer::Query do
 
     describe "when the query cannot be converted to the requested format" do
       it "raises ConversionNotPossible" do
-        query = Barometer::Query.new('90210')
+        query = Barometer::Query::Base.new('90210')
 
         Barometer::Query::Converter.stub(:find_all => nil)
 
@@ -177,6 +177,13 @@ describe Barometer::Query do
           query.convert!(:zipcode)
         }.to raise_error{ Barometer::Query::ConversionNotPossible }
       end
+    end
+  end
+
+  describe "#to_s" do
+    it "returns the query q value" do
+      query = Barometer::Query::Base.new('90210')
+      query.to_s.should == '90210'
     end
   end
 end

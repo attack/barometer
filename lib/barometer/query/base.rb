@@ -47,6 +47,10 @@ module Barometer
           raise(Barometer::Query::ConversionNotPossible)
       end
 
+      def to_s
+        q.to_s
+      end
+
       private
 
       def converted_query(q, format)
