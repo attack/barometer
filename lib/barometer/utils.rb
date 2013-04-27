@@ -9,3 +9,8 @@ require 'utils/key_file_parser'
 require 'utils/address'
 require 'utils/get'
 require 'utils/post'
+
+module Barometer
+  module Utils
+  end
+end
