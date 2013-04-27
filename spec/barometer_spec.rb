@@ -32,29 +32,6 @@ describe Barometer do
     end
   end
 
-  describe ".force_geocode" do
-    it "returns false by default" do
-      Barometer.force_geocode.should be_false
-    end
-
-    it "forces the geocoding of queries" do
-      Barometer.force_geocode = true
-      Barometer.force_geocode.should be_true
-    end
-
-    it "forces the geocoding of queries" do
-      Barometer.force_geocode = false
-      Barometer.force_geocode.should be_false
-    end
-  end
-
-  describe ".force_geocode!" do
-    it "forces the geocoding of queries" do
-      Barometer.force_geocode!
-      Barometer.force_geocode.should be_true
-    end
-  end
-
   describe ".timeout" do
     it "has a default value" do
       Barometer.timeout.should == 15

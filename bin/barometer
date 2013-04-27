@@ -20,7 +20,6 @@
 #   -v, --version       Display the version, then exit
 #   -V, --verbose       Verbose output
 #   -t, --timeout       seconds until service queries will timeout
-#   -g, --geocode       Force Geocoding of query
 #   -z, --timezone      Enhance Timezone
 #   -m, --metric        measure in metric
 #   -i, --imperial      measure in imperial
@@ -62,7 +61,6 @@ class App
     # Set defaults
     @options = OpenStruct.new
     @options.timeout = 15
-    @options.geocode = false
     @options.timezone = false
     @options.metric = true
     @options.sources = []
@@ -104,7 +102,6 @@ class App
       opt.on('-V', '--verbose')    { @options.verbose = true }
       opt.on('-a n', '--at n')     {|n| @options.at = Time.parse(n.to_s) }
       opt.on('-t n', '--timeout n') {|n| @options.timeout = n }
-      opt.on('-g', '--geocode')    { @options.geocode = true }
       opt.on('-z', '--timezone')   { @options.timezone = true }
       opt.on('-m', '--metric')     { @options.metric = true }
       opt.on('-i', '--imperial')   { @options.metric = false }
@@ -142,7 +139,6 @@ class App
     def process_options
       @options.sources << :wunderground if @options.default
       @options.sources = @options.sources.uniq
-      Barometer.force_geocode =  @options.geocode
       if @options.sources.include?(:weather_bug)
         @options.sources.delete(:weather_bug)
         @options.sources << config_weather_bug
@@ -179,7 +175,6 @@ class App
       puts "  -v, --version       Display the version, then exit"
       puts "  -V, --verbose       Verbose output"
       puts "  -t, --timeout       seconds until service queries will timeout"
-      puts "  -g, --geocode       Force Geocoding of query"
       puts "  -z, --timezone      Force timezone query"
       puts "  -m, --metric        measure in metric"
       puts "  -i, --imperial      measure in imperial"
