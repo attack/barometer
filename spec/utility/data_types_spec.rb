@@ -355,10 +355,10 @@ describe Barometer::DataTypes do
         subject.float.should == 12.0
       end
 
-      it "clears the value" do
+      it "does not clear the value" do
         subject.float = 12.0
         subject.float = nil
-        subject.float.should be_nil
+        subject.float.should == 12.0
       end
     end
 
@@ -401,10 +401,10 @@ describe Barometer::DataTypes do
         subject.integer.should == 12
       end
 
-      it "clears the value" do
+      it "does not clear the value" do
         subject.integer = 12
         subject.integer = nil
-        subject.integer.should be_nil
+        subject.integer.should == 12
       end
     end
 
@@ -447,10 +447,10 @@ describe Barometer::DataTypes do
         subject.string.to_s.should == "12"
       end
 
-      it "clears the value" do
+      it "does not clear the value" do
         subject.string = "bar"
         subject.string = nil
-        subject.string.should be_nil
+        subject.string.should == "bar"
       end
     end
 
@@ -490,6 +490,12 @@ describe Barometer::DataTypes do
 
       it "sets the value" do
         subject.symbol = "bar"
+        subject.symbol.should == :bar
+      end
+
+      it "does not clear the value" do
+        subject.symbol = :bar
+        subject.symbol = nil
         subject.symbol.should == :bar
       end
     end
@@ -538,7 +544,7 @@ describe Barometer::DataTypes do
         subject.time.should == Time.utc(2012, 10, 4, 5, 30, 45)
       end
 
-      it "clears the value" do
+      it "does not clear the value" do
         subject.time = 2012, 10, 4, 5, 30, 45
         subject.time = nil
         subject.time.should_not be_nil

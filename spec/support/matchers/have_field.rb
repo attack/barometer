@@ -14,7 +14,6 @@ module Barometer
       def matches?(subject)
         @subject = subject
         has_field? &&
-          allows_nil? &&
           type_casts_as_type? &&
           sets_value? &&
           has_correct_metric_units? &&
@@ -38,11 +37,6 @@ module Barometer
 
       def has_field?
         assert @subject.respond_to?(@field), "does not have field '#{@field}'"
-      end
-
-      def allows_nil?
-        set_value nil
-        assert value.nil?, "#{@field} does not allow a nil value to be set"
       end
 
       def type_casts_as_type?

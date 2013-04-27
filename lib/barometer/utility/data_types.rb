@@ -52,6 +52,26 @@ module Barometer
         end
       end
 
+      def typecast_writer klass, converter, *names
+        names.each do |name|
+          send :define_method, "#{name}=" do |data|
+            # return unless instance_variable_get("@#{name}").nil?
+            return if data.nil?
+
+            # if klass && data.is_a?(klass)
+              # value = data
+            if converter && data.respond_to?(converter)
+              value = data.send(converter)
+            elsif klass && Kernel.respond_to?(klass.to_s)
+              value = Kernel.send(klass.to_s, data)
+            else
+              raise ArgumentError
+            end
+            instance_variable_set "@#{name}", value
+          end
+        end
+      end
+
       def temperature *names
         new_pre_set_reader Data::Temperature, *names
         new_pre_set_writer Data::Temperature, *names
@@ -74,67 +94,22 @@ module Barometer
 
       def float *names
         attr_reader *names
-
-        names.each do |name|
-          send :define_method, "#{name}=" do |data|
-            if data == nil
-              value = nil
-            elsif data.respond_to?(:to_f)
-              value = data.to_f
-            else
-              value = Float(data)
-            end
-            instance_variable_set "@#{name}", value
-          end
-        end
+        typecast_writer Float, :to_f, *names
       end
 
       def integer *names
         attr_reader *names
-
-        names.each do |name|
-          send :define_method, "#{name}=" do |data|
-            if data == nil
-              value = nil
-            elsif data.respond_to?(:to_i)
-              value = data.to_i
-            else
-              value = Integer(data)
-            end
-            instance_variable_set "@#{name}", value
-          end
-        end
+        typecast_writer Integer, :to_i, *names
       end
 
       def string *names
         attr_reader *names
-
-        names.each do |name|
-          send :define_method, "#{name}=" do |data|
-            if data == nil
-              value = nil
-            else
-              value = String(data)
-            end
-            instance_variable_set "@#{name}", value
-          end
-        end
+        typecast_writer String, nil, *names
       end
 
       def symbol *names
         attr_reader *names
-
-        names.each do |name|
-          send :define_method, "#{name}=" do |data|
-            if data.respond_to?(:to_sym)
-              instance_variable_set "@#{name}", data.to_sym
-            elsif data == nil
-              instance_variable_set "@#{name}", data
-            else
-              raise ArgumentError
-            end
-          end
-        end
+        typecast_writer Symbol, :to_sym, *names
       end
 
       def time *names
