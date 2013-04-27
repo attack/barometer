@@ -1,5 +1,7 @@
 $:.unshift(File.dirname(__FILE__))
 require 'query/base'
+require 'query/format'
+require 'query/converter'
 
 module Barometer
   ConvertedQuery = Struct.new(:q, :format, :country_code, :geo)

@@ -12,7 +12,7 @@ module Barometer
     class Zone
 
       @@zone_codes_file = File.expand_path(
-        File.join(File.dirname(__FILE__), '..', 'translations', 'zone_codes.yml'))
+        File.join(File.dirname(__FILE__), 'translations', 'zone_codes.yml'))
       @@zone_codes = nil
 
       attr_accessor :zone_full, :zone_code, :zone_offset, :tz

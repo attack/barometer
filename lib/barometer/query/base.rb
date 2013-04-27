@@ -54,7 +54,7 @@ module Barometer
       end
 
       def detect_format
-        Barometer::Formats.match?(@q) do |key, klass|
+        Barometer::Query::Format.match?(@q) do |key, klass|
           @format = key
           @country_code = klass.country_code(@q)
           @format_klass = klass
