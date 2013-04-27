@@ -3,44 +3,46 @@ require 'parsers/yahoo'
 require 'requesters/yahoo'
 
 module Barometer
-  class WeatherService::Yahoo
-    def self.accepted_formats
-      [:zipcode, :weather_id, :woe_id]
-    end
+  module WeatherService
+    class Yahoo
+      def self.accepted_formats
+        [:zipcode, :weather_id, :woe_id]
+      end
 
-    def self.call(query, config={})
-      WeatherService::Yahoo.new(query, config).measure!
-    end
+      def self.call(query, config={})
+        WeatherService::Yahoo.new(query, config).measure!
+      end
 
-    def initialize(query, config={})
-      @query = query
-      @metric = config.fetch(:metric, true)
-      @measurement = Measurement.new(metric)
-    end
+      def initialize(query, config={})
+        @query = query
+        @metric = config.fetch(:metric, true)
+        @measurement = Measurement.new(metric)
+      end
 
-    def measure!
-      convert_query!
+      def measure!
+        convert_query!
 
-      @requester = Barometer::Requester::Yahoo.new(metric)
-      fetch_and_parse_weather
+        @requester = Barometer::Requester::Yahoo.new(metric)
+        fetch_and_parse_weather
 
-      measurement
-    end
+        measurement
+      end
 
-    private
+      private
 
-    attr_reader :measurement, :metric
+      attr_reader :measurement, :metric
 
-    def convert_query!
-      @converted_query = @query.convert!(*self.class.accepted_formats)
-      measurement.query = @converted_query.q
-      measurement.format = @converted_query.format
-    end
+      def convert_query!
+        @converted_query = @query.convert!(*self.class.accepted_formats)
+        measurement.query = @converted_query.q
+        measurement.format = @converted_query.format
+      end
 
-    def fetch_and_parse_weather
-      payload = @requester.get_weather(@converted_query)
-      parser = Barometer::Parser::Yahoo.new(measurement, @query)
-      parser.parse(payload)
+      def fetch_and_parse_weather
+        payload = @requester.get_weather(@converted_query)
+        parser = Barometer::Parser::Yahoo.new(measurement, @query)
+        parser.parse(payload)
+      end
     end
   end
 end

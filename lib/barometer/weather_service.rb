@@ -62,3 +62,8 @@ module Barometer
     class NotFound < StandardError; end
   end
 end
+
+require 'weather_services/wunderground'
+require 'weather_services/yahoo'
+require 'weather_services/weather_bug'
+require 'weather_services/noaa'
