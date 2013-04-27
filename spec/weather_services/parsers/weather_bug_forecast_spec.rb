@@ -7,7 +7,7 @@ describe Barometer::Parser::WeatherBugForecast do
   it "parses the timezones correctly" do
     measurement.timezone = 'PDT'
 
-    payload = Barometer::Payload.new({
+    payload = Barometer::Utils::Payload.new({
       "@date" => "4/13/2013 10:23:00 AM",
       "forecast" => [{"high" => "13"}]
     })

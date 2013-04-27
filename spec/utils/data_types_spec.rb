@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 class TestClass
-  include Barometer::DataTypes
+  include Barometer::Utils::DataTypes
 
   temperature :temperature
   vector :vector
@@ -18,7 +18,7 @@ class TestClass
   symbol :symbol
 end
 
-describe Barometer::DataTypes do
+describe Barometer::Utils::DataTypes do
   subject { TestClass.new }
 
   describe "#metric" do

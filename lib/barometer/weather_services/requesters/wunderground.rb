@@ -11,7 +11,7 @@ module Barometer
         response = _get("WXCurrentObXML/index.xml", query)
 
         output = Barometer::XmlReader.parse(response, "current_observation")
-        Barometer::Payload.new(output)
+        Barometer::Utils::Payload.new(output)
       end
 
       def get_forecast(query)
@@ -20,7 +20,7 @@ module Barometer
         response = _get("ForecastXML/index.xml", query)
 
         output = Barometer::XmlReader.parse(response, "forecast")
-        Barometer::Payload.new(output)
+        Barometer::Utils::Payload.new(output)
       end
 
       private

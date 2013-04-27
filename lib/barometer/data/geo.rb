@@ -14,7 +14,7 @@ module Barometer
         return nil unless location
         raise ArgumentError unless location.is_a?(Hash)
 
-        payload = Payload.new(location)
+        payload = Utils::Payload.new(location)
 
         @latitude = payload.fetch("geometry", "location", "lat").to_f
         @longitude = payload.fetch("geometry", "location", "lng").to_f

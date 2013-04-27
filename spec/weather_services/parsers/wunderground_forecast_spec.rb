@@ -5,7 +5,7 @@ describe Barometer::Parser::WundergroundCurrent do
   let(:query) { double(:query) }
 
   it "parses the timezones correctly" do
-    payload = Barometer::Payload.new({
+    payload = Barometer::Utils::Payload.new({
       "simpleforecast" => { "forecastday" => [
         {
           "date" => {
@@ -28,7 +28,7 @@ describe Barometer::Parser::WundergroundCurrent do
 
   it "parses sun timezones correctly" do
     measurement.current.observed_at = Barometer::Utils::Time.parse("May 18, 10:46 AM PDT")
-    payload = Barometer::Payload.new({
+    payload = Barometer::Utils::Payload.new({
       "simpleforecast" => { "forecastday" => [
         {
           "date" => {

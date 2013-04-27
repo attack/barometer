@@ -5,7 +5,7 @@ describe Barometer::Parser::NoaaCurrent do
   let(:query) { double(:query, :geo => nil) }
 
   it "parses the timezones correctly" do
-    payload = Barometer::Payload.new({
+    payload = Barometer::Utils::Payload.new({
       "observation_time_rfc822" => "Sun, 14 Apr 2013 10:51:00 -0700",
       "observation_time" => "Last Updated on Apr 14 2013, 10:51 am PDT"
     })

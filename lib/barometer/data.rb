@@ -1,8 +1,5 @@
 $:.unshift(File.dirname(__FILE__))
 
-require 'utility/payload'
-require 'utility/data_types'
-
 require 'data/zone'
 require 'data/sun'
 require 'data/geo'

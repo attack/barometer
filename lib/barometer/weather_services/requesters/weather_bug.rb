@@ -25,7 +25,7 @@ module Barometer
         output["barometer:icon"] = icon
         output["barometer:station_zipcode"] = zipcode
 
-        Barometer::Payload.new(output)
+        Barometer::Utils::Payload.new(output)
       end
 
       def get_forecast(query)
@@ -33,7 +33,7 @@ module Barometer
 
         response = _get("getForecastRSS.aspx", query)
         output = Barometer::XmlReader.parse(response, "weather", "forecasts")
-        Barometer::Payload.new(output)
+        Barometer::Utils::Payload.new(output)
       end
 
       private

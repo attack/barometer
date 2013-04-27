@@ -1,9 +1,9 @@
 $:.unshift(File.dirname(__FILE__))
-require 'utility/data_types'
+require 'utils/data_types'
 
 module Barometer
   class Measurement::Prediction
-    include Barometer::DataTypes
+    include Barometer::Utils::DataTypes
 
     time :starts_at, :ends_at
     temperature :high, :low

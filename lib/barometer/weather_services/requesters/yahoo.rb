@@ -11,7 +11,7 @@ module Barometer
         response = _get(query)
 
         output = Barometer::XmlReader.parse(response, "rss", "channel")
-        Barometer::Payload.new(output)
+        Barometer::Utils::Payload.new(output)
       end
 
       private

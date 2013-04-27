@@ -5,7 +5,7 @@ describe Barometer::Parser::Yahoo do
   let(:query) { double(:query, :geo => nil) }
 
   it "parses the timezones correctly for current weather" do
-    payload = Barometer::Payload.new({
+    payload = Barometer::Utils::Payload.new({
       "item" => {
         "pubDate" => "Sun, 14 Apr 2013 1:24 pm PDT"
       }
@@ -22,7 +22,7 @@ describe Barometer::Parser::Yahoo do
   end
 
   it "parses the timezones correctly for forecasted weather" do
-    payload = Barometer::Payload.new({
+    payload = Barometer::Utils::Payload.new({
       "item" => {
         "pubDate" => "Sun, 14 Apr 2013 1:24 pm PDT",
         "forecast" => [
@@ -43,7 +43,7 @@ describe Barometer::Parser::Yahoo do
   end
 
   it "parses sun timezones correctly" do
-    payload = Barometer::Payload.new({
+    payload = Barometer::Utils::Payload.new({
       "item" => {
         "pubDate" => "Sun, 14 Apr 2013 1:24 pm PDT",
         "forecast" => [

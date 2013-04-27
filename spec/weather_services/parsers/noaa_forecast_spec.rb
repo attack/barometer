@@ -5,7 +5,7 @@ describe Barometer::Parser::NoaaForecast do
   let(:query) { double(:query, :add_conversion => nil) }
 
   it "parses the timezones correctly" do
-    payload = Barometer::Payload.new({
+    payload = Barometer::Utils::Payload.new({
       "time_layout" => [
         {
           "layout_key"=> "k-p12h-n14-2",

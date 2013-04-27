@@ -5,7 +5,7 @@ describe Barometer::Parser::WeatherBugCurrent do
   let(:query) { double(:query, :geo => nil) }
 
   it "parses the timezones correctly" do
-    payload = Barometer::Payload.new({
+    payload = Barometer::Utils::Payload.new({
       'ob_date' => {
         'year' => { '@number' => '2013' },
         'month' => { '@number' => '5' },
@@ -28,7 +28,7 @@ describe Barometer::Parser::WeatherBugCurrent do
   end
 
   it "parses sun timezones correctly" do
-    payload = Barometer::Payload.new({
+    payload = Barometer::Utils::Payload.new({
       'ob_date' => {
         'year' => { '@number' => '2013' },
         'month' => { '@number' => '4' },

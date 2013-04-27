@@ -5,7 +5,7 @@ describe Barometer::Parser::WundergroundCurrent do
   let(:query) { double(:query, :geo => nil) }
 
   it "parses the timezones correctly" do
-    payload = Barometer::Payload.new({
+    payload = Barometer::Utils::Payload.new({
       "local_time" => "May 18, 10:46 AM PDT"
     })
     parser = Barometer::Parser::WundergroundCurrent.new(measurement, query)

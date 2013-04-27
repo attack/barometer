@@ -1,6 +1,9 @@
+$:.unshift(File.dirname(__FILE__))
+require 'utils/data_types'
+
 module Barometer
   class Measurement
-    include Barometer::DataTypes
+    include Barometer::Utils::DataTypes
 
     location :location, :station
     timezone :timezone
