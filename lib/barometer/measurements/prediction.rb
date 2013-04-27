@@ -39,7 +39,7 @@ module Barometer
       end
     end
 
-    def for_time?(time)
+    def covers?(time)
       raise ArgumentError unless time.is_a?(Time)
       time >= @starts_at && time <= @ends_at
     end

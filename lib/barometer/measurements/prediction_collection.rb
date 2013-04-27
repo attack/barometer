@@ -21,7 +21,7 @@ module Barometer
         Barometer::Utils::Time.parse(time)
       end
 
-      detect { |forecast| forecast.for_time?(time) }
+      detect { |forecast| forecast.covers?(time) }
     end
   end
 end
