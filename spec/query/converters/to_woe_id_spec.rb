@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 require "addressable/uri"
 
@@ -8,7 +8,7 @@ params_in_body = lambda do |request_1, request_2|
   a1.query_values == a2.query_values
 end
 
-describe Barometer::Converter::ToWoeId, :vcr => {
+describe Barometer::Query::Converter::ToWoeId, :vcr => {
   :match_requests_on => [:method, :uri, params_in_body],
   :cassette_name => "Converter::ToWoeId"
 } do
@@ -18,7 +18,7 @@ describe Barometer::Converter::ToWoeId, :vcr => {
   it "converts :coordinates -> :woe_id" do
     query = Barometer::Query.new('40.756054,-73.986951')
 
-    converter = Barometer::Converter::ToWoeId.new(query)
+    converter = Barometer::Query::Converter::ToWoeId.new(query)
     converted_query = converter.call
 
     converted_query.q.should == '12761349'
@@ -28,7 +28,7 @@ describe Barometer::Converter::ToWoeId, :vcr => {
   it "converts :geocode -> :woe_id" do
     query = Barometer::Query.new('New York, NY')
 
-    converter = Barometer::Converter::ToWoeId.new(query)
+    converter = Barometer::Query::Converter::ToWoeId.new(query)
     converted_query = converter.call
 
     converted_query.q.should == '2459115'
@@ -38,7 +38,7 @@ describe Barometer::Converter::ToWoeId, :vcr => {
   it "converts :postalcode -> :woe_id" do
     query = Barometer::Query.new('T5B 4M9')
 
-    converter = Barometer::Converter::ToWoeId.new(query)
+    converter = Barometer::Query::Converter::ToWoeId.new(query)
     converted_query = converter.call
 
     converted_query.q.should == '24354344'
@@ -49,7 +49,7 @@ describe Barometer::Converter::ToWoeId, :vcr => {
     query = Barometer::Query.new('10001')
     query.add_conversion(:geocode, 'New York, NY')
 
-    converter = Barometer::Converter::ToWoeId.new(query)
+    converter = Barometer::Query::Converter::ToWoeId.new(query)
     converted_query = converter.call
 
     converted_query.q.should == '2459115'
@@ -59,7 +59,7 @@ describe Barometer::Converter::ToWoeId, :vcr => {
   it "does not convert any other format" do
     query = Barometer::Query.new('90210')
 
-    converter = Barometer::Converter::ToWoeId.new(query)
+    converter = Barometer::Query::Converter::ToWoeId.new(query)
     converter.call.should be_nil
   end
 end

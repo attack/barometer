@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Barometer::Converter::FromGeocodeToWeatherId, :vcr => {
+describe Barometer::Query::Converter::FromGeocodeToWeatherId, :vcr => {
   :match_requests_on => [:method, :uri],
   :cassette_name => "Converter::FromGeocodeToWeatherId"
 } do
@@ -8,7 +8,7 @@ describe Barometer::Converter::FromGeocodeToWeatherId, :vcr => {
   it "converts :geocode -> :weather_id" do
     query = Barometer::Query.new('New York, NY')
 
-    converter = Barometer::Converter::FromGeocodeToWeatherId.new(query)
+    converter = Barometer::Query::Converter::FromGeocodeToWeatherId.new(query)
     converted_query = converter.call
 
     converted_query.q.should == 'USNY0996'
@@ -19,7 +19,7 @@ describe Barometer::Converter::FromGeocodeToWeatherId, :vcr => {
     query = Barometer::Query.new('KJFK')
     query.add_conversion(:geocode, 'New York, NY')
 
-    converter = Barometer::Converter::FromGeocodeToWeatherId.new(query)
+    converter = Barometer::Query::Converter::FromGeocodeToWeatherId.new(query)
     converted_query = converter.call
 
     converted_query.q.should == 'USNY0996'
@@ -29,7 +29,7 @@ describe Barometer::Converter::FromGeocodeToWeatherId, :vcr => {
   it "does not convert any other format" do
     query = Barometer::Query.new('KJFK')
 
-    converter = Barometer::Converter::FromGeocodeToWeatherId.new(query)
+    converter = Barometer::Query::Converter::FromGeocodeToWeatherId.new(query)
     converter.call.should be_nil
   end
 end

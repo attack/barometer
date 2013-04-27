@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Barometer::Converter::ToCoordinates, :vcr => {
+describe Barometer::Query::Converter::ToCoordinates, :vcr => {
   :match_requests_on => [:method, :uri],
   :cassette_name => "Converter::ToCoordinates"
 } do
@@ -8,7 +8,7 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
   it "converts :short_zipcode -> :coordinates" do
     query = Barometer::Query.new('90210')
 
-    converter = Barometer::Converter::ToCoordinates.new(query)
+    converter = Barometer::Query::Converter::ToCoordinates.new(query)
     converted_query = converter.call
 
     converted_query.q.should == '34.1030032,-118.4104684'
@@ -20,7 +20,7 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
   it "converts :zipcode -> :coordinates" do
     query = Barometer::Query.new('90210-5555')
 
-    converter = Barometer::Converter::ToCoordinates.new(query)
+    converter = Barometer::Query::Converter::ToCoordinates.new(query)
     converted_query = converter.call
 
     converted_query.q.should == '34.1030032,-118.4104684'
@@ -32,7 +32,7 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
   it "converts :geocode -> :coordinates" do
     query = Barometer::Query.new('New York, NY')
 
-    converter = Barometer::Converter::ToCoordinates.new(query)
+    converter = Barometer::Query::Converter::ToCoordinates.new(query)
     converted_query = converter.call
 
     converted_query_coords = converted_query.q.split(',').map{|c| c.to_f}
@@ -47,7 +47,7 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
   it "converts :postalcode -> :coordinates" do
     query = Barometer::Query.new('T5B 4M9')
 
-    converter = Barometer::Converter::ToCoordinates.new(query)
+    converter = Barometer::Query::Converter::ToCoordinates.new(query)
     converted_query = converter.call
 
     converted_query.q.should == '53.5721719,-113.4551835'
@@ -59,7 +59,7 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
   it "converts :icao -> :coordinates" do
     query = Barometer::Query.new('KSFO')
 
-    converter = Barometer::Converter::ToCoordinates.new(query)
+    converter = Barometer::Query::Converter::ToCoordinates.new(query)
     converted_query = converter.call
 
     converted_query.q.should == '37.615223,-122.389979'
@@ -72,7 +72,7 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
     query = Barometer::Query.new('USGA0028')
     query.add_conversion(:icao, 'KSFO')
 
-    converter = Barometer::Converter::ToCoordinates.new(query)
+    converter = Barometer::Query::Converter::ToCoordinates.new(query)
     converted_query = converter.call
 
     converted_query.q.should == '37.615223,-122.389979'
@@ -84,14 +84,14 @@ describe Barometer::Converter::ToCoordinates, :vcr => {
   it "does not convert :weather_id" do
     query = Barometer::Query.new('USGA0028')
 
-    converter = Barometer::Converter::ToCoordinates.new(query)
+    converter = Barometer::Query::Converter::ToCoordinates.new(query)
     converter.call.should be_nil
   end
 
   it "does not convert :woe_id" do
     query = Barometer::Query.new('615702')
 
-    converter = Barometer::Converter::ToCoordinates.new(query)
+    converter = Barometer::Query::Converter::ToCoordinates.new(query)
     converter.call.should be_nil
   end
 end

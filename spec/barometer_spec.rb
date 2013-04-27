@@ -73,7 +73,7 @@ describe Barometer::Base do
 
   describe "#new" do
     it "sets the query" do
-      subject.query.should be_a(Barometer::Query)
+      subject.query.should be_a(Barometer::Query::Base)
       subject.query.q.should == query_term
     end
 

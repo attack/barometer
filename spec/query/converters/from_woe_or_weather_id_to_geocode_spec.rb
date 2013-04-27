@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Barometer::Converter::FromWoeOrWeatherIdToGeocode, :vcr => {
+describe Barometer::Query::Converter::FromWoeOrWeatherIdToGeocode, :vcr => {
   :match_requests_on => [:method, :uri],
   :cassette_name => "Converter::FromWoeOrWeatherIdToGeocode"
 } do
@@ -8,7 +8,7 @@ describe Barometer::Converter::FromWoeOrWeatherIdToGeocode, :vcr => {
   it "converts :woe_id -> :geocode" do
     query = Barometer::Query.new('615702')
 
-    converter = Barometer::Converter::FromWoeOrWeatherIdToGeocode.new(query)
+    converter = Barometer::Query::Converter::FromWoeOrWeatherIdToGeocode.new(query)
     converted_query = converter.call
 
     converted_query.q.should == 'Paris, France'
@@ -20,7 +20,7 @@ describe Barometer::Converter::FromWoeOrWeatherIdToGeocode, :vcr => {
   it "converts :woe_id -> :coordinates at the same time" do
     query = Barometer::Query.new('615702')
 
-    converter = Barometer::Converter::FromWoeOrWeatherIdToGeocode.new(query)
+    converter = Barometer::Query::Converter::FromWoeOrWeatherIdToGeocode.new(query)
     converted_query = converter.call
 
     coordinate_conversion = query.get_conversion(:coordinates)
@@ -32,7 +32,7 @@ describe Barometer::Converter::FromWoeOrWeatherIdToGeocode, :vcr => {
     query = Barometer::Query.new('40.697488,-73.979681')
     query.add_conversion(:woe_id, '615702')
 
-    converter = Barometer::Converter::FromWoeOrWeatherIdToGeocode.new(query)
+    converter = Barometer::Query::Converter::FromWoeOrWeatherIdToGeocode.new(query)
     converted_query = converter.call
 
     converted_query.q.should == 'Paris, France'
@@ -44,7 +44,7 @@ describe Barometer::Converter::FromWoeOrWeatherIdToGeocode, :vcr => {
   it "converts :weather_id -> :geocode" do
     query = Barometer::Query.new('USGA0028')
 
-    converter = Barometer::Converter::FromWoeOrWeatherIdToGeocode.new(query)
+    converter = Barometer::Query::Converter::FromWoeOrWeatherIdToGeocode.new(query)
     converted_query = converter.call
 
     converted_query.q.should == 'Atlanta, GA, US'
@@ -56,7 +56,7 @@ describe Barometer::Converter::FromWoeOrWeatherIdToGeocode, :vcr => {
   it "converts :weather_id -> :coordinates at the same time" do
     query = Barometer::Query.new('USGA0028')
 
-    converter = Barometer::Converter::FromWoeOrWeatherIdToGeocode.new(query)
+    converter = Barometer::Query::Converter::FromWoeOrWeatherIdToGeocode.new(query)
     converted_query = converter.call
 
     coordinate_conversion = query.get_conversion(:coordinates)
@@ -68,7 +68,7 @@ describe Barometer::Converter::FromWoeOrWeatherIdToGeocode, :vcr => {
     query = Barometer::Query.new('30301')
     query.add_conversion(:weather_id, 'USGA0028')
 
-    converter = Barometer::Converter::FromWoeOrWeatherIdToGeocode.new(query)
+    converter = Barometer::Query::Converter::FromWoeOrWeatherIdToGeocode.new(query)
     converted_query = converter.call
 
     converted_query.q.should == 'Atlanta, GA, US'
@@ -78,7 +78,7 @@ describe Barometer::Converter::FromWoeOrWeatherIdToGeocode, :vcr => {
   it "does not convert any other format" do
     query = Barometer::Query.new('90210')
 
-    converter = Barometer::Converter::FromWoeOrWeatherIdToGeocode.new(query)
+    converter = Barometer::Query::Converter::FromWoeOrWeatherIdToGeocode.new(query)
     converter.call.should be_nil
   end
 end

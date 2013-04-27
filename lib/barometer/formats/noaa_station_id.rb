@@ -4,7 +4,6 @@ module Barometer
   # - this format cannot be detected, only set explictly
   #
   class Query::Format::NoaaStationId < Query::Format
-    def self.regex; /!./; end
     def self.is?(query); false; end
   end
 end

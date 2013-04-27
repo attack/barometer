@@ -1,7 +1,5 @@
 $:.unshift(File.dirname(__FILE__))
 
-# query formats
-#
 require 'query/formats'
 require 'formats/format'
 require 'formats/short_zipcode'
@@ -14,11 +12,4 @@ require 'formats/woe_id'
 require 'formats/noaa_station_id'
 require 'formats/geocode'
 
-require 'query/converters'
-require 'converters/from_woe_or_weather_id_to_geocode'
-require 'converters/to_woe_id'
-require 'converters/to_geocode'
-require 'converters/to_coordinates'
-require 'converters/from_short_zipcode_to_zipcode'
-require 'converters/from_geocode_to_weather_id'
-require 'converters/from_coordinates_to_noaa_station_id'
+require 'query/converter'

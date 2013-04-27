@@ -135,7 +135,7 @@ describe Barometer::Query do
         coordinates_converter = double(:converter_instance, :call => coordinates)
         coordinates_converter_klass = double(:coordinates_converter, :new => coordinates_converter)
 
-        Barometer::Converters.stub(:find_all => coordinates_converter_klass)
+        Barometer::Query::Converter.stub(:find_all => coordinates_converter_klass)
 
         query = Barometer::Query.new('90210')
 
@@ -156,7 +156,7 @@ describe Barometer::Query do
         geocode_converter = double(:geocode_converter_instance, :call => geocode)
         geocode_converter_klass = double(:geocode_converter, :new => geocode_converter)
 
-        Barometer::Converters.stub(:find_all => [geocode_converter_klass, coordinates_converter_klass])
+        Barometer::Query::Converter.stub(:find_all => [geocode_converter_klass, coordinates_converter_klass])
 
         query = Barometer::Query.new('90210')
 
@@ -171,7 +171,7 @@ describe Barometer::Query do
       it "raises ConversionNotPossible" do
         query = Barometer::Query.new('90210')
 
-        Barometer::Converters.stub(:find_all => nil)
+        Barometer::Query::Converter.stub(:find_all => nil)
 
         expect {
           query.convert!(:zipcode)

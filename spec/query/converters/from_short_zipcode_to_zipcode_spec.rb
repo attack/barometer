@@ -1,10 +1,10 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Barometer::Converter::FromShortZipcodeToZipcode do
+describe Barometer::Query::Converter::FromShortZipcodeToZipcode do
   it "converts :short_zipcode -> :zipcode" do
     query = Barometer::Query.new('90210')
 
-    converter = Barometer::Converter::FromShortZipcodeToZipcode.new(query)
+    converter = Barometer::Query::Converter::FromShortZipcodeToZipcode.new(query)
     converted_query = converter.call
 
     converted_query.q.should == '90210'
@@ -15,7 +15,7 @@ describe Barometer::Converter::FromShortZipcodeToZipcode do
     query = Barometer::Query.new('Beverly Hills, CA, United States')
     query.add_conversion(:short_zipcode, '90210')
 
-    converter = Barometer::Converter::FromShortZipcodeToZipcode.new(query)
+    converter = Barometer::Query::Converter::FromShortZipcodeToZipcode.new(query)
     converted_query = converter.call
 
     converted_query.q.should == '90210'
@@ -25,7 +25,7 @@ describe Barometer::Converter::FromShortZipcodeToZipcode do
   it "does not convert any other format" do
     query = Barometer::Query.new('Beverly Hills, CA, United States')
 
-    converter = Barometer::Converter::FromShortZipcodeToZipcode.new(query)
+    converter = Barometer::Query::Converter::FromShortZipcodeToZipcode.new(query)
     converter.call.should be_nil
   end
 end

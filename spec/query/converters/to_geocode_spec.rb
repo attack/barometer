@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Barometer::Converter::ToGeocode, :vcr => {
+describe Barometer::Query::Converter::ToGeocode, :vcr => {
   :match_requests_on => [:method, :uri],
   :cassette_name => "Converter::ToGeocode"
 } do
@@ -8,7 +8,7 @@ describe Barometer::Converter::ToGeocode, :vcr => {
   it "converts :short_zipcode -> :geocode" do
     query = Barometer::Query.new('90210')
 
-    converter = Barometer::Converter::ToGeocode.new(query)
+    converter = Barometer::Query::Converter::ToGeocode.new(query)
     converted_query = converter.call
 
     converted_query.q.should == 'Beverly Hills, CA, United States'
@@ -20,7 +20,7 @@ describe Barometer::Converter::ToGeocode, :vcr => {
   it "converts :zipcode -> :geocode" do
     query = Barometer::Query.new('90210-5555')
 
-    converter = Barometer::Converter::ToGeocode.new(query)
+    converter = Barometer::Query::Converter::ToGeocode.new(query)
     converted_query = converter.call
 
     converted_query.q.should == 'Beverly Hills, CA, United States'
@@ -32,7 +32,7 @@ describe Barometer::Converter::ToGeocode, :vcr => {
   it "converts :coordinates -> :geocode" do
     query = Barometer::Query.new('40.756054,-73.986951')
 
-    converter = Barometer::Converter::ToGeocode.new(query)
+    converter = Barometer::Query::Converter::ToGeocode.new(query)
     converted_query = converter.call
 
     converted_query.q.should == 'Manhattan, NY, United States'
@@ -44,7 +44,7 @@ describe Barometer::Converter::ToGeocode, :vcr => {
   it "converts :postalcode -> :geocode" do
     query = Barometer::Query.new('T5B 4M9')
 
-    converter = Barometer::Converter::ToGeocode.new(query)
+    converter = Barometer::Query::Converter::ToGeocode.new(query)
     converted_query = converter.call
 
     converted_query.q.should == 'Edmonton, AB, Canada'
@@ -56,7 +56,7 @@ describe Barometer::Converter::ToGeocode, :vcr => {
   it "converts :icao -> :geocode" do
     query = Barometer::Query.new('KSFO')
 
-    converter = Barometer::Converter::ToGeocode.new(query)
+    converter = Barometer::Query::Converter::ToGeocode.new(query)
     converted_query = converter.call
 
     converted_query.q.should == 'San Francisco, CA, United States'
@@ -69,7 +69,7 @@ describe Barometer::Converter::ToGeocode, :vcr => {
     query = Barometer::Query.new('USGA0028')
     query.add_conversion(:icao, 'KSFO')
 
-    converter = Barometer::Converter::ToGeocode.new(query)
+    converter = Barometer::Query::Converter::ToGeocode.new(query)
     converted_query = converter.call
 
     converted_query.q.should == 'San Francisco, CA, United States'
@@ -81,14 +81,14 @@ describe Barometer::Converter::ToGeocode, :vcr => {
   it "does not convert :weather_id" do
     query = Barometer::Query.new('USGA0028')
 
-    converter = Barometer::Converter::ToGeocode.new(query)
+    converter = Barometer::Query::Converter::ToGeocode.new(query)
     converter.call.should be_nil
   end
 
   it "does not convert :woe_id" do
     query = Barometer::Query.new('615702')
 
-    converter = Barometer::Converter::ToGeocode.new(query)
+    converter = Barometer::Query::Converter::ToGeocode.new(query)
     converter.call.should be_nil
   end
 end

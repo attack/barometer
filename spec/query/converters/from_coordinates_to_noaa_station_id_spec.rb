@@ -1,6 +1,6 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Barometer::Converter::FromCoordinatesToNoaaStationId, :vcr => {
+describe Barometer::Query::Converter::FromCoordinatesToNoaaStationId, :vcr => {
   :match_requests_on => [:method, :uri],
   :cassette_name => "Converter::FromCoordinatesToNoaaStationId"
 } do
@@ -8,7 +8,7 @@ describe Barometer::Converter::FromCoordinatesToNoaaStationId, :vcr => {
   it "converts :coordinates -> :noaa_station_id" do
     query = Barometer::Query.new('34.10,-118.41')
 
-    converter = Barometer::Converter::FromCoordinatesToNoaaStationId.new(query)
+    converter = Barometer::Query::Converter::FromCoordinatesToNoaaStationId.new(query)
     converted_query = converter.call
 
     converted_query.q.should == 'KSMO'
@@ -19,7 +19,7 @@ describe Barometer::Converter::FromCoordinatesToNoaaStationId, :vcr => {
     query = Barometer::Query.new('90210')
     query.add_conversion(:coordinates, '34.10,-118.41')
 
-    converter = Barometer::Converter::FromCoordinatesToNoaaStationId.new(query)
+    converter = Barometer::Query::Converter::FromCoordinatesToNoaaStationId.new(query)
     converted_query = converter.call
 
     converted_query.q.should == 'KSMO'
@@ -29,7 +29,7 @@ describe Barometer::Converter::FromCoordinatesToNoaaStationId, :vcr => {
   it "does not convert any other format" do
     query = Barometer::Query.new('KJFK')
 
-    converter = Barometer::Converter::FromCoordinatesToNoaaStationId.new(query)
+    converter = Barometer::Query::Converter::FromCoordinatesToNoaaStationId.new(query)
     converter.call.should be_nil
   end
 end
