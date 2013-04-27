@@ -1,38 +1,23 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Barometer::Measurement::Result do
-  describe "data fields" do
-    it { should have_field(:temperature).of_type(Barometer::Data::Temperature) }
-    it { should have_field(:dew_point).of_type(Barometer::Data::Temperature) }
-    it { should have_field(:heat_index).of_type(Barometer::Data::Temperature) }
-    it { should have_field(:wind_chill).of_type(Barometer::Data::Temperature) }
-    it { should have_field(:high).of_type(Barometer::Data::Temperature) }
-    it { should have_field(:low).of_type(Barometer::Data::Temperature) }
+describe Barometer::Measurement::Prediction do
+  it { should have_field(:starts_at).of_type(Time) }
+  it { should have_field(:ends_at).of_type(Time) }
+  it { should have_field(:high).of_type(Barometer::Data::Temperature) }
+  it { should have_field(:low).of_type(Barometer::Data::Temperature) }
+  it { should have_field(:pop).of_type(Float) }
+  it { should have_field(:icon).of_type(String) }
+  it { should have_field(:condition).of_type(String) }
+  it { should have_field(:sun).of_type(Barometer::Data::Sun) }
 
-    it { should have_field(:wind).of_type(Barometer::Data::Vector) }
-    it { should have_field(:pressure).of_type(Barometer::Data::Pressure) }
-    it { should have_field(:visibility).of_type(Barometer::Data::Distance) }
-
-    it { should have_field(:pop).of_type(Float) }
-    it { should have_field(:humidity).of_type(Float) }
-    it { should have_field(:icon).of_type(String) }
-    it { should have_field(:condition).of_type(String) }
-    it { should have_field(:description).of_type(String) }
-
-    it { should have_field(:starts_at).of_type(Barometer::Data::LocalDateTime) }
-    it { should have_field(:ends_at).of_type(Barometer::Data::LocalDateTime) }
-
-    it { should have_field(:sun).of_type(Barometer::Data::Sun) }
-  end
-
-  describe "#new" do
+  describe ".new" do
     it "initializes as metric" do
-      result = Barometer::Measurement::Result.new
+      result = Barometer::Measurement::Prediction.new
       result.should be_metric
     end
 
     it "initializes as imperial" do
-      result = Barometer::Measurement::Result.new(false)
+      result = Barometer::Measurement::Prediction.new(false)
       result.should_not be_metric
     end
   end
@@ -78,15 +63,15 @@ describe Barometer::Measurement::Result do
     end
   end
 
-  describe "#for_datetime?" do
+  describe "#for_time?" do
     it "returns true if the valid_date range includes the given date" do
       subject.date = Date.new(2009,05,05)
-      subject.for_datetime?(Barometer::Data::LocalDateTime.new(2009,5,5,12,0,0)).should be_true
+      subject.for_time?(Time.utc(2009,5,5,12,0,0)).should be_true
     end
 
     it "returns false if the valid_date range excludes the given date" do
       subject.date = Date.new(2009,05,05)
-      subject.for_datetime?(Barometer::Data::LocalDateTime.new(2009,5,4,12,0,0)).should be_false
+      subject.for_time?(Time.utc(2009,5,4,12,0,0)).should be_false
     end
   end
 end

@@ -92,19 +92,16 @@ describe Barometer::Weather do
       @weather = Barometer::Weather.new
       @wunderground = Barometer::Measurement.new
       @wunderground.source = :wunderground
-      @wunderground.current = Barometer::Measurement::Result.new
+      @wunderground.current = Barometer::Measurement::Current.new
       @wunderground.stub!(:success).and_return(true)
       @wunderground.stub!(:success?).and_return(true)
       @yahoo = Barometer::Measurement.new
       @yahoo.source = :yahoo
-      @yahoo.current = Barometer::Measurement::Result.new
+      @yahoo.current = Barometer::Measurement::Current.new
       @yahoo.stub!(:success).and_return(true)
       @yahoo.stub!(:success?).and_return(true)
-      @google = Barometer::Measurement.new
-      @google.source = :google
       @weather.measurements << @wunderground
       @weather.measurements << @yahoo
-      @weather.measurements << @google
     end
 
     it "doesn't include nil values" do

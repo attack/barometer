@@ -33,7 +33,7 @@ module Barometer
       end
 
       def _build_forecasts(payload)
-        forecasts = Measurement::ResultArray.new
+        forecasts = Measurement::PredictionCollection.new
 
         p12h_start_times = payload.fetch('time_layout').detect{|layout| layout["layout_key"] == "k-p12h-n14-2"}["start_valid_time"]
         p12h_end_times = payload.fetch('time_layout').detect{|layout| layout["layout_key"] == "k-p12h-n14-2"}["end_valid_time"]

@@ -17,5 +17,6 @@ require 'data/local_time'
 require 'data/local_datetime'
 
 require 'measurements/measurement'
-require 'measurements/result'
-require 'measurements/result_array'
+require 'measurements/current'
+require 'measurements/prediction'
+require 'measurements/prediction_collection'

@@ -19,8 +19,8 @@ module Barometer
     def initialize(metric=true)
       @metric = metric
       @weight = 1
-      @current = Barometer::Measurement::Result.new
-      @forecast = Barometer::Measurement::ResultArray.new
+      @current = Barometer::Measurement::Current.new
+      @forecast = Barometer::Measurement::PredictionCollection.new
       @requested_at = Time.now.utc
     end
 
@@ -46,7 +46,7 @@ module Barometer
     end
 
     def build_forecast
-      forecast_result = Barometer::Measurement::Result.new
+      forecast_result = Barometer::Measurement::Prediction.new
       yield(forecast_result)
       self.forecast << forecast_result
     end

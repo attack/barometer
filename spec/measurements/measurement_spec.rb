@@ -1,19 +1,17 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require 'time'
 
 describe Barometer::Measurement do
-  describe "#new" do
-    its(:forecast) { should be_a Barometer::Measurement::ResultArray }
-    its(:current) { should be_a Barometer::Measurement::Result }
+  it { should have_field(:query).of_type(String) }
+  it { should have_field(:weight).of_type(Integer) }
+  it { should have_field(:status_code).of_type(Integer) }
+
+  describe ".new" do
+    its(:forecast) { should be_a Barometer::Measurement::PredictionCollection }
+    its(:current) { should be_a Barometer::Measurement::Current }
     its(:metric) { should be_true }
     its(:weight) { should == 1 }
     its(:requested_at) { should be_a(Time) }
-  end
-
-  describe "data fields" do
-    it { should have_field(:query).of_type(String) }
-    it { should have_field(:weight).of_type(Integer) }
-    it { should have_field(:status_code).of_type(Integer) }
-    it { should have_field(:published_at).of_type(Barometer::Data::LocalDateTime) }
   end
 
   describe "#success?" do
@@ -46,7 +44,7 @@ describe Barometer::Measurement do
     it "yields a new measurement" do
       expect { |b|
         subject.build_forecast(&b)
-      }.to yield_with_args(Barometer::Measurement::Result)
+      }.to yield_with_args(Barometer::Measurement::Prediction)
     end
 
     it "adds the new measurement to forecast array" do
@@ -62,8 +60,8 @@ describe Barometer::Measurement do
       @measurement = Barometer::Measurement.new
 
       1.upto(4) do |i|
-        forecast_measurement = Barometer::Measurement::Result.new
-        forecast_measurement.date = Date.parse((Time.now + (i * 60 * 60 * 24)).to_s)
+        forecast_measurement = Barometer::Measurement::Prediction.new
+        forecast_measurement.date = Date.parse((local_now + (i * 60 * 60 * 24)).to_s)
         @measurement.forecast << forecast_measurement
       end
       @measurement.forecast.size.should == 4
@@ -72,7 +70,7 @@ describe Barometer::Measurement do
     end
 
     it "returns nil when there are no forecasts" do
-      @measurement.forecast = Barometer::Measurement::ResultArray.new
+      @measurement.forecast = Barometer::Measurement::PredictionCollection.new
       @measurement.forecast.size.should == 0
       @measurement.for.should be_nil
     end

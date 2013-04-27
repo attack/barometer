@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Barometer::Measurement::ResultArray do
+describe Barometer::Measurement::PredictionCollection do
   describe "#<<" do
     it "raises an error with invalid data" do
       expect {
@@ -8,15 +8,15 @@ describe Barometer::Measurement::ResultArray do
       }.to raise_error(ArgumentError)
     end
 
-    it "adds Measurement::Result" do
+    it "adds Measurement::Prediction" do
       expect {
-        subject <<  Barometer::Measurement::Result.new
+        subject <<  Barometer::Measurement::Prediction.new
       }.to change{ subject.count }.by(1)
     end
   end
 
   describe "#[]" do
-    let(:result) { Barometer::Measurement::Result.new }
+    let(:result) { Barometer::Measurement::Prediction.new }
     before { subject << result }
 
     it "finds result by index when passed a number" do
@@ -32,21 +32,21 @@ describe Barometer::Measurement::ResultArray do
   end
 
   describe "#for" do
+    let(:tommorrow) { Date.today + 1 }
+
     context "when there are no forecasts" do
       it "returns nil when there are no forecasts" do
         subject.size.should == 0
-        subject.for(@tommorrow).should be_nil
+        subject.for(tommorrow).should be_nil
       end
     end
 
     context "when there are forecasts" do
-      let(:tommorrow) { Date.today + 1 }
-
       before do
         today = Date.today
 
         0.upto(3) do |i|
-          forecast_measurement = Barometer::Measurement::Result.new
+          forecast_measurement = Barometer::Measurement::Prediction.new
           forecast_measurement.date = today + i
           subject << forecast_measurement
         end
@@ -62,19 +62,19 @@ describe Barometer::Measurement::ResultArray do
 
       it "finds the date using a DateTime" do
         # 1.8.7 - Date does not have to_datetime
-        as_datetime = DateTime.new(tommorrow.year, tommorrow.month, tommorrow.day)
-        subject.for(as_datetime).should == subject[1]
+        datetime = DateTime.new(tommorrow.year, tommorrow.month, tommorrow.day)
+        subject.for(datetime).should == subject[1]
       end
 
       it "finds the date using a Time" do
         # 1.8.7 - Date does not have to_time
-        as_time = Time.parse(tommorrow.to_s)
-        subject.for(as_time).should == subject[1]
+        time = Time.parse(tommorrow.to_s)
+        subject.for(time).should == subject[1]
       end
 
-      it "finds the date using Barometer::Data::LocalDateTime" do
-        local_datetime = Barometer::Data::LocalDateTime.parse(tommorrow.to_s)
-        subject.for(local_datetime).should == subject[1]
+      it "finds the date using Data::Time" do
+        time = Barometer::Helpers::Time.parse(tommorrow.to_s)
+        subject.for(time).should == subject[1]
       end
 
       it "finds nothing when there is not a match" do
