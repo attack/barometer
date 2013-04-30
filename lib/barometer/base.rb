@@ -1,15 +1,13 @@
 module Barometer
   class Base
-    attr_reader   :query
-    attr_accessor :weather
+    attr_reader :query, :weather
 
-    def initialize(query=nil)
+    def initialize(query)
       @query = Barometer::Query.new(query)
       @weather = Barometer::Weather.new
     end
 
     def measure(metric=nil)
-      return nil unless @query
       @weather.start_at = Time.now.utc
 
       level = 1
@@ -39,7 +37,7 @@ module Barometer
     # { 1 => {:wunderground => {:weight => 2}}}
     # { 1 => [{:wunderground => {:weight => 2}}]}
     #
-    def _dig(data, config=nil, metric=nil)
+    def _dig(data, config, metric)
       if data.is_a?(String) || data.is_a?(Symbol)
         _measure(data, config, metric)
       elsif data.is_a?(Array)
@@ -53,9 +51,9 @@ module Barometer
       end
     end
 
-    def _measure(source, config=nil, metric=nil)
+    def _measure(source, config, metric)
       options = { :metric => metric }
-      options.merge!({:keys => config[:keys]}) if config
+      options.merge!(config)
 
       response = Barometer::WeatherService.measure(source.to_sym, @query, options)
       response.weight = config[:weight] if config && config[:weight]

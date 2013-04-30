@@ -111,6 +111,15 @@ describe Barometer::WeatherService do
       Barometer::WeatherService.measure(:test_weather, query)
     end
 
+    it "calls the requested version of the weather service" do
+      test_weather_v2 = double(:test_weather)
+      Barometer::WeatherService.register(:test_weather, :v2, test_weather_v2)
+
+      test_weather_v2.should_receive(:call).and_return(test_response)
+
+      Barometer::WeatherService.measure(:test_weather, query, :version => :v2)
+    end
+
     it "passes along query and options" do
       test_weather.should_receive(:call).with(query)
       Barometer::WeatherService.measure(:test_weather, query)

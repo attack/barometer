@@ -25,11 +25,17 @@ module Barometer
       @@services.find(key, version) or raise NotFound
     end
 
-    def self.measure(key, query, metric=true)
+    def self.measure(*args)
+      key = args.shift
+      query = args.shift
+      options = args.shift
+
+      version = (options || {}).fetch(:version, nil)
+
       response_started_at = Time.now.utc
 
       begin
-        response = source(key).call(query)
+        response = source(key, version).call(query)
         if response.complete?
           response.status_code = 200
         else
