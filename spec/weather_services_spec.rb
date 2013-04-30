@@ -3,14 +3,22 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe Barometer::WeatherService do
   before do
     @services_cache = Barometer::WeatherService.services
-    Barometer::WeatherService.services = {}
+    Barometer::WeatherService.services = Barometer::Utils::VersionedRegistration.new
   end
 
   describe ".register" do
     it "adds the weather service to the list of available services" do
       expect {
         Barometer::WeatherService.register(:test_weather, double(:weather_service))
-      }.to change { Barometer::WeatherService.services.count }.by(1)
+      }.to change { Barometer::WeatherService.services.size }.by(1)
+    end
+
+    it "registers the service for a given version" do
+      weather_service = double(:weather_service)
+      Barometer::WeatherService.register(:test_weather, :v1, weather_service)
+      expect {
+        Barometer::WeatherService.register(:test_weather, :v2, weather_service)
+      }.to change { Barometer::WeatherService.services.size }.by(1)
     end
 
     it "adds the block as an available weather service" do
@@ -20,7 +28,7 @@ describe Barometer::WeatherService do
           m.current.temperature = 30
           m
         end
-      }.to change { Barometer::WeatherService.services.count }.by(1)
+      }.to change { Barometer::WeatherService.services.size }.by(1)
 
       Barometer::WeatherService.measure(:test_weather, "test").current.temperature.to_i.should == 30
     end
@@ -42,7 +50,15 @@ describe Barometer::WeatherService do
       Barometer::WeatherService.register(:test_weather, weather_service)
       expect {
         Barometer::WeatherService.register(:test_weather, weather_service)
-      }.not_to change { Barometer::WeatherService.services.count }
+      }.not_to change { Barometer::WeatherService.services.size }
+    end
+
+    it "only registers a version once" do
+      weather_service = double(:weather_service)
+      Barometer::WeatherService.register(:test_weather, :v1, weather_service)
+      expect {
+        Barometer::WeatherService.register(:test_weather, :v1, weather_service)
+      }.not_to change { Barometer::WeatherService.services.size }
     end
   end
 
@@ -58,6 +74,25 @@ describe Barometer::WeatherService do
       expect {
         Barometer::WeatherService.source(:test_weather)
       }.to raise_error(Barometer::WeatherService::NotFound)
+    end
+
+    it "raises an error if the version does not exist" do
+      expect {
+        Barometer::WeatherService.source(:test_weather, :v1)
+      }.to raise_error(Barometer::WeatherService::NotFound)
+    end
+
+    context "when multiple versions are registered" do
+      it "returns the requested version" do
+        test_weather = double(:test_weather)
+        other_weather = double(:other_weather)
+        Barometer::WeatherService.register(:test_weather, nil, test_weather)
+        Barometer::WeatherService.register(:test_weather, :v1, other_weather)
+
+        Barometer::WeatherService.source(:test_weather).should == test_weather
+        Barometer::WeatherService.source(:test_weather, nil).should == test_weather
+        Barometer::WeatherService.source(:test_weather, :v1).should == other_weather
+      end
     end
   end
 

@@ -8,20 +8,21 @@ module Barometer
       @@services
     end
 
-    def self.register(key, service=nil, &block)
-      @@services ||= {}
+    def self.register(key, *args, &block)
+      @@services ||= Barometer::Utils::VersionedRegistration.new
+
       if block_given?
-        @@services[key] = Proc.new(&block)
-      elsif
-        @@services[key] = service
+        @@services.register(key, *args, &block)
+      elsif args.size > 0
+        @@services.register(key, *args)
       else
         raise ArgumentError
       end
     end
 
-    def self.source(key)
-      @@services ||= {}
-      @@services[key] or raise NotFound
+    def self.source(key, version=nil)
+      @@services ||= Barometer::Utils::VersionedRegistration.new
+      @@services.find(key, version) or raise NotFound
     end
 
     def self.measure(key, query, metric=true)

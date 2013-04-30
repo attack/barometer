@@ -65,6 +65,9 @@ describe Barometer::Base do
     let(:weather_service) { double(:weather_service, :call => response) }
 
     before do
+      @services_cache = Barometer::WeatherService.services
+      Barometer::WeatherService.services = Barometer::Utils::VersionedRegistration.new
+
       @cached_config = Barometer.config
       Barometer.config = { 1 => {:test => {:keys => keys} } }
       Barometer::WeatherService.register(:test, weather_service)
@@ -73,6 +76,7 @@ describe Barometer::Base do
     end
 
     after do
+      Barometer::WeatherService.services = @services_cache
       Barometer.config = @cached_config
     end
 

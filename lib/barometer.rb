@@ -1,13 +1,13 @@
 $:.unshift(File.dirname(__FILE__))
 
 require 'barometer/version'
+require 'barometer/utils'
 require 'barometer/base'
 require 'barometer/query'
 require 'barometer/weather'
 require 'barometer/data'
 require 'barometer/response'
 require 'barometer/weather_service'
-require 'barometer/utils'
 
 module Barometer
   @@config = { 1 => [:wunderground] }
