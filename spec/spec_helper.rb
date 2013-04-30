@@ -5,6 +5,7 @@ require 'pry'
 require 'vcr'
 require 'fakefs/spec_helpers'
 require 'webmock/rspec'
+require 'coveralls'
 
 $:.unshift((File.join(File.dirname(__FILE__), '..', 'lib')))
 require 'barometer'
@@ -18,6 +19,8 @@ downcased_weatherbug_code[0] = WEATHERBUG_CODE.to_s[0..0].downcase
 
 # Barometer.debug!
 Barometer.yahoo_placemaker_app_id = 'placemaker'
+
+Coveralls.wear!
 
 VCR.configure do |config|
   config.cassette_library_dir = 'spec/cassettes'
