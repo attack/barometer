@@ -56,4 +56,4 @@ module Barometer
   end
 end
 
-Barometer::WeatherService.register(:wunderground, Barometer::WeatherService::Wunderground)
+Barometer::WeatherService.register(:wunderground, :v1, Barometer::WeatherService::Wunderground)

@@ -6,7 +6,7 @@ describe Barometer::WeatherService::Wunderground, :vcr => {
 } do
 
   it "auto-registers this weather service as :wunderground" do
-    Barometer::WeatherService.source(:wunderground).should == Barometer::WeatherService::Wunderground
+    Barometer::WeatherService.source(:wunderground, :v1).should == Barometer::WeatherService::Wunderground
   end
 
   describe ".call" do

@@ -10,7 +10,7 @@ require 'barometer/response'
 require 'barometer/weather_service'
 
 module Barometer
-  @@config = { 1 => [:wunderground] }
+  @@config = { 1 => {:wunderground => {:version => :v1}} }
   def self.config; @@config; end;
   def self.config=(hash); @@config = hash; end;
 
@@ -24,13 +24,11 @@ module Barometer
   def self.yahoo_placemaker_app_id; @@yahoo_placemaker_app_id; end;
   def self.yahoo_placemaker_app_id=(yahoo_key); @@yahoo_placemaker_app_id = yahoo_key; end;
 
-  # adjust the timeout used when interactind with external web services
-  #
   @@timeout = 15
   def self.timeout; @@timeout; end;
   def self.timeout=(value); @@timeout = value; end;
 
-  def self.new(query=nil)
+  def self.new(query)
     Barometer::Base.new(query)
   end
 

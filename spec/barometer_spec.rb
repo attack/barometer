@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 describe Barometer do
   describe ".config" do
     it "has a default value" do
-      Barometer.config.should == { 1 => [:wunderground] }
+      Barometer.config.should == { 1 => {:wunderground => {:version => :v1}} }
     end
 
     it "sets the value" do
