@@ -8,7 +8,6 @@
 - driver: metar
 - improve code based on metrics
 - use Geomojo to convert coords to woe_id (when no yahoo key)
-- remove use of HTTParty, use Net:HTTP and Nokogiri instead
 
 == soon
 
@@ -20,10 +19,6 @@
 - add uv, moon, elevation info to current
 - driver: intellicast
 - weather.com simple_questions improve answers (use extra data)
-- make sure you can compare LocalTime to LocalDateTime in LocalTime class
-
-- be smart, never make duplicate queries
-  - ie. if you are including wunderground, do it first and use the timezone info
 
 - conversion and weather fetching queries should have hooks to allow
   for configurable caching via memcache, then web service calls can 

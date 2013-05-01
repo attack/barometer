@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/attack/barometer.png?branch=master)](https://travis-ci.org/attack/barometer)
 [![Gem Version](https://badge.fury.io/rb/barometer.png)](http://badge.fury.io/rb/barometer)
 [![Code Climate](https://codeclimate.com/github/attack/barometer.png)](https://codeclimate.com/github/attack/barometer)
+[![Coverage Status](https://coveralls.io/repos/attack/barometer/badge.png?branch=master)](https://coveralls.io/r/attack/barometer)
 
 A multi API consuming weather forecasting superstar.
 
@@ -28,7 +29,7 @@ this.
 * failover configuration
 * multiple services configuration to provide average values
 
-# Usage
+## Usage
 
 You can use barometer right out of the box, as it is configured to use one
 register-less (no API key required) international weather service
@@ -45,11 +46,11 @@ puts weather.current.temperature
 
 *See [detailed usage](#detailed_Usage) further down.*
 
-# Dependencies
+## Dependencies
 
 [![Dependency Status](https://gemnasium.com/attack/barometer.png)](https://gemnasium.com/attack/barometer)
 
-## Api Keys
+### Api Keys
 
 The '~/.barometer' file can hold all your weather service API keys.
 
@@ -63,7 +64,7 @@ eg. Yahoo! Placemaker
   yahoo:
     app_id: YOUR_APP_ID
 
-# Queries
+## Queries
 
 The query handling is one of the most beneficial and powerful features of
 Barometer.  Every weather service accepts a different set of possible
@@ -79,7 +80,7 @@ For example, Yahoo! only accepts US Zip Code or Weather.com ID.  With Barometer
 you can query Yahoo! with a simple location (ie: Paris) or even an Airport
 code (ICAO) and it will return the weather as expected.
 
-## Acceptable Formats
+### Acceptable Formats
 
 * zipcode
 * icao (international airport code)
@@ -90,9 +91,9 @@ code (ICAO) and it will return the weather as expected.
 * woeid (where on earth id, by Yahoo!)
 
 <a name='detailed_Usage'></a>
-# Detailed Usage
+## Detailed Usage
 
-## Sources
+### Sources
 
 The available sources are:
 
@@ -101,7 +102,7 @@ The available sources are:
 * WeatherBug.com (:weather_bug) [requires key]
 * NOAA (:noaa)
 
-## Source Configuration
+### Source Configuration
 
 Barometer can be configured to use multiple weather service APIs (either in
 a primary/failover config or in parallel).  Each weather service can also
@@ -132,7 +133,7 @@ Weather services, one with keys.
 Barometer.config = { 1 => [:yahoo, {:weather_bug => {:keys => {:code => CODE_KEY} }}] }
 ```
 
-### Multiple weather API, with hierarchy
+#### Multiple weather API, with hierarchy
 
 ```ruby
 require 'barometer'
@@ -146,7 +147,7 @@ weather = barometer.measure
 puts weather.current.temperture
 ```
 
-## Command Line
+### Command Line
 
 You can use barometer from the command line. 
 
@@ -157,13 +158,13 @@ See the help for more command line information.
 
   # barometer -h
 
-## Searching
+### Searching
 
 After you have measured the data, Barometer provides several methods to help
 you get the data you are after. All examples assume you already have measured
 the data as shown in the above examples.
 
-### By preference (default service)
+#### By preference (default service)
 
 ```ruby
 weather.default         # returns measurement for default source
@@ -177,7 +178,7 @@ puts weather.now.temperature.c
 puts weather.tomorrow.high.c
 ```
 
-### By date
+#### By date
 
 ```ruby
 # note, the date is the date of the locations weather, not the date of the
@@ -188,7 +189,7 @@ weather.for(date)       # returns forecast_measurement for default on date
 puts weather.for(date).high.c
 ```
 
-### By time
+#### By time
 
 ```ruby
 # note, the time is the time of the locations weather, not the time of the
@@ -199,7 +200,7 @@ weather.for(time)       # returns forecast_measurement for default at time
 puts weather.for(time).low.f
 ```
 
-## Averages
+### Averages
 
 If you consume more then one weather service, Barometer can provide averages
 for the values (currently only for the 'current' values and not the forecasted
@@ -219,17 +220,11 @@ puts weather.temperture
 
 This will calculate the average temperature as given by :yahoo and :wunderground
 
-### Weights
+#### Weights
 
 You can weight the values from a weather service so that the values from that
 web service have more influence then other values.  The weights are set in the
 config ... see the config section
-
-# Extending
-
-Barometer attempts to be a common API to any weather service API.  I have included
-several weather service 'drivers', but I know there are many more available.
-Please use the provided ones as examples to create more.
 
 ## Contributions
 
@@ -240,13 +235,13 @@ Thank you to these developers who have contributed. No contribution is too small
 * plukevdh (https://github.com/plukevdh)
 * gkop (https://github.com/gkop)
 
-# Links
+## Links
 
 * repo: http://github.com/attack/barometer
 * rdoc: http://rdoc.info/projects/attack/barometer
 * travis ci: https://travis-ci.org/attack/barometer
 * code climate: https://codeclimate.com/github/attack/barometer
 
-## copyright
+## Copyright
 
 Copyright (c) 2009-2013 Mark G. See LICENSE for details.
