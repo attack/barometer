@@ -1,5 +1,6 @@
 $:.unshift(File.dirname(__FILE__))
 
+require 'utils/config_reader'
 require 'utils/time'
 require 'utils/payload'
 require 'utils/versioned_registration'
