@@ -3,7 +3,7 @@ module Barometer
     module Service
       class Geocode
         def self.fetch(query)
-          converted_query = query.get_conversion(:short_zipcode, :zipcode, :postalcode, :coordinates, :icao, :geocode)
+          converted_query = query.get_conversion(:short_zipcode, :zipcode, :postalcode, :coordinates, :icao, :unknown)
           return unless converted_query
           puts "geocoding: #{converted_query.q}" if Barometer::debug?
 

@@ -39,9 +39,9 @@ describe Barometer::Query::Base do
         query.country_code.should be_nil
       end
 
-      it "defaults to :geocode" do
+      it "defaults to :unknown" do
         query = Barometer::Query::Base.new("New York, NY")
-        query.format.should == :geocode
+        query.format.should == :unknown
         query.country_code.should be_nil
       end
     end
@@ -73,13 +73,13 @@ describe Barometer::Query::Base do
 
     context "when the requested format is that of the query" do
       it "returns self instead of a conversion" do
-        query = Barometer::Query::Base.new('Paris')
+        query = Barometer::Query::Base.new('90210')
 
-        query.add_conversion(:geocode, 'Berlin')
+        query.add_conversion(:short_zipcode, '10001')
 
-        converted_query = query.get_conversion(:geocode)
-        converted_query.q.should == 'Paris'
-        converted_query.format.should == :geocode
+        converted_query = query.get_conversion(:short_zipcode)
+        converted_query.q.should == '90210'
+        converted_query.format.should == :short_zipcode
       end
     end
 

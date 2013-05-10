@@ -3,9 +3,10 @@ module Barometer
     module Format
       #
       # eg. 123 Elm St, Mystery, Alaska, USA
+      # - this format cannot be detected, only set by explictly
       #
       class Geocode < Base
-        def self.is?(query); true; end
+        def self.is?(query); false; end
       end
     end
   end

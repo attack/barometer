@@ -25,13 +25,13 @@ describe Barometer::Query::Converter::ToWoeId, :vcr => {
     converted_query.format.should == :woe_id
   end
 
-  it "converts :geocode -> :woe_id" do
-    query = Barometer::Query.new('New York, NY')
+  it "converts :unknown -> :woe_id" do
+    query = Barometer::Query.new('Paris, France')
 
     converter = Barometer::Query::Converter::ToWoeId.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == '2459115'
+    converted_query.q.should == '615702'
     converted_query.format.should == :woe_id
   end
 

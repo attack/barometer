@@ -7,7 +7,7 @@ module Barometer
         def self.call(query)
           return unless _has_geocode_key?
 
-          converted_query = query.get_conversion(:geocode, :coordinates, :postalcode)
+          converted_query = query.get_conversion(:geocode, :unknown, :coordinates, :postalcode)
           return unless converted_query
 
           response = Barometer::Utils::Post.call(

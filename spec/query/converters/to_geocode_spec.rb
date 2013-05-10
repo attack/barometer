@@ -65,6 +65,18 @@ describe Barometer::Query::Converter::ToGeocode, :vcr => {
     converted_query.geo.should_not be_nil
   end
 
+  it "converts :unknown -> :geocode" do
+    query = Barometer::Query.new('Paris, France')
+
+    converter = Barometer::Query::Converter::ToGeocode.new(query)
+    converted_query = converter.call
+
+    converted_query.q.should == 'Paris, IdF, France'
+    converted_query.format.should == :geocode
+    converted_query.country_code.should == 'FR'
+    converted_query.geo.should_not be_nil
+  end
+
   it "uses a previous coversion (if needed) on the query" do
     query = Barometer::Query.new('USGA0028')
     query.add_conversion(:icao, 'KSFO')

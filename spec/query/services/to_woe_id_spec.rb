@@ -21,14 +21,14 @@ describe Barometer::Query::Service::ToWoeId, :vcr => {
       Barometer::Query::Service::ToWoeId.call(query).should be_nil
     end
 
-    it "returns nothing if query doesn't have geocode format" do
+    it "returns nothing if query is an unsupported format" do
       query = Barometer::Query.new("90210")
       Barometer::Query::Service::ToWoeId.call(query).should be_nil
     end
 
-    it "returns a weather_id if the query is format geocode" do
-      query = Barometer::Query.new("New York, NY")
-      Barometer::Query::Service::ToWoeId.call(query).should == "2459115"
+    it "returns a weather_id if the query is format unknown" do
+      query = Barometer::Query.new("Paris, France")
+      Barometer::Query::Service::ToWoeId.call(query).should == "615702"
     end
 
     it "returns a weather_id if the query is format coordinates" do
