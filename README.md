@@ -15,8 +15,7 @@ unavailable.
 
 Barometer handles all conversions of the supplied query, so that the
 same query can be used for all (or most) services, even if they don't
-support the query directly. See the "Query" section for more information on
-this.
+support the query directly. See the "[Queries](#queries)" section for more info.
 
 ## Key Features
 
@@ -38,13 +37,13 @@ register-less (no API key required) international weather service
 ```ruby
 require 'barometer'
 
-barometer = Barometer.new("Paris")
+barometer = Barometer.new('Paris')
 weather = barometer.measure
 
 puts weather.current.temperature
 ```
 
-*See [detailed usage](#detailed_Usage) further down.*
+*See [detailed usage](#detailed-usage) further down.*
 
 ## Dependencies
 
@@ -56,13 +55,17 @@ The '~/.barometer' file can hold all your weather service API keys.
 
 eg. weatherbug.com
 
+```yaml
   weather_bug:
     code: YOUR_API_CODE
+```
 
 eg. Yahoo! Placemaker
 
+```yaml
   yahoo:
     app_id: YOUR_APP_ID
+```
 
 ## Queries
 
@@ -71,7 +74,7 @@ Barometer.  Every weather service accepts a different set of possible
 queries, so it usually is the case that the same query can only be used
 for a couple weather services.
 
-Barometer will allow the use of all query formats for all services
+Barometer will allow the use of all query formats for all services.
 It does this by first determining the original query format,
 then converting the query to a compatible format for each specific
 weather service.
@@ -90,12 +93,11 @@ code (ICAO) and it will return the weather as expected.
 * location name (ie address, city, state, landmark, etc.)
 * woeid (where on earth id, by Yahoo!)
 
-<a name='detailed_Usage'></a>
 ## Detailed Usage
 
 ### Sources
 
-The available sources are:
+The current available sources are:
 
 * Wunderground.com (:wunderground) [default]
 * Yahoo! Weather (:yahoo)
@@ -141,7 +143,7 @@ require 'barometer'
 # use yahoo and weather bug, if they both fail, use wunderground
 Barometer.config = { 1 => [:yahoo, {:weather_bug => {:keys => {:code => CODE_KEY} }}], 2 => :wunderground }
 
-barometer = Barometer.new("Paris")
+barometer = Barometer.new('Paris')
 weather = barometer.measure
 
 puts weather.current.temperture
@@ -151,12 +153,16 @@ puts weather.current.temperture
 
 You can use barometer from the command line. 
 
+```sh
   # barometer berlin
+```
 
 This will output the weather information for the given query.
 See the help for more command line information.
 
+```sh
   # barometer -h
+```
 
 ### Searching
 
@@ -183,7 +189,7 @@ puts weather.tomorrow.high.c
 ```ruby
 # note, the date is the date of the locations weather, not the date of the
 # user measuring the weather
-date = Date.parse("01-01-2009")
+date = Date.parse('01-01-2009')
 weather.for(date)       # returns forecast_measurement for default on date 
 
 puts weather.for(date).high.c
@@ -194,7 +200,7 @@ puts weather.for(date).high.c
 ```ruby
 # note, the time is the time of the locations weather, not the time of the
 # user measuring the weather
-time = Time.parse("13:00 01-01-2009")
+time = Time.parse('13:00 01-01-2009')
 weather.for(time)       # returns forecast_measurement for default at time 
 
 puts weather.for(time).low.f
@@ -212,7 +218,7 @@ require 'barometer'
 # use yahoo and wunderground
 Barometer.config = { 1 => [:yahoo, :wunderground] }
 
-barometer = Barometer.new("90210")
+barometer = Barometer.new('90210')
 weather = barometer.measure
 
 puts weather.temperture
@@ -224,7 +230,7 @@ This will calculate the average temperature as given by :yahoo and :wunderground
 
 You can weight the values from a weather service so that the values from that
 web service have more influence then other values.  The weights are set in the
-config ... see the config section
+config ... see the [config section](#source-configuration)
 
 ## Contributions
 
