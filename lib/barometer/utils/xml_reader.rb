@@ -16,6 +16,10 @@ module Barometer
           output = output.fetch(node, output)
         end
 
+        if block_given? && output
+          output = yield(output)
+        end
+
         output
       end
     end
