@@ -56,15 +56,15 @@ The '~/.barometer' file can hold all your weather service API keys.
 eg. weatherbug.com
 
 ```yaml
-  weather_bug:
-    code: YOUR_API_CODE
+weather_bug:
+  code: YOUR_API_CODE
 ```
 
 eg. Yahoo! Placemaker
 
 ```yaml
-  yahoo:
-    app_id: YOUR_APP_ID
+yahoo:
+  app_id: YOUR_APP_ID
 ```
 
 ## Queries
@@ -154,14 +154,14 @@ puts weather.current.temperture
 You can use barometer from the command line. 
 
 ```sh
-  # barometer berlin
+% barometer berlin
 ```
 
 This will output the weather information for the given query.
 See the help for more command line information.
 
 ```sh
-  # barometer -h
+% barometer -h
 ```
 
 ### Searching
