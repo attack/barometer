@@ -16,9 +16,8 @@ module Barometer
         def call
           return unless can_convert?
 
-          response = Service::YahooGeocode.call(@query)
-          @query.add_conversion(:coordinates, Service::YahooGeocode.parse_coordinates(response))
-          @query.add_conversion(:geocode, Service::YahooGeocode.parse_geocode(response))
+          @query.geo = Service::YahooGeocode.call(@query)
+          @query.add_conversion(:geocode, @query.geo.to_s)
         end
 
         private

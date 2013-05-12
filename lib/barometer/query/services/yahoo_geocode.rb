@@ -11,16 +11,22 @@ module Barometer
             'http://weather.yahooapis.com/forecastrss',
             _format_query(converted_query)
           )
-          Barometer::Utils::XmlReader.parse(response, 'rss', 'channel')
+
+          Barometer::Utils::XmlReader.parse(response, 'rss', 'channel') do |result|
+            _parse_result(result)
+          end
         end
 
-        def self.parse_geocode(response)
-          [response['location']['@city'], response['location']['@region'], response['location']['@country']].
-            select{|r|!r.empty?}.join(', ')
-        end
+        def self._parse_result(result)
+          payload = Utils::Payload.new(result)
 
-        def self.parse_coordinates(response)
-          [response['item']['lat'], response['item']['long']].select{|r|!r.empty?}.join(',')
+          Data::Geo.new.tap do |geo|
+            geo.locality = payload.fetch('location', '@city')
+            geo.region = payload.fetch('location', '@region')
+            _parse_country(geo, payload)
+            geo.latitude = payload.fetch('item', 'lat').to_f
+            geo.longitude = payload.fetch('item', 'long').to_f
+          end
         end
 
         private
@@ -31,6 +37,14 @@ module Barometer
           else
             puts "[WARNING] - converting #{query.format} -> geocode is deprecated by Yahoo! Weather" if Barometer::debug?
             { :p => query.q }
+          end
+        end
+
+        def self._parse_country(geo, payload)
+          if (country = payload.fetch('location', '@country')).size > 2
+            geo.country = country
+          else
+            geo.country_code = country
           end
         end
       end
