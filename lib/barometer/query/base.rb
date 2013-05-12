@@ -41,9 +41,8 @@ module Barometer
       def convert!(*preferred_formats)
         return self if preferred_formats.include?(format)
 
-        converters = Barometer::Query::Converter.find_all(format, preferred_formats)
-
-        [converters].flatten.map {|converter| converter.new(self).call}.last ||
+        get_conversion(*preferred_formats) ||
+          do_conversion(format, preferred_formats) ||
           raise(Barometer::Query::ConversionNotPossible)
       end
 
@@ -68,6 +67,15 @@ module Barometer
       def freeze_query
         @q.freeze
         @format.freeze
+      end
+
+      def do_conversion(format, preferred_formats)
+        converters = Barometer::Query::Converter.find_all(format, preferred_formats)
+        converters.map do |converter|
+          to_format = converter.keys.first
+          converter_klass = converter.values.first
+          get_conversion(to_format) || converter_klass.new(self).call
+        end.last
       end
     end
   end

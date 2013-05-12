@@ -21,12 +21,15 @@ module Barometer
       end
 
       def self.find(from_format, to_format)
-        @@converters.fetch(to_format, {}).fetch(from_format, nil)
+        converter = @@converters.fetch(to_format, {}).fetch(from_format, nil)
+        {to_format => converter} if converter
       end
 
       def self.find_all(from_format, to_formats)
-        _find_direct_converter(from_format, Array(to_formats)) ||
-          _find_indirect_converters(from_format, Array(to_formats))
+        converters = _find_direct_converter(from_format, Array(to_formats))
+        return converters unless converters.empty?
+
+        _find_indirect_converters(from_format, Array(to_formats))
       end
 
       def self._find_direct_converter(from_format, to_formats)
@@ -35,7 +38,7 @@ module Barometer
           converter = find(from_format, to_format)
           break if converter
         end
-        converter
+        [converter].compact
       end
 
       def self._find_indirect_converters(from_format, to_formats)
@@ -45,7 +48,7 @@ module Barometer
           converter = find(:geocode, to_format)
           break if converter
         end
-        [geocode_converter, converter] if geocode_converter && converter
+        geocode_converter && converter ? [geocode_converter, converter] : []
       end
     end
   end
