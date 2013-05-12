@@ -10,7 +10,7 @@ end
 
 describe Barometer::Query::Service::ToWoeId, :vcr => {
   :match_requests_on => [:method, :uri, params_in_body],
-  :cassette_name => "WebService::ToWoeId"
+  :cassette_name => "Service::ToWoeId"
 } do
   describe ".call," do
     before { Barometer.yahoo_placemaker_app_id = YAHOO_KEY }

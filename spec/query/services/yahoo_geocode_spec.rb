@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Barometer::Query::Service::YahooGeocode, :vcr => {
-  :cassette_name => "WebService::YahooGeocode"
+  :cassette_name => "Service::YahooGeocode"
 } do
   describe ".call" do
     it "returns nothing if query doesn't have weather_id or woe_id format" do

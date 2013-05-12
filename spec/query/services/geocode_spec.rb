@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Barometer::Query::Service::Geocode, :vcr => {
-  :cassette_name => "WebService::Geocode"
+  :cassette_name => "Service::Geocode"
 } do
   describe ".fetch" do
     it "returns a Geo object" do
