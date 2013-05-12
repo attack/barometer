@@ -24,8 +24,8 @@ module Barometer
             geo.locality = payload.fetch('location', '@city')
             geo.region = payload.fetch('location', '@region')
             _parse_country(geo, payload)
-            geo.latitude = payload.fetch('item', 'lat').to_f
-            geo.longitude = payload.fetch('item', 'long').to_f
+            geo.latitude = payload.fetch('item', 'lat')
+            geo.longitude = payload.fetch('item', 'long')
           end
         end
 

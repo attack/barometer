@@ -33,8 +33,8 @@ module Barometer
           payload = Utils::Payload.new(result)
 
           Data::Geo.new.tap do |geo|
-            geo.latitude = payload.fetch('geometry', 'location', 'lat').to_f
-            geo.longitude = payload.fetch('geometry', 'location', 'lng').to_f
+            geo.latitude = payload.fetch('geometry', 'location', 'lat')
+            geo.longitude = payload.fetch('geometry', 'location', 'lng')
 
             detected_query_types = payload.fetch('types')
             query_parts = []
