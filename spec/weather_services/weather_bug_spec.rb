@@ -1,5 +1,4 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
-include Barometer
 
 describe Barometer::WeatherService::WeatherBug, :vcr => {
   :cassette_name => "WeatherService::WeatherBug"
@@ -13,7 +12,7 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
     context "when no keys provided" do
       it "raises error" do
         expect {
-          WeatherService::WeatherBug.call(nil)
+          Barometer::WeatherService::WeatherBug.call(nil)
         }.to raise_error(Barometer::WeatherService::KeyRequired)
       end
     end
@@ -23,7 +22,7 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
       let(:query) { double(:query, :convert! => converted_query, :geo => nil) }
       let(:config) { {:keys => {:code => WEATHERBUG_CODE}, :metric => true} }
 
-      subject { WeatherService::WeatherBug.call(query, config) }
+      subject { Barometer::WeatherService::WeatherBug.call(query, config) }
 
       it "asks the query to convert to accepted formats" do
         query.should_receive(:convert!).with(:short_zipcode, :coordinates)

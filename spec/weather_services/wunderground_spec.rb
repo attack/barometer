@@ -1,5 +1,4 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
-include Barometer
 
 describe Barometer::WeatherService::Wunderground, :vcr => {
   :cassette_name => "WeatherService::Wunderground"
@@ -14,7 +13,7 @@ describe Barometer::WeatherService::Wunderground, :vcr => {
     let(:query) { double(:query, :convert! => converted_query, :geo => nil) }
     let(:config) { {:metric => true} }
 
-    subject { WeatherService::Wunderground.call(query, config) }
+    subject { Barometer::WeatherService::Wunderground.call(query, config) }
 
     it "asks the query to convert to accepted formats" do
       query.should_receive(:convert!).with(:zipcode, :postalcode, :icao, :coordinates, :geocode)
