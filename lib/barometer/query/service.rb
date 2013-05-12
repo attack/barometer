@@ -1,4 +1,4 @@
-require 'query/services/geocode'
+require 'query/services/google_geocode'
 require 'query/services/yahoo_geocode'
 require 'query/services/to_weather_id'
 require 'query/services/timezone'
