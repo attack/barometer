@@ -1,8 +1,8 @@
 module Barometer
   module Query
     class Base
-      attr_reader :format
-      attr_accessor :geo, :timezone
+      attr_reader :format, :geo
+      attr_accessor :timezone
 
       def initialize(query)
         @q = query
@@ -49,6 +49,10 @@ module Barometer
 
       def to_s
         q.to_s
+      end
+
+      def geo=(geo)
+        @geo.merge(geo)
       end
 
       private

@@ -220,6 +220,28 @@ describe Barometer::Query::Base do
     end
   end
 
+  describe '#geo=' do
+    it 'updates the current geo values' do
+      query = Barometer::Query::Base.new('90210')
+      query.geo.tap do |geo|
+        geo.locality = 'foo'
+        geo.region = 'bar'
+        geo.country_code = 'FB'
+      end
+
+      geo = Barometer::Data::Geo.new
+      geo.latitude = 12.34
+      geo.longitude = -56.78
+
+      query.geo = geo
+      query.geo.locality.should == 'foo'
+      query.geo.region.should == 'bar'
+      query.geo.country_code.should == 'FB'
+      query.geo.latitude.should == 12.34
+      query.geo.longitude.should == -56.78
+    end
+  end
+
   describe '#to_s' do
     it 'returns the query q value' do
       query = Barometer::Query::Base.new('90210')
