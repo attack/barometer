@@ -10,7 +10,7 @@ module Barometer
 
         response = _get(query)
 
-        output = Barometer::Utils::XmlReader.parse(response, "rss", "channel")
+        output = Barometer::Utils::XmlReader.parse(response, 'rss', 'channel')
         Barometer::Utils::Payload.new(output)
       end
 
@@ -20,7 +20,7 @@ module Barometer
 
       def _get(query)
         Barometer::Utils::Get.call(
-          "http://weather.yahooapis.com/forecastrss",
+          'http://weather.yahooapis.com/forecastrss',
           _format_request(query)
         )
       end

@@ -9,7 +9,7 @@ module Barometer
       def get_current(query)
         puts "fetch weatherbug current: #{query.q}" if Barometer::debug?
 
-        response = _get("getLiveWeatherRSS.aspx", query)
+        response = _get('getLiveWeatherRSS.aspx', query)
 
         # Some nodes have attributes along with text values, and
         # XML parsers will ignore the attributes. For a couple
@@ -21,9 +21,9 @@ module Barometer
         zip_match = response.match(/zipcode=\"(\d*)\"/)
         zipcode = zip_match[1] if zip_match
 
-        output = Barometer::Utils::XmlReader.parse(response, "weather", "ob")
-        output["barometer:icon"] = icon
-        output["barometer:station_zipcode"] = zipcode
+        output = Barometer::Utils::XmlReader.parse(response, 'weather', 'ob')
+        output['barometer:icon'] = icon
+        output['barometer:station_zipcode'] = zipcode
 
         Barometer::Utils::Payload.new(output)
       end
@@ -31,8 +31,8 @@ module Barometer
       def get_forecast(query)
         puts "fetch weatherbug forecast: #{query.q}" if Barometer::debug?
 
-        response = _get("getForecastRSS.aspx", query)
-        output = Barometer::Utils::XmlReader.parse(response, "weather", "forecasts")
+        response = _get('getForecastRSS.aspx', query)
+        output = Barometer::Utils::XmlReader.parse(response, 'weather', 'forecasts')
         Barometer::Utils::Payload.new(output)
       end
 
@@ -48,7 +48,7 @@ module Barometer
       end
 
       def _format_request
-        { :ACode => api_code, :OutputType => "1", :UnitType => _unit_type }
+        { :ACode => api_code, :OutputType => '1', :UnitType => _unit_type }
       end
 
       def _format_query(query)
