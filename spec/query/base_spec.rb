@@ -6,43 +6,43 @@ describe Barometer::Query::Base do
       it 'detects :short_zipcode' do
         query = Barometer::Query::Base.new('90210')
         query.format.should == :short_zipcode
-        query.country_code.should == 'US'
+        query.geo.country_code.should == 'US'
       end
 
       it 'detects :zipcode' do
         query = Barometer::Query::Base.new('90210-5555')
         query.format.should == :zipcode
-        query.country_code.should == 'US'
+        query.geo.country_code.should == 'US'
       end
 
       it 'detects :postalcode' do
         query = Barometer::Query::Base.new('T5B 4M9')
         query.format.should == :postalcode
-        query.country_code.should == 'CA'
+        query.geo.country_code.should == 'CA'
       end
 
       it 'detects :icao' do
         query = Barometer::Query::Base.new('KSFO')
         query.format.should == :icao
-        query.country_code.should == 'US'
+        query.geo.country_code.should == 'US'
       end
 
       it 'detects :weather_id' do
         query = Barometer::Query::Base.new('USGA0028')
         query.format.should == :weather_id
-        query.country_code.should == 'US'
+        query.geo.country_code.should == 'US'
       end
 
       it 'detects :coordinates' do
         query = Barometer::Query::Base.new('40.756054,-73.986951')
         query.format.should == :coordinates
-        query.country_code.should be_nil
+        query.geo.country_code.should be_nil
       end
 
       it 'defaults to :unknown' do
         query = Barometer::Query::Base.new('New York, NY')
         query.format.should == :unknown
-        query.country_code.should be_nil
+        query.geo.country_code.should be_nil
       end
     end
   end
@@ -69,7 +69,7 @@ describe Barometer::Query::Base do
   end
 
   describe '#get_conversion' do
-    let(:query) { Barometer::Query::Base.new('foo') }
+    let(:query) { Barometer::Query::Base.new('somewhere') }
 
     context 'when the requested format is that of the query' do
       it 'returns self instead of a conversion' do
@@ -113,18 +113,22 @@ describe Barometer::Query::Base do
     it 'includes the current country code value' do
       query.add_conversion(:geocode, 'Paris')
 
-      query.country_code = nil
-      query.get_conversion(:geocode, :woe_id).country_code.should be_nil
+      query.geo.country_code = nil
+      query.get_conversion(:geocode, :woe_id).geo.country_code.should be_nil
 
-      query.country_code = 'FR'
-      query.get_conversion(:geocode, :woe_id).country_code.should == 'FR'
+      query.geo.country_code = 'FR'
+      query.get_conversion(:geocode, :woe_id).geo.country_code.should == 'FR'
     end
 
     it 'includes the current geo value' do
       query = Barometer::Query::Base.new('34.1030032,-118.4104684')
       query.add_conversion(:geocode, 'Paris')
-      query.geo = { :foo => 'bar' }
-      query.get_conversion(:geocode, :woe_id).geo.should == { :foo => 'bar' }
+
+      geo = Barometer::Data::Geo.new
+      geo.locality = 'New York'
+      query.geo = geo
+
+      query.get_conversion(:geocode, :woe_id).geo.to_s.should == geo.to_s
     end
   end
 
@@ -142,7 +146,6 @@ describe Barometer::Query::Base do
         converted_query = query.convert!(:coordinates)
         converted_query.q.should == '12.34,-56.78'
         converted_query.format.should == :coordinates
-        converted_query.country_code.should be_nil
       end
     end
 
@@ -177,7 +180,6 @@ describe Barometer::Query::Base do
         converted_query = query.convert!(:coordinates)
         converted_query.q.should == '12.34,-56.78'
         converted_query.format.should == :coordinates
-        converted_query.country_code.should be_nil
       end
 
       it 'uses any exisiting intermediate conversions' do
@@ -202,7 +204,6 @@ describe Barometer::Query::Base do
         converted_query = query.convert!(:coordinates)
         converted_query.q.should == '12.34,-56.78'
         converted_query.format.should == :coordinates
-        converted_query.country_code.should be_nil
       end
     end
 

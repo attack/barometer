@@ -5,7 +5,7 @@ require 'query/converter'
 require 'query/service'
 
 module Barometer
-  ConvertedQuery = Struct.new(:q, :format, :country_code, :geo)
+  ConvertedQuery = Struct.new(:q, :format, :geo)
 
   module Query
     class ConversionNotPossible < StandardError; end

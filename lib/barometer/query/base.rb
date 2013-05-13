@@ -2,10 +2,11 @@ module Barometer
   module Query
     class Base
       attr_reader :format
-      attr_accessor :country_code, :geo, :timezone
+      attr_accessor :geo, :timezone
 
       def initialize(query)
         @q = query
+        @geo = Barometer::Data::Geo.new
         detect_format
         freeze_query
         @conversions = {}
@@ -53,13 +54,13 @@ module Barometer
       private
 
       def converted_query(q, format)
-        Barometer::ConvertedQuery.new(q, format, country_code, geo)
+        Barometer::ConvertedQuery.new(q, format, geo)
       end
 
       def detect_format
         Barometer::Query::Format.match?(@q) do |key, klass|
           @format = key
-          @country_code = klass.country_code(@q)
+          @geo.country_code = klass.country_code(@q)
           @format_klass = klass
         end
       end

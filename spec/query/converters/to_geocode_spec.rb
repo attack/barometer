@@ -13,8 +13,7 @@ describe Barometer::Query::Converter::ToGeocode, :vcr => {
 
     converted_query.q.should == 'Beverly Hills, CA, United States'
     converted_query.format.should == :geocode
-    converted_query.country_code.should == 'US'
-    converted_query.geo.should_not be_nil
+    converted_query.geo.country_code.should == 'US'
   end
 
   it "converts :zipcode -> :geocode" do
@@ -25,8 +24,7 @@ describe Barometer::Query::Converter::ToGeocode, :vcr => {
 
     converted_query.q.should == 'Beverly Hills, CA, United States'
     converted_query.format.should == :geocode
-    converted_query.country_code.should == 'US'
-    converted_query.geo.should_not be_nil
+    converted_query.geo.country_code.should == 'US'
   end
 
   it "converts :coordinates -> :geocode" do
@@ -37,8 +35,7 @@ describe Barometer::Query::Converter::ToGeocode, :vcr => {
 
     converted_query.q.should == 'Manhattan, NY, United States'
     converted_query.format.should == :geocode
-    converted_query.country_code.should == 'US'
-    converted_query.geo.should_not be_nil
+    converted_query.geo.country_code.should == 'US'
   end
 
   it "converts :postalcode -> :geocode" do
@@ -49,8 +46,7 @@ describe Barometer::Query::Converter::ToGeocode, :vcr => {
 
     converted_query.q.should == 'Edmonton, AB, Canada'
     converted_query.format.should == :geocode
-    converted_query.country_code.should == 'CA'
-    converted_query.geo.should_not be_nil
+    converted_query.geo.country_code.should == 'CA'
   end
 
   it "converts :icao -> :geocode" do
@@ -61,8 +57,7 @@ describe Barometer::Query::Converter::ToGeocode, :vcr => {
 
     converted_query.q.should == 'San Francisco, CA, United States'
     converted_query.format.should == :geocode
-    converted_query.country_code.should == 'US'
-    converted_query.geo.should_not be_nil
+    converted_query.geo.country_code.should == 'US'
   end
 
   it "converts :unknown -> :geocode" do
@@ -73,8 +68,7 @@ describe Barometer::Query::Converter::ToGeocode, :vcr => {
 
     converted_query.q.should == 'Paris, IdF, France'
     converted_query.format.should == :geocode
-    converted_query.country_code.should == 'FR'
-    converted_query.geo.should_not be_nil
+    converted_query.geo.country_code.should == 'FR'
   end
 
   it "uses a previous coversion (if needed) on the query" do
@@ -86,8 +80,7 @@ describe Barometer::Query::Converter::ToGeocode, :vcr => {
 
     converted_query.q.should == 'San Francisco, CA, United States'
     converted_query.format.should == :geocode
-    converted_query.country_code.should == 'US'
-    converted_query.geo.should_not be_nil
+    converted_query.geo.country_code.should == 'US'
   end
 
   it "does not convert :weather_id" do

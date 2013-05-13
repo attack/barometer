@@ -15,7 +15,7 @@ describe Barometer::Query::Converter::FromGeocodeToCoordinates do
 
     converted_query.q.should == '40.7143528,-74.0059731'
     converted_query.format.should == :coordinates
-    converted_query.country_code.should == 'US'
+    converted_query.geo.country_code.should == 'US'
     converted_query.geo.should_not be_nil
   end
 

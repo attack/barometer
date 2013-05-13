@@ -19,7 +19,7 @@ module Barometer
 
         def self._format_params(query)
           params = { :sensor => 'false' }
-          params[:region] = query.country_code if query.country_code
+          params[:region] = query.geo.country_code if query.geo.country_code
 
           if query.format == :coordinates
             params[:latlng] = query.q.dup
