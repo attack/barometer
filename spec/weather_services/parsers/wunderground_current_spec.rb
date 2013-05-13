@@ -2,13 +2,12 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Barometer::Parser::WundergroundCurrent do
   let(:response) { Barometer::Response.new }
-  let(:query) { double(:query, :geo => nil) }
 
   it "parses the timezones correctly" do
     payload = Barometer::Utils::Payload.new({
       "local_time" => "May 18, 10:46 AM PDT"
     })
-    parser = Barometer::Parser::WundergroundCurrent.new(response, query)
+    parser = Barometer::Parser::WundergroundCurrent.new(response)
     parser.parse(payload)
 
     utc_observed_at = Time.utc(2013,5,18,17,46,0)

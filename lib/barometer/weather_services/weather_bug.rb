@@ -55,13 +55,13 @@ module Barometer
 
       def fetch_and_parse_current
         payload = @requester.get_current(@converted_query)
-        current_parser = Barometer::Parser::WeatherBugCurrent.new(response, @query)
+        current_parser = Barometer::Parser::WeatherBugCurrent.new(response)
         current_parser.parse(payload)
       end
 
       def fetch_and_parse_forecast
         payload = @requester.get_forecast(@converted_query)
-        forecast_parser = Barometer::Parser::WeatherBugForecast.new(response, @query)
+        forecast_parser = Barometer::Parser::WeatherBugForecast.new(response)
         forecast_parser.parse(payload)
       end
     end

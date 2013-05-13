@@ -2,7 +2,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Barometer::Parser::WundergroundCurrent do
   let(:response) { Barometer::Response.new }
-  let(:query) { double(:query) }
 
   it "parses the timezones correctly" do
     payload = Barometer::Utils::Payload.new({
@@ -15,7 +14,7 @@ describe Barometer::Parser::WundergroundCurrent do
         }
       ]}
     })
-    parser = Barometer::Parser::WundergroundForecast.new(response, query)
+    parser = Barometer::Parser::WundergroundForecast.new(response)
     parser.parse(payload)
 
     utc_starts_at = Time.utc(2013,5,19,5,46,0)
@@ -46,7 +45,7 @@ describe Barometer::Parser::WundergroundCurrent do
         }
       }
     })
-    parser = Barometer::Parser::WundergroundForecast.new(response, query)
+    parser = Barometer::Parser::WundergroundForecast.new(response)
     parser.parse(payload)
 
     utc_current_sun_rise = Time.utc(2013,5,18,14,59,0)

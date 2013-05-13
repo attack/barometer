@@ -2,7 +2,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Barometer::Parser::WeatherBugForecast do
   let(:response) { Barometer::Response.new }
-  let(:query) { double(:query, :geo => nil) }
 
   it "parses the timezones correctly" do
     response.timezone = 'PDT'
@@ -11,7 +10,7 @@ describe Barometer::Parser::WeatherBugForecast do
       "@date" => "4/13/2013 10:23:00 AM",
       "forecast" => [{"high" => "13"}]
     })
-    parser = Barometer::Parser::WeatherBugForecast.new(response, query)
+    parser = Barometer::Parser::WeatherBugForecast.new(response)
     parser.parse(payload)
 
     utc_starts_at = Time.utc(2013,4,13,7,0,0)

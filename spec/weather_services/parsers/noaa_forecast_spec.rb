@@ -2,7 +2,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Barometer::Parser::NoaaForecast do
   let(:response) { Barometer::Response.new }
-  let(:query) { double(:query, :add_conversion => nil) }
 
   it "parses the timezones correctly" do
     payload = Barometer::Utils::Payload.new({
@@ -23,7 +22,7 @@ describe Barometer::Parser::NoaaForecast do
         "conditions_icon" => { "icon_link" => [] }
       }
     })
-    parser = Barometer::Parser::NoaaForecast.new(response, query)
+    parser = Barometer::Parser::NoaaForecast.new(response)
     parser.parse(payload)
 
     utc_starts_at = Time.utc(2013,2,9,14,0,0)

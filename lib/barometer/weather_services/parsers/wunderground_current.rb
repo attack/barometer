@@ -1,9 +1,8 @@
 module Barometer
   module Parser
     class WundergroundCurrent
-      def initialize(response, query)
+      def initialize(response)
         @response = response
-        @query = query
       end
 
       def parse(payload)
@@ -49,23 +48,14 @@ module Barometer
 
       def _parse_location(payload)
         @response.location.tap do |location|
-          if geo = @query.geo
-            location.city = geo.locality
-            location.state_code = geo.region
-            location.country = geo.country
-            location.country_code = geo.country_code
-            location.latitude = geo.latitude
-            location.longitude = geo.longitude
-          else
-            location.name = payload.fetch('display_location', 'full')
-            location.city = payload.fetch('display_location', 'city')
-            location.state_code = payload.fetch('display_location', 'state')
-            location.state_name = payload.fetch('display_location', 'state_name')
-            location.zip_code = payload.fetch('display_location', 'zip')
-            location.country_code = payload.fetch('display_location', 'country')
-            location.latitude = payload.fetch('display_location', 'latitude')
-            location.longitude = payload.fetch('display_location', 'longitude')
-          end
+          location.name = payload.fetch('display_location', 'full')
+          location.city = payload.fetch('display_location', 'city')
+          location.state_code = payload.fetch('display_location', 'state')
+          location.state_name = payload.fetch('display_location', 'state_name')
+          location.zip_code = payload.fetch('display_location', 'zip')
+          location.country_code = payload.fetch('display_location', 'country')
+          location.latitude = payload.fetch('display_location', 'latitude')
+          location.longitude = payload.fetch('display_location', 'longitude')
         end
       end
 

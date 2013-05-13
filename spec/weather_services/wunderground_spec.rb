@@ -74,29 +74,5 @@ describe Barometer::WeatherService::Wunderground, :vcr => {
       should have_forecast(:sun, :rise).as_format(:time)
       should have_forecast(:sun, :set).as_format(:time)
     end
-
-    context "when the query already has geo data" do
-      let(:geo) do
-        double(:geo,
-          :locality => "locality",
-          :region => "region",
-          :country => "country",
-          :country_code => "country_code",
-          :latitude => "latitude",
-          :longitude => "longitude"
-        )
-      end
-
-      before { query.stub(:geo => geo) }
-
-      it "uses the query geo data for 'location'" do
-        should have_data(:location, :city).as_value("locality")
-        should have_data(:location, :state_code).as_value("region")
-        should have_data(:location, :country).as_value("country")
-        should have_data(:location, :country_code).as_value("country_code")
-        should have_data(:location, :latitude).as_value("latitude")
-        should have_data(:location, :longitude).as_value("longitude")
-      end
-    end
   end
 end

@@ -40,7 +40,7 @@ module Barometer
 
       def fetch_and_parse_weather
         payload = @requester.get_weather(@converted_query)
-        parser = Barometer::Parser::Yahoo.new(response, @query)
+        parser = Barometer::Parser::Yahoo.new(response)
         parser.parse(payload)
       end
     end

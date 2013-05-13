@@ -2,7 +2,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Barometer::Parser::Yahoo do
   let(:response) { Barometer::Response.new }
-  let(:query) { double(:query, :geo => nil) }
 
   it "parses the timezones correctly for current weather" do
     payload = Barometer::Utils::Payload.new({
@@ -10,7 +9,7 @@ describe Barometer::Parser::Yahoo do
         "pubDate" => "Sun, 14 Apr 2013 1:24 pm PDT"
       }
     })
-    parser = Barometer::Parser::Yahoo.new(response, query)
+    parser = Barometer::Parser::Yahoo.new(response)
     parser.parse(payload)
 
     utc_observed_at = Time.utc(2013,4,14,20,24,0)
@@ -32,7 +31,7 @@ describe Barometer::Parser::Yahoo do
         ]
       }
     })
-    parser = Barometer::Parser::Yahoo.new(response, query)
+    parser = Barometer::Parser::Yahoo.new(response)
     parser.parse(payload)
 
     utc_starts_at = Time.utc(2013,4,14,7,0,0)
@@ -57,7 +56,7 @@ describe Barometer::Parser::Yahoo do
         "@sunset" => "5:32 pm"
       }
     })
-    parser = Barometer::Parser::Yahoo.new(response, query)
+    parser = Barometer::Parser::Yahoo.new(response)
     parser.parse(payload)
 
     utc_current_sun_rise = Time.utc(2013,4,14,13,44,0)

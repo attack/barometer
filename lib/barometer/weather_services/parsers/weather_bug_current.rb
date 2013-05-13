@@ -1,9 +1,8 @@
 module Barometer
   module Parser
     class WeatherBugCurrent
-      def initialize(response, query)
+      def initialize(response)
         @response = response
-        @query = query
       end
 
       def parse(payload)

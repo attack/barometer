@@ -78,29 +78,5 @@ describe Barometer::WeatherService::Noaa, :vcr => {
       should have_forecast(:high).as_format(:temperature)
       should have_forecast(:low).as_format(:temperature)
     end
-
-    context "when the query already has geo data" do
-      let(:geo) do
-        double(:geo,
-          :locality => "locality",
-          :region => "region",
-          :country => "country",
-          :country_code => "country_code",
-          :latitude => "latitude",
-          :longitude => "longitude"
-        )
-      end
-
-      before { query.stub(:geo => geo) }
-
-      it "uses the query geo data for 'location'" do
-        should have_data(:location, :city).as_value("locality")
-        should have_data(:location, :state_code).as_value("region")
-        should have_data(:location, :country).as_value("country")
-        should have_data(:location, :country_code).as_value("country_code")
-        should have_data(:location, :latitude).as_value(34.10)
-        should have_data(:location, :longitude).as_value(-118.41)
-      end
-    end
   end
 end

@@ -1,9 +1,8 @@
 module Barometer
   module Parser
     class NoaaForecast
-      def initialize(response, query)
+      def initialize(response)
         @response = response
-        @query = query
       end
 
       def parse(payload)
@@ -18,8 +17,6 @@ module Barometer
       def _parse_forecast_location(payload)
         latitude = payload.fetch('location', 'point', '@latitude')
         longitude = payload.fetch('location', 'point', '@longitude')
-
-        @query.add_conversion(:coordinates, "#{latitude},#{longitude}")
 
         @response.location.tap do |location|
           location.latitude = latitude

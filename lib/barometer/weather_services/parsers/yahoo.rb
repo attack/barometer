@@ -1,9 +1,8 @@
 module Barometer
   module Parser
     class Yahoo
-      def initialize(response, query)
+      def initialize(response)
         @response = response
-        @query = query
       end
 
       def parse(payload)
@@ -53,20 +52,11 @@ module Barometer
 
       def _parse_location(payload)
         @response.location.tap do |location|
-          if geo = @query.geo
-            location.city = geo.locality
-            location.state_code = geo.region
-            location.country = geo.country
-            location.country_code = geo.country_code
-            location.latitude = geo.latitude
-            location.longitude = geo.longitude
-          else
-            location.city = payload.fetch('location', '@city')
-            location.state_code = payload.fetch('location', '@region')
-            location.country_code = payload.fetch('location', '@country')
-            location.latitude = payload.fetch('item', 'lat')
-            location.longitude = payload.fetch('item', 'long')
-          end
+          location.city = payload.fetch('location', '@city')
+          location.state_code = payload.fetch('location', '@region')
+          location.country_code = payload.fetch('location', '@country')
+          location.latitude = payload.fetch('item', 'lat')
+          location.longitude = payload.fetch('item', 'long')
         end
       end
 

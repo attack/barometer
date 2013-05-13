@@ -2,7 +2,6 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Barometer::Parser::WeatherBugCurrent do
   let(:response) { Barometer::Response.new }
-  let(:query) { double(:query, :geo => nil) }
 
   it "parses the timezones correctly" do
     payload = Barometer::Utils::Payload.new({
@@ -16,7 +15,7 @@ describe Barometer::Parser::WeatherBugCurrent do
         'time_zone' => { '@abbrv' => 'PDT' }
       }
     })
-    parser = Barometer::Parser::WeatherBugCurrent.new(response, query)
+    parser = Barometer::Parser::WeatherBugCurrent.new(response)
     parser.parse(payload)
 
     utc_observed_at = Time.utc(2013,5,18,17,46,0)
@@ -55,7 +54,7 @@ describe Barometer::Parser::WeatherBugCurrent do
         'second' => { '@number' => '50' },
       }
     })
-    parser = Barometer::Parser::WeatherBugCurrent.new(response, query)
+    parser = Barometer::Parser::WeatherBugCurrent.new(response)
     parser.parse(payload)
 
     utc_current_sun_rise = Time.utc(2013,4,13,13,44,19)
