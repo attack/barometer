@@ -35,7 +35,7 @@ module Barometer
       response_started_at = Time.now.utc
 
       begin
-        response = source(key, version).call(query)
+        response = source(key, version).call(query, options)
         if response.complete?
           response.status_code = 200
         else

@@ -99,6 +99,7 @@ describe Barometer::WeatherService do
   describe ".measure" do
     let(:test_weather) { double(:test_weather) }
     let(:query) { double(:query) }
+    let(:options) { {} }
     let(:test_response) { Barometer::Response.new }
 
     before do
@@ -121,8 +122,8 @@ describe Barometer::WeatherService do
     end
 
     it "passes along query and options" do
-      test_weather.should_receive(:call).with(query)
-      Barometer::WeatherService.measure(:test_weather, query)
+      test_weather.should_receive(:call).with(query, options)
+      Barometer::WeatherService.measure(:test_weather, query, options)
     end
 
     describe "timing information" do

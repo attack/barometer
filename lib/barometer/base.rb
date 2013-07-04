@@ -13,7 +13,8 @@ module Barometer
       tier = 1
       until @weather.success?
         Utils::ConfigReader.each_service(tier) do |source, config|
-          options = { :metric => metric }.merge!(config)
+          options = { :metric => metric }
+          options.merge!(config) if config
           _measure(source, options)
         end
         tier += 1

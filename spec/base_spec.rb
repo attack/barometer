@@ -80,5 +80,19 @@ describe Barometer::Base do
         subject.measure
       end
     end
+
+    context "when no configuration given" do
+      it "uses a default config" do
+        query = double(:query)
+        Barometer::Query.stub(:new).with(query_term).and_return(query)
+
+        weather_service = double(:weather_service)
+        weather_service.should_receive(:call).with(query, {:metric => nil}).and_return(response)
+        Barometer::WeatherService.register(:other_test, weather_service)
+
+        Barometer.config = { 1 => :other_test }
+        subject.measure
+      end
+    end
   end
 end
