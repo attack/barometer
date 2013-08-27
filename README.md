@@ -151,18 +151,7 @@ puts weather.current.temperture
 
 ### Command Line
 
-You can use barometer from the command line. 
-
-```sh
-% barometer berlin
-```
-
-This will output the weather information for the given query.
-See the help for more command line information.
-
-```sh
-% barometer -h
-```
+Extracted to separate gem: [barometer-cli](http://github.com/attack/barometer-cli)
 
 ### Searching
 
