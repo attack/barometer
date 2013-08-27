@@ -7,8 +7,6 @@ module Barometer
       end
 
       def get_current(query)
-        puts "fetch weatherbug current: #{query.q}" if Barometer::debug?
-
         response = _get('getLiveWeatherRSS.aspx', query)
 
         # Some nodes have attributes along with text values, and
@@ -29,8 +27,6 @@ module Barometer
       end
 
       def get_forecast(query)
-        puts "fetch weatherbug forecast: #{query.q}" if Barometer::debug?
-
         response = _get('getForecastRSS.aspx', query)
         output = Barometer::Utils::XmlReader.parse(response, 'weather', 'forecasts')
         Barometer::Utils::Payload.new(output)

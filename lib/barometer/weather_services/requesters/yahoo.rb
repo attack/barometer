@@ -6,10 +6,7 @@ module Barometer
       end
 
       def get_weather(query)
-        puts "fetch yahoo weather: #{query.q}" if Barometer::debug?
-
         response = _get(query)
-
         output = Barometer::Utils::XmlReader.parse(response, 'rss', 'channel')
         Barometer::Utils::Payload.new(output)
       end
@@ -33,7 +30,6 @@ module Barometer
         if query.format == :woe_id
           { :w => query.q }
         else
-          puts "[WARNING] - using Yahoo Weather! with #{query.format} is deprecated" if Barometer::debug?
           { :p => query.q }
         end
       end

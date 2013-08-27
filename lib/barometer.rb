@@ -14,12 +14,6 @@ module Barometer
   def self.config; @@config; end;
   def self.config=(hash); @@config = hash; end;
 
-  @@debug_mode = false
-  def self.debug; @@debug_mode; end;
-  def self.debug=(value); @@debug_mode = value; end;
-  def self.debug!; @@debug_mode = true; end;
-  def self.debug?; @@debug_mode; end;
-
   @@yahoo_placemaker_app_id = nil
   def self.yahoo_placemaker_app_id; @@yahoo_placemaker_app_id; end;
   def self.yahoo_placemaker_app_id=(yahoo_key); @@yahoo_placemaker_app_id = yahoo_key; end;

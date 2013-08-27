@@ -31,7 +31,6 @@ module Barometer
         converted_format = formats.detect{|f| format == f || @conversions.has_key?(f)}
         return unless converted_format
 
-        puts "found: #{format} -> #{converted_format} = #{q} -> #{@conversions[converted_format]}" if Barometer::debug?
         if converted_format == format
           self
         else

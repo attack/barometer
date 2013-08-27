@@ -5,7 +5,6 @@ module Barometer
         def self.call(query)
           converted_query = query.get_conversion(:woe_id, :weather_id)
           return unless converted_query
-          puts "reverse #{converted_query.format}: #{converted_query.q}" if Barometer::debug?
 
           response =  Barometer::Utils::Get.call(
             'http://weather.yahooapis.com/forecastrss',
@@ -35,7 +34,6 @@ module Barometer
           if query.format == :woe_id
             { :w => query.q }
           else
-            puts "[WARNING] - converting #{query.format} -> geocode is deprecated by Yahoo! Weather" if Barometer::debug?
             { :p => query.q }
           end
         end

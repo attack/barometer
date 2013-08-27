@@ -5,15 +5,11 @@ module Barometer
       end
 
       def get_current(query)
-        puts "fetch NOAA current weather: #{query.q}" if Barometer::debug?
-
         response = _get("http://w1.weather.gov/xml/current_obs/#{query.q}.xml")
         _parse_for_payload(response, 'current_observation')
       end
 
       def get_forecast(query)
-        puts "fetch NOAA forecast: #{query.q}" if Barometer::debug?
-
         response = _get('http://graphical.weather.gov/xml/sample_products/browser_interface/ndfdBrowserClientByDay.php', query)
         _parse_for_payload(response, 'dwml', 'data')
       end

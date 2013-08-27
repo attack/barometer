@@ -5,15 +5,11 @@ module Barometer
       end
 
       def get_current(query)
-        puts "fetch wunderground current: #{query.q}" if Barometer::debug?
-
         response = _get('WXCurrentObXML/index.xml', query)
         _parse_for_payload(response, 'current_observation')
       end
 
       def get_forecast(query)
-        puts "fetch wunderground forecast: #{query.q}" if Barometer::debug?
-
         response = _get('ForecastXML/index.xml', query)
         _parse_for_payload(response, 'forecast')
       end

@@ -18,7 +18,6 @@ YAHOO_KEY = Barometer::Support::KeyFileParser.find(:yahoo, :app_id) || 'yahoo'
 downcased_weatherbug_code = WEATHERBUG_CODE.to_s
 downcased_weatherbug_code[0] = WEATHERBUG_CODE.to_s[0..0].downcase
 
-# Barometer.debug!
 Barometer.yahoo_placemaker_app_id = 'placemaker'
 
 VCR.configure do |config|

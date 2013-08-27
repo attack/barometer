@@ -11,7 +11,6 @@ module Barometer
         def self.fetch(query)
           converted_query = query.get_conversion(:coordinates)
           return unless converted_query
-          puts "fetching NOAA station ID near #{converted_query.q}" if Barometer::debug?
 
           _fetch_via_noaa(converted_query)
         end
@@ -42,7 +41,6 @@ module Barometer
             end
           end
         rescue
-          puts "[ERROR] finding NOAA station" if Barometer::debug?
           nil
         end
       end

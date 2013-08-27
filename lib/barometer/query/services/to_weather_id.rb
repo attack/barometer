@@ -5,7 +5,6 @@ module Barometer
         def self.call(query)
           converted_query = query.get_conversion(:geocode, :unknown)
           return unless converted_query
-          puts "fetch weather_id: #{converted_query.q}" if Barometer::debug?
 
           response = Barometer::Utils::Get.call(
             'http://xoap.weather.com/search/search',

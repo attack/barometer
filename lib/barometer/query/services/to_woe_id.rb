@@ -32,7 +32,6 @@ module Barometer
             microformat = "<html><body><div class=\"geo\"><span class=\"latitude\">%s</span><span class=\"longitude\">%s</span></div></body></html>"
             output = sprintf(microformat, query.q.to_s.split(',')[0], query.q.to_s.split(',')[1])
           end
-          puts "placemaker adjusted query: #{output}" if Barometer::debug?
           output
         end
 
