@@ -1,7 +1,7 @@
 module Barometer
   KEY_FILE = File.expand_path(File.join('~', '.barometer'))
 
-  module Utils
+  module Support
     class KeyFileParser
       def self.find(*paths)
         if File.exists?(KEY_FILE)

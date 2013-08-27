@@ -49,24 +49,6 @@ puts weather.current.temperature
 
 [![Dependency Status](https://gemnasium.com/attack/barometer.png)](https://gemnasium.com/attack/barometer)
 
-### Api Keys
-
-The '~/.barometer' file can hold all your weather service API keys.
-
-eg. weatherbug.com
-
-```yaml
-weather_bug:
-  code: YOUR_API_CODE
-```
-
-eg. Yahoo! Placemaker
-
-```yaml
-yahoo:
-  app_id: YOUR_APP_ID
-```
-
 ## Queries
 
 The query handling is one of the most beneficial and powerful features of
