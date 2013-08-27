@@ -50,12 +50,12 @@ describe Barometer::Weather do
       @weather = Barometer::Weather.new
       @wunderground = Barometer::Response.new
       @wunderground.source = :wunderground
-      @wunderground.stub!(:success).and_return(true)
-      @wunderground.stub!(:success?).and_return(true)
+      @wunderground.stub(:success).and_return(true)
+      @wunderground.stub(:success?).and_return(true)
       @yahoo = Barometer::Response.new
       @yahoo.source = :yahoo
-      @yahoo.stub!(:success).and_return(true)
-      @yahoo.stub!(:success?).and_return(true)
+      @yahoo.stub(:success).and_return(true)
+      @yahoo.stub(:success?).and_return(true)
       @google = Barometer::Response.new
       @google.source = :google
       @weather.responses << @wunderground
@@ -64,9 +64,9 @@ describe Barometer::Weather do
     end
 
     it "retrieves a source response" do
-      lambda { @weather.source(1) }.should raise_error(ArgumentError)
-      lambda { @weather.source("valid") }.should_not raise_error(ArgumentError)
-      lambda { @weather.source(:valid) }.should_not raise_error(ArgumentError)
+      expect { @weather.source(1) }.to raise_error(ArgumentError)
+      expect { @weather.source("valid") }.not_to raise_error
+      expect { @weather.source(:valid) }.not_to raise_error
       @weather.source(:does_not_exist).should be_nil
       @weather.source(:wunderground).should == @wunderground
     end
@@ -93,13 +93,13 @@ describe Barometer::Weather do
       @wunderground = Barometer::Response.new
       @wunderground.source = :wunderground
       @wunderground.current = Barometer::Response::Current.new
-      @wunderground.stub!(:success).and_return(true)
-      @wunderground.stub!(:success?).and_return(true)
+      @wunderground.stub(:success).and_return(true)
+      @wunderground.stub(:success?).and_return(true)
       @yahoo = Barometer::Response.new
       @yahoo.source = :yahoo
       @yahoo.current = Barometer::Response::Current.new
-      @yahoo.stub!(:success).and_return(true)
-      @yahoo.stub!(:success?).and_return(true)
+      @yahoo.stub(:success).and_return(true)
+      @yahoo.stub(:success?).and_return(true)
       @weather.responses << @wunderground
       @weather.responses << @yahoo
     end

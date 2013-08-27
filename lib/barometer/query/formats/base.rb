@@ -19,7 +19,6 @@ module Barometer
         def self.country_code(query); nil; end
 
         def self.is?(query)
-          raise ArgumentError unless query.is_a?(String)
           !(query =~ self.regex).nil?
         end
 

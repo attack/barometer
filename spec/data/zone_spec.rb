@@ -40,7 +40,7 @@ describe Barometer::Data::Zone do
       end
 
       it "responds to tz" do
-        lambda { Barometer::Data::Zone.new("invalid timezone") }.should raise_error(ArgumentError)
+        expect { Barometer::Data::Zone.new("invalid timezone") }.to raise_error(ArgumentError)
 
         zone = Barometer::Data::Zone.new(@timezone)
         zone.tz.should_not be_nil
