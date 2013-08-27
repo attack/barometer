@@ -4,7 +4,7 @@ require 'utils/data_types'
 module Barometer
   module Response
     class Base
-      include Barometer::Utils::DataTypes
+      include Utils::DataTypes
 
       location :location, :station
       timezone :timezone
@@ -15,15 +15,11 @@ module Barometer
 
       attr_accessor :current, :forecast
 
-      def current
-        @current
-      end
-
       def initialize(metric=true)
         @metric = metric
         @weight = 1
-        @current = Barometer::Response::Current.new
-        @forecast = Barometer::Response::PredictionCollection.new
+        @current = Current.new
+        @forecast = PredictionCollection.new
         @requested_at = Time.now.utc
       end
 
@@ -35,23 +31,20 @@ module Barometer
         current && !current.temperature.nil?
       end
 
-      def now
-        timezone ? timezone.now : nil
-      end
-
       def for(date=nil)
-        date = @timezone.today unless date || !@timezone
-        date ||= Date.today
-        return nil unless (@forecast && @forecast.size > 0)
-
-        forecast = @forecast.for(date)
-        forecast
+        forecast.for(date || today)
       end
 
       def build_forecast
-        forecast_result = Barometer::Response::Prediction.new
+        forecast_result = Prediction.new
         yield(forecast_result)
         self.forecast << forecast_result
+      end
+
+      private
+
+      def today
+        timezone ? timezone.today : Date.today
       end
     end
   end
