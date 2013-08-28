@@ -3,34 +3,51 @@ module Barometer
     attr_reader :query, :weather
 
     def initialize(query)
-      @query = Barometer::Query.new(query)
-      @weather = Barometer::Weather.new
+      @query = Query.new(query)
+      @weather = Weather.new
     end
 
     def measure(metric=nil)
-      @weather.start_at = Time.now.utc
-
-      tier = 1
-      until @weather.success?
-        Utils::ConfigReader.each_service(tier) do |source, config|
-          options = { :metric => metric }
-          options.merge!(config) if config
-          _measure(source, options)
-        end
-        tier += 1
+      record_time do
+        measure_until_successful(metric) or raise OutOfSources
       end
-
-      @weather.end_at = Time.now.utc
       @weather
     end
 
     private
 
-    def _measure(source, options)
-      response = Barometer::WeatherService.measure(source.to_sym, @query, options)
-      response.weight = options[:weight] if options && options[:weight]
+    def record_time
+      @weather.start_at = Time.now.utc
+      yield
+      @weather.end_at = Time.now.utc
+    end
 
-      @weather.responses << response
+    def measure_until_successful(metric)
+      Utils::ConfigReader.take_level_while do |level|
+        measure_using_all_services_in_level(level, metric)
+        measure_with_next_level?
+      end
+      success?
+    end
+
+    def measure_using_all_services_in_level(level, metric)
+      Utils::ConfigReader.services(level) do |source, config|
+        options = { :metric => metric }
+        options.merge!(config) if config
+        measure_and_record(source, options)
+      end
+    end
+
+    def measure_and_record(source, options)
+      @weather.responses << WeatherService.measure(source, query, options)
+    end
+
+    def success?
+      @weather.success?
+    end
+
+    def measure_with_next_level?
+      !success?
     end
   end
 end

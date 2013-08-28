@@ -1,12 +1,14 @@
 module Barometer
   module Utils
     module ConfigReader
-      def self.each_service(level, &block)
-        if sources = Barometer.config[level]
-          _dig(sources, nil, &block)
-        else
-          raise Barometer::OutOfSources
+      def self.take_level_while(&block)
+        Barometer.config.take_while do |level, level_config|
+          yield level
         end
+      end
+
+      def self.services(level, &block)
+        _dig(Barometer.config[level], nil, &block)
       end
 
       # iterate through the setup until we have a source name (and possibly

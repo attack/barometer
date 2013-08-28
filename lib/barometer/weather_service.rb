@@ -28,9 +28,9 @@ module Barometer
     def self.measure(*args)
       key = args.shift
       query = args.shift
-      options = args.shift
+      options = args.shift || {}
 
-      version = (options || {}).fetch(:version, nil)
+      version = options.fetch(:version, nil)
 
       response_started_at = Time.now.utc
 
@@ -59,6 +59,7 @@ module Barometer
         response.status_code = 408
       end
 
+      response.weight = options[:weight]
       response.response_started_at = response_started_at
       response.response_ended_at = Time.now.utc
       response.source = key

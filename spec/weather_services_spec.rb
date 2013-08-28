@@ -145,6 +145,16 @@ describe Barometer::WeatherService do
         response = Barometer::WeatherService.measure(:test_weather, query)
         response.source.should == :test_weather
       end
+
+      it "adds the source weight" do
+        response = Barometer::WeatherService.measure(:test_weather, query, {:weight => 10})
+        expect( response.weight ).to eq 10
+      end
+
+      it "adds the default source weight" do
+        response = Barometer::WeatherService.measure(:test_weather, query)
+        expect( response.weight ).to eq 1
+      end
     end
 
     describe "error handling" do
