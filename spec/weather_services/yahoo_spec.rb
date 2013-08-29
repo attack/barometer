@@ -47,7 +47,7 @@ describe Barometer::WeatherService::Yahoo, :vcr => {
 
       should have_data(:timezone, :code).as_format(/^P[DS]T$/i)
 
-      subject.forecast.size.should == 2
+      subject.forecast.size.should == 5
       should have_forecast(:starts_at).as_format(:time)
       should have_forecast(:ends_at).as_format(:time)
       should have_forecast(:icon).as_format(:number)
