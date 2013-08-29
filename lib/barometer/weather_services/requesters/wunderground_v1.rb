@@ -1,6 +1,6 @@
 module Barometer
   module Requester
-    class Wunderground
+    class WundergroundV1
       def initialize(metric=true)
       end
 
@@ -17,15 +17,15 @@ module Barometer
       private
 
       def _get(path, query)
-        Barometer::Utils::Get.call(
+        Utils::Get.call(
           "http://api.wunderground.com/auto/wui/geo/#{path}",
           {:query => query.q.dup}
         )
       end
 
       def _parse_for_payload(response, *keys_to_unwrap)
-        output = Barometer::Utils::XmlReader.parse(response, *keys_to_unwrap)
-        Barometer::Utils::Payload.new(output)
+        output = Utils::XmlReader.parse(response, *keys_to_unwrap)
+        Utils::Payload.new(output)
       end
     end
   end

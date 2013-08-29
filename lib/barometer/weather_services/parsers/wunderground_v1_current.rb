@@ -1,6 +1,6 @@
 module Barometer
   module Parser
-    class WundergroundCurrent
+    class WundergroundV1Current
       def initialize(response)
         @response = response
       end
