@@ -141,17 +141,15 @@ After you have measured the data, Barometer provides several methods to help
 you get the data you are after. All examples assume you already have measured
 the data as shown in the above examples.
 
-#### By preference (default service)
+#### By relativity
 
 ```ruby
-weather.default         # returns measurement for default source
-weather.current         # returns current_measurement for default
-weather.now             # returns current_measurement for default
-weather.forecast        # returns all forecast_measurements for default
-weather.today           # returns forecast_measurement for default today
-weather.tomorrow        # returns forecast_measurement for default tomorrow
+weather.current         # returns the first successful current_measurement
+weather.forecast        # returns the first successful forecast_measurements
+weather.today           # returns the first successful forecast_measurement for today
+weather.tomorrow        # returns the first successful forecast_measurement for tomorrow
 
-puts weather.now.temperature.c
+puts weather.current.temperature.c
 puts weather.tomorrow.high.c
 ```
 
@@ -161,7 +159,7 @@ puts weather.tomorrow.high.c
 # note, the date is the date of the locations weather, not the date of the
 # user measuring the weather
 date = Date.parse('01-01-2009')
-weather.for(date)       # returns forecast_measurement for default on date 
+weather.for(date)       # returns the first successful forecast_measurement for the date
 
 puts weather.for(date).high.c
 ```
@@ -172,14 +170,14 @@ puts weather.for(date).high.c
 # note, the time is the time of the locations weather, not the time of the
 # user measuring the weather
 time = Time.parse('13:00 01-01-2009')
-weather.for(time)       # returns forecast_measurement for default at time 
+weather.for(time)       # returns the first successful forecast_measurement for the time
 
 puts weather.for(time).low.f
 ```
 
 ### Averages
 
-If you consume more then one weather service, Barometer can provide averages
+If you consume more then one weather service, Barometer will provide averages
 for the values (currently only for the 'current' values and not the forecasted
 values).
 

@@ -42,13 +42,12 @@ module Barometer
         before { response_one.stub(:success? => true) }
 
         it "measures the weather" do
-          metric = double(:boolean)
           WeatherService.stub(:measure => response_one)
 
-          barometer.measure(metric)
+          barometer.measure
 
           expect( WeatherService ).to have_received(:measure).
-            with(:test_one, barometer.query, { :metric => metric, :keys => keys })
+            with(:test_one, barometer.query, { :metric => true, :keys => keys })
         end
 
         it "adds the result to weather.responses" do
