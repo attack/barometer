@@ -35,7 +35,6 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
         subject.metric.should be_true
 
         should have_data(:current, :observed_at).as_format(:time)
-        # specifics about when?
         should have_data(:current, :stale_at).as_format(:time)
 
         should have_data(:current, :humidity).as_format(:float)
@@ -64,7 +63,7 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
 
         should have_data(:timezone, :code).as_format(/^P[DS]T$/i)
 
-        subject.forecast.size.should == 7
+        subject.forecast.size.should == 6
         should have_forecast(:starts_at).as_format(:time)
         should have_forecast(:ends_at).as_format(:time)
         should have_forecast(:condition).as_format(:string)
