@@ -33,14 +33,23 @@ module Barometer
 
     def measure_using_all_services_in_level(level)
       Utils::ConfigReader.services(level) do |source, config|
-        options = { :metric => metric }
-        options.merge!(config) if config
-        measure_and_record(source, options)
+        version = extract_version(config)
+        options = build_options(config)
+        measure_and_record(source, version, options)
       end
     end
 
-    def measure_and_record(source, options)
-      @weather.responses << WeatherService.measure(source, query, options)
+    def extract_version(config)
+      return unless config
+      config[:version]
+    end
+
+    def build_options(config)
+      {:metric => metric}.merge(config || {})
+    end
+
+    def measure_and_record(source, version, options)
+      @weather.responses << WeatherService.new(source, version).measure(query, options)
     end
 
     def success?

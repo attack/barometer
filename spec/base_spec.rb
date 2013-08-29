@@ -6,10 +6,10 @@ module Barometer
 
     describe "#measure" do
       let(:keys) { {:fake_secret => 'ABC123'} }
-      let(:response_one) { Response.new.tap{|r| r.stub(:complete? => true)} }
-      let(:response_two) { Response.new.tap{|r| r.stub(:complete? => true)} }
-      let(:weather_service_one) { double(:weather_service_one, :call => response_one) }
-      let(:weather_service_two) { double(:weather_service_two, :call => response_two) }
+      let(:response_foo) { Response.new.tap{|r| r.stub(:complete? => true)} }
+      let(:response_bar) { Response.new.tap{|r| r.stub(:complete? => true)} }
+      let(:foo_weather_service) { double(:weather_service, :call => response_foo) }
+      let(:bar_weather_service) { double(:weather_service, :call => response_bar) }
 
       around do |example|
         services_cache = WeatherService.services
@@ -23,9 +23,9 @@ module Barometer
       end
 
       before do
-        Barometer.config = { 1 => {:test_one => {:keys => keys} } }
-        WeatherService.register(:test_one, weather_service_one)
-        WeatherService.register(:test_two, weather_service_two)
+        Barometer.config = {1 => {:foo => {:keys => keys}}}
+        WeatherService.register(:foo, foo_weather_service)
+        WeatherService.register(:bar, bar_weather_service)
       end
 
       it "returns a Weather object" do
@@ -39,59 +39,49 @@ module Barometer
       end
 
       context "when the first weather service is successful" do
-        before { response_one.stub(:success? => true) }
+        before { response_foo.stub(:success? => true) }
 
         it "measures the weather" do
-          WeatherService.stub(:measure => response_one)
-
           barometer.measure
-
-          expect( WeatherService ).to have_received(:measure).
-            with(:test_one, barometer.query, { :metric => true, :keys => keys })
+          expect( foo_weather_service ).to have_received(:call).
+            with(barometer.query, {:metric => true, :keys => keys})
         end
 
         it "adds the result to weather.responses" do
           weather = barometer.measure
-          expect( weather.responses ).to include response_one
+          expect( weather.responses ).to include response_foo
         end
 
         context "and another weather service is configured for the same service_level" do
-          before { Barometer.config = { 1 => [:test_one, :test_two] } }
+          before { Barometer.config = {1 => [:foo, :bar]} }
 
           it "measures the weather again" do
-            WeatherService.stub(:measure).and_return(response_one, response_two)
-
             barometer.measure
-
-            expect( WeatherService ).to have_received(:measure).
-              with(:test_two, barometer.query, anything)
+            expect( bar_weather_service ).to have_received(:call).
+              with(barometer.query, {:metric => true})
           end
 
           it "adds the result to weather.responses" do
             weather = barometer.measure
-            expect( weather.responses ).to include response_two
+            expect( weather.responses ).to include response_bar
           end
         end
 
         context "and another weather service is configured for the next service_level" do
-          before { Barometer.config = { 1 => :test_one, 2 => :test_two } }
+          before { Barometer.config = {1 => :foo, 2 => :bar} }
 
           it "does not measure the weather again" do
-            WeatherService.stub(:measure => response_one)
-
             barometer.measure
-
-            expect( WeatherService ).not_to have_received(:measure).
-              with(:test_two, barometer.query, anything)
+            expect( bar_weather_service ).not_to have_received(:call)
           end
         end
       end
 
       context "when the first weather service is not successful" do
-        before { response_one.stub(:success? => false) }
+        before { response_foo.stub(:success? => false) }
 
         context "and there are no other weather services configured" do
-          before { Barometer.config = { 1 => :test_one } }
+          before { Barometer.config = {1 => :foo} }
 
           it "raises an error" do
             expect {
@@ -102,22 +92,19 @@ module Barometer
 
         context "and another weather service is configured for the next service_level" do
           before do
-            Barometer.config = { 1 => [:test_one, :test_two], 2 => :test_two }
-            response_two.stub(:success? => true)
+            Barometer.config = {1 => [:foo, :bar], 2 => :bar}
+            response_bar.stub(:success? => true)
           end
 
           it "measures the weather using the next service_level" do
-            WeatherService.stub(:measure).and_return(response_one, response_two)
-
             barometer.measure
-
-            expect( WeatherService ).to have_received(:measure).
-              with(:test_two, barometer.query, anything)
+            expect( bar_weather_service ).to have_received(:call).
+              with(barometer.query, {:metric => true})
           end
 
           it "adds the result to weather.responses" do
             weather = barometer.measure
-            expect( weather.responses ).to include response_two
+            expect( weather.responses ).to include response_bar
           end
         end
       end
