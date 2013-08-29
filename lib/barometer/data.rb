@@ -9,3 +9,8 @@ require 'data/temperature'
 require 'data/distance'
 require 'data/vector'
 require 'data/pressure'
+
+module Barometer
+  module Data
+  end
+end
