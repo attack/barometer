@@ -1,7 +1,7 @@
 module Barometer
   module Data
     class Geo
-      include Barometer::Utils::DataTypes
+      include Utils::DataTypes
 
       float :latitude, :longitude
       string :query, :address
@@ -17,7 +17,7 @@ module Barometer
       end
 
       def merge(geo)
-        return unless geo.is_a?(Barometer::Data::Geo)
+        return unless geo.is_a?(Geo)
 
         %w(
           locality region country country_code postal_code

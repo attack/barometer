@@ -2,15 +2,7 @@ require 'tzinfo'
 
 module Barometer
   module Data
-    #
-    # A simple Zone class
-    #
-    # Used for building and converting timezone aware date and times
-    # Really, these are just wrappers for TZInfo conversions plus
-    # some extras.
-    #
     class Zone
-
       @@zone_codes_file = File.expand_path(
         File.join(File.dirname(__FILE__), 'translations', 'zone_codes.yml'))
       @@zone_codes = nil
@@ -18,12 +10,12 @@ module Barometer
       attr_accessor :zone_full, :zone_code, :zone_offset, :tz
 
       def initialize(zone)
-        if Data::Zone.is_zone_full?(zone)
+        if Zone.is_zone_full?(zone)
           @zone_full = zone
           @tz = TZInfo::Timezone.get(zone)
-        elsif Data::Zone.is_zone_offset?(zone)
+        elsif Zone.is_zone_offset?(zone)
           @zone_offset = zone
-        elsif Data::Zone.is_zone_code?(zone)
+        elsif Zone.is_zone_code?(zone)
           @zone_code = zone
         else
           raise(ArgumentError, "invalid time zone")
@@ -34,7 +26,6 @@ module Barometer
         @zone_full || @zone_offset || @zone_code
       end
 
-      # what is the Timezone Short Code for the current timezone
       def code
         return @zone_code if @zone_code
         return nil unless @tz
@@ -49,18 +40,15 @@ module Barometer
         if @zone_offset
           @zone_offset.to_f * 60 * 60
         elsif @zone_code
-          Data::Zone.zone_to_offset(@zone_code)
-        elsif @zone_full
+          Zone.zone_to_offset(@zone_code)
         end
       end
 
-      # is the current timezone in daylights savings mode?
       def dst?
         return nil unless @tz
-        @tz.period_for_utc(::Time.now.utc).dst?
+        @tz.period_for_utc(Time.now.utc).dst?
       end
 
-      # return Time.now.utc for the set timezone
       def now
         if @zone_full
           now = @tz.utc_to_local(Time.now.utc)
@@ -70,7 +58,6 @@ module Barometer
         now
       end
 
-      # return Date.today for the set timezone
       def today
         now = self.now
         Date.new(now.year, now.month, now.day)
@@ -94,10 +81,6 @@ module Barometer
         end
       end
 
-      #
-      # Class Methods
-      #
-
       def self.is_zone_code?(zone)
         return false unless (zone && zone.is_a?(String))
         _load_zone_codes unless @@zone_codes
@@ -114,15 +97,13 @@ module Barometer
         zone.to_f.abs <= 14
       end
 
-      #
-      # Known conflicts
+      # Known conflicts:
       # IRT (ireland and india)
       # CST (central standard time, china standard time)
       #
       def self.zone_to_offset(timezone)
         offset = 0
         seconds_in_hour = 60*60
-        # try to use Time
         unless offset = Time.zone_offset(timezone)
           # that would have been too easy, do it manually
           # http://www.timeanddate.com/library/abbreviations/timezones/
@@ -136,7 +117,6 @@ module Barometer
         $:.unshift(File.dirname(__FILE__))
         @@zone_codes ||= YAML.load_file(@@zone_codes_file)
       end
-
     end
   end
 end

@@ -4,9 +4,6 @@ module Barometer
       # METRIC_UNITS = "km"
       # IMPERIAL_UNITS = "m"
 
-      # auto convert magnitude to_f (unless Int), degress to_i (unless Float)
-      # convert incoming string to_i or to_f
-
       def initialize(*args)
         args = super(*args)
         parse_values!(args)

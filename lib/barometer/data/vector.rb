@@ -4,10 +4,6 @@ module Barometer
       # METRIC_UNITS = "kph"
       # IMPERIAL_UNITS = "mph"
 
-      # auto convert magnitude to_f (unless Int), degress to_i (unless Float)
-      # add compass direction output
-      # convert incoming string to_i or to_f
-
       attr_reader :bearing
 
       def initialize(*args)
