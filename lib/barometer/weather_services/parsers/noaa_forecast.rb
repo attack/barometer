@@ -73,20 +73,28 @@ module Barometer
         (index / 2).floor
       end
 
+      def times
+        @times ||= payload.fetch('time_layout').detect{|layout| layout['layout_key'] == 'k-p12h-n14-2'}
+      end
+
       def start_times
-        @start_times ||= payload.fetch('time_layout').detect{|layout| layout['layout_key'] == 'k-p12h-n14-2'}['start_valid_time']
+        @start_times ||= times['start_valid_time']
       end
 
       def end_times
-        @end_times ||= payload.fetch('time_layout').detect{|layout| layout['layout_key'] == 'k-p12h-n14-2'}['end_valid_time']
+        @end_times ||= times['end_valid_time']
+      end
+
+      def temperatures
+        @temperatures ||= payload.fetch('parameters', 'temperature')
       end
 
       def high_temperatures
-        @high_temperatures ||= payload.fetch('parameters', 'temperature').detect{|t| t['@type'] == 'maximum'}.fetch('value', []).map(&:to_i)
+        @high_temperatures ||= temperatures.detect{|t| t['@type'] == 'maximum'}.fetch('value', [])
       end
 
       def low_temperatures
-        @low_temperatures ||= payload.fetch('parameters', 'temperature').detect{|t| t['@type'] == 'minimum'}.fetch('value', []).map(&:to_i)
+        @low_temperatures ||= temperatures.detect{|t| t['@type'] == 'minimum'}.fetch('value', [])
       end
 
       def precipitations
