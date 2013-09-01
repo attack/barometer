@@ -10,11 +10,10 @@ module Barometer::WeatherService
     end
 
     describe ".call" do
-      let(:converted_query) { Barometer::ConvertedQuery.new('Calgary,AB', :geocode) }
-      let(:query) { double(:query, :convert! => converted_query, :geo => nil) }
-      let(:config) { {:metric => true} }
+      let(:converted_query) { Barometer::ConvertedQuery.new('Calgary,AB', :geocode, :metric) }
+      let(:query) { double(:query, :convert! => converted_query, :geo => nil, :metric? => true) }
 
-      subject { WundergroundV1.call(query, config) }
+      subject { WundergroundV1.call(query) }
 
       it "asks the query to convert to accepted formats" do
         query.should_receive(:convert!).with(:zipcode, :postalcode, :icao, :coordinates, :geocode)

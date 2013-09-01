@@ -10,17 +10,19 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
 
   describe ".call" do
     context "when no keys provided" do
+      let(:query) { double(:query, :metric? => true) }
+
       it "raises error" do
         expect {
-          Barometer::WeatherService::WeatherBug.call(nil)
+          Barometer::WeatherService::WeatherBug.call(query)
         }.to raise_error(Barometer::WeatherService::KeyRequired)
       end
     end
 
     context "when keys are provided" do
-      let(:converted_query) { Barometer::ConvertedQuery.new("90210", :short_zipcode) }
-      let(:query) { double(:query, :convert! => converted_query, :geo => nil) }
-      let(:config) { {:keys => {:code => WEATHERBUG_CODE}, :metric => true} }
+      let(:converted_query) { Barometer::ConvertedQuery.new("90210", :short_zipcode, :metric) }
+      let(:query) { double(:query, :convert! => converted_query, :geo => nil, :metric? => true) }
+      let(:config) { {:keys => {:code => WEATHERBUG_CODE}} }
 
       subject { Barometer::WeatherService::WeatherBug.call(query, config) }
 

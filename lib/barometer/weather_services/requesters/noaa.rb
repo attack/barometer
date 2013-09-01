@@ -1,9 +1,6 @@
 module Barometer
   module Requester
     class Noaa
-      def initialize(metric=true)
-      end
-
       def get_current(query)
         response = _get("http://w1.weather.gov/xml/current_obs/#{query.q}.xml")
         _parse_for_payload(response, 'current_observation')

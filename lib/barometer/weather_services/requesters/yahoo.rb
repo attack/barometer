@@ -1,32 +1,32 @@
 module Barometer
   module Requester
     class Yahoo
-      def initialize(metric=true)
-        @metric = metric
+      def initialize(query)
+        @query = query
       end
 
-      def get_weather(query)
-        response = _get(query)
+      def get_weather
+        response = _get
         output = Barometer::Utils::XmlReader.parse(response, 'rss', 'channel')
         Barometer::Utils::Payload.new(output)
       end
 
       private
 
-      attr_reader :metric
+      attr_reader :query
 
-      def _get(query)
+      def _get
         Barometer::Utils::Get.call(
           'http://weather.yahooapis.com/forecastrss',
-          _format_request(query)
+          _format_request
         )
       end
 
-      def _format_request(query)
-        { :u => _unit_type }.merge(_format_query(query))
+      def _format_request
+        { :u => _unit_type }.merge(_format_query)
       end
 
-      def _format_query(query)
+      def _format_query
         if query.format == :woe_id
           { :w => query.q }
         else
@@ -35,7 +35,7 @@ module Barometer
       end
 
       def _unit_type
-        metric ? 'c' : 'f'
+        query.metric? ? 'c' : 'f'
       end
     end
   end

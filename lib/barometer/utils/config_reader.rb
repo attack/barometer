@@ -8,7 +8,7 @@ module Barometer
       end
 
       def self.services(level, &block)
-        _dig(Barometer.config[level], nil, &block)
+        _dig(Barometer.config[level], {}, &block)
       end
 
       # iterate through the setup until we have a source name (and possibly
@@ -27,7 +27,7 @@ module Barometer
           yield(data.to_sym, config)
         elsif data.is_a?(Array)
           data.each do |datum|
-            _dig(datum, nil, &block)
+            _dig(datum, {}, &block)
           end
         elsif data.is_a?(Hash)
           data.each do |datum, config|

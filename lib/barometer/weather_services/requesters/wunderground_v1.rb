@@ -1,22 +1,25 @@
 module Barometer
   module Requester
     class WundergroundV1
-      def initialize(metric=true)
+      def initialize(query)
+        @query = query
       end
 
-      def get_current(query)
-        response = _get('WXCurrentObXML/index.xml', query)
+      def get_current
+        response = _get('WXCurrentObXML/index.xml')
         _parse_for_payload(response, 'current_observation')
       end
 
-      def get_forecast(query)
-        response = _get('ForecastXML/index.xml', query)
+      def get_forecast
+        response = _get('ForecastXML/index.xml')
         _parse_for_payload(response, 'forecast')
       end
 
       private
 
-      def _get(path, query)
+      attr_reader :query
+
+      def _get(path)
         Utils::Get.call(
           "http://api.wunderground.com/auto/wui/geo/#{path}",
           {:query => query.q.dup}

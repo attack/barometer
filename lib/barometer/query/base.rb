@@ -1,12 +1,13 @@
 module Barometer
   module Query
     class Base
-      attr_reader :format, :geo
+      attr_reader :format, :geo, :units
       attr_accessor :timezone
 
-      def initialize(query)
+      def initialize(query, units=:metric)
         @q = query
-        @geo = Barometer::Data::Geo.new
+        @units = units
+        @geo = Data::Geo.new
         detect_format
         freeze_query
         @conversions = {}
@@ -43,7 +44,11 @@ module Barometer
 
         get_conversion(*preferred_formats) ||
           do_conversion(format, preferred_formats) ||
-          raise(Barometer::Query::ConversionNotPossible)
+          raise(ConversionNotPossible)
+      end
+
+      def metric?
+        units == :metric
       end
 
       def to_s
@@ -57,11 +62,11 @@ module Barometer
       private
 
       def converted_query(q, format)
-        Barometer::ConvertedQuery.new(q, format, geo)
+        ConvertedQuery.new(q, format, units, geo)
       end
 
       def detect_format
-        Barometer::Query::Format.match?(@q) do |key, klass|
+        Format.match?(@q) do |key, klass|
           @format = key
           @geo.country_code = klass.country_code(@q)
           @format_klass = klass
@@ -71,10 +76,11 @@ module Barometer
       def freeze_query
         @q.freeze
         @format.freeze
+        @units.freeze
       end
 
       def do_conversion(format, preferred_formats)
-        converters = Barometer::Query::Converter.find_all(format, preferred_formats)
+        converters = Converter.find_all(format, preferred_formats)
         converters.map do |converter|
           to_format = converter.keys.first
           converter_klass = converter.values.first

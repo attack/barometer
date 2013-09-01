@@ -17,15 +17,14 @@ module Barometer
       def initialize(query, config={})
         @query = query
         @converted_query = nil
-        @metric = config.fetch(:metric, true)
 
-        @response = Response.new(metric)
+        @response = Response.new(query.metric?)
       end
 
       def measure!
         convert_query!
 
-        @requester = Barometer::Requester::Noaa.new(metric)
+        @requester = Barometer::Requester::Noaa.new
         fetch_and_parse_forecast
         fetch_and_parse_current
 
@@ -34,7 +33,7 @@ module Barometer
 
       private
 
-      attr_reader :response, :api_code, :metric
+      attr_reader :response, :api_code
 
       def convert_query!
         @converted_query = @query.convert!(*self.class.accepted_formats)

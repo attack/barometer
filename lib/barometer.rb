@@ -22,8 +22,8 @@ module Barometer
   def self.timeout; @@timeout; end;
   def self.timeout=(value); @@timeout = value; end;
 
-  def self.new(query)
-    Barometer::Base.new(query)
+  def self.new(*args)
+    Barometer::Base.new(*args)
   end
 
   class OutOfSources < StandardError; end

@@ -15,14 +15,13 @@ module Barometer
 
       def initialize(query, config={})
         @query = query
-        @metric = config.fetch(:metric, true)
-        @response = Response.new(metric)
+        @response = Response.new(query.metric?)
       end
 
       def measure!
         convert_query!
 
-        @requester = Barometer::Requester::Yahoo.new(metric)
+        @requester = Barometer::Requester::Yahoo.new(@converted_query)
         fetch_and_parse_weather
 
         response
@@ -30,7 +29,7 @@ module Barometer
 
       private
 
-      attr_reader :response, :metric
+      attr_reader :response
 
       def convert_query!
         @converted_query = @query.convert!(*self.class.accepted_formats)
@@ -39,7 +38,7 @@ module Barometer
       end
 
       def fetch_and_parse_weather
-        payload = @requester.get_weather(@converted_query)
+        payload = @requester.get_weather
         parser = Barometer::Parser::Yahoo.new(response)
         parser.parse(payload)
       end

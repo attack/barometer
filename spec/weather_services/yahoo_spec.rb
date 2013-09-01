@@ -9,11 +9,10 @@ describe Barometer::WeatherService::Yahoo, :vcr => {
   end
 
   describe ".call" do
-    let(:converted_query) { Barometer::ConvertedQuery.new("90210", :zipcode) }
-    let(:query) { double(:query, :convert! => converted_query, :geo => nil) }
-    let(:config) { {:metric => true} }
+    let(:converted_query) { Barometer::ConvertedQuery.new("90210", :zipcode, :metric) }
+    let(:query) { double(:query, :convert! => converted_query, :geo => nil, :metric? => true) }
 
-    subject { Barometer::WeatherService::Yahoo.call(query, config) }
+    subject { Barometer::WeatherService::Yahoo.call(query) }
 
     it "asks the query to convert to accepted formats" do
       query.should_receive(:convert!).with(:zipcode, :weather_id, :woe_id)

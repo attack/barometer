@@ -9,10 +9,9 @@ describe Barometer::WeatherService::Noaa, :vcr => {
   end
 
   describe ".call" do
-    let(:query) { double(:query, :geo => nil, :add_conversion => nil) }
-    let(:config) { {:metric => true} }
+    let(:query) { double(:query, :geo => nil, :add_conversion => nil, :metric? => true) }
 
-    subject { Barometer::WeatherService::Noaa.call(query, config) }
+    subject { Barometer::WeatherService::Noaa.call(query) }
 
     before do
       query.stub(:convert!).and_return do |*formats|

@@ -77,7 +77,7 @@ describe Barometer::Base do
 
           expect { |b|
             Barometer::Utils::ConfigReader.services(1, &b)
-          }.to yield_with_args(:test, nil)
+          }.to yield_with_args(:test, {})
         end
       end
 
@@ -87,7 +87,7 @@ describe Barometer::Base do
 
           expect { |b|
             Barometer::Utils::ConfigReader.services(1, &b)
-          }.to yield_with_args(:test, nil)
+          }.to yield_with_args(:test, {})
         end
       end
 
@@ -97,7 +97,7 @@ describe Barometer::Base do
 
           expect { |b|
             Barometer::Utils::ConfigReader.services(1, &b)
-          }.to yield_with_args(:test, nil)
+          }.to yield_with_args(:test, {})
         end
       end
 
@@ -129,7 +129,7 @@ describe Barometer::Base do
 
           expect { |b|
             Barometer::Utils::ConfigReader.services(1, &b)
-          }.to yield_successive_args([:foo, nil], [:bar, nil])
+          }.to yield_successive_args([:foo, {}], [:bar, {}])
         end
       end
 
@@ -139,7 +139,7 @@ describe Barometer::Base do
 
           expect { |b|
             Barometer::Utils::ConfigReader.services(1, &b)
-          }.to yield_successive_args([:foo, nil], [:bar, {:version => :v1}])
+          }.to yield_successive_args([:foo, {}], [:bar, {:version => :v1}])
         end
       end
 

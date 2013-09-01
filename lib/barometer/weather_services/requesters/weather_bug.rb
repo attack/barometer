@@ -1,13 +1,13 @@
 module Barometer
   module Requester
     class WeatherBug
-      def initialize(api_code, metric=true)
+      def initialize(api_code, query)
         @api_code = api_code
-        @metric = metric
+        @query = query
       end
 
-      def get_current(query)
-        response = _get('getLiveWeatherRSS.aspx', query)
+      def get_current
+        response = _get('getLiveWeatherRSS.aspx')
 
         # Some nodes have attributes along with text values, and
         # XML parsers will ignore the attributes. For a couple
@@ -26,20 +26,20 @@ module Barometer
         Barometer::Utils::Payload.new(output)
       end
 
-      def get_forecast(query)
-        response = _get('getForecastRSS.aspx', query)
+      def get_forecast
+        response = _get('getForecastRSS.aspx')
         output = Barometer::Utils::XmlReader.parse(response, 'weather', 'forecasts')
         Barometer::Utils::Payload.new(output)
       end
 
       private
 
-      attr_reader :api_code, :metric
+      attr_reader :api_code, :query
 
-      def _get(path, query)
+      def _get(path)
         Barometer::Utils::Get.call(
           "http://#{api_code}.api.wxbug.net/#{path}",
-          _format_request.merge(_format_query(query))
+          _format_request.merge(_format_query)
         )
       end
 
@@ -47,7 +47,7 @@ module Barometer
         { :ACode => api_code, :OutputType => '1', :UnitType => _unit_type }
       end
 
-      def _format_query(query)
+      def _format_query
         if query.format == :short_zipcode
           { :zipCode => query.q }
         else
@@ -56,7 +56,7 @@ module Barometer
       end
 
       def _unit_type
-        metric ? '1' : '0'
+        query.metric? ? '1' : '0'
       end
     end
   end

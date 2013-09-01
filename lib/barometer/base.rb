@@ -3,8 +3,7 @@ module Barometer
     attr_reader :query, :weather
 
     def initialize(query, units=:metric)
-      @query = Query.new(query)
-      @units = units
+      @query = Query.new(query, units)
       @weather = Weather.new(units)
     end
 
@@ -33,23 +32,12 @@ module Barometer
 
     def measure_using_all_services_in_level(level)
       Utils::ConfigReader.services(level) do |source, config|
-        version = extract_version(config)
-        options = build_options(config)
-        measure_and_record(source, version, options)
+        measure_and_record(source, config)
       end
     end
 
-    def extract_version(config)
-      return unless config
-      config[:version]
-    end
-
-    def build_options(config)
-      {:metric => metric}.merge(config || {})
-    end
-
-    def measure_and_record(source, version, options)
-      @weather.responses << WeatherService.new(source, version).measure(query, options)
+    def measure_and_record(source, config)
+      @weather.responses << WeatherService.new(source, config[:version]).measure(query, config)
     end
 
     def success?
@@ -58,10 +46,6 @@ module Barometer
 
     def measure_with_next_level?
       !success?
-    end
-
-    def metric
-      @units == :metric
     end
   end
 end
