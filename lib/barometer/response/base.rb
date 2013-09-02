@@ -17,8 +17,6 @@ module Barometer
 
       def initialize(query)
         @weight = 1
-        @current = Current.new
-        @forecast = PredictionCollection.new
         @requested_at = Time.now.utc
         add_query(query)
       end

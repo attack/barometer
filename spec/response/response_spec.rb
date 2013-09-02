@@ -34,6 +34,7 @@ module Barometer::Response
     end
 
     describe "#complete?" do
+      before { response.current = Current.new }
       it "returns true when the current temperature has been set" do
         response.current.temperature = [10]
         expect( response ).to be_complete
@@ -47,12 +48,11 @@ module Barometer::Response
 
     describe "#for" do
       let(:date) { double(:date) }
+      let(:prediction_collection) { double(:prediction_collection) }
 
-      before { response.forecast.stub(:for) }
-
-      it "returns nil when there are no forecasts" do
-        response.forecast = PredictionCollection.new
-        expect( response.for ).to be_nil
+      before do
+        prediction_collection.stub(:for)
+        response.forecast = prediction_collection
       end
 
       context "when a date is given" do
