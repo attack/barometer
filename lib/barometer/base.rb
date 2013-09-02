@@ -1,6 +1,6 @@
 module Barometer
   class Base
-    attr_reader :query, :weather
+    attr_reader :weather
 
     def initialize(query, units=:metric)
       @query = Query.new(query, units)
@@ -11,15 +11,17 @@ module Barometer
       record_time do
         measure_until_successful or raise OutOfSources
       end
-      @weather
+      weather
     end
 
     private
 
+    attr_reader :query
+
     def record_time
-      @weather.start_at = Time.now.utc
+      weather.start_at = Time.now.utc
       yield
-      @weather.end_at = Time.now.utc
+      weather.end_at = Time.now.utc
     end
 
     def measure_until_successful
@@ -37,11 +39,11 @@ module Barometer
     end
 
     def measure_and_record(source, config)
-      @weather.responses << WeatherService.new(source, config[:version]).measure(query, config)
+      weather.responses << WeatherService.new(source, config[:version]).measure(query, config)
     end
 
     def success?
-      @weather.success?
+      weather.success?
     end
 
     def measure_with_next_level?

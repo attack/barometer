@@ -45,7 +45,7 @@ module Barometer
         it "measures the weather" do
           barometer.measure
           expect( foo_weather_service ).to have_received(:call).
-            with(barometer.query, {:keys => keys})
+            with(an_instance_of(Query::Base), {:keys => keys})
         end
 
         it "adds the result to weather.responses" do
@@ -59,7 +59,7 @@ module Barometer
           it "measures the weather again" do
             barometer.measure
             expect( bar_weather_service ).to have_received(:call).
-              with(barometer.query, {})
+              with(an_instance_of(Query::Base), {})
           end
 
           it "adds the result to weather.responses" do
@@ -100,7 +100,7 @@ module Barometer
           it "measures the weather using the next service_level" do
             barometer.measure
             expect( bar_weather_service ).to have_received(:call).
-              with(barometer.query, {})
+              with(an_instance_of(Query::Base), {})
           end
 
           it "adds the result to weather.responses" do
