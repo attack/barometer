@@ -1,60 +1,47 @@
 $:.unshift(File.dirname(__FILE__))
-require 'parsers/noaa_current'
-require 'parsers/noaa_forecast'
-require 'requesters/noaa'
+require 'noaa/forecast_query'
+require 'noaa/forecast_request'
+require 'noaa/forecast_response'
+require 'noaa/current_query'
+require 'noaa/current_request'
+require 'noaa/current_response'
 
 module Barometer
   module WeatherService
     class Noaa
-      def self.accepted_formats
-        [:zipcode, :coordinates]
-      end
-
       def self.call(query, config={})
-        WeatherService::Noaa.new(query, config).measure!
+        Noaa.new(query).measure!
       end
 
-      def initialize(query, config={})
+      def initialize(query)
         @query = query
-        @converted_query = nil
-
-        @response = Response.new(query)
       end
 
       def measure!
-        convert_query!
-
-        @requester = Barometer::Requester::Noaa.new
-        fetch_and_parse_forecast
-        fetch_and_parse_current
-
-        response
+        forecast_response = measure_forecast
+        update_query(forecast_response)
+        add_current(forecast_response)
       end
 
       private
 
-      attr_reader :response, :api_code
+      attr_reader :query
 
-      def convert_query!
-        @converted_query = @query.convert!(*self.class.accepted_formats)
-        response.query = @converted_query.q
-        response.format = @converted_query.format
+      def measure_forecast
+        forecast_query = Noaa::ForecastQuery.new(query)
+        forecast_payload = Noaa::ForecastRequest.new(forecast_query).get_weather
+        Noaa::ForecastResponse.new(forecast_query, forecast_payload).parse
       end
 
-      def fetch_and_parse_forecast
-        payload = @requester.get_forecast(@converted_query)
-        forecast_parser = Barometer::Parser::NoaaForecast.new(response)
-        forecast_parser.parse(payload)
+      def add_current(response)
+        current_query = Noaa::CurrentQuery.new(query)
+        response.add_query(current_query.converted_query)
+        current_payload = Noaa::CurrentRequest.new(current_query).get_weather
+        Noaa::CurrentResponse.new(current_payload, response).parse
       end
 
-      def fetch_and_parse_current
-        # this conversion is delayed until after forecast has been parsed
-        @query.add_conversion(:coordinates, @response.location.coordinates)
-        converted_query = @query.convert!(:noaa_station_id)
-
-        payload = @requester.get_current(converted_query)
-        current_parser = Barometer::Parser::NoaaCurrent.new(response)
-        current_parser.parse(payload)
+      def update_query(response)
+        query.add_conversion(:coordinates, response.location.coordinates)
       end
     end
   end
