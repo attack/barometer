@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 describe Barometer::Parser::WeatherBugForecast do
-  let(:response) { Barometer::Response.new }
+  let(:response) { Barometer::Response.new(build_query) }
 
   it "parses the timezones correctly" do
     response.timezone = 'PDT'

@@ -3,14 +3,17 @@ require 'time'
 
 module Barometer::Response
   describe Base do
-    let(:response) { Base.new }
+    let(:query) { build_query }
+    let(:response) { Base.new(query) }
 
     specify { expect( response ).to have_field(:query).of_type(String) }
     specify { expect( response ).to have_field(:weight).of_type(Integer) }
     specify { expect( response ).to have_field(:status_code).of_type(Integer) }
 
     describe ".new" do
-      specify { expect( response.metric ).to be_true }
+      specify { expect( response ).to be_metric }
+      specify { expect( response.format ).to eq :unknown }
+      specify { expect( response.query ).to eq 'foo' }
       specify { expect( response.weight ).to eq 1 }
       specify { expect( response.requested_at ).to be }
     end

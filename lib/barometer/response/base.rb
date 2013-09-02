@@ -15,12 +15,12 @@ module Barometer
 
       attr_accessor :current, :forecast
 
-      def initialize(metric=true)
-        @metric = metric
+      def initialize(query)
         @weight = 1
         @current = Current.new
         @forecast = PredictionCollection.new
         @requested_at = Time.now.utc
+        add_query(query)
       end
 
       def success?
@@ -39,6 +39,12 @@ module Barometer
         forecast_result = Prediction.new
         yield(forecast_result)
         self.forecast << forecast_result
+      end
+
+      def add_query(query)
+        @query = query.q
+        @format = query.format
+        @metric = query.metric?
       end
 
       private

@@ -11,9 +11,9 @@ module Barometer
 
     describe "#measure" do
       let(:test_weather) { double(:test_weather) }
-      let(:query) { double(:query) }
+      let(:query) { build_query }
       let(:options) { {} }
-      let(:test_response) { Response.new }
+      let(:test_response) { Response.new(query) }
 
       before do
         test_weather.stub(:call => test_response)

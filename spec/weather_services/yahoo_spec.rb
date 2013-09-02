@@ -10,7 +10,7 @@ describe Barometer::WeatherService::Yahoo, :vcr => {
 
   describe ".call" do
     let(:converted_query) { Barometer::ConvertedQuery.new("90210", :zipcode, :metric) }
-    let(:query) { double(:query, :convert! => converted_query, :geo => nil, :metric? => true) }
+    let(:query) { build_query.tap{|q|q.stub(:convert! => converted_query)} }
 
     subject { Barometer::WeatherService::Yahoo.call(query) }
 

@@ -102,7 +102,7 @@ module Barometer
         response_two = double(:response, :success? => true, :for => nil)
         weather.responses = [response_one, response_two]
 
-        query = double(:query)
+        query = build_query
         weather.for(query)
 
         expect( response_two ).to have_received(:for).with(query)

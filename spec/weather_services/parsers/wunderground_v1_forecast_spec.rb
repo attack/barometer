@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
 module Barometer::Parser
   describe WundergroundV1Forecast do
-    let(:response) { Barometer::Response.new }
+    let(:response) { Barometer::Response.new(build_query) }
 
     it "parses the timezones correctly" do
       payload = Barometer::Utils::Payload.new({

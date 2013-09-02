@@ -5,7 +5,7 @@ module Barometer
       attr_accessor :timezone
 
       def initialize(query, units=:metric)
-        @q = query
+        @q = query.dup
         @units = units
         @geo = Data::Geo.new
         detect_format

@@ -18,7 +18,7 @@ module Barometer
         @query = query
         @converted_query = nil
 
-        @response = Response.new(query.metric?)
+        @response = Response.new(query)
       end
 
       def measure!

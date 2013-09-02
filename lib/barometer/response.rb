@@ -1,7 +1,7 @@
 module Barometer
   module Response
-    def self.new(metric=true)
-      Barometer::Response::Base.new(metric)
+    def self.new(query)
+      Barometer::Response::Base.new(query)
     end
   end
 end

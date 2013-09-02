@@ -27,11 +27,11 @@ module Barometer
       it "adds the block as an available weather service" do
         expect {
           WeatherService.register(:test_weather) do
-            Response.new.tap{|r| r.current.temperature = 30 }
+            Response.new(build_query).tap{|r| r.current.temperature = 30 }
           end
         }.to change { WeatherService.services.size }.by(1)
 
-        expect( WeatherService.new(:test_weather).measure("test").current.temperature.to_i ).to eq 30
+        expect( WeatherService.new(:test_weather).measure(build_query).current.temperature.to_i ).to eq 30
       end
 
       it "raises an error if no service or block given" do

@@ -7,7 +7,7 @@ module Barometer
       end
 
       def measure(query, options={})
-        @response = Response.new
+        @response = Response.new(query)
 
         record_time do
           measure_and_record_status(query, options)

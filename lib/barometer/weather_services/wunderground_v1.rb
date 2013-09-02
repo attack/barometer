@@ -16,7 +16,7 @@ module Barometer
 
       def initialize(query, config={})
         @query = query
-        @response = Response.new(query.metric?)
+        @response = Response.new(query)
       end
 
       def measure!

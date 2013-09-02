@@ -11,7 +11,7 @@ module Barometer::WeatherService
 
     describe ".call" do
       let(:converted_query) { Barometer::ConvertedQuery.new('Calgary,AB', :geocode, :metric) }
-      let(:query) { double(:query, :convert! => converted_query, :geo => nil, :metric? => true) }
+      let(:query) { build_query.tap{|q|q.stub(:convert! => converted_query)} }
 
       subject { WundergroundV1.call(query) }
 
