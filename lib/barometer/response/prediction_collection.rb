@@ -2,14 +2,27 @@ require 'date'
 
 module Barometer
   module Response
-    class PredictionCollection < Array
-      def <<(value)
-        raise ArgumentError unless value.is_a?(Response::Prediction)
-        super(value)
+    class PredictionCollection
+      include Enumerable
+
+      def initialize(*predictions)
+        @predictions = predictions
+      end
+
+      def each(&block)
+        @predictions.each(&block)
+      end
+
+      def <<(prediction)
+        @predictions << prediction
       end
 
       def [](index)
-        index.respond_to?(:to_i) ? super(index.to_i) : self.for(index)
+        index.respond_to?(:to_i) ? @predictions[index] : self.for(index)
+      end
+
+      def size
+        @predictions.size
       end
 
       def for(time)
@@ -19,10 +32,16 @@ module Barometer
         when Date
           Time.utc(time.year,time.month,time.day,12,0,0)
         else
-          Barometer::Utils::Time.parse(time)
+          Utils::Time.parse(time)
         end
 
-        detect { |forecast| forecast.covers?(time) }
+        detect{ |forecast| forecast.covers?(time) }
+      end
+
+      def build
+        prediction = Prediction.new
+        yield(prediction)
+        @predictions << prediction
       end
     end
   end

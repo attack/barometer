@@ -41,7 +41,7 @@ module Barometer
 
       def _build_forecasts(payload)
         payload.fetch_each("simpleforecast", "forecastday") do |forecast_payload|
-          @response.build_forecast do |forecast_response|
+          @response.forecast.build do |forecast_response|
             forecast_response.starts_at = forecast_payload.fetch('date', 'pretty'), "%I:%M %p %Z on %B %d, %Y"
             forecast_response.ends_at = Utils::Time.add_one_day(forecast_response.starts_at)
 

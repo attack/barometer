@@ -87,20 +87,5 @@ module Barometer::Response
         end
       end
     end
-
-    describe "#build_forecast" do
-      it "yields a new response" do
-        expect { |b|
-          response.build_forecast(&b)
-        }.to yield_with_args(Prediction)
-      end
-
-      it "adds the new response to forecast array" do
-        expect {
-          response.build_forecast do
-          end
-        }.to change{ response.forecast.count }.by(1)
-      end
-    end
   end
 end

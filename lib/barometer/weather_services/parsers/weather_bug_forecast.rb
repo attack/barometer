@@ -26,7 +26,7 @@ module Barometer
         start_date = Date.strptime(payload.fetch('@date'), "%m/%d/%Y %H:%M:%S %p")
 
         payload.fetch_each_with_index("forecast") do |forecast_payload, index|
-          @response.build_forecast do |forecast_response|
+          @response.forecast.build do |forecast_response|
             forecast_response.date = (start_date + index), @response.timezone
 
             forecast_response.icon = forecast_payload.using(/cond0*([1-9][0-9]*)\.gif$/).fetch('image')

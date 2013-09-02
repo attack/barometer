@@ -20,7 +20,7 @@ module Barometer
 
       def build_forecasts
         each_forecast do |index, shared_index|
-          @response.build_forecast do |forecast_response|
+          @response.forecast.build do |forecast_response|
             forecast_response.starts_at = start_times[index]
             forecast_response.ends_at = end_times[index]
             forecast_response.icon = icons[shared_index]

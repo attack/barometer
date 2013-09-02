@@ -66,7 +66,7 @@ module Barometer
 
       def _build_forecasts(payload)
         payload.fetch_each("item", "forecast") do |forecast_payload|
-          @response.build_forecast do |forecast_response|
+          @response.forecast.build do |forecast_response|
             forecast_response.date = forecast_payload.fetch('@date'), @response.timezone
             forecast_response.icon = forecast_payload.fetch('@code')
             forecast_response.condition = forecast_payload.fetch('@text')

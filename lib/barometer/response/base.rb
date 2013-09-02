@@ -35,12 +35,6 @@ module Barometer
         forecast.for(date || today)
       end
 
-      def build_forecast
-        forecast_result = Prediction.new
-        yield(forecast_result)
-        self.forecast << forecast_result
-      end
-
       def add_query(query)
         @query = query.q
         @format = query.format
