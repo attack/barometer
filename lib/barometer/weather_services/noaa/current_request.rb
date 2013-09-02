@@ -7,14 +7,11 @@ module Barometer
         end
 
         def get_weather
-          response = Utils::Get.call("http://w1.weather.gov/xml/current_obs/#{query.to_param}.xml")
-          output = Utils::XmlReader.parse(response, 'current_observation')
-          Utils::Payload.new(output)
+          Utils::PayloadRequest.new(
+            "http://w1.weather.gov/xml/current_obs/#{@query.to_param}.xml",
+            nil, 'current_observation'
+          ).call
         end
-
-        private
-
-        attr_reader :query
       end
     end
   end

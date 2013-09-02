@@ -8,12 +8,10 @@ module Barometer
         end
 
         def get_weather
-          response = Utils::Get.call(
+          Utils::PayloadRequest.new(
             "http://#{api_code}.api.wxbug.net/getForecastRSS.aspx",
-            params
-          )
-          output = Utils::XmlReader.parse(response, 'weather', 'forecasts')
-          Utils::Payload.new(output)
+            params, 'weather', 'forecasts'
+          ).call
         end
 
         private

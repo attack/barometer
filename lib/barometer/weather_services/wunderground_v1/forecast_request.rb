@@ -7,17 +7,11 @@ module Barometer
         end
 
         def get_weather
-          response = Utils::Get.call(
+          Utils::PayloadRequest.new(
             'http://api.wunderground.com/auto/wui/geo/ForecastXML/index.xml',
-            query.to_param
-          )
-          output = Utils::XmlReader.parse(response, 'forecast')
-          Utils::Payload.new(output)
+            @query.to_param, 'forecast'
+          ).call
         end
-
-        private
-
-        attr_reader :query
       end
     end
   end

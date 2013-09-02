@@ -7,17 +7,11 @@ module Barometer
         end
 
         def get_weather
-          response = Utils::Get.call(
+          Utils::PayloadRequest.new(
             'http://weather.yahooapis.com/forecastrss',
-            query.to_param
-          )
-          output = Utils::XmlReader.parse(response, 'rss', 'channel')
-          Utils::Payload.new(output)
+            @query.to_param, 'rss', 'channel'
+          ).call
         end
-
-        private
-
-        attr_reader :query
       end
     end
   end
