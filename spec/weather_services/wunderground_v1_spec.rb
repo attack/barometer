@@ -21,7 +21,7 @@ module Barometer::WeatherService
       end
 
       it "includes the expected data" do
-        subject.query.should == "Calgary,AB"
+        subject.query.should == 'Calgary,AB'
         subject.format.should == :geocode
         subject.metric.should be_true
 

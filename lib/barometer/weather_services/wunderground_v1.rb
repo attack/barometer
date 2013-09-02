@@ -1,54 +1,42 @@
 $:.unshift(File.dirname(__FILE__))
-require 'parsers/wunderground_v1_current'
-require 'parsers/wunderground_v1_forecast'
-require 'requesters/wunderground_v1'
+require 'wunderground_v1/query'
+require 'wunderground_v1/current_request'
+require 'wunderground_v1/current_response'
+require 'wunderground_v1/forecast_request'
+require 'wunderground_v1/forecast_response'
 
 module Barometer
   module WeatherService
     class WundergroundV1
-      def self.accepted_formats
-        [:zipcode, :postalcode, :icao, :coordinates, :geocode]
-      end
-
       def self.call(query, config={})
-        WundergroundV1.new(query, config).measure!
+        WundergroundV1.new(query).measure!
       end
 
-      def initialize(query, config={})
+      def initialize(query)
         @query = query
-        @response = Response.new(query)
       end
 
       def measure!
-        convert_query!
-
-        @requester = Requester::WundergroundV1.new(@converted_query)
-        fetch_and_parse_current
-        fetch_and_parse_forecast
-
-        response
+        current_response = measure_current
+        add_forecast(current_response)
       end
 
       private
 
-      attr_reader :response
+      attr_reader :query
 
-      def convert_query!
-        @converted_query = @query.convert!(*self.class.accepted_formats)
-        response.query = @converted_query.q
-        response.format = @converted_query.format
+      def converted_query
+        @converted_query ||= WundergroundV1::Query.new(query)
       end
 
-      def fetch_and_parse_current
-        payload = @requester.get_current
-        current_parser = Parser::WundergroundV1Current.new(response)
-        current_parser.parse(payload)
+      def measure_current
+        current_payload = WundergroundV1::CurrentRequest.new(converted_query).get_weather
+        WundergroundV1::CurrentResponse.new(converted_query, current_payload).parse
       end
 
-      def fetch_and_parse_forecast
-        payload = @requester.get_forecast
-        forecast_parser = Parser::WundergroundV1Forecast.new(response)
-        forecast_parser.parse(payload)
+      def add_forecast(response)
+        forecast_payload = WundergroundV1::ForecastRequest.new(converted_query).get_weather
+        WundergroundV1::ForecastResponse.new(forecast_payload, response).parse
       end
     end
   end
