@@ -9,7 +9,7 @@ describe Barometer::WeatherService::Yahoo, :vcr => {
   end
 
   describe ".call" do
-    let(:converted_query) { Barometer::ConvertedQuery.new("90210", :zipcode, :metric) }
+    let(:converted_query) { Barometer::ConvertedQuery.new('90210', :zipcode, :metric) }
     let(:query) { build_query.tap{|q|q.stub(:convert! => converted_query)} }
 
     subject { Barometer::WeatherService::Yahoo.call(query) }
@@ -20,7 +20,7 @@ describe Barometer::WeatherService::Yahoo, :vcr => {
     end
 
     it "includes the expected data" do
-      subject.query.should == "90210"
+      subject.query.should == '90210'
       subject.format.should == :zipcode
       subject.metric.should be_true
 
