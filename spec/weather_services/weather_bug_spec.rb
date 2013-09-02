@@ -32,7 +32,7 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
       end
 
       it "includes the expected data" do
-        subject.query.should == "90210"
+        subject.query.should == '90210'
         subject.format.should == :short_zipcode
         subject.metric.should be_true
 

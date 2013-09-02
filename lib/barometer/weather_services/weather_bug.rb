@@ -1,44 +1,31 @@
 $:.unshift(File.dirname(__FILE__))
-require 'parsers/weather_bug_current'
-require 'parsers/weather_bug_forecast'
-require 'requesters/weather_bug'
+require 'weather_bug/query'
+require 'weather_bug/current_request'
+require 'weather_bug/current_response'
+require 'weather_bug/forecast_request'
+require 'weather_bug/forecast_response'
 
 module Barometer
   module WeatherService
     class WeatherBug
-      def self.accepted_formats
-        [:short_zipcode, :coordinates]
-      end
-
       def self.call(query, config={})
-        WeatherService::WeatherBug.new(query, config).measure!
+        WeatherBug.new(query, config).measure!
       end
 
       def initialize(query, config={})
         @query = query
-        @converted_query = nil
-
-        @response = Response.new(query)
-
-        if config[:keys]
-          @api_code = config[:keys][:code]
-        end
+        @api_code = config[:keys][:code] if config[:keys]
       end
 
       def measure!
         validate_key!
-        convert_query!
-
-        @requester = Barometer::Requester::WeatherBug.new(api_code, @converted_query)
-        fetch_and_parse_current
-        fetch_and_parse_forecast
-
-        response
+        current_response = measure_current
+        add_forecast(current_response)
       end
 
       private
 
-      attr_reader :response, :api_code
+      attr_reader :query, :api_code
 
       def validate_key!
         unless api_code && !api_code.empty?
@@ -46,22 +33,18 @@ module Barometer
         end
       end
 
-      def convert_query!
-        @converted_query = @query.convert!(*self.class.accepted_formats)
-        response.query = @converted_query.q
-        response.format = @converted_query.format
+      def converted_query
+        @converted_query ||= WeatherBug::Query.new(query)
       end
 
-      def fetch_and_parse_current
-        payload = @requester.get_current
-        current_parser = Barometer::Parser::WeatherBugCurrent.new(response)
-        current_parser.parse(payload)
+      def measure_current
+        current_payload = WeatherBug::CurrentRequest.new(converted_query, api_code).get_weather
+        WeatherBug::CurrentResponse.new(converted_query, current_payload).parse
       end
 
-      def fetch_and_parse_forecast
-        payload = @requester.get_forecast
-        forecast_parser = Barometer::Parser::WeatherBugForecast.new(response)
-        forecast_parser.parse(payload)
+      def add_forecast(response)
+        forecast_payload = WeatherBug::ForecastRequest.new(converted_query, api_code).get_weather
+        WeatherBug::ForecastResponse.new(forecast_payload, response).parse
       end
     end
   end
