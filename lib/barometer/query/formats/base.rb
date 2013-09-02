@@ -17,6 +17,7 @@ module Barometer
 
         def self.regex; raise NotImplementedError; end
         def self.country_code(query); nil; end
+        def self.convert_query(query); query; end
 
         def self.is?(query)
           !(query =~ self.regex).nil?

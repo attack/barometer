@@ -14,11 +14,7 @@ module Barometer
       end
 
       def q
-        if @format_klass.respond_to?(:convert_query)
-          @format_klass.convert_query(@q)
-        else
-          @q
-        end
+        @format_klass.convert_query(@q)
       end
 
       def add_conversion(format, q)
