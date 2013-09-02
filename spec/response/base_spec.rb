@@ -35,13 +35,19 @@ module Barometer::Response
 
     describe "#complete?" do
       before { response.current = Current.new }
-      it "returns true when the current temperature has been set" do
-        response.current.temperature = [10]
+
+      it "returns true when current is complete" do
+        response.current.stub(:complete? => true)
         expect( response ).to be_complete
       end
 
-      it "returns true when the current temperature has not been set" do
-        response.current.temperature = nil
+      it "returns false when the is no current" do
+        response.current = nil
+        expect( response ).not_to be_complete
+      end
+
+      it "returns false when current is not complete" do
+        response.current.stub(:complete? => false)
         expect( response ).not_to be_complete
       end
     end

@@ -26,7 +26,7 @@ module Barometer
       end
 
       def complete?
-        current && !current.temperature.nil?
+        current && current.complete?
       end
 
       def for(date=nil)

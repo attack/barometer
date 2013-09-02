@@ -18,6 +18,10 @@ module Barometer
       def initialize(metric=true)
         @metric = metric
       end
+
+      def complete?
+        !temperature.nil?
+      end
     end
   end
 end
