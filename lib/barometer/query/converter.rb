@@ -54,10 +54,10 @@ module Barometer
   end
 end
 
-require 'query/converters/from_woe_or_weather_id_to_geocode'
-require 'query/converters/to_woe_id'
-require 'query/converters/to_geocode'
-require 'query/converters/from_short_zipcode_to_zipcode'
-require 'query/converters/to_weather_id'
-require 'query/converters/from_coordinates_to_noaa_station_id'
-require 'query/converters/from_geocode_to_coordinates'
+require 'barometer/query/converters/from_woe_or_weather_id_to_geocode'
+require 'barometer/query/converters/to_woe_id'
+require 'barometer/query/converters/to_geocode'
+require 'barometer/query/converters/from_short_zipcode_to_zipcode'
+require 'barometer/query/converters/to_weather_id'
+require 'barometer/query/converters/from_coordinates_to_noaa_station_id'
+require 'barometer/query/converters/from_geocode_to_coordinates'

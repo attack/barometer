@@ -1,6 +1,5 @@
-$:.unshift(File.dirname(__FILE__))
-require 'weather_bug/response/forecasted_weather'
-require 'weather_bug/response/location'
+require 'barometer/weather_services/weather_bug/response/forecasted_weather'
+require 'barometer/weather_services/weather_bug/response/location'
 
 module Barometer
   module WeatherService

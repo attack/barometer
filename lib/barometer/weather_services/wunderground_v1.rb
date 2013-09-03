@@ -1,9 +1,8 @@
-$:.unshift(File.dirname(__FILE__))
-require 'wunderground_v1/query'
-require 'wunderground_v1/current_request'
-require 'wunderground_v1/current_response'
-require 'wunderground_v1/forecast_request'
-require 'wunderground_v1/forecast_response'
+require 'barometer/weather_services/wunderground_v1/query'
+require 'barometer/weather_services/wunderground_v1/current_request'
+require 'barometer/weather_services/wunderground_v1/current_response'
+require 'barometer/weather_services/wunderground_v1/forecast_request'
+require 'barometer/weather_services/wunderground_v1/forecast_response'
 
 module Barometer
   module WeatherService

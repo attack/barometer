@@ -1,10 +1,9 @@
-$:.unshift(File.dirname(__FILE__))
-require 'noaa/forecast_query'
-require 'noaa/forecast_request'
-require 'noaa/forecast_response'
-require 'noaa/current_query'
-require 'noaa/current_request'
-require 'noaa/current_response'
+require 'barometer/weather_services/noaa/forecast_query'
+require 'barometer/weather_services/noaa/forecast_request'
+require 'barometer/weather_services/noaa/forecast_response'
+require 'barometer/weather_services/noaa/current_query'
+require 'barometer/weather_services/noaa/current_request'
+require 'barometer/weather_services/noaa/current_response'
 
 module Barometer
   module WeatherService

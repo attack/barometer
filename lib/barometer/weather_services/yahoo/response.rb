@@ -1,8 +1,7 @@
-$:.unshift(File.dirname(__FILE__))
-require 'yahoo/response/time_zone'
-require 'yahoo/response/location'
-require 'yahoo/response/current_weather'
-require 'yahoo/response/forecasted_weather'
+require 'barometer/weather_services/yahoo/response/time_zone'
+require 'barometer/weather_services/yahoo/response/location'
+require 'barometer/weather_services/yahoo/response/current_weather'
+require 'barometer/weather_services/yahoo/response/forecasted_weather'
 
 module Barometer
   module WeatherService

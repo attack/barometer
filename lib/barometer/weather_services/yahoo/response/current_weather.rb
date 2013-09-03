@@ -1,5 +1,4 @@
-$:.unshift(File.dirname(__FILE__))
-require 'sun'
+require 'barometer/weather_services/yahoo/response/sun'
 require 'ostruct'
 
 module Barometer

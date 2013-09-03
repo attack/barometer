@@ -1,5 +1,3 @@
-$:.unshift(File.dirname(__FILE__))
-
 require 'barometer/version'
 require 'barometer/utils'
 require 'barometer/base'
