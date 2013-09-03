@@ -1,8 +1,7 @@
-$:.unshift(File.dirname(__FILE__))
-require 'noaa/response/timezone'
-require 'noaa/response/current_location'
-require 'noaa/response/current_station'
-require 'noaa/response/current_weather'
+require 'barometer/weather_services/noaa/response/timezone'
+require 'barometer/weather_services/noaa/response/current_location'
+require 'barometer/weather_services/noaa/response/current_station'
+require 'barometer/weather_services/noaa/response/current_weather'
 
 module Barometer
   module WeatherService

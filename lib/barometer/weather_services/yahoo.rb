@@ -1,7 +1,6 @@
-$:.unshift(File.dirname(__FILE__))
-require 'yahoo/query'
-require 'yahoo/request'
-require 'yahoo/response'
+require 'barometer/weather_services/yahoo/query'
+require 'barometer/weather_services/yahoo/request'
+require 'barometer/weather_services/yahoo/response'
 
 module Barometer
   module WeatherService

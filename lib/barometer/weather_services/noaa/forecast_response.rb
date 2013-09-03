@@ -1,6 +1,5 @@
-$:.unshift(File.dirname(__FILE__))
-require 'noaa/response/location'
-require 'noaa/response/forecasted_weather'
+require 'barometer/weather_services/noaa/response/location'
+require 'barometer/weather_services/noaa/response/forecasted_weather'
 
 module Barometer
   module WeatherService

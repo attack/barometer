@@ -6,7 +6,7 @@ module Barometer
   end
 end
 
-require 'response/base'
-require 'response/current'
-require 'response/prediction'
-require 'response/prediction_collection'
+require 'barometer/response/base'
+require 'barometer/response/current'
+require 'barometer/response/prediction'
+require 'barometer/response/prediction_collection'

@@ -1,5 +1,4 @@
-$:.unshift(File.dirname(__FILE__))
-require 'time_helper'
+require 'barometer/weather_services/weather_bug/response/time_helper'
 
 module Barometer
   module WeatherService

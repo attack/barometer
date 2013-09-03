@@ -1,5 +1,4 @@
-$:.unshift(File.dirname(__FILE__))
-require 'weather_services/base'
+require 'barometer/weather_services/base'
 
 module Barometer
   module WeatherService
@@ -34,7 +33,7 @@ module Barometer
   end
 end
 
-require 'weather_services/wunderground_v1'
-require 'weather_services/yahoo'
-require 'weather_services/weather_bug'
-require 'weather_services/noaa'
+require 'barometer/weather_services/wunderground_v1'
+require 'barometer/weather_services/yahoo'
+require 'barometer/weather_services/weather_bug'
+require 'barometer/weather_services/noaa'

@@ -1,8 +1,7 @@
-$:.unshift(File.dirname(__FILE__))
-require 'wunderground_v1/response/current_weather'
-require 'wunderground_v1/response/station'
-require 'wunderground_v1/response/location'
-require 'wunderground_v1/response/timezone'
+require 'barometer/weather_services/wunderground_v1/response/current_weather'
+require 'barometer/weather_services/wunderground_v1/response/station'
+require 'barometer/weather_services/wunderground_v1/response/location'
+require 'barometer/weather_services/wunderground_v1/response/timezone'
 
 module Barometer
   module WeatherService

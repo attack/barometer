@@ -1,5 +1,4 @@
-$:.unshift(File.dirname(__FILE__))
-require 'utils/data_types'
+require 'barometer/utils/data_types'
 
 module Barometer
   module Response

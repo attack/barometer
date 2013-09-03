@@ -1,8 +1,7 @@
-$:.unshift(File.dirname(__FILE__))
-require 'query/base'
-require 'query/format'
-require 'query/converter'
-require 'query/service'
+require 'barometer/query/base'
+require 'barometer/query/format'
+require 'barometer/query/converter'
+require 'barometer/query/service'
 
 module Barometer
   class ConvertedQuery
