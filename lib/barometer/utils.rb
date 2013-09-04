@@ -1,18 +1,17 @@
-$:.unshift(File.dirname(__FILE__))
-
-require 'utils/config_reader'
-require 'utils/time'
-require 'utils/payload'
-require 'utils/payload_request'
-require 'utils/versioned_registration'
-require 'utils/data_types'
-require 'utils/xml_reader'
-require 'utils/json_reader'
-require 'utils/address'
-require 'utils/get'
-require 'utils/post'
-
 module Barometer
   module Utils
   end
 end
+
+require 'barometer/utils/config_reader'
+require 'barometer/utils/time'
+require 'barometer/utils/payload'
+require 'barometer/utils/payload_request'
+require 'barometer/utils/versioned_registration'
+require 'barometer/utils/data_types'
+require 'barometer/utils/xml_reader'
+require 'barometer/utils/json_reader'
+require 'barometer/utils/address'
+require 'barometer/utils/get'
+require 'barometer/utils/post'
+
