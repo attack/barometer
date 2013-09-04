@@ -8,7 +8,7 @@ module Barometer
           args.first
         elsif args.first.is_a? DateTime
           ::Time.parse(args.first.to_s)
-        elsif args.first.respond_to?(:to_time)
+        elsif args.first.respond_to?(:to_time) && !args.first.is_a?(String)
           args.first.to_time
         elsif args.size == 1 || args.size == 2
           strptime(*args)

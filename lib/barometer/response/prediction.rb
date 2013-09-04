@@ -24,7 +24,7 @@ module Barometer
 
         if date.is_a?(Date)
           @date = date
-        elsif date.respond_to?(:to_date)
+        elsif date.respond_to?(:to_date) && !date.is_a?(String)
           @date = date.to_date
         else
           @date = Date.parse(date)
