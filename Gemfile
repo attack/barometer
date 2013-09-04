@@ -12,6 +12,7 @@ end
 
 group :test do
   gem 'coveralls', :require => false
+  gem 'activesupport', '~> 3.2.12', :require => false
 end
 
 gemspec
