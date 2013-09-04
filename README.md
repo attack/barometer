@@ -209,6 +209,7 @@ Thank you to these developers who have contributed. No contribution is too small
 * floere (https://github.com/floere)
 * plukevdh (https://github.com/plukevdh)
 * gkop (https://github.com/gkop)
+* avit (https://github.com/avit)
 
 ## Links
 
