@@ -1,26 +1,37 @@
 module Barometer
   module Utils
     class PayloadRequest
-      def initialize(url, params, *nodes_to_remove)
-        @url = url
-        @params = params
-        @nodes_to_remove = nodes_to_remove
+      def initialize(api)
+        @api = api
       end
 
-      def call
+      def get
         response = make_request
         output = parse_response(response)
-        Payload.new(output)
+        Payload.new(output, api.current_query)
       end
 
       private
 
       def make_request
-        Get.call(@url, @params)
+        Get.call(api.url, api.params)
       end
 
       def parse_response(response)
-        XmlReader.parse(response, *@nodes_to_remove)
+        using_around_filters(response) do
+          XmlReader.parse(response, *api.unwrap_nodes)
+        end
+      end
+
+      private
+
+      attr_reader :api
+
+      def using_around_filters(response)
+        api.before_parse(response) if api.respond_to?(:before_parse)
+        output = yield
+        api.after_parse(output) if api.respond_to?(:after_parse)
+        output
       end
     end
   end

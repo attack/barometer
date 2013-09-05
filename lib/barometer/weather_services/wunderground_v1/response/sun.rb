@@ -18,12 +18,14 @@ module Barometer
           attr_reader :payload, :timezone, :response
 
           def utc_rise_time
+            return unless response.current
             Utils::Time.utc_from_base_plus_local_time(
               timezone, response.current.observed_at, rise_hour, rise_min
             )
           end
 
           def utc_set_time
+            return unless response.current
             Utils::Time.utc_from_base_plus_local_time(
               timezone, response.current.observed_at, set_hour, set_min
             )

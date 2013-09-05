@@ -1,4 +1,5 @@
 require 'barometer/weather_services/base'
+require 'barometer/weather_services/api'
 
 module Barometer
   module WeatherService

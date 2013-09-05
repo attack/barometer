@@ -6,14 +6,15 @@ module Barometer
   module WeatherService
     class WundergroundV1
       class ForecastResponse
-        def initialize(payload, response)
-          @payload = payload
+        def initialize(response)
           @response = response
         end
 
-        def parse
+        def parse(payload)
           response.timezone = WundergroundV1::Response::FullTimeZone.new(payload).parse
-          response.current.sun = WundergroundV1::Response::Sun.new(payload, timezone, response).parse
+          if response.current
+            response.current.sun = WundergroundV1::Response::Sun.new(payload, timezone, response).parse
+          end
           response.forecast = WundergroundV1::Response::ForecastedWeather.new(payload, timezone, response).parse
 
           response
@@ -21,7 +22,7 @@ module Barometer
 
         private
 
-        attr_reader :payload, :response
+        attr_reader :response
 
         def timezone
           response.timezone

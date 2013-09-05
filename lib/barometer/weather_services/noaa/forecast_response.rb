@@ -5,12 +5,13 @@ module Barometer
   module WeatherService
     class Noaa
       class ForecastResponse
-        def initialize(query, payload)
+        def initialize
           @response = Barometer::Response.new
-          @payload = payload
         end
 
-        def parse
+        def parse(payload)
+          response.add_query(payload.query)
+
           response.location = Noaa::Response::Location.new(payload).parse
           response.station = response.location
           response.forecast = Noaa::Response::ForecastedWeather.new(payload).parse
@@ -20,7 +21,7 @@ module Barometer
 
         private
 
-        attr_reader :response, :payload
+        attr_reader :response
       end
     end
   end

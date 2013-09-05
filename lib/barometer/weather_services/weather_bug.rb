@@ -1,7 +1,6 @@
-require 'barometer/weather_services/weather_bug/query'
-require 'barometer/weather_services/weather_bug/current_request'
+require 'barometer/weather_services/weather_bug/current_api'
 require 'barometer/weather_services/weather_bug/current_response'
-require 'barometer/weather_services/weather_bug/forecast_request'
+require 'barometer/weather_services/weather_bug/forecast_api'
 require 'barometer/weather_services/weather_bug/forecast_response'
 
 module Barometer
@@ -18,8 +17,12 @@ module Barometer
 
       def measure!
         validate_key!
-        current_response = measure_current
-        add_forecast(current_response)
+
+        current_weather_api = CurrentApi.new(query, api_code)
+        response = CurrentResponse.new.parse(current_weather_api.get)
+
+        forecast_weather_api = ForecastApi.new(current_weather_api.query, api_code)
+        ForecastResponse.new(response).parse(forecast_weather_api.get)
       end
 
       private
@@ -28,22 +31,8 @@ module Barometer
 
       def validate_key!
         unless api_code && !api_code.empty?
-          raise Barometer::WeatherService::KeyRequired
+          raise KeyRequired
         end
-      end
-
-      def converted_query
-        @converted_query ||= WeatherBug::Query.new(query)
-      end
-
-      def measure_current
-        current_payload = WeatherBug::CurrentRequest.new(converted_query, api_code).get_weather
-        WeatherBug::CurrentResponse.new(converted_query, current_payload).parse
-      end
-
-      def add_forecast(response)
-        forecast_payload = WeatherBug::ForecastRequest.new(converted_query, api_code).get_weather
-        WeatherBug::ForecastResponse.new(forecast_payload, response).parse
       end
     end
   end

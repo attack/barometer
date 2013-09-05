@@ -7,12 +7,11 @@ module Barometer
   module WeatherService
     class Noaa
       class CurrentResponse
-        def initialize(payload, response)
-          @payload = payload
+        def initialize(response)
           @response = response
         end
 
-        def parse
+        def parse(payload)
           response.timezone = Noaa::Response::TimeZone.new(payload).parse
           response.location = Noaa::Response::CurrentLocation.new(payload, response).parse
           response.station = Noaa::Response::CurrentStation.new(payload, response).parse
@@ -23,7 +22,7 @@ module Barometer
 
         private
 
-        attr_reader :response, :payload
+        attr_reader :response
       end
     end
   end

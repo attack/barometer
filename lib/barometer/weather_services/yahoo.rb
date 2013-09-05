@@ -1,5 +1,4 @@
-require 'barometer/weather_services/yahoo/query'
-require 'barometer/weather_services/yahoo/request'
+require 'barometer/weather_services/yahoo/api'
 require 'barometer/weather_services/yahoo/response'
 
 module Barometer
@@ -14,9 +13,8 @@ module Barometer
       end
 
       def measure!
-        converted_query = Yahoo::Query.new(query)
-        payload = Yahoo::Request.new(converted_query).get_weather
-        Yahoo::Response.new(converted_query, payload).parse
+        api = Yahoo::Api.new(query)
+        Yahoo::Response.new.parse(api.get)
       end
 
       private

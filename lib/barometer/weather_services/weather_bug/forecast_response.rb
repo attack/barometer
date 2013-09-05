@@ -5,12 +5,11 @@ module Barometer
   module WeatherService
     class WeatherBug
       class ForecastResponse
-        def initialize(payload, response)
-          @payload = payload
+        def initialize(response)
           @response = response
         end
 
-        def parse
+        def parse(payload)
           response.forecast = WeatherBug::Response::ForecastedWeather.new(payload, timezone).parse
           response.location = WeatherBug::Response::Location.new(payload).parse
 
@@ -19,7 +18,7 @@ module Barometer
 
         private
 
-        attr_reader :payload, :response
+        attr_reader :response
 
         def timezone
           response.timezone

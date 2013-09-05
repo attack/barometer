@@ -1,7 +1,6 @@
-require 'barometer/weather_services/wunderground_v1/query'
-require 'barometer/weather_services/wunderground_v1/current_request'
+require 'barometer/weather_services/wunderground_v1/current_api'
 require 'barometer/weather_services/wunderground_v1/current_response'
-require 'barometer/weather_services/wunderground_v1/forecast_request'
+require 'barometer/weather_services/wunderground_v1/forecast_api'
 require 'barometer/weather_services/wunderground_v1/forecast_response'
 
 module Barometer
@@ -16,27 +15,16 @@ module Barometer
       end
 
       def measure!
-        current_response = measure_current
-        add_forecast(current_response)
+        current_weather_api = CurrentApi.new(query)
+        response = CurrentResponse.new.parse(current_weather_api.get)
+
+        forecast_weather_api = ForecastApi.new(current_weather_api.query)
+        ForecastResponse.new(response).parse(forecast_weather_api.get)
       end
 
       private
 
       attr_reader :query
-
-      def converted_query
-        @converted_query ||= WundergroundV1::Query.new(query)
-      end
-
-      def measure_current
-        current_payload = WundergroundV1::CurrentRequest.new(converted_query).get_weather
-        WundergroundV1::CurrentResponse.new(converted_query, current_payload).parse
-      end
-
-      def add_forecast(response)
-        forecast_payload = WundergroundV1::ForecastRequest.new(converted_query).get_weather
-        WundergroundV1::ForecastResponse.new(forecast_payload, response).parse
-      end
     end
   end
 end

@@ -7,12 +7,13 @@ module Barometer
   module WeatherService
     class Yahoo
       class Response
-        def initialize(query, payload)
+        def initialize
           @response = Barometer::Response.new
-          @payload = payload
         end
 
-        def parse
+        def parse(payload)
+          response.add_query(payload.query)
+
           response.timezone = Yahoo::Response::TimeZone.new(payload).parse
           response.location = Yahoo::Response::Location.new(payload).parse
           response.current = Yahoo::Response::CurrentWeather.new(payload, timezone).parse
@@ -23,7 +24,7 @@ module Barometer
 
         private
 
-        attr_reader :response, :payload
+        attr_reader :response
 
         def timezone
           response.timezone

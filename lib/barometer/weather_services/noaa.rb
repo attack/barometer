@@ -1,8 +1,6 @@
-require 'barometer/weather_services/noaa/forecast_query'
-require 'barometer/weather_services/noaa/forecast_request'
+require 'barometer/weather_services/noaa/forecast_api'
 require 'barometer/weather_services/noaa/forecast_response'
-require 'barometer/weather_services/noaa/current_query'
-require 'barometer/weather_services/noaa/current_request'
+require 'barometer/weather_services/noaa/current_api'
 require 'barometer/weather_services/noaa/current_response'
 
 module Barometer
@@ -17,31 +15,17 @@ module Barometer
       end
 
       def measure!
-        forecast_response = measure_forecast
-        update_query(forecast_response)
-        add_current(forecast_response)
+        forecast_weather_api = ForecastApi.new(query)
+        response = ForecastResponse.new.parse(forecast_weather_api.get)
+        forecast_weather_api.query.add_conversion(:coordinates, response.location.coordinates)
+
+        current_weather_api = CurrentApi.new(forecast_weather_api.query)
+        CurrentResponse.new(response).parse(current_weather_api.get)
       end
 
       private
 
       attr_reader :query
-
-      def measure_forecast
-        forecast_query = Noaa::ForecastQuery.new(query)
-        forecast_payload = Noaa::ForecastRequest.new(forecast_query).get_weather
-        Noaa::ForecastResponse.new(forecast_query, forecast_payload).parse
-      end
-
-      def add_current(response)
-        current_query = Noaa::CurrentQuery.new(query)
-        response.add_query(current_query.converted_query)
-        current_payload = Noaa::CurrentRequest.new(current_query).get_weather
-        Noaa::CurrentResponse.new(current_payload, response).parse
-      end
-
-      def update_query(response)
-        query.add_conversion(:coordinates, response.location.coordinates)
-      end
     end
   end
 end

@@ -6,12 +6,13 @@ module Barometer
   module WeatherService
     class WeatherBug
       class CurrentResponse
-        def initialize(query, payload)
+        def initialize
           @response = Barometer::Response.new
-          @payload = payload
         end
 
-        def parse
+        def parse(payload)
+          response.add_query(payload.query)
+
           response.timezone = WeatherBug::Response::TimeZone.new(payload).parse
           response.current = WeatherBug::Response::CurrentWeather.new(payload, timezone).parse
           response.station = WeatherBug::Response::Station.new(payload).parse
@@ -21,7 +22,7 @@ module Barometer
 
         private
 
-        attr_reader :response, :payload
+        attr_reader :response
 
         def timezone
           response.timezone
