@@ -1,10 +1,11 @@
 module Barometer
   module Utils
     class Payload
-      attr_reader :hash, :regex
+      attr_reader :hash, :regex, :query
 
-      def initialize(hash)
+      def initialize(hash, query=nil)
         @hash = hash
+        @query = query
       end
 
       def using(regex)

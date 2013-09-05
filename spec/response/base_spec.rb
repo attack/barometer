@@ -90,5 +90,14 @@ module Barometer::Response
         end
       end
     end
+
+    describe "#add_query" do
+      let(:query) { double(:query, :to_s => 'foo', :format => :unknown, :metric? => true) }
+      before { response.add_query(query) }
+
+      specify { expect( response ).to be_metric }
+      specify { expect( response.format ).to eq :unknown }
+      specify { expect( response.query ).to eq 'foo' }
+    end
   end
 end

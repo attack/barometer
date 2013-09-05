@@ -14,4 +14,3 @@ require 'barometer/utils/json_reader'
 require 'barometer/utils/address'
 require 'barometer/utils/get'
 require 'barometer/utils/post'
-
