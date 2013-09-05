@@ -17,6 +17,10 @@ module Barometer
     def metric?
       units == :metric
     end
+
+    def to_s
+      @q
+    end
   end
 
   module Query
