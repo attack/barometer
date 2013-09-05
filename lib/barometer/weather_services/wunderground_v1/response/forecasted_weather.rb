@@ -65,13 +65,17 @@ module Barometer
           end
 
           def sun_rise_utc(starts_at)
-            return unless response.current && response.current.sun
+            return unless current_sun?
             Utils::Time.utc_merge_base_plus_time(starts_at, response.current.sun.rise)
           end
 
           def sun_set_utc(ends_at)
-            return unless response.current && response.current.sun
+            return unless current_sun?
             Utils::Time.utc_merge_base_plus_time(ends_at, response.current.sun.set)
+          end
+
+          def current_sun?
+            response.current && response.current.sun
           end
         end
       end
