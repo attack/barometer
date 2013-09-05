@@ -7,8 +7,8 @@ module Barometer
 
     describe "#measure" do
       let(:keys) { {:fake_secret => 'ABC123'} }
-      let(:response_foo) { Response.new(query).tap{|r| r.stub(:complete? => true)} }
-      let(:response_bar) { Response.new(query).tap{|r| r.stub(:complete? => true)} }
+      let(:response_foo) { Response.new.tap{|r| r.stub(:complete? => true)} }
+      let(:response_bar) { Response.new.tap{|r| r.stub(:complete? => true)} }
       let(:foo_weather_service) { double(:weather_service, :call => response_foo) }
       let(:bar_weather_service) { double(:weather_service, :call => response_bar) }
 

@@ -14,10 +14,9 @@ module Barometer
 
       attr_accessor :current, :forecast
 
-      def initialize(query)
+      def initialize
         @weight = 1
         @requested_at = Time.now.utc
-        add_query(query)
       end
 
       def success?
@@ -33,7 +32,8 @@ module Barometer
       end
 
       def add_query(query)
-        @query = query.q
+        return unless query
+        @query = query.to_s
         @format = query.format
         @metric = query.metric?
       end

@@ -13,7 +13,7 @@ module Barometer
       let(:test_weather) { double(:test_weather) }
       let(:query) { build_query }
       let(:options) { {} }
-      let(:test_response) { Response.new(query) }
+      let(:test_response) { Response.new }
 
       before do
         test_weather.stub(:call => test_response)

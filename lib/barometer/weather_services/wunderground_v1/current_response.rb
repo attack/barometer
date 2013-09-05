@@ -8,7 +8,7 @@ module Barometer
     class WundergroundV1
       class CurrentResponse
         def initialize(query, payload)
-          @response = Barometer::Response.new(query.converted_query)
+          @response = Barometer::Response.new
           @payload = payload
         end
 

@@ -27,7 +27,7 @@ module Barometer
       it "adds the block as an available weather service" do
         expect {
           WeatherService.register(:test_weather) do
-            Response.new(build_query).tap do |r|
+            Response.new.tap do |r|
               r.current = Response::Current.new
               r.current.temperature = 30
             end
