@@ -16,16 +16,6 @@ module Barometer
         end
 
         def to_param
-          {:format => '24 hourly', :numDays => '7'}.merge(format_query)
-        end
-
-        private
-
-        def convert_query
-          convert!(*self.class.accepted_formats)
-        end
-
-        def format_query
           case converted_query.format.to_sym
           when :short_zipcode
             {:zipCodeList => converted_query.q}
@@ -36,6 +26,12 @@ module Barometer
           else
             {}
           end
+        end
+
+        private
+
+        def convert_query
+          convert!(*self.class.accepted_formats)
         end
       end
     end

@@ -11,7 +11,7 @@ module Barometer
         end
 
         def initialize(query)
-          super(query)
+          super
           @converted_query = convert_query
         end
 
