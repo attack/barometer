@@ -12,9 +12,9 @@ module Barometer
         when :time
           /^\d{1,4}-\d{1,2}-\d{1,2} \d{2}:\d{2}:\d{2} [\-\+\d]{5}$/i
         when :optional_string
-          /^[\w ]*$/i
+          /^[\w \.-]*$/i
         when :string
-          /^[\w ]{2,}$/i
+          /^[\w \.-]{2,}$/i
         when :number
           /^\d{1,3}$/i
         when :float

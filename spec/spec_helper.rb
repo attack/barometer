@@ -15,6 +15,7 @@ Dir["./spec/support/**/*.rb"].sort.each {|f| require f}
 
 WEATHERBUG_CODE = Barometer::Support::KeyFileParser.find(:weather_bug, :code) || 'weatherbug'
 YAHOO_KEY = Barometer::Support::KeyFileParser.find(:yahoo, :app_id) || 'yahoo'
+FORECAST_IO_APIKEY = Barometer::Support::KeyFileParser.find(:forecast_io, :apikey) || 'forecastio'
 downcased_weatherbug_code = WEATHERBUG_CODE.to_s
 downcased_weatherbug_code[0] = WEATHERBUG_CODE.to_s[0..0].downcase
 
@@ -30,6 +31,7 @@ VCR.configure do |config|
   config.filter_sensitive_data('WEATHERBUG_CODE') { downcased_weatherbug_code }
   config.filter_sensitive_data('<YAHOO_KEY>') { YAHOO_KEY.to_s }
   config.filter_sensitive_data('<PLACEMAKER_KEY>') { Barometer.yahoo_placemaker_app_id.to_s }
+  config.filter_sensitive_data('FORECAST_IO_APIKEY') { FORECAST_IO_APIKEY.to_s }
 
   config.configure_rspec_metadata!
 end

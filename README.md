@@ -21,7 +21,7 @@ support the query directly. See the "[Queries](#queries)" section for more info.
 
 * works with ruby 1.8.7, 1.9.x, 2.0, Rubinius, REE (see
   [Travis CI status](https://travis-ci.org/attack/barometer) to confirm)
-* supports 4 weather services, more planned
+* supports 5 weather services, more planned
 * the same query can be used with any supported weather service
 * provides a powerful data object to hold the weather information
 * provides a simple plugin api to allow more weather services to be added
@@ -85,6 +85,7 @@ The current available sources are:
 * Yahoo! Weather (:yahoo)
 * WeatherBug.com (:weather_bug) [requires key]
 * NOAA (:noaa)
+* Forecast.io (:forecast_io) [requires key]
 
 ### Source Configuration
 
