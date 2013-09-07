@@ -5,7 +5,7 @@ module Barometer
   module Response
     class Current
       include Virtus
-      include Barometer::Utils::DataTypes
+      include Utils::DataTypes
 
       attribute :humidity, Float, :writer_class => Data::FloatWriter
       attribute :icon, String

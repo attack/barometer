@@ -29,7 +29,7 @@ describe Barometer::WeatherService::Noaa, :vcr => {
     end
 
     it "adds a coordinate conversion to the query" do
-      query.should_receive(:add_conversion).with(:coordinates, '34.10,-118.41')
+      query.should_receive(:add_conversion).with(:coordinates, '34.1,-118.41')
       subject
     end
 

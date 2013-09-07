@@ -2,25 +2,15 @@ module Barometer
   module WeatherService
     class Noaa
       class Response
-        class CurrentStation
+        class CurrentStation < WeatherService::Response::Location
           def initialize(payload, response)
-            @payload = payload
+            super(payload)
             @station = response.station
-          end
-
-          def parse
-            station.id = id
-            station.name = name
-            station.city = city
-            station.state_code = state_code
-            station.country_code = country_code
-
-            station
           end
 
           private
 
-          attr_reader :payload, :station
+          attr_reader :station
 
           def id
             payload.fetch('station_id')
@@ -40,6 +30,14 @@ module Barometer
 
           def country_code
             'US'
+          end
+
+          def latitude
+            station.latitude
+          end
+
+          def longitude
+            station.longitude
           end
         end
       end

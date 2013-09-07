@@ -16,11 +16,11 @@ module Barometer
       attribute :postal_code, String
 
       def coordinates
-        [@latitude, @longitude].join(',')
+        [latitude, longitude].join(',')
       end
 
       def to_s
-        [@address, @locality, @region, @country || @country_code].
+        [address, locality, region, country || country_code].
           compact.reject(&:empty?).join(', ')
       end
 

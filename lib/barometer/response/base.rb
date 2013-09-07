@@ -10,8 +10,9 @@ module Barometer
       attribute :weight, Integer, :writer_class => Data::IntegerWriter, :default => 1
       attribute :status_code, Integer
       attribute :query, String
+      attribute :location, Data::Attribute::Location
+      attribute :station, Data::Attribute::Location
 
-      location :location, :station
       timezone :timezone
       symbol :source, :format
       time :response_started_at, :response_ended_at, :requested_at

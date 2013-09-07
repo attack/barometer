@@ -2,28 +2,8 @@ module Barometer
   module WeatherService
     class WundergroundV1
       class Response
-        class Location
-          def initialize(payload)
-            @payload = payload
-            @location = Data::Location.new
-          end
-
-          def parse
-            location.name = name
-            location.city = city
-            location.state_code = state_code
-            location.state_name = state_name
-            location.zip_code = zip_code
-            location.country_code = country_code
-            location.latitude = latitude
-            location.longitude = longitude
-
-            location
-          end
-
+        class Location < WeatherService::Response::Location
           private
-
-          attr_reader :payload, :location
 
           def name
             payload.fetch('display_location', 'full')

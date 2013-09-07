@@ -5,7 +5,7 @@ module Barometer
   module Response
     class Prediction
       include Virtus
-      include Barometer::Utils::DataTypes
+      include Utils::DataTypes
 
       attribute :pop, Float, :writer_class => Data::FloatWriter
       attribute :icon, String

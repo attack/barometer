@@ -127,22 +127,6 @@ module Barometer
           end
         end
 
-        def location *names
-          pre_set_reader Data::Location, *names
-
-          names.each do |name|
-            send :define_method, "#{name}=" do |data|
-              if data == nil
-                instance_variable_set "@#{name}", nil
-              elsif data.is_a?(Data::Location)
-                instance_variable_set "@#{name}", data
-              else
-                raise ArgumentError
-              end
-            end
-          end
-        end
-
         def timezone *names
           attr_reader *names
 

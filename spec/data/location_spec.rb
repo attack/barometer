@@ -1,61 +1,75 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Barometer::Data::Location do
-  describe "#new" do
-    its(:id) { should be_nil }
-    its(:name) { should be_nil }
-    its(:city) { should be_nil }
-    its(:state_name) { should be_nil }
-    its(:state_code) { should be_nil }
-    its(:country) { should be_nil }
-    its(:country_code) { should be_nil }
-    its(:zip_code) { should be_nil }
-    its(:latitude) { should be_nil }
-    its(:longitude) { should be_nil }
-  end
-
-  describe "#coordinates" do
-    it "joins  longitude and latitude" do
-      subject.longitude = "99.99"
-      subject.latitude = "88.88"
-      subject.coordinates.should == "88.88,99.99"
-    end
-  end
-
-  describe "#nil?" do
-    it "true if nothing is set" do
-      subject.nil?.should be_true
+module Barometer::Data
+  describe Location do
+    describe "#coordinates" do
+      it "joins longitude and latitude" do
+        location = Location.new(
+          :longitude => '99.99',
+          :latitude => '88.88'
+        )
+        expect( location.coordinates ).to eq '88.88,99.99'
+      end
     end
 
-    it "returns false if anything is set" do
-      subject.name = "name"
-      subject.nil?.should be_false
-    end
-  end
+    describe "#to_s" do
+      it "defaults to an empty string" do
+        location = Location.new
+        expect( location.to_s ).to be_empty
+      end
 
-  describe "#to_s" do
-    it "defaults to an empty string" do
-      subject.to_s.should == ""
-    end
+      it "returns only the name" do
+        location = Location.new(:name => 'name')
+        expect( location.to_s ).to eq 'name'
+      end
 
-    it "compiles a string" do
-      subject.name = "name"
-      subject.to_s.should == "name"
+      it "returns name + city" do
+        location = Location.new(
+          :name => 'name',
+          :city => 'city'
+        )
+        expect( location.to_s ).to eq 'name, city'
+      end
 
-      subject.city = "city"
-      subject.to_s.should == "name, city"
+      it "returns name + city + country_code" do
+        location = Location.new(
+          :name => 'name',
+          :city => 'city',
+          :country_code => 'country_code'
+        )
+        expect( location.to_s ).to eq 'name, city, country_code'
+      end
 
-      subject.country_code = "country_code"
-      subject.to_s.should == "name, city, country_code"
+      it "returns name + city + country" do
+        location = Location.new(
+          :name => 'name',
+          :city => 'city',
+          :country_code => 'country_code',
+          :country => 'country'
+        )
+        expect( location.to_s ).to eq 'name, city, country'
+      end
 
-      subject.country = "country"
-      subject.to_s.should == "name, city, country"
+      it "returns name + city + state_code + country" do
+        location = Location.new(
+          :name => 'name',
+          :city => 'city',
+          :country => 'country',
+          :state_code => 'state_code'
+        )
+        expect( location.to_s ).to eq 'name, city, state_code, country'
+      end
 
-      subject.state_code = "state_code"
-      subject.to_s.should == "name, city, state_code, country"
-
-      subject.state_name = "state_name"
-      subject.to_s.should == "name, city, state_name, country"
+      it "returns name + city + state_name + country" do
+        location = Location.new(
+          :name => 'name',
+          :city => 'city',
+          :country => 'country',
+          :state_code => 'state_code',
+          :state_name => 'state_name'
+        )
+        expect( location.to_s ).to eq 'name, city, state_name, country'
+      end
     end
   end
 end
