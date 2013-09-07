@@ -9,7 +9,7 @@ module Barometer
 
       attribute :high, Data::Attribute::Temperature
       attribute :low, Data::Attribute::Temperature
-      attribute :pop, Float, :writer_class => Data::FloatWriter
+      attribute :pop, Data::Attribute::Float
       attribute :icon, String
       attribute :condition, String
 

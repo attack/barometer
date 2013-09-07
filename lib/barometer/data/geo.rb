@@ -5,8 +5,8 @@ module Barometer
     class Geo
       include Virtus
 
-      attribute :latitude, Float, :writer_class => Data::FloatWriter
-      attribute :longitude, Float, :writer_class => Data::FloatWriter
+      attribute :latitude, Data::Attribute::Float
+      attribute :longitude, Data::Attribute::Float
       attribute :query, String
       attribute :address, String
       attribute :locality, String

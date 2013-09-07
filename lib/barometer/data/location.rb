@@ -13,8 +13,8 @@ module Barometer
       attribute :country, String
       attribute :country_code, String
       attribute :zip_code, String
-      attribute :latitude, Float
-      attribute :longitude, Float
+      attribute :latitude, Data::Attribute::Float
+      attribute :longitude, Data::Attribute::Float
 
       def coordinates
         [latitude, longitude].join(',')

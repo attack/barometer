@@ -14,7 +14,7 @@ module Barometer
       attribute :wind, Data::Attribute::Vector
       attribute :pressure, Data::Attribute::Pressure
       attribute :visibility, Data::Attribute::Distance
-      attribute :humidity, Float, :writer_class => Data::FloatWriter
+      attribute :humidity, Data::Attribute::Float
       attribute :icon, String
       attribute :condition, String
 
