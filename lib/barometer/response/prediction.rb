@@ -7,12 +7,13 @@ module Barometer
       include Virtus
       include Utils::DataTypes
 
+      attribute :high, Data::Attribute::Temperature
+      attribute :low, Data::Attribute::Temperature
       attribute :pop, Float, :writer_class => Data::FloatWriter
       attribute :icon, String
       attribute :condition, String
 
       time :starts_at, :ends_at
-      temperature :high, :low
       sun :sun
 
       attr_reader :date

@@ -73,11 +73,6 @@ module Barometer
           end
         end
 
-        def temperature *names
-          new_pre_set_reader Data::Temperature, *names
-          new_pre_set_writer Data::Temperature, *names
-        end
-
         def vector *names
           new_pre_set_reader Barometer::Data::Vector, *names
           new_pre_set_writer Barometer::Data::Vector, *names

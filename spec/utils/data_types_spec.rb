@@ -8,8 +8,8 @@ module Barometer
 
     attribute :location, Data::Attribute::Location
     attribute :timezone, Data::Attribute::Zone
+    attribute :temperature, Data::Attribute::Temperature
 
-    temperature :temperature
     vector :vector
     pressure :pressure
     distance :distance
@@ -69,9 +69,6 @@ module Barometer
     end
 
     describe "temperature" do
-      it { should respond_to :temperature }
-      it { should respond_to :temperature= }
-
       context "when setting to nil" do
         it "equals nil" do
           subject.temperature = nil
@@ -90,10 +87,10 @@ module Barometer
           subject.temperature.to_s.should == "12 C"
         end
 
-        it "does not clear the value" do
+        it "clears the value" do
           subject.temperature = [12]
           subject.temperature = nil
-          subject.temperature.to_s.should == "12 C"
+          subject.temperature.should be_nil
         end
       end
 
@@ -102,8 +99,6 @@ module Barometer
           temperature = Barometer::Data::Temperature.new(12)
           subject.temperature = temperature
           subject.temperature.should be_a(Barometer::Data::Temperature)
-          subject.temperature.should == temperature
-          subject.temperature.object_id.should == temperature.object_id
         end
       end
 

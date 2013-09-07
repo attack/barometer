@@ -7,12 +7,15 @@ module Barometer
       include Virtus
       include Utils::DataTypes
 
+      attribute :temperature, Data::Attribute::Temperature
+      attribute :dew_point, Data::Attribute::Temperature
+      attribute :heat_index, Data::Attribute::Temperature
+      attribute :wind_chill, Data::Attribute::Temperature
       attribute :humidity, Float, :writer_class => Data::FloatWriter
       attribute :icon, String
       attribute :condition, String
 
       time :observed_at, :stale_at
-      temperature :temperature, :dew_point, :heat_index, :wind_chill
       vector :wind
       pressure :pressure
       distance :visibility
