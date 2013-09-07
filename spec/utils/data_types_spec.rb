@@ -11,7 +11,6 @@ class TestClass
   sun :sun
   location :location
   timezone :timezone
-  boolean :boolean
   symbol :symbol
 end
 
@@ -583,54 +582,6 @@ describe Barometer::Utils::DataTypes do
         subject.timezone = timezone
         subject.timezone.should be_a(Barometer::Data::Zone)
         subject.timezone.to_s.should == timezone.to_s
-      end
-    end
-  end
-
-  describe "boolean" do
-    it { should respond_to :boolean }
-    it { should respond_to :boolean= }
-
-    context "when nothing has been set" do
-      it "returns nil" do
-        subject.boolean.should be_nil
-        subject.should_not be_boolean
-      end
-    end
-
-    context "when setting to nil" do
-      it "returns nil" do
-        subject.boolean = nil
-        subject.boolean.should be_nil
-        subject.should_not be_boolean
-      end
-    end
-
-    context "when setting to anything truthy" do
-      it "returns true" do
-        subject.boolean = "PDT"
-        subject.boolean.should be_true
-        subject.should be_boolean
-
-        subject.boolean = true
-        subject.boolean.should be_true
-        subject.should be_boolean
-
-        subject.boolean = 0
-        subject.boolean.should be_true
-        subject.should be_boolean
-
-        subject.boolean = []
-        subject.boolean.should be_true
-        subject.should be_boolean
-      end
-    end
-
-    context "when setting to anything falsy (except nil)" do
-      it "returns false" do
-        subject.boolean = false
-        subject.boolean.should be_false
-        subject.should_not be_boolean
       end
     end
   end
