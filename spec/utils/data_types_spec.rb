@@ -10,8 +10,8 @@ module Barometer
     attribute :timezone, Data::Attribute::Zone
     attribute :temperature, Data::Attribute::Temperature
     attribute :vector, Data::Attribute::Vector
+    attribute :pressure, Data::Attribute::Pressure
 
-    pressure :pressure
     distance :distance
     time :time
     sun :sun
@@ -181,9 +181,6 @@ module Barometer
     end
 
     describe "pressure" do
-      it { should respond_to :pressure }
-      it { should respond_to :pressure= }
-
       context "when setting to nil" do
         it "equals nil" do
           subject.pressure = nil
@@ -202,10 +199,10 @@ module Barometer
           subject.pressure.to_s.should == "12 mb"
         end
 
-        it "does not clear the value" do
+        it "clears the value" do
           subject.pressure = [12]
           subject.pressure = nil
-          subject.pressure.to_s.should == "12 mb"
+          subject.pressure.should be_nil
         end
       end
 

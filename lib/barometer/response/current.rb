@@ -12,12 +12,12 @@ module Barometer
       attribute :heat_index, Data::Attribute::Temperature
       attribute :wind_chill, Data::Attribute::Temperature
       attribute :wind, Data::Attribute::Vector
+      attribute :pressure, Data::Attribute::Pressure
       attribute :humidity, Float, :writer_class => Data::FloatWriter
       attribute :icon, String
       attribute :condition, String
 
       time :observed_at, :stale_at
-      pressure :pressure
       distance :visibility
       sun :sun
 
