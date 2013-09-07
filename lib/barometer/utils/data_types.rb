@@ -103,11 +103,6 @@ module Barometer
           typecast_writer Integer, :to_i, *names
         end
 
-        def string *names
-          attr_reader *names
-          typecast_writer String, nil, *names
-        end
-
         def symbol *names
           attr_reader *names
           typecast_writer Symbol, :to_sym, *names

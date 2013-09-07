@@ -1,13 +1,16 @@
 require 'barometer/utils/data_types'
+require 'virtus'
 
 module Barometer
   module Response
     class Base
+      include Virtus
       include Utils::DataTypes
+
+      attribute :query, String
 
       location :location, :station
       timezone :timezone
-      string :query
       integer :weight, :status_code
       symbol :source, :format
       time :response_started_at, :response_ended_at, :requested_at

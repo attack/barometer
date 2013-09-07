@@ -9,7 +9,6 @@ class TestClass
   distance :distance
   float :float
   integer :integer
-  string :string
   time :time
   sun :sun
   location :location
@@ -415,52 +414,6 @@ describe Barometer::Utils::DataTypes do
         subject.integer.should be_a(Integer)
         subject.integer.should == integer
         subject.integer.object_id.should == integer.object_id
-      end
-    end
-  end
-
-  describe "string" do
-    it { should respond_to :string }
-    it { should respond_to :string= }
-
-    context "when nothing has been set" do
-      it "returns nil" do
-        subject.string.should be_nil
-      end
-    end
-
-    context "when setting to nil" do
-      it "returns nil" do
-        subject.string = nil
-        subject.string.should be_nil
-      end
-    end
-
-    context "when setting with data to be interpretted as a String" do
-      it "returns a String" do
-        subject.string = 12
-        subject.string.should be_a(String)
-      end
-
-      it "sets the value" do
-        subject.string = 12
-        subject.string.to_s.should == "12"
-      end
-
-      it "does not clear the value" do
-        subject.string = "bar"
-        subject.string = nil
-        subject.string.should == "bar"
-      end
-    end
-
-    context "when setting with String" do
-      it "uses the passed in value" do
-        text = String.new("bar")
-        subject.string = text
-        subject.string.should be_a(String)
-        subject.string.should == text
-        subject.string.object_id.should == text.object_id
       end
     end
   end

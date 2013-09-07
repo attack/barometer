@@ -1,11 +1,20 @@
+require 'virtus'
+
 module Barometer
   module Data
     class Geo
+      include Virtus
       include Utils::DataTypes
 
+      attribute :query, String
+      attribute :address, String
+      attribute :locality, String
+      attribute :region, String
+      attribute :country, String
+      attribute :country_code, String
+      attribute :postal_code, String
+
       float :latitude, :longitude
-      string :query, :address
-      string :locality, :region, :country, :country_code, :postal_code
 
       def coordinates
         [@latitude, @longitude].join(',')
