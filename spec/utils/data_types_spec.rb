@@ -9,8 +9,8 @@ module Barometer
     attribute :location, Data::Attribute::Location
     attribute :timezone, Data::Attribute::Zone
     attribute :temperature, Data::Attribute::Temperature
+    attribute :vector, Data::Attribute::Vector
 
-    vector :vector
     pressure :pressure
     distance :distance
     time :time
@@ -133,9 +133,6 @@ module Barometer
     end
 
     describe "vector" do
-      it { should respond_to :vector }
-      it { should respond_to :vector= }
-
       context "when setting to nil" do
         it "equals nil" do
           subject.vector = nil
@@ -154,10 +151,10 @@ module Barometer
           subject.vector.to_s.should == "12 kph"
         end
 
-        it "does not clear the value" do
+        it "clears the value" do
           subject.vector = [12]
           subject.vector = nil
-          subject.vector.to_s.should == "12 kph"
+          subject.vector.should be_nil
         end
       end
 

@@ -73,11 +73,6 @@ module Barometer
           end
         end
 
-        def vector *names
-          new_pre_set_reader Barometer::Data::Vector, *names
-          new_pre_set_writer Barometer::Data::Vector, *names
-        end
-
         def pressure *names
           new_pre_set_reader Data::Pressure, *names
           new_pre_set_writer Data::Pressure, *names

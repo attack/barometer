@@ -4,6 +4,7 @@ module Barometer
 end
 
 require 'barometer/data/writer'
+require 'barometer/data/reader'
 require 'barometer/data/zone'
 require 'barometer/data/sun'
 require 'barometer/data/geo'

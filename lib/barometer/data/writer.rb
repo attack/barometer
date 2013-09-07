@@ -10,5 +10,6 @@ module Barometer
   end
 end
 
+require 'barometer/data/writers/metric_writer.rb'
 require 'barometer/data/writers/float_writer.rb'
 require 'barometer/data/writers/integer_writer.rb'
