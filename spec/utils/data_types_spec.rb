@@ -11,8 +11,8 @@ module Barometer
     attribute :temperature, Data::Attribute::Temperature
     attribute :vector, Data::Attribute::Vector
     attribute :pressure, Data::Attribute::Pressure
+    attribute :distance, Data::Attribute::Distance
 
-    distance :distance
     time :time
     sun :sun
   end
@@ -247,9 +247,6 @@ module Barometer
     end
 
     describe "distance" do
-      it { should respond_to :distance }
-      it { should respond_to :distance= }
-
       context "when setting to nil" do
         it "equals nil" do
           subject.distance = nil
@@ -268,10 +265,10 @@ module Barometer
           subject.distance.to_s.should == "42.2 km"
         end
 
-        it "does not clear the value" do
+        it "clears the value" do
           subject.distance = [42.2]
           subject.distance = nil
-          subject.distance.to_s.should == "42.2 km"
+          subject.distance.should be_nil
         end
       end
 

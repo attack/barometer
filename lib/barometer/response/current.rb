@@ -13,12 +13,12 @@ module Barometer
       attribute :wind_chill, Data::Attribute::Temperature
       attribute :wind, Data::Attribute::Vector
       attribute :pressure, Data::Attribute::Pressure
+      attribute :visibility, Data::Attribute::Distance
       attribute :humidity, Float, :writer_class => Data::FloatWriter
       attribute :icon, String
       attribute :condition, String
 
       time :observed_at, :stale_at
-      distance :visibility
       sun :sun
 
       def initialize(metric=true)

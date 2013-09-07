@@ -26,58 +26,6 @@ module Barometer
           end
         end
 
-        def new_pre_set_reader type, *names
-          names.each do |name|
-            send :define_method, name do
-              value = instance_variable_get("@#{name}")
-              if value.respond_to?(:metric=)
-                value.metric = metric?
-              end
-              value
-            end
-          end
-        end
-
-        def new_pre_set_writer type, *names
-          names.each do |name|
-            send :define_method, "#{name}=" do |data|
-              return unless instance_variable_get("@#{name}").nil?
-              if data.is_a?(type)
-                instance = data
-              else
-                instance = type.new(*data)
-              end
-              instance.metric = metric?
-              instance_variable_set "@#{name}", instance
-            end
-          end
-        end
-
-        def typecast_writer klass, converter, *names
-          names.each do |name|
-            send :define_method, "#{name}=" do |data|
-              # return unless instance_variable_get("@#{name}").nil?
-              return if data.nil?
-
-              # if klass && data.is_a?(klass)
-                # value = data
-              if converter && data.respond_to?(converter)
-                value = data.send(converter)
-              elsif klass && Kernel.respond_to?(klass.to_s)
-                value = Kernel.send(klass.to_s, data)
-              else
-                raise ArgumentError
-              end
-              instance_variable_set "@#{name}", value
-            end
-          end
-        end
-
-        def distance *names
-          new_pre_set_reader Data::Distance, *names
-          new_pre_set_writer Data::Distance, *names
-        end
-
         def time *names
           attr_reader *names
 
