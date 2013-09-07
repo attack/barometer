@@ -7,7 +7,6 @@ class TestClass
   vector :vector
   pressure :pressure
   distance :distance
-  float :float
   integer :integer
   time :time
   sun :sun
@@ -322,52 +321,6 @@ describe Barometer::Utils::DataTypes do
 
         subject.metric = false
         subject.distance.to_s.should == "26.2 m"
-      end
-    end
-  end
-
-  describe "float" do
-    it { should respond_to :float }
-    it { should respond_to :float= }
-
-    context "when nothing has been set" do
-      it "returns nil" do
-        subject.float.should be_nil
-      end
-    end
-
-    context "when setting to nil" do
-      it "returns nil" do
-        subject.float = nil
-        subject.float.should be_nil
-      end
-    end
-
-    context "when setting with data to be interpretted as Float" do
-      it "returns a Float" do
-        subject.float = "12 cats"
-        subject.float.should be_a(Float)
-      end
-
-      it "sets the value" do
-        subject.float = "12 cats"
-        subject.float.should == 12.0
-      end
-
-      it "does not clear the value" do
-        subject.float = 12.0
-        subject.float = nil
-        subject.float.should == 12.0
-      end
-    end
-
-    context "when setting with Float" do
-      it "uses the passed in value" do
-        float = 9.0
-        subject.float = float
-        subject.float.should be_a(Float)
-        subject.float.should == float
-        subject.float.object_id.should == float.object_id
       end
     end
   end

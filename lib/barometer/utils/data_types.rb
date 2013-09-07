@@ -93,11 +93,6 @@ module Barometer
           new_pre_set_writer Data::Distance, *names
         end
 
-        def float *names
-          attr_reader *names
-          typecast_writer Float, :to_f, *names
-        end
-
         def integer *names
           attr_reader *names
           typecast_writer Integer, :to_i, *names

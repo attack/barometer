@@ -7,6 +7,7 @@ module Barometer
       include Virtus
       include Barometer::Utils::DataTypes
 
+      attribute :humidity, Float, :writer_class => Data::FloatWriter
       attribute :icon, String
       attribute :condition, String
 
@@ -15,7 +16,6 @@ module Barometer
       vector :wind
       pressure :pressure
       distance :visibility
-      float :humidity
       sun :sun
 
       def initialize(metric=true)

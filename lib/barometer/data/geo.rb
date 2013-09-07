@@ -4,8 +4,9 @@ module Barometer
   module Data
     class Geo
       include Virtus
-      include Utils::DataTypes
 
+      attribute :latitude, Float, :writer_class => Data::FloatWriter
+      attribute :longitude, Float, :writer_class => Data::FloatWriter
       attribute :query, String
       attribute :address, String
       attribute :locality, String
@@ -13,8 +14,6 @@ module Barometer
       attribute :country, String
       attribute :country_code, String
       attribute :postal_code, String
-
-      float :latitude, :longitude
 
       def coordinates
         [@latitude, @longitude].join(',')
@@ -39,9 +38,7 @@ module Barometer
       private
 
       def set_if_nil(attr, value)
-        if instance_variable_get("@#{attr}").nil?
-          instance_variable_set("@#{attr}", value)
-        end
+        self.send("#{attr}=", value) if self.send(attr).nil?
       end
     end
   end
