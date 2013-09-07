@@ -13,8 +13,9 @@ module Barometer
       attribute :location, Data::Attribute::Location
       attribute :station, Data::Attribute::Location
       attribute :timezone, Data::Attribute::Zone
+      attribute :source, Symbol
+      attribute :format, Symbol
 
-      symbol :source, :format
       time :response_started_at, :response_ended_at, :requested_at
 
       attr_accessor :current, :forecast

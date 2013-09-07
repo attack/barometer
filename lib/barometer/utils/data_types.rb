@@ -93,11 +93,6 @@ module Barometer
           new_pre_set_writer Data::Distance, *names
         end
 
-        def symbol *names
-          attr_reader *names
-          typecast_writer Symbol, :to_sym, *names
-        end
-
         def time *names
           attr_reader *names
 
@@ -126,22 +121,6 @@ module Barometer
             end
           end
         end
-
-        def boolean *names
-          attr_reader *names
-
-          names.each do |name|
-            send :define_method, "#{name}=" do |data|
-              data = !!data if data != nil
-              instance_variable_set "@#{name}", data
-            end
-
-            send :define_method, "#{name}?" do
-              !!instance_variable_get("@#{name}")
-            end
-          end
-        end
-
       end
     end
   end

@@ -15,7 +15,6 @@ module Barometer
     distance :distance
     time :time
     sun :sun
-    symbol :symbol
   end
 
   describe Utils::DataTypes do
@@ -323,60 +322,6 @@ module Barometer
 
           subject.metric = false
           subject.distance.to_s.should == "26.2 m"
-        end
-      end
-    end
-
-    describe "symbol" do
-      it { should respond_to :symbol }
-      it { should respond_to :symbol= }
-
-      context "when nothing has been set" do
-        it "returns nil" do
-          subject.symbol.should be_nil
-        end
-      end
-
-      context "when setting to nil" do
-        it "returns nil" do
-          subject.symbol = nil
-          subject.symbol.should be_nil
-        end
-      end
-
-      context "when setting with data to be interpretted as a Symbol" do
-        it "returns a Symbol" do
-          subject.symbol = "bar"
-          subject.symbol.should be_a(Symbol)
-        end
-
-        it "sets the value" do
-          subject.symbol = "bar"
-          subject.symbol.should == :bar
-        end
-
-        it "does not clear the value" do
-          subject.symbol = :bar
-          subject.symbol = nil
-          subject.symbol.should == :bar
-        end
-      end
-
-      context "when setting with data that can't be converted to a Symbol" do
-        it "returns nil" do
-          expect {
-            subject.symbol = []
-          }.to raise_error{ ArgumentError }
-        end
-      end
-
-      context "when setting with Symbol" do
-        it "uses the passed in value" do
-          symbol = :foo
-          subject.symbol = symbol
-          subject.symbol.should be_a(Symbol)
-          subject.symbol.should == symbol
-          subject.symbol.object_id.should == symbol.object_id
         end
       end
     end
