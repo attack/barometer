@@ -1,4 +1,4 @@
-require 'barometer/weather_services/yahoo/response/time_zone'
+require 'barometer/weather_services/yahoo/response/timezone'
 require 'barometer/weather_services/yahoo/response/location'
 require 'barometer/weather_services/yahoo/response/current_weather'
 require 'barometer/weather_services/yahoo/response/forecasted_weather'

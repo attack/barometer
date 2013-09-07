@@ -1,6 +1,6 @@
 module Barometer
   module WeatherService
-    class Yahoo
+    class ForecastIo
       class Response
         class TimeZone
           def initialize(payload)
@@ -8,7 +8,15 @@ module Barometer
           end
 
           def parse
-            @payload.using(/ ([A-Z]+)$/).fetch('item', 'pubDate')
+            Data::Zone.new(time_zone)
+          end
+
+          private
+
+          attr_reader :payload
+
+          def time_zone
+            payload.fetch('timezone')
           end
         end
       end

@@ -12,8 +12,8 @@ module Barometer
       attribute :query, String
       attribute :location, Data::Attribute::Location
       attribute :station, Data::Attribute::Location
+      attribute :timezone, Data::Attribute::Zone
 
-      timezone :timezone
       symbol :source, :format
       time :response_started_at, :response_ended_at, :requested_at
 

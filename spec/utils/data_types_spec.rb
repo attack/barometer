@@ -7,8 +7,8 @@ module Barometer
     include Utils::DataTypes
 
     attribute :location, Data::Attribute::Location
+    attribute :timezone, Data::Attribute::Zone
 
-    timezone :timezone
     temperature :temperature
     vector :vector
     pressure :pressure

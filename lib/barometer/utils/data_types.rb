@@ -127,23 +127,6 @@ module Barometer
           end
         end
 
-        def timezone *names
-          attr_reader *names
-
-          names.each do |name|
-            send :define_method, "#{name}=" do |data|
-              if data == nil
-                timezone = nil
-              elsif data.is_a?(Data::Zone)
-                timezone = data
-              elsif data
-                timezone = Data::Zone.new(data)
-              end
-              instance_variable_set "@#{name}", timezone
-            end
-          end
-        end
-
         def boolean *names
           attr_reader *names
 
