@@ -7,7 +7,6 @@ class TestClass
   vector :vector
   pressure :pressure
   distance :distance
-  integer :integer
   time :time
   sun :sun
   location :location
@@ -321,52 +320,6 @@ describe Barometer::Utils::DataTypes do
 
         subject.metric = false
         subject.distance.to_s.should == "26.2 m"
-      end
-    end
-  end
-
-  describe "integer" do
-    it { should respond_to :integer }
-    it { should respond_to :integer= }
-
-    context "when nothing has been set" do
-      it "returns nil" do
-        subject.integer.should be_nil
-      end
-    end
-
-    context "when setting to nil" do
-      it "returns nil" do
-        subject.integer = nil
-        subject.integer.should be_nil
-      end
-    end
-
-    context "when setting with data to be interpretted as Integer" do
-      it "returns a Integer" do
-        subject.integer = "12 cats"
-        subject.integer.should be_a(Integer)
-      end
-
-      it "sets the value" do
-        subject.integer = "12 cats"
-        subject.integer.should == 12
-      end
-
-      it "does not clear the value" do
-        subject.integer = 12
-        subject.integer = nil
-        subject.integer.should == 12
-      end
-    end
-
-    context "when setting with Integer" do
-      it "uses the passed in value" do
-        integer = 9
-        subject.integer = integer
-        subject.integer.should be_a(Integer)
-        subject.integer.should == integer
-        subject.integer.object_id.should == integer.object_id
       end
     end
   end

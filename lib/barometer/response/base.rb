@@ -7,18 +7,19 @@ module Barometer
       include Virtus
       include Utils::DataTypes
 
+      attribute :weight, Integer, :writer_class => Data::IntegerWriter, :default => 1
+      attribute :status_code, Integer
       attribute :query, String
 
       location :location, :station
       timezone :timezone
-      integer :weight, :status_code
       symbol :source, :format
       time :response_started_at, :response_ended_at, :requested_at
 
       attr_accessor :current, :forecast
 
       def initialize
-        @weight = 1
+        super
         @requested_at = Time.now.utc
       end
 
