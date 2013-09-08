@@ -13,8 +13,7 @@ module Barometer
     attribute :pressure, Data::Attribute::Pressure
     attribute :distance, Data::Attribute::Distance
     attribute :sun, Data::Attribute::Sun
-
-    time :time
+    attribute :time, Data::Attribute::Time
   end
 
   describe Utils::DataTypes do
@@ -337,10 +336,10 @@ module Barometer
           subject.time.should == Time.utc(2012, 10, 4, 5, 30, 45)
         end
 
-        it "does not clear the value" do
+        it "clears the value" do
           subject.time = 2012, 10, 4, 5, 30, 45
           subject.time = nil
-          subject.time.should_not be_nil
+          subject.time.should be_nil
         end
       end
 
