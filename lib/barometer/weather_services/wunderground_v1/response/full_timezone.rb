@@ -10,7 +10,7 @@ module Barometer
           def parse
             payload.fetch_each('simpleforecast', 'forecastday') do |forecast_payload|
               timezone = timezone(forecast_payload)
-              return timezone if timezone
+              return Data::Zone.new(timezone) if timezone
             end
           end
 

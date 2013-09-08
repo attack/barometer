@@ -1,21 +1,27 @@
 require 'barometer/utils/data_types'
+require 'virtus'
 
 module Barometer
   module Response
     class Base
+      include Virtus
       include Utils::DataTypes
 
-      location :location, :station
-      timezone :timezone
-      string :query
-      integer :weight, :status_code
-      symbol :source, :format
+      attribute :weight, Integer, :writer_class => Data::IntegerWriter, :default => 1
+      attribute :status_code, Integer
+      attribute :query, String
+      attribute :location, Data::Attribute::Location
+      attribute :station, Data::Attribute::Location
+      attribute :timezone, Data::Attribute::Zone
+      attribute :source, Symbol
+      attribute :format, Symbol
+
       time :response_started_at, :response_ended_at, :requested_at
 
       attr_accessor :current, :forecast
 
       def initialize
-        @weight = 1
+        super
         @requested_at = Time.now.utc
       end
 

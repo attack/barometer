@@ -51,7 +51,6 @@ module Barometer
         end
 
         def self._parse_locality(geo, payload)
-          # sublocality trumps locality
           if payload.fetch('types').include?('sublocality')
             geo.locality = payload.fetch('long_name')
           end

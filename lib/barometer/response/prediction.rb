@@ -1,14 +1,19 @@
 require 'barometer/utils/data_types'
+require 'virtus'
 
 module Barometer
   module Response
     class Prediction
-      include Barometer::Utils::DataTypes
+      include Virtus
+      include Utils::DataTypes
+
+      attribute :high, Data::Attribute::Temperature
+      attribute :low, Data::Attribute::Temperature
+      attribute :pop, Data::Attribute::Float
+      attribute :icon, String
+      attribute :condition, String
 
       time :starts_at, :ends_at
-      temperature :high, :low
-      float :pop
-      string :icon, :condition
       sun :sun
 
       attr_reader :date

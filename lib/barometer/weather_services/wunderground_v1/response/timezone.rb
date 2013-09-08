@@ -8,12 +8,16 @@ module Barometer
           end
 
           def parse
-            payload.using(/ (\w*)$/).fetch('local_time')
+            Data::Zone.new(time_zone)
           end
 
           private
 
           attr_reader :payload
+
+          def time_zone
+            payload.using(/ (\w*)$/).fetch('local_time')
+          end
         end
       end
     end

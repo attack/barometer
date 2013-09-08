@@ -5,22 +5,21 @@ module Barometer
         class Location
           def initialize(payload)
             @payload = payload
-            @location = Data::Location.new
           end
 
           def parse
-            location.city = city
-            location.state_code = state_code
-            location.country_code = country_code
-            location.latitude = latitude
-            location.longitude = longitude
-
-            location
+            Data::Location.new(
+              :city => city,
+              :state_code => state_code,
+              :country_code => country_code,
+              :latitude => latitude,
+              :longitude => longitude
+            )
           end
 
           private
 
-          attr_reader :payload, :location
+          attr_reader :payload
 
           def city
             payload.fetch('location', '@city')

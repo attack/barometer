@@ -2,7 +2,6 @@ module Barometer
   module Query
     class Base
       attr_reader :format, :geo, :units
-      attr_accessor :timezone
 
       def initialize(query, units=:metric)
         @q = query.dup

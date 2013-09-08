@@ -1,4 +1,4 @@
-require 'barometer/weather_services/forecast_io/response/time_zone'
+require 'barometer/weather_services/forecast_io/response/timezone'
 require 'barometer/weather_services/forecast_io/response/location'
 require 'barometer/weather_services/forecast_io/response/current_weather'
 require 'barometer/weather_services/forecast_io/response/forecasted_weather'

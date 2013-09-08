@@ -8,12 +8,16 @@ module Barometer
           end
 
           def parse
-            payload.fetch('ob_date', 'time_zone', '@abbrv')
+            Data::Zone.new(time_zone)
           end
 
           private
 
           attr_reader :payload
+
+          def time_zone
+            payload.fetch('ob_date', 'time_zone', '@abbrv')
+          end
         end
       end
     end
