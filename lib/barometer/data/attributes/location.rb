@@ -5,18 +5,8 @@ module Barometer
         primitive Data::Location
         default primitive.new
 
-        class Location < Virtus::Attribute::Writer::Coercible
-          def coerce(value)
-            if value.nil? || value.is_a?(primitive)
-              super
-            else
-              raise ArgumentError
-            end
-          end
-        end
-
         def self.writer_class(*)
-          Location
+          TypeRequiredWriter
         end
       end
     end

@@ -1,9 +1,9 @@
 module Barometer
   module Data
     module Attribute
-      class Zone < Virtus::Attribute::Object
-        primitive Data::Zone
-        default nil
+      class Sun < Virtus::Attribute::Object
+        primitive Data::Sun
+        default primitive.new
 
         def self.writer_class(*)
           TypeRequiredWriter

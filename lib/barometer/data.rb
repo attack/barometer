@@ -15,6 +15,5 @@ require 'barometer/data/pressure'
 require 'barometer/data/zone'
 require 'barometer/data/location'
 require 'barometer/data/geo'
-
-require 'barometer/data/attribute'
 require 'barometer/data/sun'
+require 'barometer/data/attribute'

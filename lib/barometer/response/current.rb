@@ -15,11 +15,11 @@ module Barometer
       attribute :pressure, Data::Attribute::Pressure
       attribute :visibility, Data::Attribute::Distance
       attribute :humidity, Data::Attribute::Float
+      attribute :sun, Data::Attribute::Sun
       attribute :icon, String
       attribute :condition, String
 
       time :observed_at, :stale_at
-      sun :sun
 
       def initialize(metric=true)
         @metric = metric

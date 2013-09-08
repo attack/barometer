@@ -10,11 +10,11 @@ module Barometer
       attribute :high, Data::Attribute::Temperature
       attribute :low, Data::Attribute::Temperature
       attribute :pop, Data::Attribute::Float
+      attribute :sun, Data::Attribute::Sun
       attribute :icon, String
       attribute :condition, String
 
       time :starts_at, :ends_at
-      sun :sun
 
       attr_reader :date
 

@@ -39,21 +39,6 @@ module Barometer
             end
           end
         end
-
-        def sun *names
-          pre_set_reader Data::Sun, *names
-
-          names.each do |name|
-            send :define_method, "#{name}=" do |data|
-              return if data.nil?
-              if data.is_a?(Data::Sun)
-                instance_variable_set "@#{name}", data
-              else
-                raise ArgumentError
-              end
-            end
-          end
-        end
       end
     end
   end

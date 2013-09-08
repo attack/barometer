@@ -27,6 +27,10 @@ module Barometer::WeatherService
               "@date" => "14 Apr 2013"
             }
           ]
+        },
+        "astronomy" => {
+          "@sunrise" => "6:44 am",
+          "@sunset" => "5:32 pm"
         }
       })
       response = Yahoo::Response.new.parse(payload)

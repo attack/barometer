@@ -12,9 +12,9 @@ module Barometer
     attribute :vector, Data::Attribute::Vector
     attribute :pressure, Data::Attribute::Pressure
     attribute :distance, Data::Attribute::Distance
+    attribute :sun, Data::Attribute::Sun
 
     time :time
-    sun :sun
   end
 
   describe Utils::DataTypes do
@@ -373,9 +373,6 @@ module Barometer
     end
 
     describe "sun" do
-      it { should respond_to :sun }
-      it { should respond_to :sun= }
-
       context "when setting to nil" do
         it "equals nil" do
           subject.sun = nil
@@ -394,12 +391,12 @@ module Barometer
           subject.sun.should == sun
         end
 
-        it "does not clear the value" do
+        it "clears the value" do
           rise = Time.utc(2013, 02, 10, 6, 0, 0)
           set = Time.utc(2013, 02, 10, 6, 0, 0)
           subject.sun = Barometer::Data::Sun.new(rise, set)
           subject.sun = nil
-          subject.sun.should_not be_nil
+          subject.sun.should be_nil
         end
       end
 
