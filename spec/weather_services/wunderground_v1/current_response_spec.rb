@@ -13,7 +13,7 @@ module Barometer::WeatherService
 
       expect( response.current.observed_at.utc ).to eq utc_observed_at
       expect( response.current.stale_at.utc ).to eq utc_stale_at
-      expect( response.timezone.code ).to eq 'PDT'
+      expect( response.timezone.to_s ).to eq 'PDT'
     end
   end
 end

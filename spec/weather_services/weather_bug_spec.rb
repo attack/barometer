@@ -63,7 +63,7 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
         should have_data(:location, :state_code).as_value("CA")
         should have_data(:location, :zip_code).as_value("90210")
 
-        should have_data(:timezone, :code).as_format(/^P[DS]T$/i)
+        should have_data(:timezone, :to_s).as_format(/^P[DS]T$/i)
 
         subject.forecast.size.should == 6
         should have_forecast(:starts_at).as_format(:time)

@@ -44,7 +44,7 @@ describe Barometer::WeatherService::Yahoo, :vcr => {
       should have_data(:location, :latitude).as_value(34.08)
       should have_data(:location, :longitude).as_value(-118.4)
 
-      should have_data(:timezone, :code).as_format(/^P[DS]T$/i)
+      should have_data(:timezone, :to_s).as_format(/^P[DS]T$/i)
 
       subject.forecast.size.should == 5
       should have_forecast(:starts_at).as_format(:time)

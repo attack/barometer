@@ -1,122 +1,138 @@
 require 'tzinfo'
+require 'delegate'
 
 module Barometer
   module Data
-    class Zone
-      @@zone_codes_file = File.expand_path(
-        File.join(File.dirname(__FILE__), 'translations', 'zone_codes.yml'))
-      @@zone_codes = nil
-
-      attr_accessor :zone_full, :zone_code, :zone_offset, :tz
-
+    class Zone < SimpleDelegator
       def initialize(zone)
-        if Zone.is_zone_full?(zone)
-          @zone_full = zone
-          @tz = TZInfo::Timezone.get(zone)
-        elsif Zone.is_zone_offset?(zone)
-          @zone_offset = zone
-        elsif Zone.is_zone_code?(zone)
-          @zone_code = zone
+        zone = if ZoneFull.detect?(zone)
+          ZoneFull.new(zone)
+        elsif ZoneOffset.detect?(zone)
+          ZoneOffset.new(zone)
+        elsif ZoneCode.detect?(zone)
+          ZoneCode.new(zone)
         else
           raise(ArgumentError, "invalid time zone")
         end
+        super(zone)
+      end
+    end
+
+    class ZoneFull
+      def self.detect?(zone)
+        zone.respond_to?(:match) && !!zone.match(/^[A-Za-z]+\/[A-Za-z_]+$/)
       end
 
-      def current
-        @zone_full || @zone_offset || @zone_code
+      def initialize(zone, time_class=::Time)
+        @zone = zone
+        @time_class = time_class
+        @tz = TZInfo::Timezone.get(zone)
       end
 
       def code
-        return @zone_code if @zone_code
-        return nil unless @tz
-        @tz.period_for_utc(Time.now.utc).zone_identifier.to_s
-      end
-
-      def full
-        @zone_full || nil
+        tz.period_for_utc(time_class.now.utc).zone_identifier.to_s
       end
 
       def offset
-        if @zone_offset
-          @zone_offset.to_f * 60 * 60
-        elsif @zone_code
-          Zone.zone_to_offset(@zone_code)
-        end
-      end
-
-      def dst?
-        return nil unless @tz
-        @tz.period_for_utc(Time.now.utc).dst?
+        tz.period_for_utc(time_class.now.utc).utc_total_offset
       end
 
       def now
-        if @zone_full
-          now = @tz.utc_to_local(Time.now.utc)
-        elsif @zone_offset || @zone_code
-          now = Time.now.utc + self.offset
-        end
-        now
+        tz.utc_to_local(time_class.now.utc)
       end
 
-      def today
-        now = self.now
-        Date.new(now.year, now.month, now.day)
+      def to_s
+        zone
       end
 
       def local_to_utc(local_time)
-        if @zone_full
-          @tz.local_to_utc(local_time)
-        elsif @zone_offset || @zone_code
-          local_time -= self.offset
-          Time.utc(local_time.year,local_time.month,local_time.day,
-            local_time.hour,local_time.min,local_time.sec)
-        end
+        tz.local_to_utc(local_time)
       end
 
       def utc_to_local(utc_time)
-        if @zone_full
-          @tz.utc_to_local(utc_time)
-        elsif @zone_offset || @zone_code
-          utc_time + self.offset
-        end
+        tz.utc_to_local(utc_time)
       end
 
-      def self.is_zone_code?(zone)
-        return false unless (zone && zone.is_a?(String))
-        _load_zone_codes unless @@zone_codes
-        Time.zone_offset(zone) || (@@zone_codes && @@zone_codes.has_key?(zone))
+      private
+
+      attr_reader :zone, :tz, :time_class
+    end
+
+    class ZoneOffset
+      def self.detect?(zone)
+        zone.respond_to?(:abs) && zone.abs <= 14
       end
 
-      def self.is_zone_full?(zone)
-        return false unless (zone && zone.is_a?(String))
-        zone.match(/[A-Za-z]+\/[A-Za-z]+/) ? true : false
+      def initialize(zone, time_class=::Time)
+        @zone = zone
+        @time_class = time_class
       end
 
-      def self.is_zone_offset?(zone)
-        return false unless (zone && (zone.is_a?(Fixnum) || zone.is_a?(Float)))
-        zone.to_f.abs <= 14
+      def code
       end
 
-      # Known conflicts:
-      # IRT (ireland and india)
-      # CST (central standard time, china standard time)
-      #
-      def self.zone_to_offset(timezone)
-        offset = 0
-        seconds_in_hour = 60*60
-        unless offset = Time.zone_offset(timezone)
-          # that would have been too easy, do it manually
-          # http://www.timeanddate.com/library/abbreviations/timezones/
-          # http://www.worldtimezone.com/wtz-names/timezonenames.html
-          offset = (@@zone_codes[timezone.to_s.upcase] || 0) * seconds_in_hour
-        end
-        offset
+      def offset
+        zone.to_f * 60 * 60
       end
 
-      def self._load_zone_codes
-        $:.unshift(File.dirname(__FILE__))
-        @@zone_codes ||= YAML.load_file(@@zone_codes_file)
+      def now
+        time_class.now.utc + offset
       end
+
+      def to_s
+        zone.to_s
+      end
+
+      def local_to_utc(local_time)
+        local_time - offset
+      end
+
+      def utc_to_local(utc_time)
+        utc_time + offset
+      end
+
+      private
+
+      attr_reader :zone, :time_class
+    end
+
+    class ZoneCode
+      def self.detect?(zone)
+        zone.respond_to?(:to_s) && Utils::ZoneCodeLookup.exists?(zone.to_s)
+      end
+
+      def initialize(zone, time_class=::Time)
+        @zone = zone
+        @time_class = time_class
+      end
+
+      def code
+        zone
+      end
+
+      def offset
+        Utils::ZoneCodeLookup.offset(zone)
+      end
+
+      def now
+        time_class.now.utc + offset
+      end
+
+      def to_s
+        zone
+      end
+
+      def local_to_utc(local_time)
+        local_time - offset
+      end
+
+      def utc_to_local(utc_time)
+        utc_time + offset
+      end
+
+      private
+
+      attr_reader :zone, :time_class
     end
   end
 end

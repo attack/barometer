@@ -3,9 +3,8 @@ module Barometer
     class WundergroundV1
       class Response
         class ForecastedWeather
-          def initialize(payload, timezone, response)
+          def initialize(payload, response)
             @payload = payload
-            @timezone = timezone
             @response = response
             @predictions = Barometer::Response::PredictionCollection.new
           end
@@ -26,7 +25,7 @@ module Barometer
 
           private
 
-          attr_reader :payload, :timezone, :response, :predictions
+          attr_reader :payload, :response, :predictions
 
           def each_prediction
             payload.fetch_each('simpleforecast', 'forecastday') do |forecast_payload|

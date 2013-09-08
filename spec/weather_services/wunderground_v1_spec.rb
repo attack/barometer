@@ -59,8 +59,7 @@ module Barometer::WeatherService
         should have_data(:location, :longitude).as_value(-114.01999664)
 
         should have_data(:timezone, :code).as_format(/^M[DS]T$/i)
-        should have_data(:timezone, :zone_full).as_value('America/Edmonton')
-        should have_data(:timezone, :current).as_value('America/Edmonton')
+        should have_data(:timezone, :to_s).as_value('America/Edmonton')
 
         subject.forecast.size.should == 6
         should have_forecast(:starts_at).as_format(:time)

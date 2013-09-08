@@ -2,340 +2,297 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 module Barometer::Data
   describe Zone do
-    describe "when initialized" do
-      describe "with a full zone" do
-        before(:each) do
-          @utc = Time.now.utc
-          @timezone = "Europe/Paris"
-          @zone = Zone.new(@timezone)
-        end
+    describe "#new" do
+      let(:zone) { double(:zone) }
 
-        it "responds to zone_full" do
-          @zone.zone_full.should_not be_nil
-          @zone.zone_full.should == @timezone
-        end
-
-        it "responds to zone_code" do
-          @zone.zone_code.should be_nil
-        end
-
-        it "responds to zone_offset" do
-          @zone.zone_offset.should be_nil
-        end
-
-        it "responds to tz" do
-          expect { Zone.new("invalid timezone") }.to raise_error(ArgumentError)
-
-          zone = Zone.new(@timezone)
-          zone.tz.should_not be_nil
-        end
-
-        it "responds to full" do
-          @zone.respond_to?("full").should be_true
-          zone = Zone.new(@timezone)
-          zone.tz = nil
-          zone.tz.should be_nil
-          zone.full.should == @timezone
-
-          zone = Zone.new(@timezone)
-          zone.full.should == @timezone
-        end
-
-        it "responds to code" do
-          @zone.respond_to?("code").should be_true
-          zone = Zone.new(@timezone)
-          zone.tz = nil
-          zone.tz.should be_nil
-          zone.code.should be_nil
-
-          zone = Zone.new(@timezone)
-          # the expected result of this depends on the time of year
-          # when summer expect "CEST", otherwise "CET"
-          # just let TZINFO handle this
-          zone.code.should == TZInfo::Timezone.get(@timezone).period_for_utc(Time.now.utc).zone_identifier.to_s
-        end
-
-        it "responds to dst?" do
-          @zone.respond_to?("dst?").should be_true
-          zone = Zone.new(@timezone)
-          zone.tz = nil
-          zone.tz.should be_nil
-          zone.dst?.should be_nil
-        end
-
-        it "responds to now" do
-          @zone.respond_to?("now").should be_true
-          @zone.now.is_a?(Time).should be_true
-
-          period = @zone.tz.period_for_utc(Time.now)
-          actual_now = Time.now.utc + period.utc_total_offset
-
-          now = @zone.now
-          now.hour.should == actual_now.hour
-          now.min.should == actual_now.min
-          now.sec.should == actual_now.sec
-          now.year.should == actual_now.year
-          now.month.should == actual_now.month
-          now.day.should == actual_now.day
-        end
-
-        it "responds to today" do
-          @zone.respond_to?("today").should be_true
-          @zone.today.is_a?(Date).should be_true
-
-          period = @zone.tz.period_for_utc(Time.now)
-          actual_now = Time.now.utc + period.utc_total_offset
-
-          now = @zone.today
-          now.year.should == actual_now.year
-          now.month.should == actual_now.month
-          now.day.should == actual_now.day
-        end
-
-        it "converts local_time to utc" do
-          local_time = Time.now.utc
-          utc_time = @zone.local_to_utc(local_time)
-
-          offset =  @zone.tz.period_for_utc(local_time).utc_total_offset
-          utc_time.should == (local_time - offset)
-        end
-
-        it "converts utc to local_time" do
-          utc_time = Time.now.utc
-          local_time = @zone.utc_to_local(utc_time)
-
-          offset =  @zone.tz.period_for_utc(local_time).utc_total_offset
-          utc_time.should == (local_time - offset)
-        end
+      before do
+        ZoneFull.stub(:detect? => false)
+        ZoneOffset.stub(:detect? => false)
+        ZoneCode.stub(:detect? => false)
       end
 
-      describe "with a zone code" do
-        before(:each) do
-          @utc = Time.now.utc
-          @timezone = "EAST"
-          @zone = Zone.new(@timezone)
-        end
-
-        it "responds to zone_code" do
-          @zone.zone_code.should_not be_nil
-          @zone.zone_code.should == @timezone
-        end
-
-        it "responds to zone_full" do
-          @zone.zone_full.should be_nil
-        end
-
-        it "responds to zone_offset" do
-          @zone.zone_offset.should be_nil
-        end
-
-        it "responds to tz" do
-          zone = Zone.new(@timezone)
-          zone.tz.should be_nil
-        end
-
-        it "responds to code" do
-          @zone.respond_to?("code").should be_true
-          zone = Zone.new(@timezone)
-          zone.tz = nil
-          zone.tz.should be_nil
-          zone.code.should == @timezone
-
-          zone = Zone.new(@timezone)
-          zone.code.should == @timezone
-        end
-
-        it "responds to full" do
-          @zone.respond_to?("full").should be_true
-          zone = Zone.new(@timezone)
-          zone.tz = nil
-          zone.tz.should be_nil
-          zone.full.should be_nil
-
-          zone = Zone.new(@timezone)
-          zone.full.should be_nil
-        end
-
-        it "responds to now" do
-          @zone.respond_to?("now").should be_true
-          @zone.now.is_a?(Time).should be_true
-
-          actual_now = Time.now.utc + (-6*60*60)
-
-          now = @zone.now
-          now.hour.should == actual_now.hour
-          now.min.should == actual_now.min
-          now.sec.should == actual_now.sec
-          now.year.should == actual_now.year
-          now.month.should == actual_now.month
-          now.day.should == actual_now.day
-        end
-
-        it "responds to today" do
-          @zone.respond_to?("today").should be_true
-          @zone.today.is_a?(Date).should be_true
-
-          actual_now = Time.now.utc + (-6*60*60)
-
-          now = @zone.today
-          now.year.should == actual_now.year
-          now.month.should == actual_now.month
-          now.day.should == actual_now.day
-        end
-
-        it "converts local_time to utc" do
-          local_time = Time.now.utc
-          utc_time = @zone.local_to_utc(local_time)
-
-          utc_time.year.should == (local_time - @zone.offset).year
-          utc_time.month.should == (local_time - @zone.offset).month
-          utc_time.day.should == (local_time - @zone.offset).day
-          utc_time.hour.should == (local_time - @zone.offset).hour
-          utc_time.min.should == (local_time - @zone.offset).min
-          utc_time.sec.should == (local_time - @zone.offset).sec
-        end
-
-        it "converts utc to local_time" do
-          utc_time = Time.now.utc
-          local_time = @zone.utc_to_local(utc_time)
-
-          local_time.year.should == (utc_time + @zone.offset).year
-          local_time.month.should == (utc_time + @zone.offset).month
-          local_time.day.should == (utc_time + @zone.offset).day
-          local_time.hour.should == (utc_time + @zone.offset).hour
-          local_time.min.should == (utc_time + @zone.offset).min
-          local_time.sec.should == (utc_time + @zone.offset).sec
-        end
+      it 'detects a full timezone input' do
+        ZoneFull.stub(:detect? => true, :new => nil)
+        Zone.new(zone)
+        expect( ZoneFull ).to have_received(:new).with(zone)
       end
 
-      describe "with a zone offset" do
-        before(:each) do
-          @utc = Time.now.utc
-          @timezone = 8.5
-          @zone = Zone.new(@timezone)
-        end
+      it 'detects a timezone code input' do
+        ZoneOffset.stub(:detect? => true, :new => nil)
+        Zone.new(zone)
+        expect( ZoneOffset ).to have_received(:new).with(zone)
+      end
 
-        it "responds to zone_offset" do
-          @zone.zone_offset.should_not be_nil
-          @zone.zone_offset.should == @timezone
-        end
+      it 'detects a timezone offset input' do
+        ZoneCode.stub(:detect? => true, :new => nil)
+        Zone.new(zone)
+        expect( ZoneCode ).to have_received(:new).with(zone)
+      end
 
-        it "responds to zone_full" do
-          @zone.zone_full.should be_nil
-        end
+      it 'raises an error when nothing detected' do
+        expect {
+          Zone.new(zone)
+        }.to raise_error(ArgumentError)
+      end
+    end
+  end
 
-        it "responds to zone_code" do
-          @zone.zone_code.should be_nil
-        end
+  describe ZoneFull do
+    def stub_time(utc_now)
+      now = double(:now, :utc => utc_now)
+      double(:time_class, :now => now)
+    end
 
-        it "responds to tz" do
-          zone = Zone.new(@timezone)
-          zone.tz.should be_nil
-        end
+    describe ".detect?" do
+      it "returns true when given a full timezone" do
+        expect( ZoneFull.detect?('America/Los_Angeles') ).to be_true
+      end
 
-        it "responds to offset" do
-          @zone.respond_to?("offset").should be_true
-          zone = Zone.new(@timezone)
-          zone.tz = nil
-          zone.tz.should be_nil
-          zone.offset.should == (@timezone * 60 * 60)
+      it "returns false when given a timezone code" do
+        expect( ZoneFull.detect?('PST') ).to be_false
+      end
 
-          zone = Zone.new(@timezone)
-          zone.offset.should == (@timezone * 60 * 60)
-        end
+      it "returns false when given an offset" do
+        expect( ZoneFull.detect?(10) ).to be_false
+      end
 
-        it "responds to full" do
-          @zone.respond_to?("full").should be_true
-          zone = Zone.new(@timezone)
-          zone.tz = nil
-          zone.tz.should be_nil
-          zone.full.should be_nil
-
-          zone = Zone.new(@timezone)
-          zone.full.should be_nil
-        end
-
-        it "responds to code" do
-          @zone.respond_to?("code").should be_true
-          zone = Zone.new(@timezone)
-          zone.tz = nil
-          zone.tz.should be_nil
-          zone.code.should be_nil
-
-          zone = Zone.new(@timezone)
-          zone.code.should be_nil
-        end
-
-        it "responds to now" do
-          @zone.respond_to?("now").should be_true
-          @zone.now.is_a?(Time).should be_true
-
-          actual_now = Time.now.utc + (@timezone.to_f*60*60)
-
-          now = @zone.now
-          now.hour.should == actual_now.hour
-          now.min.should == actual_now.min
-          now.sec.should == actual_now.sec
-          now.year.should == actual_now.year
-          now.month.should == actual_now.month
-          now.day.should == actual_now.day
-        end
-
-        it "responds to today" do
-          @zone.respond_to?("today").should be_true
-          @zone.today.is_a?(Date).should be_true
-
-          actual_now = Time.now.utc + (@timezone.to_f*60*60)
-
-          now = @zone.today
-          now.year.should == actual_now.year
-          now.month.should == actual_now.month
-          now.day.should == actual_now.day
-        end
-
-        it "converts local_time to utc" do
-          local_time = Time.now.utc
-          utc_time = @zone.local_to_utc(local_time)
-
-          utc_time.year.should == (local_time - @zone.offset).year
-          utc_time.month.should == (local_time - @zone.offset).month
-          utc_time.day.should == (local_time - @zone.offset).day
-          utc_time.hour.should == (local_time - @zone.offset).hour
-          utc_time.min.should == (local_time - @zone.offset).min
-          utc_time.sec.should == (local_time - @zone.offset).sec
-        end
-
-        it "converts utc to local_time" do
-          utc_time = Time.now.utc
-          local_time = @zone.utc_to_local(utc_time)
-
-          local_time.year.should == (utc_time + @zone.offset).year
-          local_time.month.should == (utc_time + @zone.offset).month
-          local_time.day.should == (utc_time + @zone.offset).day
-          local_time.hour.should == (utc_time + @zone.offset).hour
-          local_time.min.should == (utc_time + @zone.offset).min
-          local_time.sec.should == (utc_time + @zone.offset).sec
-        end
+      it "returns false when given nothing" do
+        expect( ZoneFull.detect?('') ).to be_false
+        expect( ZoneFull.detect?(nil) ).to be_false
       end
     end
 
-    describe "when detecting zones" do
-      it "recognozes a full time zone format" do
-        Zone.is_zone_full?("invalid").should be_false
-        Zone.is_zone_full?("America/New York").should be_true
+    describe "#code" do
+      it "returns the correct non-DST zone code" do
+        time = stub_time(::Time.utc(2013, 1, 1))
+        zone = ZoneFull.new('America/Los_Angeles', time)
+
+        expect( zone.code ).to eq 'PST'
       end
 
-      it "matches a zone offset" do
-        Zone.is_zone_offset?("invalid").should be_false
-        Zone.is_zone_offset?("MST").should be_false
-        Zone.is_zone_offset?("10").should be_false
-        Zone.is_zone_offset?(-10).should be_true
+      it "returns the correct DST zone code" do
+        time = stub_time(::Time.utc(2013, 6, 1))
+        zone = ZoneFull.new('America/Los_Angeles', time)
+
+        expect( zone.code ).to eq 'PDT'
+      end
+    end
+
+    describe "#offset" do
+      it "returns the current non-DST offset" do
+        time = stub_time(::Time.utc(2013, 1, 1, 18, 0, 0))
+        zone = ZoneFull.new('America/Los_Angeles', time)
+
+        expect( zone.offset ).to eq(-8 * 60 * 60)
       end
 
-      it "matches a zone code" do
-        Zone.is_zone_code?("invalid").should be_false
-        Zone.is_zone_code?("MST").should be_true
-        Zone.is_zone_code?("EAST").should be_true
+      it "returns the current DST offset" do
+        time = stub_time(::Time.utc(2013, 6, 1, 18, 0, 0))
+        zone = ZoneFull.new('America/Los_Angeles', time)
+
+        expect( zone.offset ).to eq(-7 * 60 * 60)
+      end
+    end
+
+    describe "#now" do
+      it "returns the current non-DST local time" do
+        time = stub_time(::Time.utc(2013, 1, 1, 18, 0, 0))
+        zone = ZoneFull.new('America/Los_Angeles', time)
+
+        expect( zone.now ).to eq ::Time.utc(2013, 1, 1, 10, 0, 0)
+      end
+
+      it "returns the current DST local time" do
+        time = stub_time(::Time.utc(2013, 6, 1, 18, 0, 0))
+        zone = ZoneFull.new('America/Los_Angeles', time)
+
+        expect( zone.now ).to eq ::Time.utc(2013, 6, 1, 11, 0, 0)
+      end
+    end
+
+    describe "#to_s" do
+      it "returns the input zone" do
+        expect( ZoneFull.new('Europe/Paris').to_s ).to eq 'Europe/Paris'
+      end
+    end
+
+    describe "#local_to_utc" do
+      it "converts a time in the local time zone to UTC" do
+        zone = ZoneFull.new('America/Los_Angeles')
+        local_time = ::Time.now.utc
+
+        expect( zone.local_to_utc(local_time).to_i ).to eq((local_time - zone.offset).to_i)
+      end
+    end
+
+    describe "#utc_to_local" do
+      it "converts a time in the local time zone to UTC" do
+        zone = ZoneFull.new('America/Los_Angeles')
+        utc_time = ::Time.now.utc
+
+        expect( zone.utc_to_local(utc_time).to_i ).to eq((utc_time + zone.offset).to_i)
+      end
+    end
+  end
+
+  describe ZoneOffset do
+    def stub_time(utc_now)
+      now = double(:now, :utc => utc_now)
+      double(:time_class, :now => now)
+    end
+
+    describe ".detect?" do
+      it "returns false when given a full timezone" do
+        expect( ZoneOffset.detect?('America/Los_Angeles') ).to be_false
+      end
+
+      it "returns false when given a timezone code" do
+        expect( ZoneOffset.detect?('PST') ).to be_false
+      end
+
+      it "returns true when given an offset" do
+        expect( ZoneOffset.detect?(10) ).to be_true
+      end
+
+      it "returns false when given an offset out of range" do
+        expect( ZoneOffset.detect?(15) ).to be_false
+      end
+
+      it "returns false when given nothing" do
+        expect( ZoneOffset.detect?('') ).to be_false
+        expect( ZoneOffset.detect?(nil) ).to be_false
+      end
+    end
+
+    describe "#code" do
+      it "returns nil" do
+        expect( ZoneOffset.new(10).code ).to be_nil
+      end
+    end
+
+    describe "#offset" do
+      it "converts the input from hours to seconds" do
+        expect( ZoneOffset.new(5).offset ).to eq(5 * 60 * 60)
+      end
+    end
+
+    describe "#now" do
+      it "returns the current local time" do
+        time = stub_time(::Time.utc(2013, 1, 1, 10, 0, 0))
+        zone = ZoneOffset.new(5, time)
+
+        expect( zone.now ).to eq ::Time.utc(2013, 1, 1, 15, 0, 0)
+      end
+    end
+
+    describe "#to_s" do
+      it "returns the input zone" do
+        expect( ZoneOffset.new(5).to_s ).to eq '5'
+      end
+    end
+
+    describe "#local_to_utc" do
+      it "converts a time in the local time zone to UTC" do
+        zone = ZoneOffset.new(5)
+        local_time = ::Time.now.utc
+
+        expect( zone.local_to_utc(local_time).to_i ).to eq((local_time - zone.offset).to_i)
+      end
+    end
+
+    describe "#utc_to_local" do
+      it "converts a time in the local time zone to UTC" do
+        zone = ZoneOffset.new(5)
+        utc_time = ::Time.now.utc
+
+        expect( zone.utc_to_local(utc_time).to_i ).to eq((utc_time + zone.offset).to_i)
+      end
+    end
+  end
+
+  describe ZoneCode do
+    def stub_time(utc_now)
+      now = double(:now, :utc => utc_now)
+      double(:time_class, :now => now)
+    end
+
+    describe ".detect?" do
+      it "returns false when given a full timezone" do
+        expect( ZoneCode.detect?('America/Los_Angeles') ).to be_false
+      end
+
+      it "returns true when given a timezone code" do
+        expect( ZoneCode.detect?('PST') ).to be_true
+      end
+
+      it "returns true when given an obscure timezone code" do
+        expect( ZoneCode.detect?('CEST') ).to be_true
+      end
+
+      it "returns false when given an invalid timezone code" do
+        expect( ZoneCode.detect?('ABC') ).to be_false
+      end
+
+      it "returns false when given an offset" do
+        expect( ZoneCode.detect?(10) ).to be_false
+      end
+
+      it "returns false when given nothing" do
+        expect( ZoneCode.detect?('') ).to be_false
+        expect( ZoneCode.detect?(nil) ).to be_false
+      end
+    end
+
+    describe "#code" do
+      it "returns the input code" do
+        expect( ZoneCode.new('PST').code ).to eq 'PST'
+      end
+    end
+
+    describe "#offset" do
+      it "returns the offset in seconds" do
+        expect( ZoneCode.new('PST').offset ).to eq(-8 * 60 * 60)
+      end
+
+      it "returns the offset in seconds for an obscure input code" do
+        expect( ZoneCode.new('CEST').offset ).to eq(2 * 60 * 60)
+      end
+
+      it "returns 0 for unknown codes" do
+        expect( ZoneCode.new('ABC').offset ).to be_zero
+      end
+    end
+
+    describe "#now" do
+      it "returns the current local time" do
+        time = stub_time(::Time.utc(2013, 1, 1, 10, 0, 0))
+        zone = ZoneCode.new('PST', time)
+
+        expect( zone.now ).to eq ::Time.utc(2013, 1, 1, 2, 0, 0)
+      end
+    end
+
+    describe "#to_s" do
+      it "returns the input zone" do
+        expect( ZoneCode.new('PST').to_s ).to eq 'PST'
+      end
+    end
+
+    describe "#local_to_utc" do
+      it "converts a time in the local time zone to UTC" do
+        zone = ZoneCode.new('PST')
+        local_time = ::Time.now.utc
+
+        expect( zone.local_to_utc(local_time).to_i ).to eq((local_time - zone.offset).to_i)
+      end
+    end
+
+    describe "#utc_to_local" do
+      it "converts a time in the local time zone to UTC" do
+        zone = ZoneCode.new('PST')
+        utc_time = ::Time.now.utc
+
+        expect( zone.utc_to_local(utc_time).to_i ).to eq((utc_time + zone.offset).to_i)
       end
     end
   end

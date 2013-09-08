@@ -22,7 +22,7 @@ module Barometer::WeatherService
 
       expect( response.forecast[0].starts_at.utc ).to eq utc_starts_at
       expect( response.forecast[0].ends_at.utc ).to eq utc_ends_at
-      expect( response.timezone.full ).to eq 'America/Los_Angeles'
+      expect( response.timezone.to_s ).to eq 'America/Los_Angeles'
     end
 
     it "parses sun timezones correctly" do

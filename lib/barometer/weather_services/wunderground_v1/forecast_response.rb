@@ -15,7 +15,7 @@ module Barometer
           if response.current
             response.current.sun = WundergroundV1::Response::Sun.new(payload, timezone, response).parse
           end
-          response.forecast = WundergroundV1::Response::ForecastedWeather.new(payload, timezone, response).parse
+          response.forecast = WundergroundV1::Response::ForecastedWeather.new(payload, response).parse
 
           response
         end

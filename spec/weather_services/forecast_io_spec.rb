@@ -53,7 +53,8 @@ describe Barometer::WeatherService::ForecastIo, :vcr => {
         should have_data(:location, :latitude).as_value(42.7243)
         should have_data(:location, :longitude).as_value(-73.6927)
 
-        should have_data(:timezone, :full).as_value('America/New_York')
+        should have_data(:timezone, :to_s).as_value('America/New_York')
+        should have_data(:timezone, :code).as_format(/^E[DS]T$/i)
 
         subject.forecast.size.should == 8
         should have_forecast(:starts_at).as_format(:time)

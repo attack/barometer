@@ -723,8 +723,7 @@ describe Barometer::Utils::DataTypes do
         timezone = Barometer::Data::Zone.new("PDT")
         subject.timezone = timezone
         subject.timezone.should be_a(Barometer::Data::Zone)
-        subject.timezone.should == timezone
-        subject.timezone.object_id.should == timezone.object_id
+        subject.timezone.to_s.should == timezone.to_s
       end
     end
   end
