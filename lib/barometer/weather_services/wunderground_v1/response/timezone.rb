@@ -2,18 +2,8 @@ module Barometer
   module WeatherService
     class WundergroundV1
       class Response
-        class TimeZone
-          def initialize(payload)
-            @payload = payload
-          end
-
-          def parse
-            Data::Zone.new(time_zone)
-          end
-
+        class TimeZone < WeatherService::Response::TimeZone
           private
-
-          attr_reader :payload
 
           def time_zone
             payload.using(/ (\w*)$/).fetch('local_time')
