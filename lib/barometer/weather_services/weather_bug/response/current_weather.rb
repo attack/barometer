@@ -49,7 +49,7 @@ module Barometer
           end
 
           def icon
-            payload.fetch('barometer:icon')
+            payload.using(/cond(\d*)\.gif/).fetch('current_condition', '@icon')
           end
 
           def temperature

@@ -41,28 +41,6 @@ module Barometer::Utils
 
         expect( payload.query ).to eq current_query
       end
-
-      context "when the api defines #before_parse" do
-        it "calls the method with the GET response" do
-          api.stub(:before_parse)
-
-          payload_request.get
-
-          expect( api ).to have_received(:before_parse).with("<foo></foo>")
-        end
-      end
-
-      context "when the api defines #after_parse" do
-        it "calls the method with the XML parsing output" do
-          output = double(:output)
-          XmlReader.stub(:parse => output)
-          api.stub(:after_parse)
-
-          payload_request.get
-
-          expect( api ).to have_received(:after_parse).with(output)
-        end
-      end
     end
   end
 end

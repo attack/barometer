@@ -18,21 +18,12 @@ module Barometer
       end
 
       def parse_response(response)
-        using_around_filters(response) do
-          reader.parse(response, *api.unwrap_nodes)
-        end
+        reader.parse(response, *api.unwrap_nodes)
       end
 
       private
 
       attr_reader :api
-
-      def using_around_filters(response)
-        api.before_parse(response) if api.respond_to?(:before_parse)
-        output = yield
-        api.after_parse(output) if api.respond_to?(:after_parse)
-        output
-      end
 
       def reader
         json? ? JsonReader : XmlReader

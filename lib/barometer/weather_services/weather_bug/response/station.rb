@@ -26,7 +26,7 @@ module Barometer
           end
 
           def zip_code
-            payload.fetch('barometer:station_zipcode')
+            payload.fetch('city_state', '@zipcode')
           end
 
           def latitude
