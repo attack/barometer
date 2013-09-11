@@ -43,6 +43,25 @@ describe Barometer::Utils::Payload do
       parser = Barometer::Utils::Payload.new(hash)
       parser.fetch(:one).should be_nil
     end
+
+    context "when the data is accessed via an attribute" do
+      it "returns the value of the key" do
+        hash = {:one => {'@two' => 2}}
+        parser = Barometer::Utils::Payload.new(hash)
+        parser.fetch(:one, '@two').should == 2
+      end
+
+      it "returns the value accessed via :attributes" do
+        class StringWithAttributes < String
+          attr_accessor :attributes
+        end
+        value_with_attributes = StringWithAttributes.new('one')
+        value_with_attributes.attributes = {'two' => 2}
+        hash = {:one => value_with_attributes}
+        parser = Barometer::Utils::Payload.new(hash)
+        parser.fetch(:one, '@two').should == 2
+      end
+    end
   end
 
   describe "#fetch_each" do

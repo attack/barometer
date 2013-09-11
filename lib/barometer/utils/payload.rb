@@ -15,7 +15,7 @@ module Barometer
 
       def fetch(*paths)
         if hash
-          result = paths.inject(hash) { |result, path| result.fetch(path, nil) || break }
+          result = fetch_value_or_attribute(paths)
         else
           result = nil
         end
@@ -53,6 +53,24 @@ module Barometer
       end
 
       private
+
+      def fetch_value_or_attribute(paths)
+        result = paths.inject(hash) do |result, path|
+          fetch_value(result, path) || fetch_attribute(result, path) || break
+        end
+      end
+
+      def fetch_value(result, path)
+        if result.respond_to? :fetch
+          result.fetch(path, nil)
+        end
+      end
+
+      def fetch_attribute(result, path)
+        if path.to_s.start_with?('@') && result.respond_to?(:attributes)
+          result.attributes.fetch(path.slice(1..-1))
+        end
+      end
 
       def _apply_regex(result)
         if @regex && @regex.is_a?(Regexp) && matched = result.to_s.match(@regex)
