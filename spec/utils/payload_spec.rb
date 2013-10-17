@@ -142,5 +142,19 @@ describe Barometer::Utils::Payload do
       parser.fetch(:one).should == 'two, three'
     end
   end
+
+  describe '#units' do
+    it 'returns the query units when the query is present' do
+      units = double(:units)
+      query = double(:query, :units => units)
+      payload = Barometer::Utils::Payload.new({}, query)
+      expect( payload.units ).to eq units
+    end
+
+    it 'returns nil when the query is not present' do
+      payload = Barometer::Utils::Payload.new({}, nil)
+      expect( payload.units ).to be_nil
+    end
+  end
 end
 

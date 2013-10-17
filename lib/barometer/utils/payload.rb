@@ -52,6 +52,10 @@ module Barometer
         each_with_index(*paths, &block)
       end
 
+      def units
+        query.units if query
+      end
+
       private
 
       def fetch_value_or_attribute(paths)
