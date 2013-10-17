@@ -25,7 +25,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'yajl-ruby'
   s.add_dependency 'nori'
   s.add_dependency 'multi_json', '~> 1.0'
-  s.add_dependency 'virtus', '1.0.0.beta0'
 
   s.add_development_dependency 'rspec', '>= 2.11'
   s.add_development_dependency 'webmock'
