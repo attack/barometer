@@ -23,7 +23,7 @@ describe Barometer::Utils::Time do
 
     it "calls to_time on object, if it can" do
       utc = Time.now.utc
-      t = double(:foo, :to_time => utc)
+      t = double(:foo, to_time: utc)
       time = Barometer::Utils::Time.parse(t)
 
       assert_times_are_equal(time, utc)

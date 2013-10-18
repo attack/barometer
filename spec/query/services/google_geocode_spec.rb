@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Barometer::Query::Service::GoogleGeocode, :vcr => {
-  :cassette_name => 'Service::GoogleGeocode'
+describe Barometer::Query::Service::GoogleGeocode, vcr: {
+  cassette_name: 'Service::GoogleGeocode'
 } do
   describe '.call' do
     subject { Barometer::Query::Service::GoogleGeocode.call(query) }

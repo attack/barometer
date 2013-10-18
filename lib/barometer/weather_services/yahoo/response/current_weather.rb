@@ -37,7 +37,7 @@ module Barometer
           end
 
           def base_time
-            OpenStruct.new(:timezone => timezone, :base => current.observed_at)
+            OpenStruct.new(timezone: timezone, base: current.observed_at)
           end
 
           def observed_at

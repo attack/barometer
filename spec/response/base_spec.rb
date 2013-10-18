@@ -34,7 +34,7 @@ module Barometer::Response
       before { response.current = Current.new }
 
       it "returns true when current is complete" do
-        response.current.stub(:complete? => true)
+        response.current.stub(complete?: true)
         expect( response ).to be_complete
       end
 
@@ -44,7 +44,7 @@ module Barometer::Response
       end
 
       it "returns false when current is not complete" do
-        response.current.stub(:complete? => false)
+        response.current.stub(complete?: false)
         expect( response ).not_to be_complete
       end
     end
@@ -69,7 +69,7 @@ module Barometer::Response
         context "and the timezone is set" do
           it "passes along timezone.today to the collection" do
             timezone = Barometer::Data::Zone.new('EST')
-            timezone.stub(:today => date)
+            timezone.stub(today: date)
             response.timezone = timezone
 
             response.for
@@ -80,7 +80,7 @@ module Barometer::Response
 
         context "and the tiemzone is not set" do
           it "passes along Date.today to the collection" do
-            Date.stub(:today => date)
+            Date.stub(today: date)
             response.timezone = nil
 
             response.for
@@ -92,7 +92,7 @@ module Barometer::Response
     end
 
     describe "#add_query" do
-      let(:query) { double(:query, :to_s => 'foo', :format => :unknown, :metric? => true) }
+      let(:query) { double(:query, to_s: 'foo', format: :unknown, metric?: true) }
       before { response.add_query(query) }
 
       specify { expect( response ).to be_metric }

@@ -8,9 +8,9 @@ params_in_body = lambda do |request_1, request_2|
   a1.query_values == a2.query_values
 end
 
-describe Barometer::Query::Converter::ToWoeId, :vcr => {
-  :match_requests_on => [:method, :uri, params_in_body],
-  :cassette_name => "Converter::ToWoeId"
+describe Barometer::Query::Converter::ToWoeId, vcr: {
+  match_requests_on: [:method, :uri, params_in_body],
+  cassette_name: "Converter::ToWoeId"
 } do
 
   before { Barometer.yahoo_placemaker_app_id = YAHOO_KEY }

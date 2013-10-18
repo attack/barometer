@@ -18,9 +18,9 @@ module Barometer
       # { 1 => :wunderground }
       # { 1 => [:wunderground]}
       # { 1 => [:wunderground, :yahoo]}
-      # { 1 => [:wunderground, {:yahoo => {:weight => 2}}]}
-      # { 1 => {:wunderground => {:weight => 2}}}
-      # { 1 => [{:wunderground => {:weight => 2}}]}
+      # { 1 => [:wunderground, {yahoo: {weight: 2}}]}
+      # { 1 => {wunderground: {weight: 2}}}
+      # { 1 => [{wunderground: {weight: 2}}]}
       #
       def self._dig(data, config, &block)
         if data.respond_to?(:to_sym)

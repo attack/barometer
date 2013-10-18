@@ -20,7 +20,7 @@ module Barometer
         end
 
         def units_param
-          {:units => unit_type}
+          {units: unit_type}
         end
 
         private

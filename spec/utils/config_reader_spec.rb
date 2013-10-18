@@ -103,21 +103,21 @@ describe Barometer::Base do
 
       context "and that service is a hash with options" do
         it "calls the block with the options" do
-          Barometer.config = { 1 => {:test => {:version => :v1} } }
+          Barometer.config = { 1 => {test: {version: :v1} } }
 
           expect { |b|
             Barometer::Utils::ConfigReader.services(1, &b)
-          }.to yield_with_args(:test, {:version => :v1})
+          }.to yield_with_args(:test, {version: :v1})
         end
       end
 
       context "and that service is a hash with options in an array" do
         it "calls the block with the options" do
-          Barometer.config = { 1 => [{:test => {:version => :v1} }] }
+          Barometer.config = { 1 => [{test: {version: :v1} }] }
 
           expect { |b|
             Barometer::Utils::ConfigReader.services(1, &b)
-          }.to yield_with_args(:test, {:version => :v1})
+          }.to yield_with_args(:test, {version: :v1})
         end
       end
     end
@@ -135,21 +135,21 @@ describe Barometer::Base do
 
       context "and one service has no options, one has options" do
         it "calls the block twice with and without options" do
-          Barometer.config = { 1 => [:foo, {:bar => {:version => :v1}}] }
+          Barometer.config = { 1 => [:foo, {bar: {version: :v1}}] }
 
           expect { |b|
             Barometer::Utils::ConfigReader.services(1, &b)
-          }.to yield_successive_args([:foo, {}], [:bar, {:version => :v1}])
+          }.to yield_successive_args([:foo, {}], [:bar, {version: :v1}])
         end
       end
 
       context "and both services have opitons" do
         it "calls the block twice with options" do
-          Barometer.config = { 1 => [{:foo => {:weight => 2}}, {:bar => {:version => :v1}}] }
+          Barometer.config = { 1 => [{foo: {weight: 2}}, {bar: {version: :v1}}] }
 
           expect { |b|
             Barometer::Utils::ConfigReader.services(1, &b)
-          }.to yield_successive_args([:foo, {:weight => 2}], [:bar, {:version => :v1}])
+          }.to yield_successive_args([:foo, {weight: 2}], [:bar, {version: :v1}])
         end
       end
     end

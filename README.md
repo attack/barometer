@@ -109,13 +109,13 @@ Weather services, one with some configuration. In this case we are setting
 a weight value, this weight is respected when calculating averages.
 
 ```ruby
-Barometer.config = { 1 => [{:wunderground => {:weight => 2}}, :yahoo] }
+Barometer.config = { 1 => [{wunderground: {weight: 2}}, :yahoo] }
 ```
 
 Weather services, one with keys.
 
 ```ruby
-Barometer.config = { 1 => [:yahoo, {:weather_bug => {:keys => {:code => CODE_KEY} }}] }
+Barometer.config = { 1 => [:yahoo, {weather_bug: {keys: {code: CODE_KEY} }}] }
 ```
 
 #### Multiple weather API, with hierarchy
@@ -124,7 +124,7 @@ Barometer.config = { 1 => [:yahoo, {:weather_bug => {:keys => {:code => CODE_KEY
 require 'barometer'
 
 # use yahoo and weather bug, if they both fail, use wunderground
-Barometer.config = { 1 => [:yahoo, {:weather_bug => {:keys => {:code => CODE_KEY} }}], 2 => :wunderground }
+Barometer.config = { 1 => [:yahoo, {weather_bug: {keys: {code: CODE_KEY} }}], 2 => :wunderground }
 
 barometer = Barometer.new('Paris')
 weather = barometer.measure
@@ -145,10 +145,10 @@ the data as shown in the above examples.
 #### By relativity
 
 ```ruby
-weather.current         # returns the first successful current_measurement
-weather.forecast        # returns the first successful forecast_measurements
-weather.today           # returns the first successful forecast_measurement for today
-weather.tomorrow        # returns the first successful forecast_measurement for tomorrow
+weather.current       # returns the first successful current_measurement
+weather.forecast      # returns the first successful forecast_measurements
+weather.today         # returns the first successful forecast_measurement for today
+weather.tomorrow      # returns the first successful forecast_measurement for tomorrow
 
 puts weather.current.temperature.c
 puts weather.tomorrow.high.c

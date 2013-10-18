@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Barometer::WeatherService::Noaa, :vcr => {
-  :cassette_name => "WeatherService::Noaa"
+describe Barometer::WeatherService::Noaa, vcr: {
+  cassette_name: "WeatherService::Noaa"
 } do
 
   it "auto-registers this weather service as :noaa" do
@@ -9,7 +9,7 @@ describe Barometer::WeatherService::Noaa, :vcr => {
   end
 
   describe ".call" do
-    let(:query) { build_query.tap{|q|q.stub(:add_conversion => nil)} }
+    let(:query) { build_query.tap{|q|q.stub(add_conversion: nil)} }
 
     subject { Barometer::WeatherService::Noaa.call(query) }
 

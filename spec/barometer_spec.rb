@@ -9,7 +9,7 @@ describe Barometer do
     end
 
     it "has a default value" do
-      expect( Barometer.config ).to eq({ 1 => {:wunderground => {:version => :v1}} })
+      expect( Barometer.config ).to eq({ 1 => {wunderground: {version: :v1}} })
     end
 
     it "sets the value" do

@@ -27,7 +27,7 @@ module Barometer
           latitude = query.q.split(',')[0]
           longitude = query.q.split(',')[1]
 
-          { :textField1 => latitude, :textField2 => longitude }
+          { textField1: latitude, textField2: longitude }
         end
 
         def self._parse_station_id(response)

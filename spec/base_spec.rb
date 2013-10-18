@@ -6,11 +6,11 @@ module Barometer
     let(:barometer) { Base.new(query) }
 
     describe "#measure" do
-      let(:keys) { {:fake_secret => 'ABC123'} }
-      let(:response_foo) { Response.new.tap{|r| r.stub(:complete? => true)} }
-      let(:response_bar) { Response.new.tap{|r| r.stub(:complete? => true)} }
-      let(:foo_weather_service) { double(:weather_service, :call => response_foo) }
-      let(:bar_weather_service) { double(:weather_service, :call => response_bar) }
+      let(:keys) { {fake_secret: 'ABC123'} }
+      let(:response_foo) { Response.new.tap{|r| r.stub(complete?: true)} }
+      let(:response_bar) { Response.new.tap{|r| r.stub(complete?: true)} }
+      let(:foo_weather_service) { double(:weather_service, call: response_foo) }
+      let(:bar_weather_service) { double(:weather_service, call: response_bar) }
 
       around do |example|
         services_cache = WeatherService.services
@@ -24,7 +24,7 @@ module Barometer
       end
 
       before do
-        Barometer.config = {1 => {:foo => {:keys => keys}}}
+        Barometer.config = {1 => {foo: {keys: keys}}}
         WeatherService.register(:foo, foo_weather_service)
         WeatherService.register(:bar, bar_weather_service)
       end
@@ -40,12 +40,12 @@ module Barometer
       end
 
       context "when the first weather service is successful" do
-        before { response_foo.stub(:success? => true) }
+        before { response_foo.stub(success?: true) }
 
         it "measures the weather" do
           barometer.measure
           expect( foo_weather_service ).to have_received(:call).
-            with(an_instance_of(Query::Base), {:keys => keys})
+            with(an_instance_of(Query::Base), {keys: keys})
         end
 
         it "adds the result to weather.responses" do
@@ -79,7 +79,7 @@ module Barometer
       end
 
       context "when the first weather service is not successful" do
-        before { response_foo.stub(:success? => false) }
+        before { response_foo.stub(success?: false) }
 
         context "and there are no other weather services configured" do
           before { Barometer.config = {1 => :foo} }
@@ -94,7 +94,7 @@ module Barometer
         context "and another weather service is configured for the next service_level" do
           before do
             Barometer.config = {1 => [:foo, :bar], 2 => :bar}
-            response_bar.stub(:success? => true)
+            response_bar.stub(success?: true)
           end
 
           it "measures the weather using the next service_level" do

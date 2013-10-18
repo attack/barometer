@@ -9,11 +9,11 @@ module Barometer
 
           def parse
             Data::Location.new(
-              :city => city,
-              :state_code => state_code,
-              :country_code => country_code,
-              :latitude => latitude,
-              :longitude => longitude
+              city: city,
+              state_code: state_code,
+              country_code: country_code,
+              latitude: latitude,
+              longitude: longitude
             )
           end
 

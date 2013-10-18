@@ -16,7 +16,7 @@ module Barometer
         end
 
         def to_param
-          {:UnitType => unit_type}.merge(format_query)
+          {UnitType: unit_type}.merge(format_query)
         end
 
         private
@@ -27,9 +27,9 @@ module Barometer
 
         def format_query
           if converted_query.format == :short_zipcode
-            {:zipCode => converted_query.q}
+            {zipCode: converted_query.q}
           else
-            {:lat => converted_query.latitude, :long => converted_query.longitude}
+            {lat: converted_query.latitude, long: converted_query.longitude}
           end
         end
 

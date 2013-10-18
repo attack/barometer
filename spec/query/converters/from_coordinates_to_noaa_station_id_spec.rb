@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Barometer::Query::Converter::FromCoordinatesToNoaaStationId, :vcr => {
-  :match_requests_on => [:method, :uri],
-  :cassette_name => "Converter::FromCoordinatesToNoaaStationId"
+describe Barometer::Query::Converter::FromCoordinatesToNoaaStationId, vcr: {
+  match_requests_on: [:method, :uri],
+  cassette_name: "Converter::FromCoordinatesToNoaaStationId"
 } do
 
   it "converts :coordinates -> :noaa_station_id" do

@@ -3,14 +3,14 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 module Barometer::Utils
   describe PayloadRequest do
     describe "#get" do
-      let(:api) { double(:api, :url => nil, :params => nil, :unwrap_nodes => [], :current_query => nil) }
+      let(:api) { double(:api, url: nil, params: nil, unwrap_nodes: [], current_query: nil) }
       let(:payload_request) { PayloadRequest.new(api) }
 
-      before { Get.stub(:call => "<foo></foo>") }
+      before { Get.stub(call: "<foo></foo>") }
       it "makes a GET request" do
         url = double(:url)
         params = double(:params)
-        api.stub(:url => url, :params => params)
+        api.stub(url: url, params: params)
 
         payload_request.get
 
@@ -19,9 +19,9 @@ module Barometer::Utils
 
       it "XML parses the GET response" do
         response = double(:response)
-        Get.stub(:call => response)
+        Get.stub(call: response)
         unwrap_nodes = double(:unwrap_nodes)
-        api.stub(:unwrap_nodes => unwrap_nodes)
+        api.stub(unwrap_nodes: unwrap_nodes)
         XmlReader.stub(:parse)
 
         payload_request.get
@@ -35,7 +35,7 @@ module Barometer::Utils
 
       it "stores the query used to make the request" do
         current_query = double(:query)
-        api.stub(:current_query => current_query)
+        api.stub(current_query: current_query)
 
         payload = payload_request.get
 

@@ -394,13 +394,13 @@ module Barometer
 
       context "when setting attributes of location" do
         it "sets the value" do
-          location = Barometer::Data::Location.new(:name => 'foo')
+          location = Barometer::Data::Location.new(name: 'foo')
           subject.location = location
           subject.location.to_s.should == "foo"
         end
 
         it "resets the value" do
-          location = Barometer::Data::Location.new(:name => 'foo')
+          location = Barometer::Data::Location.new(name: 'foo')
           subject.location = location
 
           subject.location = nil

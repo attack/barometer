@@ -16,7 +16,7 @@ module Barometer
         end
 
         def to_param
-          {:query => converted_query.q.dup}
+          {query: converted_query.q.dup}
         end
 
         private

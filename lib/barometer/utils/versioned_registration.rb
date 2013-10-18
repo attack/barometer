@@ -44,8 +44,8 @@ module Barometer
 
       def add_value(key, version, value)
         registration = {
-          :version => (version || :default),
-          :value => value
+          version: (version || :default),
+          value: value
         }
         add_registration(key, registration)
       end

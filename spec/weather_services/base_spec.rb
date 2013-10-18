@@ -16,7 +16,7 @@ module Barometer
       let(:test_response) { Response.new }
 
       before do
-        test_weather.stub(:call => test_response)
+        test_weather.stub(call: test_response)
         WeatherService.register(:test_weather, test_weather)
       end
 
@@ -26,7 +26,7 @@ module Barometer
       end
 
       it "calls the requested version of the weather service" do
-        test_weather_v2 = double(:test_weather, :call => test_response)
+        test_weather_v2 = double(:test_weather, call: test_response)
         WeatherService.register(:test_weather, :v2, test_weather_v2)
 
         WeatherService.new(:test_weather, :v2).measure(query)
@@ -58,7 +58,7 @@ module Barometer
         end
 
         it "adds the source weight" do
-          response = WeatherService.new(:test_weather).measure(query, {:weight => 10})
+          response = WeatherService.new(:test_weather).measure(query, {weight: 10})
           expect( response.weight ).to eq 10
         end
 
@@ -70,14 +70,14 @@ module Barometer
 
       describe "error handling" do
         it "adds code 200 if no errors" do
-          test_response.stub(:complete? => true)
+          test_response.stub(complete?: true)
 
           response = WeatherService.new(:test_weather).measure(query)
           expect( response.status_code ).to eq 200
         end
 
         it "adds code 204 if service has no data" do
-          test_response.stub(:complete? => false)
+          test_response.stub(complete?: false)
 
           response = WeatherService.new(:test_weather).measure(query)
           expect( response.status_code ).to eq 204

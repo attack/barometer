@@ -8,7 +8,7 @@ require 'barometer/response'
 require 'barometer/weather_service'
 
 module Barometer
-  @@config = { 1 => {:wunderground => {:version => :v1}} }
+  @@config = { 1 => {wunderground: {version: :v1}} }
   def self.config; @@config; end;
   def self.config=(hash); @@config = hash; end;
 

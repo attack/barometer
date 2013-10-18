@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Barometer::Query::Converter::ToGeocode, :vcr => {
-  :match_requests_on => [:method, :uri],
-  :cassette_name => "Converter::ToGeocode"
+describe Barometer::Query::Converter::ToGeocode, vcr: {
+  match_requests_on: [:method, :uri],
+  cassette_name: "Converter::ToGeocode"
 } do
 
   it "converts :short_zipcode -> :geocode" do

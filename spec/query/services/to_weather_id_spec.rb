@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Barometer::Query::Service::ToWeatherId, :vcr => {
-  :cassette_name => "Service::ToWeatherId"
+describe Barometer::Query::Service::ToWeatherId, vcr: {
+  cassette_name: "Service::ToWeatherId"
 } do
   describe ".call," do
     it "returns nothing if query doesn't have a supported format" do

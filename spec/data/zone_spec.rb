@@ -6,25 +6,25 @@ module Barometer::Data
       let(:zone) { double(:zone) }
 
       before do
-        ZoneFull.stub(:detect? => false)
-        ZoneOffset.stub(:detect? => false)
-        ZoneCode.stub(:detect? => false)
+        ZoneFull.stub(detect?: false)
+        ZoneOffset.stub(detect?: false)
+        ZoneCode.stub(detect?: false)
       end
 
       it 'detects a full timezone input' do
-        ZoneFull.stub(:detect? => true, :new => nil)
+        ZoneFull.stub(detect?: true, new: nil)
         Zone.new(zone)
         expect( ZoneFull ).to have_received(:new).with(zone)
       end
 
       it 'detects a timezone code input' do
-        ZoneOffset.stub(:detect? => true, :new => nil)
+        ZoneOffset.stub(detect?: true, new: nil)
         Zone.new(zone)
         expect( ZoneOffset ).to have_received(:new).with(zone)
       end
 
       it 'detects a timezone offset input' do
-        ZoneCode.stub(:detect? => true, :new => nil)
+        ZoneCode.stub(detect?: true, new: nil)
         Zone.new(zone)
         expect( ZoneCode ).to have_received(:new).with(zone)
       end
@@ -39,8 +39,8 @@ module Barometer::Data
 
   describe ZoneFull do
     def stub_time(utc_now)
-      now = double(:now, :utc => utc_now)
-      double(:time_class, :now => now)
+      now = double(:now, utc: utc_now)
+      double(:time_class, now: now)
     end
 
     describe ".detect?" do
@@ -137,8 +137,8 @@ module Barometer::Data
 
   describe ZoneOffset do
     def stub_time(utc_now)
-      now = double(:now, :utc => utc_now)
-      double(:time_class, :now => now)
+      now = double(:now, utc: utc_now)
+      double(:time_class, now: now)
     end
 
     describe ".detect?" do
@@ -212,8 +212,8 @@ module Barometer::Data
 
   describe ZoneCode do
     def stub_time(utc_now)
-      now = double(:now, :utc => utc_now)
-      double(:time_class, :now => now)
+      now = double(:now, utc: utc_now)
+      double(:time_class, now: now)
     end
 
     describe ".detect?" do

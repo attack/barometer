@@ -4,11 +4,11 @@ module Barometer
       def build_query
         double(
           :query,
-          :q => 'foo',
-          :format => :unknown,
-          :units => :metric,
-          :geo => nil,
-          :metric? => true
+          q: 'foo',
+          format: :unknown,
+          units: :metric,
+          geo: nil,
+          metric?: true
         )
       end
     end

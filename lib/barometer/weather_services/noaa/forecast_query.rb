@@ -18,11 +18,11 @@ module Barometer
         def to_param
           case converted_query.format.to_sym
           when :short_zipcode
-            {:zipCodeList => converted_query.q}
+            {zipCodeList: converted_query.q}
           when :zipcode
-            {:zipCodeList => converted_query.q}
+            {zipCodeList: converted_query.q}
           when :coordinates
-            {:lat => converted_query.q.split(',')[0], :lon => converted_query.q.split(',')[1]}
+            {lat: converted_query.q.split(',')[0], lon: converted_query.q.split(',')[1]}
           else
             {}
           end

@@ -8,7 +8,7 @@ module Barometer
 
           response = Barometer::Utils::Get.call(
             'http://xoap.weather.com/search/search',
-            { :where => _format_query(converted_query.q) }
+            { where: _format_query(converted_query.q) }
           )
           _format_response(response)
         end

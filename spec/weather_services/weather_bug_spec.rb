@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
-describe Barometer::WeatherService::WeatherBug, :vcr => {
-  :cassette_name => "WeatherService::WeatherBug"
+describe Barometer::WeatherService::WeatherBug, vcr: {
+  cassette_name: "WeatherService::WeatherBug"
 } do
 
   it "auto-registers this weather service as :weather_bug" do
@@ -22,7 +22,7 @@ describe Barometer::WeatherService::WeatherBug, :vcr => {
     context "when keys are provided" do
       let(:converted_query) { Barometer::ConvertedQuery.new("90210", :short_zipcode, :metric) }
       let(:query) { build_query.tap{|q|q.stub(:convert! => converted_query)} }
-      let(:config) { {:keys => {:code => WEATHERBUG_CODE}} }
+      let(:config) { {keys: {code: WEATHERBUG_CODE}} }
 
       subject { Barometer::WeatherService::WeatherBug.call(query, config) }
 

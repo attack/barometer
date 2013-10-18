@@ -1,7 +1,7 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Barometer::Query::Service::NoaaStation, :vcr => {
-  :cassette_name => "Service::NoaaStation"
+describe Barometer::Query::Service::NoaaStation, vcr: {
+  cassette_name: "Service::NoaaStation"
 } do
   describe ".fetch," do
     it "returns nohing if query doesn't have coordinates format" do

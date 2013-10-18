@@ -161,10 +161,10 @@ module Barometer
       context 'when the query can be converted directly to the requested format' do
         it 'creates a conversion for the requested format' do
           coordinates = ConvertedQuery.new('12.34,-56.78', :coordinates)
-          coordinates_converter = double(:converter_instance, :call => coordinates)
-          coordinates_converter_klass = double(:coordinates_converter, :new => coordinates_converter)
+          coordinates_converter = double(:converter_instance, call: coordinates)
+          coordinates_converter_klass = double(:coordinates_converter, new: coordinates_converter)
 
-          Query::Converter.stub(:find_all => [{:coordinates => coordinates_converter_klass}])
+          Query::Converter.stub(find_all: [{coordinates: coordinates_converter_klass}])
 
           query = Query::Base.new('90210')
 
@@ -188,16 +188,16 @@ module Barometer
       context 'when the query can be converted via geocoding to the requested format' do
         it 'creates a conversion for the requested format' do
           coordinates = ConvertedQuery.new('12.34,-56.78', :coordinates)
-          coordinates_converter = double(:converter_instance, :call => coordinates)
-          coordinates_converter_klass = double(:coordinates_converter, :new => coordinates_converter)
+          coordinates_converter = double(:converter_instance, call: coordinates)
+          coordinates_converter_klass = double(:coordinates_converter, new: coordinates_converter)
 
           geocode = ConvertedQuery.new('Foo Bar', :geocode)
-          geocode_converter = double(:geocode_converter_instance, :call => geocode)
-          geocode_converter_klass = double(:geocode_converter, :new => geocode_converter)
+          geocode_converter = double(:geocode_converter_instance, call: geocode)
+          geocode_converter_klass = double(:geocode_converter, new: geocode_converter)
 
-          Query::Converter.stub(:find_all => [
-            {:geocode => geocode_converter_klass},
-            {:coordinates => coordinates_converter_klass}
+          Query::Converter.stub(find_all: [
+            {geocode: geocode_converter_klass},
+            {coordinates: coordinates_converter_klass}
           ])
 
           query = Query::Base.new('90210')
@@ -209,14 +209,14 @@ module Barometer
 
         it 'uses any exisiting intermediate conversions' do
           coordinates = ConvertedQuery.new('12.34,-56.78', :coordinates)
-          coordinates_converter = double(:converter_instance, :call => coordinates)
-          coordinates_converter_klass = double(:coordinates_converter, :new => coordinates_converter, :from => [:geocode])
+          coordinates_converter = double(:converter_instance, call: coordinates)
+          coordinates_converter_klass = double(:coordinates_converter, new: coordinates_converter, from: [:geocode])
 
           geocode_converter_klass = double(:geocode_converter)
 
-          Query::Converter.stub(:find_all => [
-            {:geocode => geocode_converter_klass},
-            {:coordinates => coordinates_converter_klass}
+          Query::Converter.stub(find_all: [
+            {geocode: geocode_converter_klass},
+            {coordinates: coordinates_converter_klass}
           ])
 
           query = Query::Base.new('90210')
@@ -236,7 +236,7 @@ module Barometer
         it 'raises ConversionNotPossible' do
           query = Query::Base.new('90210')
 
-          Query::Converter.stub(:find_all => [])
+          Query::Converter.stub(find_all: [])
 
           expect {
             query.convert!(:zipcode)

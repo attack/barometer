@@ -7,8 +7,8 @@ module Barometer
     module XmlReader
       def self.parse(xml, *nodes_to_remove)
         xml_reader = Nori.new(
-          :parser => :nokogiri,
-          :strip_namespaces => true
+          parser: :nokogiri,
+          strip_namespaces: true
         )
         output = xml_reader.parse(xml)
 

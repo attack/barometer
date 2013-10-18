@@ -14,7 +14,7 @@ module Barometer
         end
 
         def params
-          {:ACode => @api_code, :OutputType => '1'}.merge(@query.to_param)
+          {ACode: @api_code, OutputType: '1'}.merge(@query.to_param)
         end
 
         def unwrap_nodes

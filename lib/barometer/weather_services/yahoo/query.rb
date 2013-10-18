@@ -16,7 +16,7 @@ module Barometer
         end
 
         def to_param
-          {:u => unit_type}.merge(format_query)
+          {u: unit_type}.merge(format_query)
         end
 
         private
@@ -27,9 +27,9 @@ module Barometer
 
         def format_query
           if converted_query.format == :woe_id
-            { :w => converted_query.q }
+            { w: converted_query.q }
           else
-            { :p => converted_query.q }
+            { p: converted_query.q }
           end
         end
 

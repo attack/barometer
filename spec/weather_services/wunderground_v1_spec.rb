@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 
 module Barometer::WeatherService
-  describe WundergroundV1, :vcr => {
-    :cassette_name => "WeatherService::WundergroundV1"
+  describe WundergroundV1, vcr: {
+    cassette_name: "WeatherService::WundergroundV1"
   } do
 
     it "auto-registers this weather service as :wunderground" do

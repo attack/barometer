@@ -32,9 +32,9 @@ module Barometer
 
         def self._format_query(query)
           if query.format == :woe_id
-            { :w => query.q }
+            { w: query.q }
           else
-            { :p => query.q }
+            { p: query.q }
           end
         end
 

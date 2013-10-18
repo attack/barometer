@@ -3,7 +3,7 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Barometer::Utils::Payload do
   describe "#fetch" do
     it "returns the value for the key provided" do
-      hash = {:one => 1}
+      hash = {one: 1}
       parser = Barometer::Utils::Payload.new(hash)
       parser.fetch(:one).should == 1
     end
@@ -15,13 +15,13 @@ describe Barometer::Utils::Payload do
     end
 
     it "traverses multiple levels to get the value" do
-      hash = {:one => {:two => {:three => 3}}}
+      hash = {one: {two: {three: 3}}}
       parser = Barometer::Utils::Payload.new(hash)
       parser.fetch(:one, :two, :three).should == 3
     end
 
     it "returns nil when any level cannot be found" do
-      hash = {:one => {:two => {:three => {:four => 4}}}}
+      hash = {one: {two: {three: {four: 4}}}}
       parser = Barometer::Utils::Payload.new(hash)
       parser.fetch(:one, :too, :three).should be_nil
     end
@@ -33,20 +33,20 @@ describe Barometer::Utils::Payload do
     end
 
     it "returns a stripped result" do
-      hash = {:one => " one "}
+      hash = {one: " one "}
       parser = Barometer::Utils::Payload.new(hash)
       parser.fetch(:one).should == "one"
     end
 
     it "returns nil when the value is NA" do
-      hash = {:one => "NA"}
+      hash = {one: "NA"}
       parser = Barometer::Utils::Payload.new(hash)
       parser.fetch(:one).should be_nil
     end
 
     context "when the data is accessed via an attribute" do
       it "returns the value of the key" do
-        hash = {:one => {'@two' => 2}}
+        hash = {one: {'@two' => 2}}
         parser = Barometer::Utils::Payload.new(hash)
         parser.fetch(:one, '@two').should == 2
       end
@@ -57,7 +57,7 @@ describe Barometer::Utils::Payload do
         end
         value_with_attributes = StringWithAttributes.new('one')
         value_with_attributes.attributes = {'two' => 2}
-        hash = {:one => value_with_attributes}
+        hash = {one: value_with_attributes}
         parser = Barometer::Utils::Payload.new(hash)
         parser.fetch(:one, '@two').should == 2
       end
@@ -66,7 +66,7 @@ describe Barometer::Utils::Payload do
 
   describe "#fetch_each" do
     it "returns a payload for each result found at the key" do
-      hash = {:one => [{:two => 2}, {:two => 2}]}
+      hash = {one: [{two: 2}, {two: 2}]}
       parser = Barometer::Utils::Payload.new(hash)
 
       expect { |b|
@@ -75,7 +75,7 @@ describe Barometer::Utils::Payload do
     end
 
     it "returns a payload for each result found at the key" do
-      hash = {:one => [{:two => 2}, {:two => 2}]}
+      hash = {one: [{two: 2}, {two: 2}]}
       parser = Barometer::Utils::Payload.new(hash)
 
       parser.fetch_each(:one) do |each_parser|
@@ -84,7 +84,7 @@ describe Barometer::Utils::Payload do
     end
 
     it "raises an error when result is not an array" do
-      hash = {:one => 1}
+      hash = {one: 1}
       parser = Barometer::Utils::Payload.new(hash)
 
       expect {
@@ -95,7 +95,7 @@ describe Barometer::Utils::Payload do
 
   describe "#fetch_each_with_index" do
     it "returns a payload for each result found at the key" do
-      hash = {:one => [{:two => 2}, {:two => 2}]}
+      hash = {one: [{two: 2}, {two: 2}]}
       parser = Barometer::Utils::Payload.new(hash)
 
       i = 0
@@ -107,7 +107,7 @@ describe Barometer::Utils::Payload do
     end
 
     it "raises an error when result is not an array" do
-      hash = {:one => 1}
+      hash = {one: 1}
       parser = Barometer::Utils::Payload.new(hash)
 
       expect {
@@ -118,25 +118,25 @@ describe Barometer::Utils::Payload do
 
   describe "#using" do
     it "applies the regex to the fetched result" do
-      hash = {:one => 'two, three'}
+      hash = {one: 'two, three'}
       parser = Barometer::Utils::Payload.new(hash)
       parser.using(/^(.*),/).fetch(:one).should == 'two'
     end
 
     it "does nothing if valid regex does not exist" do
-      hash = {:one => 'two, three'}
+      hash = {one: 'two, three'}
       parser = Barometer::Utils::Payload.new(hash)
       parser.using(:invalid_regex).fetch(:one).should == 'two, three'
     end
 
     it "does nothing if regex does not capture proper result" do
-      hash = {:one => 'two, three'}
+      hash = {one: 'two, three'}
       parser = Barometer::Utils::Payload.new(hash)
       parser.using(/^.*,.*$/).fetch(:one).should == 'two, three'
     end
 
     it "forgets the regex" do
-      hash = {:one => 'two, three'}
+      hash = {one: 'two, three'}
       parser = Barometer::Utils::Payload.new(hash)
       parser.using(/^(.*),/).fetch(:one).should == 'two'
       parser.fetch(:one).should == 'two, three'
@@ -146,7 +146,7 @@ describe Barometer::Utils::Payload do
   describe '#units' do
     it 'returns the query units when the query is present' do
       units = double(:units)
-      query = double(:query, :units => units)
+      query = double(:query, units: units)
       payload = Barometer::Utils::Payload.new({}, query)
       expect( payload.units ).to eq units
     end

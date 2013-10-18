@@ -1,8 +1,8 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe Barometer::Query::Converter::FromWoeOrWeatherIdToGeocode, :vcr => {
-  :match_requests_on => [:method, :uri],
-  :cassette_name => 'Converter::FromWoeOrWeatherIdToGeocode'
+describe Barometer::Query::Converter::FromWoeOrWeatherIdToGeocode, vcr: {
+  match_requests_on: [:method, :uri],
+  cassette_name: 'Converter::FromWoeOrWeatherIdToGeocode'
 } do
 
   describe '.call' do

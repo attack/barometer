@@ -3,9 +3,9 @@ require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
 describe Barometer::Utils::Post do
   describe ".call" do
     it "posts http content to a given address" do
-      stub_request(:post, "www.example.com").to_return(:body => "Hello World")
+      stub_request(:post, "www.example.com").to_return(body: "Hello World")
 
-      content = Barometer::Utils::Post.call('www.example.com', :foo => :bar)
+      content = Barometer::Utils::Post.call('www.example.com', foo: :bar)
       content.should include('Hello World')
     end
 
