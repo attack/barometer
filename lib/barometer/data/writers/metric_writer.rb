@@ -14,9 +14,7 @@ module Barometer
       end
 
       def call(instance, value)
-        value = super(instance, coerce(value))
-        value.metric = instance.metric?
-        value
+        super(instance, coerce(value))
       end
     end
   end

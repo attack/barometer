@@ -32,6 +32,10 @@ module Barometer
 
           attr_reader :payload, :timezone, :current
 
+          def units
+            payload.units
+          end
+
           def base_time
             OpenStruct.new(:timezone => timezone, :base => current.observed_at)
           end
@@ -53,7 +57,7 @@ module Barometer
           end
 
           def temperature
-            payload.fetch('item', 'condition', '@temp')
+            [units, payload.fetch('item', 'condition', '@temp')]
           end
 
           def humidity
@@ -61,19 +65,19 @@ module Barometer
           end
 
           def pressure
-            [payload.fetch('atmosphere', '@pressure')]
+            [units, payload.fetch('atmosphere', '@pressure')]
           end
 
           def visibility
-            [payload.fetch('atmosphere', '@visibility')]
+            [units, payload.fetch('atmosphere', '@visibility')]
           end
 
           def wind_chill
-            payload.fetch('wind', '@chill')
+            [units, payload.fetch('wind', '@chill')]
           end
 
           def wind
-            [payload.fetch('wind', '@speed'), payload.fetch('wind', '@direction').to_f]
+            [units, payload.fetch('wind', '@speed'), payload.fetch('wind', '@direction').to_f]
           end
         end
       end

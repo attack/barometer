@@ -26,6 +26,10 @@ module Barometer
 
           attr_reader :payload, :current
 
+          def units
+            payload.units
+          end
+
           def observed_at
             Time.at(payload.fetch('currently', 'time').to_i)
           end
@@ -43,15 +47,15 @@ module Barometer
           end
 
           def temperature
-            payload.fetch('currently', 'temperature')
+            [units, payload.fetch('currently', 'temperature')]
           end
 
           def dew_point
-            payload.fetch('currently', 'dewPoint')
+            [units, payload.fetch('currently', 'dewPoint')]
           end
 
           def wind
-            [convert_metre_per_second(payload.fetch('currently', 'windSpeed')), payload.fetch('currently', 'windBearing').to_i]
+            [units, convert_metre_per_second(payload.fetch('currently', 'windSpeed')), payload.fetch('currently', 'windBearing').to_i]
           end
 
           def pressure
@@ -59,7 +63,7 @@ module Barometer
           end
 
           def visibility
-            payload.fetch('currently', 'visibility')
+            [units, payload.fetch('currently', 'visibility')]
           end
 
           private

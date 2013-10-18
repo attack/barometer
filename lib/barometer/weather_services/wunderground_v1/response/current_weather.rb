@@ -29,6 +29,10 @@ module Barometer
 
           attr_reader :payload, :current
 
+          def units
+            payload.units
+          end
+
           def observed_at
             payload.fetch('local_time')
           end
@@ -55,19 +59,19 @@ module Barometer
           end
 
           def temperature
-            [payload.fetch('temp_c'), payload.fetch('temp_f')]
+            [units, payload.fetch('temp_c'), payload.fetch('temp_f')]
           end
 
           def dew_point
-            [payload.fetch('dewpoint_c'), payload.fetch('dewpoint_f')]
+            [units, payload.fetch('dewpoint_c'), payload.fetch('dewpoint_f')]
           end
 
           def wind_chill
-            [payload.fetch('windchill_c'), payload.fetch('windchill_f')]
+            [units, payload.fetch('windchill_c'), payload.fetch('windchill_f')]
           end
 
           def heat_index
-            [payload.fetch('heat_index_c'), payload.fetch('heat_index_f')]
+            [units, payload.fetch('heat_index_c'), payload.fetch('heat_index_f')]
           end
 
           def wind
@@ -75,11 +79,11 @@ module Barometer
           end
 
           def visibility
-            [payload.fetch('visibility_km'), payload.fetch('visibility_mi')]
+            [units, payload.fetch('visibility_km'), payload.fetch('visibility_mi')]
           end
 
           def pressure
-            [payload.fetch('pressure_mb'), payload.fetch('pressure_in')]
+            [units, payload.fetch('pressure_mb'), payload.fetch('pressure_in')]
           end
         end
       end

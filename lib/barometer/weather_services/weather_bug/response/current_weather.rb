@@ -32,6 +32,10 @@ module Barometer
 
           attr_reader :payload, :timezone, :current
 
+          def units
+            payload.units
+          end
+
           def observed_at
             @observed_at ||= TimeHelper.new(payload, timezone).parse('ob_date')
           end
@@ -53,23 +57,23 @@ module Barometer
           end
 
           def temperature
-            [payload.fetch('temp')]
+            [units, payload.fetch('temp')]
           end
 
           def dew_point
-            [payload.fetch('dew_point')]
+            [units, payload.fetch('dew_point')]
           end
 
           def wind_chill
-            [payload.fetch('feels_like')]
+            [units, payload.fetch('feels_like')]
           end
 
           def wind
-            [payload.fetch('wind_speed'), payload.fetch('wind_direction_degrees')]
+            [units, payload.fetch('wind_speed'), payload.fetch('wind_direction_degrees')]
           end
 
           def pressure
-            [payload.fetch('pressure')]
+            [units, payload.fetch('pressure')]
           end
         end
       end

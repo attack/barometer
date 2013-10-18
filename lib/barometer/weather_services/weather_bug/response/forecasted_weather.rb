@@ -25,6 +25,10 @@ module Barometer
 
           attr_reader :payload, :timezone, :predictions
 
+          def units
+            payload.units
+          end
+
           def each_prediction
             payload.fetch_each_with_index('forecast') do |forecast_payload, index|
               predictions.build do |prediction|
@@ -50,11 +54,11 @@ module Barometer
           end
 
           def high(forecast_payload)
-            [forecast_payload.fetch('high')]
+            [units, forecast_payload.fetch('high')]
           end
 
           def low(forecast_payload)
-            [forecast_payload.fetch('low')]
+            [units, forecast_payload.fetch('low')]
           end
         end
       end

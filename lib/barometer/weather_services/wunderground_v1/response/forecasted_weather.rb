@@ -27,6 +27,10 @@ module Barometer
 
           attr_reader :payload, :response, :predictions
 
+          def units
+            payload.units
+          end
+
           def each_prediction
             payload.fetch_each('simpleforecast', 'forecastday') do |forecast_payload|
               predictions.build do |prediction|
@@ -52,11 +56,11 @@ module Barometer
           end
 
           def high(forecast_payload)
-            [forecast_payload.fetch('high', 'celsius'), forecast_payload.fetch('high', 'fahrenheit')]
+            [units, forecast_payload.fetch('high', 'celsius'), forecast_payload.fetch('high', 'fahrenheit')]
           end
 
           def low(forecast_payload)
-            [forecast_payload.fetch('low', 'celsius'), forecast_payload.fetch('low', 'fahrenheit')]
+            [units, forecast_payload.fetch('low', 'celsius'), forecast_payload.fetch('low', 'fahrenheit')]
           end
 
           def sun(starts_at, ends_at)

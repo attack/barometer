@@ -7,10 +7,6 @@ module Barometer
         def self.writer_class(*args)
           MetricWriter
         end
-
-        def self.reader_class(*args)
-          MetricReader
-        end
       end
     end
   end

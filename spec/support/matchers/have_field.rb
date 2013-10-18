@@ -15,9 +15,7 @@ module Barometer
         @subject = subject
         has_field? &&
           type_casts_as_type? &&
-          sets_value? &&
-          has_correct_metric_units? &&
-          has_correct_imperial_units?
+          sets_value?
       end
 
       def failure_message
@@ -65,22 +63,6 @@ module Barometer
           set_value 10
           assert value.to_i == 10, "expected value of '10', got '#{value.to_i}'"
         end
-      end
-
-      def has_correct_metric_units?
-        @subject.metric = true
-        return true unless value_responds_to_metric?
-        set_value 10
-
-        assert value.units == metric_units, "expected units of '#{metric_units}', got '#{value.units}'"
-      end
-
-      def has_correct_imperial_units?
-        @subject.metric = false
-        return true unless value_responds_to_metric?
-        set_value 10
-
-        assert value.units == imperial_units, "expected units of '#{imperial_units}', got '#{value.units}'"
       end
 
       private

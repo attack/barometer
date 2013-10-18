@@ -4,7 +4,6 @@ module Barometer
 end
 
 require 'barometer/data/writer'
-require 'barometer/data/reader'
 require 'barometer/data/attributes/float.rb'
 
 require 'barometer/data/convertable_units'

@@ -10,10 +10,8 @@ module Barometer
 
       def metric=(value)
         if detect_imperial?(value)
-          unknown_becomes_imperial!
           @metric = false
         else
-          unknown_becomes_metric!
           @metric = true
         end
       end
@@ -43,18 +41,22 @@ module Barometer
       end
 
       def metric
-        metric_or_unknown || metric_from_imperial
+        @metric_value || metric_from_imperial
       end
 
       def imperial
-        imperial_or_unknown || imperial_from_metric
+        @imperial_value || imperial_from_metric
+      end
+
+      def units
+        metric? ? 'METRIC' : 'IMPERIAL'
       end
 
       private
 
       def metric_from_imperial
-        return nil unless imperial_or_unknown
-        round(convert_imperial_to_metric(imperial_or_unknown))
+        return nil unless @imperial_value
+        round(convert_imperial_to_metric(@imperial_value))
       end
 
       def convert_imperial_to_metric(value)
@@ -62,8 +64,8 @@ module Barometer
       end
 
       def imperial_from_metric
-        return nil unless metric_or_unknown
-        round(convert_metric_to_imperial(metric_or_unknown))
+        return nil unless @metric_value
+        round(convert_metric_to_imperial(@metric_value))
       end
 
       def magnitude
@@ -73,6 +75,8 @@ module Barometer
       def parse_metric!(args)
         unless detect_number?(args.first)
           self.metric = args.shift
+        else
+          self.metric = true
         end
       end
 
@@ -80,40 +84,28 @@ module Barometer
         parse_extra_values!(args)
 
         if args.length == 1
-          self.unknown = args.shift
+          parse_single_value!(args.shift)
         else
-          @metric_value = args.shift
-          @imperial_value = args.shift
+          parse_multiple_values!(args)
         end
+        freeze_magnitude
       end
 
       def parse_extra_values!(args)
         args
       end
 
-      def unknown=(value)
-        if @metric.nil?
-          @unknown = value
-        elsif metric?
+      def parse_single_value!(value)
+        if metric?
           @metric_value = value
         else
           @imperial_value = value
         end
-        freeze_magnitude
       end
 
-      def unknown_becomes_imperial!
-        if @unknown && !@imperial_value
-          @imperial_value = @unknown
-          @unknown = nil
-        end
-      end
-
-      def unknown_becomes_metric!
-        if @unknown && !@metric_value
-          @metric_value = @unknown
-          @unknown = nil
-        end
+      def parse_multiple_values!(values)
+        @metric_value = values.shift
+        @imperial_value = values.shift
       end
 
       def detect_imperial?(value)
@@ -127,22 +119,6 @@ module Barometer
       def string_is_number?(value)
         value.is_a?(String) &&
           ((value.to_i.to_s == value) || (value.to_f.to_s == value))
-      end
-
-      def metric_or_unknown
-        @metric_value || metric_unknown
-      end
-
-      def imperial_or_unknown
-        @imperial_value || imperial_unknown
-      end
-
-      def metric_unknown
-        @unknown if metric?
-      end
-
-      def imperial_unknown
-        @unknown unless metric?
       end
 
       def round(number)

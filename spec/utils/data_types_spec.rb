@@ -67,66 +67,54 @@ module Barometer
       end
     end
 
-    describe "temperature" do
-      context "when setting to nil" do
-        it "equals nil" do
+    describe 'temperature' do
+      context 'when setting to nil' do
+        it 'equals nil' do
           subject.temperature = nil
-          subject.temperature.should be_nil
+          expect( subject.temperature ).to be_nil
         end
       end
 
-      context "when setting with data of exact values" do
-        it "initializes Barometer::Data::Temperature" do
+      context 'when setting with data of exact values' do
+        it 'initializes Barometer::Data::Temperature' do
           subject.temperature = [12]
-          subject.temperature.should be_a(Barometer::Data::Temperature)
+          expect( subject.temperature ).to be_a Barometer::Data::Temperature
         end
 
-        it "prints correctly" do
+        it 'defaults to :metric' do
           subject.temperature = [12]
-          subject.temperature.to_s.should == "12 C"
+          expect( subject.temperature.to_s ).to eq '12 C'
         end
 
-        it "clears the value" do
+        it 'clears the value' do
           subject.temperature = [12]
           subject.temperature = nil
-          subject.temperature.should be_nil
+          expect( subject.temperature ).to be_nil
         end
       end
 
-      context "when setting with Barometer::Data::Temperature" do
-        it "uses the passed in value" do
+      context 'when setting with Barometer::Data::Temperature' do
+        it 'uses the passed in value' do
           temperature = Barometer::Data::Temperature.new(12)
           subject.temperature = temperature
-          subject.temperature.should be_a(Barometer::Data::Temperature)
+          expect( subject.temperature ).to eq temperature
         end
       end
 
-      context "when setting to multiple values" do
-        it "initializes Barometer::Data::Temperature" do
+      context 'when setting to multiple values' do
+        it 'initializes Barometer::Data::Temperature' do
           subject.temperature = [12, 53]
-          subject.temperature.should be_a(Barometer::Data::Temperature)
+          expect( subject.temperature ).to be_a Barometer::Data::Temperature
         end
 
-        it "prints correctly (as metric)" do
+        it 'defaults to :metric' do
           subject.temperature = [12, 53]
-          subject.temperature.to_s.should == "12 C"
+          expect( subject.temperature.to_s ).to eq '12 C'
         end
 
-        it "prints correctly (as imperial)" do
-          subject.temperature = [12, 53]
-          subject.metric = false
-          subject.temperature.to_s.should == "53 F"
-        end
-      end
-
-      context "when changing metric" do
-        it "adjusts correctly" do
-          subject.metric = true
-          subject.temperature = [12, 53]
-          subject.temperature.to_s.should == "12 C"
-
-          subject.metric = false
-          subject.temperature.to_s.should == "53 F"
+        it 'respects the units' do
+          subject.temperature = [:imperial, 12, 53]
+          expect( subject.temperature.to_s ).to eq '53 F'
         end
       end
     end
@@ -164,17 +152,6 @@ module Barometer
           subject.vector.should be_a(Barometer::Data::Vector)
           subject.vector.should == vector
           subject.vector.object_id.should == vector.object_id
-        end
-      end
-
-      context "when changing metric" do
-        it "adjusts correctly" do
-          subject.metric = true
-          subject.vector = [16.1]
-          subject.vector.to_s.should == "16.1 kph"
-
-          subject.metric = false
-          subject.vector.to_s.should == "10.0 mph"
         end
       end
     end
@@ -217,8 +194,7 @@ module Barometer
         end
 
         it "prints correctly (as imperial)" do
-          subject.pressure = [1234, 36]
-          subject.metric = false
+          subject.pressure = [:imperial, 1234, 36]
           subject.pressure.to_s.should == "36 in"
         end
       end
@@ -230,17 +206,6 @@ module Barometer
           subject.pressure.should be_a(Barometer::Data::Pressure)
           subject.pressure.should == pressure
           subject.pressure.object_id.should == pressure.object_id
-        end
-      end
-
-      context "when changing metric" do
-        it "adjusts correctly" do
-          subject.metric = true
-          subject.pressure = [1234]
-          subject.pressure.to_s.should == "1234 mb"
-
-          subject.metric = false
-          subject.pressure.to_s.should == "36.4 in"
         end
       end
     end
@@ -283,8 +248,7 @@ module Barometer
         end
 
         it "prints correctly (as imperial)" do
-          subject.distance = [42.2, 26.2]
-          subject.metric = false
+          subject.distance = [:imperial, 42.2, 26.2]
           subject.distance.to_s.should == "26.2 m"
         end
       end
@@ -296,17 +260,6 @@ module Barometer
           subject.distance.should be_a(Barometer::Data::Distance)
           subject.distance.should == distance
           subject.distance.object_id.should == distance.object_id
-        end
-      end
-
-      context "when changing metric" do
-        it "adjusts correctly" do
-          subject.metric = true
-          subject.distance = [42.2]
-          subject.distance.to_s.should == "42.2 km"
-
-          subject.metric = false
-          subject.distance.to_s.should == "26.2 m"
         end
       end
     end
