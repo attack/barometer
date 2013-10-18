@@ -4,7 +4,7 @@ require 'virtus'
 module Barometer
   module Response
     class Prediction
-      include Virtus
+      include Virtus.model
       include Utils::DataTypes
 
       attribute :high, Data::Attribute::Temperature

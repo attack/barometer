@@ -4,10 +4,10 @@ require 'virtus'
 module Barometer
   module Response
     class Base
-      include Virtus
+      include Virtus.model
       include Utils::DataTypes
 
-      attribute :weight, Integer, :writer_class => Data::IntegerWriter, :default => 1
+      attribute :weight, Data::Attribute::Integer, :default => 1
       attribute :status_code, Integer
       attribute :query, String
       attribute :location, Data::Attribute::Location

@@ -3,7 +3,7 @@ require 'virtus'
 module Barometer
   module Data
     class Location
-      include Virtus::ValueObject
+      include Virtus.value_object
 
       attribute :id, String
       attribute :name, String

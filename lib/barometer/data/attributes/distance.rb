@@ -1,8 +1,10 @@
 module Barometer
   module Data
     module Attribute
-      class Distance < AttributeWithUnits
-        primitive Data::Distance
+      class Distance < Virtus::Attribute
+        def coerce(value)
+          value.is_a?(Barometer::Data::Distance) ? value : Barometer::Data::Distance.new(*value)
+        end
       end
     end
   end

@@ -1,7 +1,7 @@
 module Barometer
   module Data
     class Sun
-      include Virtus::ValueObject
+      include Virtus.value_object
 
       attribute :rise, ::Time
       attribute :set, ::Time

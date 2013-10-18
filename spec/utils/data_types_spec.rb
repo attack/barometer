@@ -3,7 +3,7 @@ require 'virtus'
 
 module Barometer
   class TestClass
-    include Virtus
+    include Virtus.model
     include Utils::DataTypes
 
     attribute :location, Data::Attribute::Location

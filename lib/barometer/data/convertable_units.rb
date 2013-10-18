@@ -1,23 +1,16 @@
+require 'virtus'
+
 module Barometer
   module Data
     class ConvertableUnits
+      include Virtus.value_object
       include Comparable
+
+      attribute :metric, Boolean
 
       def initialize(*args)
         parse_metric!(args)
         args
-      end
-
-      def metric=(value)
-        if detect_imperial?(value)
-          @metric = false
-        else
-          @metric = true
-        end
-      end
-
-      def metric?
-        @metric.nil? || !!@metric
       end
 
       def to_i
@@ -53,6 +46,14 @@ module Barometer
       end
 
       private
+
+      def metric=(value)
+        if detect_imperial?(value)
+          @metric = false
+        else
+          @metric = true
+        end
+      end
 
       def metric_from_imperial
         return nil unless @imperial_value

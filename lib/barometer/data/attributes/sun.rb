@@ -1,12 +1,15 @@
 module Barometer
   module Data
     module Attribute
-      class Sun < Virtus::Attribute::Object
-        primitive Data::Sun
-        default primitive.new
-
-        def self.writer_class(*)
-          TypeRequiredWriter
+      class Sun < Virtus::Attribute
+        def coerce(value)
+          if value.nil?
+            Barometer::Data::Sun.new
+          elsif value.is_a?(Barometer::Data::Sun)
+            value
+          else
+            Barometer::Data::Sun.new(*value)
+          end
         end
       end
     end

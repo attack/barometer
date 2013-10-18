@@ -4,7 +4,7 @@ require 'virtus'
 module Barometer
   module Response
     class Current
-      include Virtus
+      include Virtus.model
       include Utils::DataTypes
 
       attribute :temperature, Data::Attribute::Temperature

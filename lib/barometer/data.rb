@@ -3,9 +3,6 @@ module Barometer
   end
 end
 
-require 'barometer/data/writer'
-require 'barometer/data/attributes/float.rb'
-
 require 'barometer/data/convertable_units'
 require 'barometer/data/temperature'
 require 'barometer/data/distance'

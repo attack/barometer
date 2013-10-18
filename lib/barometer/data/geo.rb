@@ -3,7 +3,7 @@ require 'virtus'
 module Barometer
   module Data
     class Geo
-      include Virtus
+      include Virtus.model
 
       attribute :latitude, Data::Attribute::Float
       attribute :longitude, Data::Attribute::Float
