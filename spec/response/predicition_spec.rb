@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../spec_helper')
+require_relative '../spec_helper'
 
 describe Barometer::Response::Prediction do
   it { should have_field(:starts_at).of_type(Time) }

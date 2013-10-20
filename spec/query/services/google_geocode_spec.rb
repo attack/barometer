@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+require_relative '../../spec_helper'
 
 describe Barometer::Query::Service::GoogleGeocode, vcr: {
   cassette_name: 'Service::GoogleGeocode'

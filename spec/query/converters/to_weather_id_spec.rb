@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
+require_relative '../../spec_helper'
 
 describe Barometer::Query::Converter::ToWeatherId, vcr: {
   match_requests_on: [:method, :uri],
