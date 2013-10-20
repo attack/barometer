@@ -22,14 +22,6 @@ module Barometer
       end
 
       def self.strptime(str, format=nil)
-        # if format && ::Time.respond_to?(:strptime)
-          # 1.9.x
-          # ::Time.strptime(str, format)
-        # else
-          # 1.8.7
-          # ::Time.parse(str)
-        # end
-
         dt = if format
           DateTime.strptime(str, format)
         else

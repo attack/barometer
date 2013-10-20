@@ -80,13 +80,7 @@ module Barometer
       end
 
       def print_value
-        # if @type == Data::Time
-          # value.to_s
-        # elsif @type == ::DateTime
-        #   value.strftime("%Y-%m-%d %I:%M:%S %P")
-        # else
-          value.to_s
-        # end
+        value.to_s
       end
 
       def metric_units
