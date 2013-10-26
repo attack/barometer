@@ -62,6 +62,14 @@ describe Barometer::Utils::Payload do
         parser.fetch(:one, '@two').should == 2
       end
     end
+
+    context "when the data is accessed via an index" do
+      it "returns the value at that index" do
+        hash = {one: [2]}
+        parser = Barometer::Utils::Payload.new(hash)
+        parser.fetch(:one, 0).should == 2
+      end
+    end
   end
 
   describe "#fetch_each" do
