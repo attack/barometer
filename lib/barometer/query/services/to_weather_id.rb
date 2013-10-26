@@ -7,7 +7,7 @@ module Barometer
           return unless converted_query
 
           response = Barometer::Utils::Get.call(
-            'http://xoap.weather.com/search/search',
+            'http://wxdata.weather.com/wxdata/search/search',
             { where: _format_query(converted_query.q) }
           )
           _format_response(response)
