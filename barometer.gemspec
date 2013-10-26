@@ -3,15 +3,14 @@ $:.push File.expand_path('../lib', __FILE__)
 require 'barometer/version'
 
 Gem::Specification.new do |s|
-  s.name = %q{barometer}
+  s.name = 'barometer'
   s.version = Barometer::VERSION
   s.authors = ['Mark G']
-  s.email = %q{barometer@attackcorp.com}
-  s.summary = %q{A multi API consuming weather forecasting superstar.}
-  s.description = %q{A multi API consuming weather forecasting superstar.}
-  s.homepage = %q{http://github.com/attack/barometer}
-
-  s.default_executable = %q{barometer}
+  s.email = ['barometer@attackcorp.com']
+  s.description = 'A multi API consuming weather forecasting superstar.'
+  s.summary = s.description
+  s.homepage = 'http://github.com/attack/barometer'
+  s.license = 'MIT'
 
   s.files = `git ls-files`.split("\n")
   s.test_files = `git ls-files -- spec/*`.split("\n")
