@@ -7,7 +7,7 @@ module Barometer
 
       def get
         response = make_request
-        output = parse_response(response.content)
+        output = parse_response(response)
         Payload.new(output, api.current_query)
       end
 
@@ -18,19 +18,19 @@ module Barometer
       end
 
       def parse_response(response)
-        reader.parse(response, *api.unwrap_nodes)
+        reader(response).parse(response.content, *api.unwrap_nodes)
       end
 
       private
 
       attr_reader :api
 
-      def reader
-        json? ? JsonReader : XmlReader
-      end
-
-      def json?
-        api.respond_to?(:format) && api.format == :json
+      def reader(response)
+        if response.headers.fetch('Content-Type', '').match(/json/)
+          JsonReader
+        else
+          XmlReader
+        end
       end
     end
   end

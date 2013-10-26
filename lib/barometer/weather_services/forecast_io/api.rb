@@ -9,10 +9,6 @@ module Barometer
           @api_code = api_code
         end
 
-        def format
-          :json
-        end
-
         def url
           "https://api.forecast.io/forecast/#{@api_code}/#{@query.to_param}"
         end

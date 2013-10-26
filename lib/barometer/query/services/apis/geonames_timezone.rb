@@ -16,10 +16,6 @@ module Barometer
             { lat: @latitude, lng: @longitude }
           end
 
-          def format
-            :json
-          end
-
           def unwrap_nodes
             ['geonames', 'timezone']
           end

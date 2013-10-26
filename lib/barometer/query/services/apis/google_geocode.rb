@@ -11,10 +11,6 @@ module Barometer
             format_params
           end
 
-          def format
-            :json
-          end
-
           def unwrap_nodes
             ['results', 0]
           end
