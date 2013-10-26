@@ -13,7 +13,7 @@ module Barometer
           end
 
           def params
-            {query: "#{@latitude},#{@longitude}"}
+            { query: "#{@latitude},#{@longitude}" }
           end
 
           def unwrap_nodes

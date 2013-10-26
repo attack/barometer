@@ -15,8 +15,8 @@ module Barometer
 
       def self.default_params
         {
-          'documentType' => 'text/html',
-          'outputType' => 'xml'
+          documentType: 'text/html',
+          outputType: 'xml'
         }
       end
     end
