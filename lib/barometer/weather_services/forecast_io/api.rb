@@ -3,7 +3,7 @@ require 'barometer/weather_services/forecast_io/query'
 module Barometer
   module WeatherService
     class ForecastIo
-      class Api < Api
+      class Api < Utils::Api
         def initialize(query, api_code)
           @query = ForecastIo::Query.new(query)
           @api_code = api_code

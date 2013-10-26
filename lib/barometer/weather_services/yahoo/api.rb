@@ -3,7 +3,7 @@ require 'barometer/weather_services/yahoo/query'
 module Barometer
   module WeatherService
     class Yahoo
-      class Api < Api
+      class Api < Utils::Api
         def initialize(query)
           @query = Yahoo::Query.new(query)
         end

@@ -8,6 +8,7 @@ module Barometer
       end
 
       def current_query
+        @query.converted_query if @query.respond_to?(:converted_query)
       end
 
       def url

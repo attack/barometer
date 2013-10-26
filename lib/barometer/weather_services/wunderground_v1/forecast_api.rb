@@ -3,7 +3,7 @@ require 'barometer/weather_services/wunderground_v1/query'
 module Barometer
   module WeatherService
     class WundergroundV1
-      class ForecastApi < Api
+      class ForecastApi < Utils::Api
         def initialize(query)
           @query = WundergroundV1::Query.new(query)
         end

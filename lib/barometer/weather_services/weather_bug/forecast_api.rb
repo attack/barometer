@@ -3,7 +3,7 @@ require 'barometer/weather_services/weather_bug/query'
 module Barometer
   module WeatherService
     class WeatherBug
-      class ForecastApi < Api
+      class ForecastApi < Utils::Api
         def initialize(query, api_code)
           @query = WeatherBug::Query.new(query)
           @api_code = api_code

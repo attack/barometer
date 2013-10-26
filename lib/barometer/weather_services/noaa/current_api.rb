@@ -3,7 +3,7 @@ require 'barometer/weather_services/noaa/current_query'
 module Barometer
   module WeatherService
     class Noaa
-      class CurrentApi < Api
+      class CurrentApi < Utils::Api
         def initialize(query)
           @query = CurrentQuery.new(query)
         end

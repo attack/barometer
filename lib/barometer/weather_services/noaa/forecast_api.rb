@@ -3,7 +3,7 @@ require 'barometer/weather_services/noaa/forecast_query'
 module Barometer
   module WeatherService
     class Noaa
-      class ForecastApi < Api
+      class ForecastApi < Utils::Api
         def initialize(query)
           @query = ForecastQuery.new(query)
         end
