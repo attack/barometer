@@ -32,7 +32,7 @@ describe Barometer::Query::Service::ToWoeId, vcr: {
 
     it "returns a weather_id if the query is format coordinates" do
       query = Barometer::Query.new("40.756054,-73.986951")
-      Barometer::Query::Service::ToWoeId.call(query).should == "12761367"
+      Barometer::Query::Service::ToWoeId.call(query).should == "12761333"
     end
 
     it "returns a weather_id if the query is format postal code" do

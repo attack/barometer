@@ -66,7 +66,7 @@ describe Barometer::Query::Converter::ToGeocode, vcr: {
     converter = Barometer::Query::Converter::ToGeocode.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == 'Paris, IdF, France'
+    converted_query.q.should == 'Paris, IDF, France'
     converted_query.format.should == :geocode
     converted_query.geo.country_code.should == 'FR'
   end

@@ -20,7 +20,7 @@ describe Barometer::Query::Converter::ToWoeId, vcr: {
     converter = Barometer::Query::Converter::ToWoeId.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == '12761349'
+    converted_query.q.should == '12761333'
     converted_query.format.should == :woe_id
   end
 

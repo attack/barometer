@@ -50,14 +50,14 @@ describe Barometer::WeatherService::WeatherBug, vcr: {
         should have_data(:current, :sun, :rise).as_format(:time)
         should have_data(:current, :sun, :set).as_format(:time)
 
-        should have_data(:station, :id).as_value("LSNGN")
-        should have_data(:station, :name).as_value("Alexander Hamilton Senior HS")
-        should have_data(:station, :city).as_value("Los Angeles")
+        should have_data(:station, :id).as_value("NRTSH")
+        should have_data(:station, :name).as_value("Campbell Hall School")
+        should have_data(:station, :city).as_value("Valley Village")
         should have_data(:station, :state_code).as_value("CA")
         should have_data(:station, :country).as_value("USA")
-        should have_data(:station, :zip_code).as_value("90034")
-        should have_data(:station, :latitude).as_value(34.0336112976074)
-        should have_data(:station, :longitude).as_value(-118.389999389648)
+        should have_data(:station, :zip_code).as_value("91617")
+        should have_data(:station, :latitude).as_value(34.1536102294922)
+        should have_data(:station, :longitude).as_value(-118.398056030273)
 
         should have_data(:location, :city).as_value("Beverly Hills")
         should have_data(:location, :state_code).as_value("CA")
@@ -65,7 +65,7 @@ describe Barometer::WeatherService::WeatherBug, vcr: {
 
         should have_data(:timezone, :to_s).as_format(/^P[DS]T$/i)
 
-        subject.forecast.size.should == 6
+        subject.forecast.size.should == 7
         should have_forecast(:starts_at).as_format(:time)
         should have_forecast(:ends_at).as_format(:time)
         should have_forecast(:condition).as_format(:string)
