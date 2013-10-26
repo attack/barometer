@@ -1,15 +1,6 @@
 module Barometer
   module Data
     class Pressure < ConvertableUnits
-      # METRIC_UNITS = "mb"
-      # IMPERIAL_UNITS = "in"
-
-      def initialize(*args)
-        args = super(*args)
-        parse_values!(args)
-        freeze_all
-      end
-
       def mb; metric; end
       def in; imperial; end
 

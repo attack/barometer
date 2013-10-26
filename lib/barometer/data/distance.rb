@@ -1,15 +1,6 @@
 module Barometer
   module Data
     class Distance < ConvertableUnits
-      # METRIC_UNITS = "km"
-      # IMPERIAL_UNITS = "m"
-
-      def initialize(*args)
-        args = super(*args)
-        parse_values!(args)
-        freeze_all
-      end
-
       def km; metric; end
       def m; imperial; end
 

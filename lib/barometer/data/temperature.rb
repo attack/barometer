@@ -1,15 +1,6 @@
 module Barometer
   module Data
     class Temperature < ConvertableUnits
-      # METRIC_UNITS = "C"
-      # IMPERIAL_UNITS = "F"
-
-      def initialize(*args)
-        args = super(*args)
-        parse_values!(args)
-        freeze_all
-      end
-
       def c; metric; end
       def f; imperial; end
 

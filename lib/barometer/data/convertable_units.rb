@@ -1,24 +1,15 @@
-require 'virtus'
+require 'delegate'
 
 module Barometer
   module Data
-    class ConvertableUnits
-      include Virtus.value_object
+    class ConvertableUnits < SimpleDelegator
       include Comparable
-
-      attribute :metric, Boolean
 
       def initialize(*args)
         parse_metric!(args)
-        args
-      end
-
-      def to_i
-        magnitude.to_i
-      end
-
-      def to_f
-        magnitude.to_f
+        parse_values!(args)
+        super(magnitude)
+        freeze_all
       end
 
       def to_s
@@ -45,6 +36,10 @@ module Barometer
         metric? ? 'METRIC' : 'IMPERIAL'
       end
 
+      def metric?
+        !!@metric
+      end
+
       private
 
       def metric=(value)
@@ -56,7 +51,7 @@ module Barometer
       end
 
       def metric_from_imperial
-        return nil unless @imperial_value
+        return unless @imperial_value
         round(convert_imperial_to_metric(@imperial_value))
       end
 
@@ -65,7 +60,7 @@ module Barometer
       end
 
       def imperial_from_metric
-        return nil unless @metric_value
+        return unless @metric_value
         round(convert_metric_to_imperial(@metric_value))
       end
 
@@ -127,7 +122,8 @@ module Barometer
       end
 
       def magnitude_to_s
-        "#{magnitude} #{units}" unless magnitude.nil?
+        return if magnitude.nil?
+        "#{magnitude} #{units}"
       end
 
       def freeze_all
@@ -142,6 +138,7 @@ module Barometer
       def freeze_magnitude
         @metric_value.freeze
         @imperial_value.freeze
+        @metric.freeze
       end
     end
   end

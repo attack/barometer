@@ -2,11 +2,6 @@ require_relative '../spec_helper'
 
 module Barometer::Data
   class TestData < ConvertableUnits
-    def initialize(*args)
-      args = super(*args)
-      parse_values!(args)
-    end
-
     private
 
     def convert_imperial_to_metric(imperial_value)

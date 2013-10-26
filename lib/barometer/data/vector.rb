@@ -1,16 +1,7 @@
 module Barometer
   module Data
     class Vector < ConvertableUnits
-      # METRIC_UNITS = "kph"
-      # IMPERIAL_UNITS = "mph"
-
       attr_reader :bearing
-
-      def initialize(*args)
-        args = super(*args)
-        parse_values!(args)
-        freeze_all
-      end
 
       def kph; metric; end
       def mph; imperial; end
@@ -20,11 +11,11 @@ module Barometer
       end
 
       def to_s
-        [magnitude_to_s, bearing_to_s].compact.join(' @ ')
+        [super, bearing_to_s].compact.join(' @ ')
       end
 
       def nil?
-        magnitude.nil? && bearing.nil?
+        super && bearing.nil?
       end
 
       private
