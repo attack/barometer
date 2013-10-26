@@ -88,12 +88,12 @@ module Barometer::Data
 
       # it 'keeps integer resolution' do
       #   test_data = TestData.new(:imperial, 10)
-      #   test_data.metric.should == 16
+      #   expect( test_data.metric ).to eq 16
       # end
 
       # it 'keeps float resolution' do
       #   test_data = TestData.new(:imperial, 10.0)
-      #   test_data.metric.should == 16.1
+      #   expect( test_data.metric ).to eq 16.1
       # end
     end
 
@@ -115,12 +115,12 @@ module Barometer::Data
 
       # it 'keeps integer resolution' do
       #   test_data = TestData.new(:imperial, 10)
-      #   test_data.metric.should == 16
+      #   expect( test_data.metric ).to eq 16
       # end
 
       # it 'keeps float resolution' do
       #   test_data = TestData.new(:imperial, 10.0)
-      #   test_data.metric.should == 16.1
+      #   expect( test_data.metric ).to eq 16.1
       # end
     end
 

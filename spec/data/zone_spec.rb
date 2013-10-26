@@ -2,7 +2,7 @@ require_relative '../spec_helper'
 
 module Barometer::Data
   describe Zone do
-    describe "#new" do
+    describe '#new' do
       let(:zone) { double(:zone) }
 
       before do
@@ -43,34 +43,34 @@ module Barometer::Data
       double(:time_class, now: now)
     end
 
-    describe ".detect?" do
-      it "returns true when given a full timezone" do
+    describe '.detect?' do
+      it 'returns true when given a full timezone' do
         expect( ZoneFull.detect?('America/Los_Angeles') ).to be_true
       end
 
-      it "returns false when given a timezone code" do
+      it 'returns false when given a timezone code' do
         expect( ZoneFull.detect?('PST') ).to be_false
       end
 
-      it "returns false when given an offset" do
+      it 'returns false when given an offset' do
         expect( ZoneFull.detect?(10) ).to be_false
       end
 
-      it "returns false when given nothing" do
+      it 'returns false when given nothing' do
         expect( ZoneFull.detect?('') ).to be_false
         expect( ZoneFull.detect?(nil) ).to be_false
       end
     end
 
-    describe "#code" do
-      it "returns the correct non-DST zone code" do
+    describe '#code' do
+      it 'returns the correct non-DST zone code' do
         time = stub_time(::Time.utc(2013, 1, 1))
         zone = ZoneFull.new('America/Los_Angeles', time)
 
         expect( zone.code ).to eq 'PST'
       end
 
-      it "returns the correct DST zone code" do
+      it 'returns the correct DST zone code' do
         time = stub_time(::Time.utc(2013, 6, 1))
         zone = ZoneFull.new('America/Los_Angeles', time)
 
@@ -78,15 +78,15 @@ module Barometer::Data
       end
     end
 
-    describe "#offset" do
-      it "returns the current non-DST offset" do
+    describe '#offset' do
+      it 'returns the current non-DST offset' do
         time = stub_time(::Time.utc(2013, 1, 1, 18, 0, 0))
         zone = ZoneFull.new('America/Los_Angeles', time)
 
         expect( zone.offset ).to eq(-8 * 60 * 60)
       end
 
-      it "returns the current DST offset" do
+      it 'returns the current DST offset' do
         time = stub_time(::Time.utc(2013, 6, 1, 18, 0, 0))
         zone = ZoneFull.new('America/Los_Angeles', time)
 
@@ -94,15 +94,15 @@ module Barometer::Data
       end
     end
 
-    describe "#now" do
-      it "returns the current non-DST local time" do
+    describe '#now' do
+      it 'returns the current non-DST local time' do
         time = stub_time(::Time.utc(2013, 1, 1, 18, 0, 0))
         zone = ZoneFull.new('America/Los_Angeles', time)
 
         expect( zone.now ).to eq ::Time.utc(2013, 1, 1, 10, 0, 0)
       end
 
-      it "returns the current DST local time" do
+      it 'returns the current DST local time' do
         time = stub_time(::Time.utc(2013, 6, 1, 18, 0, 0))
         zone = ZoneFull.new('America/Los_Angeles', time)
 
@@ -110,14 +110,14 @@ module Barometer::Data
       end
     end
 
-    describe "#to_s" do
-      it "returns the input zone" do
+    describe '#to_s' do
+      it 'returns the input zone' do
         expect( ZoneFull.new('Europe/Paris').to_s ).to eq 'Europe/Paris'
       end
     end
 
-    describe "#local_to_utc" do
-      it "converts a time in the local time zone to UTC" do
+    describe '#local_to_utc' do
+      it 'converts a time in the local time zone to UTC' do
         zone = ZoneFull.new('America/Los_Angeles')
         local_time = ::Time.now.utc
 
@@ -125,8 +125,8 @@ module Barometer::Data
       end
     end
 
-    describe "#utc_to_local" do
-      it "converts a time in the local time zone to UTC" do
+    describe '#utc_to_local' do
+      it 'converts a time in the local time zone to UTC' do
         zone = ZoneFull.new('America/Los_Angeles')
         utc_time = ::Time.now.utc
 
@@ -141,43 +141,43 @@ module Barometer::Data
       double(:time_class, now: now)
     end
 
-    describe ".detect?" do
-      it "returns false when given a full timezone" do
+    describe '.detect?' do
+      it 'returns false when given a full timezone' do
         expect( ZoneOffset.detect?('America/Los_Angeles') ).to be_false
       end
 
-      it "returns false when given a timezone code" do
+      it 'returns false when given a timezone code' do
         expect( ZoneOffset.detect?('PST') ).to be_false
       end
 
-      it "returns true when given an offset" do
+      it 'returns true when given an offset' do
         expect( ZoneOffset.detect?(10) ).to be_true
       end
 
-      it "returns false when given an offset out of range" do
+      it 'returns false when given an offset out of range' do
         expect( ZoneOffset.detect?(15) ).to be_false
       end
 
-      it "returns false when given nothing" do
+      it 'returns false when given nothing' do
         expect( ZoneOffset.detect?('') ).to be_false
         expect( ZoneOffset.detect?(nil) ).to be_false
       end
     end
 
-    describe "#code" do
-      it "returns nil" do
+    describe '#code' do
+      it 'returns nil' do
         expect( ZoneOffset.new(10).code ).to be_nil
       end
     end
 
-    describe "#offset" do
-      it "converts the input from hours to seconds" do
+    describe '#offset' do
+      it 'converts the input from hours to seconds' do
         expect( ZoneOffset.new(5).offset ).to eq(5 * 60 * 60)
       end
     end
 
-    describe "#now" do
-      it "returns the current local time" do
+    describe '#now' do
+      it 'returns the current local time' do
         time = stub_time(::Time.utc(2013, 1, 1, 10, 0, 0))
         zone = ZoneOffset.new(5, time)
 
@@ -185,14 +185,14 @@ module Barometer::Data
       end
     end
 
-    describe "#to_s" do
-      it "returns the input zone" do
+    describe '#to_s' do
+      it 'returns the input zone' do
         expect( ZoneOffset.new(5).to_s ).to eq '5'
       end
     end
 
-    describe "#local_to_utc" do
-      it "converts a time in the local time zone to UTC" do
+    describe '#local_to_utc' do
+      it 'converts a time in the local time zone to UTC' do
         zone = ZoneOffset.new(5)
         local_time = ::Time.now.utc
 
@@ -200,8 +200,8 @@ module Barometer::Data
       end
     end
 
-    describe "#utc_to_local" do
-      it "converts a time in the local time zone to UTC" do
+    describe '#utc_to_local' do
+      it 'converts a time in the local time zone to UTC' do
         zone = ZoneOffset.new(5)
         utc_time = ::Time.now.utc
 
@@ -216,55 +216,55 @@ module Barometer::Data
       double(:time_class, now: now)
     end
 
-    describe ".detect?" do
-      it "returns false when given a full timezone" do
+    describe '.detect?' do
+      it 'returns false when given a full timezone' do
         expect( ZoneCode.detect?('America/Los_Angeles') ).to be_false
       end
 
-      it "returns true when given a timezone code" do
+      it 'returns true when given a timezone code' do
         expect( ZoneCode.detect?('PST') ).to be_true
       end
 
-      it "returns true when given an obscure timezone code" do
+      it 'returns true when given an obscure timezone code' do
         expect( ZoneCode.detect?('CEST') ).to be_true
       end
 
-      it "returns false when given an invalid timezone code" do
+      it 'returns false when given an invalid timezone code' do
         expect( ZoneCode.detect?('ABC') ).to be_false
       end
 
-      it "returns false when given an offset" do
+      it 'returns false when given an offset' do
         expect( ZoneCode.detect?(10) ).to be_false
       end
 
-      it "returns false when given nothing" do
+      it 'returns false when given nothing' do
         expect( ZoneCode.detect?('') ).to be_false
         expect( ZoneCode.detect?(nil) ).to be_false
       end
     end
 
-    describe "#code" do
-      it "returns the input code" do
+    describe '#code' do
+      it 'returns the input code' do
         expect( ZoneCode.new('PST').code ).to eq 'PST'
       end
     end
 
-    describe "#offset" do
-      it "returns the offset in seconds" do
+    describe '#offset' do
+      it 'returns the offset in seconds' do
         expect( ZoneCode.new('PST').offset ).to eq(-8 * 60 * 60)
       end
 
-      it "returns the offset in seconds for an obscure input code" do
+      it 'returns the offset in seconds for an obscure input code' do
         expect( ZoneCode.new('CEST').offset ).to eq(2 * 60 * 60)
       end
 
-      it "returns 0 for unknown codes" do
+      it 'returns 0 for unknown codes' do
         expect( ZoneCode.new('ABC').offset ).to be_zero
       end
     end
 
-    describe "#now" do
-      it "returns the current local time" do
+    describe '#now' do
+      it 'returns the current local time' do
         time = stub_time(::Time.utc(2013, 1, 1, 10, 0, 0))
         zone = ZoneCode.new('PST', time)
 
@@ -272,14 +272,14 @@ module Barometer::Data
       end
     end
 
-    describe "#to_s" do
-      it "returns the input zone" do
+    describe '#to_s' do
+      it 'returns the input zone' do
         expect( ZoneCode.new('PST').to_s ).to eq 'PST'
       end
     end
 
-    describe "#local_to_utc" do
-      it "converts a time in the local time zone to UTC" do
+    describe '#local_to_utc' do
+      it 'converts a time in the local time zone to UTC' do
         zone = ZoneCode.new('PST')
         local_time = ::Time.now.utc
 
@@ -287,8 +287,8 @@ module Barometer::Data
       end
     end
 
-    describe "#utc_to_local" do
-      it "converts a time in the local time zone to UTC" do
+    describe '#utc_to_local' do
+      it 'converts a time in the local time zone to UTC' do
         zone = ZoneCode.new('PST')
         utc_time = ::Time.now.utc
 
