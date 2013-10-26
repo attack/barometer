@@ -19,7 +19,7 @@ module Barometer
           response =  Barometer::Utils::Get.call(
             'http://forecast.weather.gov/MapClick.php?',
             _format_params(converted_query)
-          )
+          ).content
           _parse_station_id(response)
         end
 

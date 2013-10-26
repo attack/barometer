@@ -11,7 +11,7 @@ module Barometer
             _format_params(converted_query)
           )
 
-          Barometer::Utils::JsonReader.parse(response, 'results') do |result|
+          Barometer::Utils::JsonReader.parse(response.content, 'results') do |result|
             _parse_result(result.first)
           end
         end

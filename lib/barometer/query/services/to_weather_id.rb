@@ -10,7 +10,7 @@ module Barometer
             'http://wxdata.weather.com/wxdata/search/search',
             { where: _format_query(converted_query.q) }
           )
-          _format_response(response)
+          _format_response(response.content)
         end
 
         # filter out words that weather.com has trouble geo-locating

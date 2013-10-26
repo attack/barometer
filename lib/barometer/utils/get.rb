@@ -8,7 +8,7 @@ module Barometer
 
         http = HTTPClient.new
         http.receive_timeout = Barometer.timeout
-        http.get(address).content
+        http.get(address)
       rescue HTTPClient::TimeoutError
         raise Barometer::TimeoutError
       end

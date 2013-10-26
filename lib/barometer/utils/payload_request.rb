@@ -7,7 +7,7 @@ module Barometer
 
       def get
         response = make_request
-        output = parse_response(response)
+        output = parse_response(response.content)
         Payload.new(output, api.current_query)
       end
 

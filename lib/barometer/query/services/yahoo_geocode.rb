@@ -11,7 +11,7 @@ module Barometer
             _format_query(converted_query)
           )
 
-          Barometer::Utils::XmlReader.parse(response, 'rss', 'channel') do |result|
+          Barometer::Utils::XmlReader.parse(response.content, 'rss', 'channel') do |result|
             _parse_result(result)
           end
         end

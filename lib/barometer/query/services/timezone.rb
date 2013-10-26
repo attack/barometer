@@ -21,7 +21,7 @@ module Barometer
             'http://ws.geonames.org/timezone',
             { lat: latitude, lng: longitude }
           )
-          timezoneId = Barometer::Utils::JsonReader.parse(response, 'geonames', 'timezone', 'timezoneId')
+          timezoneId = Barometer::Utils::JsonReader.parse(response.content, 'geonames', 'timezone', 'timezoneId')
           timezoneId ? Data::Zone.new(timezoneId) : nil
         end
 
