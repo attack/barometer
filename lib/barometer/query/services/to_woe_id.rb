@@ -17,12 +17,12 @@ module Barometer
             }
           )
 
-          _parse_woe_id(Nokogiri::HTML.parse(response))
+          _parse_doc( Nokogiri::HTML.parse(response) )
         end
 
         private
 
-        def self._parse_woe_id(doc)
+        def self._parse_doc(doc)
           doc.search('woeid').group_by(&:content).max_by{|woeid,occurances| occurances.count}[0]
         end
 

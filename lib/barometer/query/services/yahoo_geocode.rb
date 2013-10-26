@@ -1,3 +1,5 @@
+require_relative 'apis/yahoo_geocode'
+
 module Barometer
   module Query
     module Service
@@ -6,19 +8,11 @@ module Barometer
           converted_query = query.get_conversion(:woe_id, :weather_id)
           return unless converted_query
 
-          response =  Barometer::Utils::Get.call(
-            'http://weather.yahooapis.com/forecastrss',
-            _format_query(converted_query)
-          )
-
-          Barometer::Utils::XmlReader.parse(response.content, 'rss', 'channel') do |result|
-            _parse_result(result)
-          end
+          api = YahooGeocode::Api.new(converted_query)
+          _parse_payload(api.get)
         end
 
-        def self._parse_result(result)
-          payload = Utils::Payload.new(result)
-
+        def self._parse_payload(payload)
           Data::Geo.new.tap do |geo|
             geo.locality = payload.fetch('location', '@city')
             geo.region = payload.fetch('location', '@region')
@@ -29,14 +23,6 @@ module Barometer
         end
 
         private
-
-        def self._format_query(query)
-          if query.format == :woe_id
-            { w: query.q }
-          else
-            { p: query.q }
-          end
-        end
 
         def self._parse_country(geo, payload)
           if (country = payload.fetch('location', '@country')).size > 2

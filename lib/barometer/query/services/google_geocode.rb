@@ -1,3 +1,5 @@
+require_relative 'apis/google_geocode'
+
 module Barometer
   module Query
     module Service
@@ -6,31 +8,11 @@ module Barometer
           converted_query = query.get_conversion(:short_zipcode, :zipcode, :postalcode, :coordinates, :icao, :unknown)
           return unless converted_query
 
-          response =  Barometer::Utils::Get.call(
-            'http://maps.googleapis.com/maps/api/geocode/json',
-            _format_params(converted_query)
-          )
-
-          Barometer::Utils::JsonReader.parse(response.content, 'results') do |result|
-            _parse_result(result.first)
-          end
+          api = GoogleGeocode::Api.new(converted_query)
+          _parse_payload(api.get)
         end
 
-        def self._format_params(query)
-          params = { sensor: 'false' }
-          params[:region] = query.geo.country_code if query.geo.country_code
-
-          if query.format == :coordinates
-            params[:latlng] = query.q.dup
-          else
-            params[:address] = query.q.dup
-          end
-          params
-        end
-
-        def self._parse_result(result)
-          payload = Utils::Payload.new(result)
-
+        def self._parse_payload(payload)
           Data::Geo.new.tap do |geo|
             geo.latitude = payload.fetch('geometry', 'location', 'lat')
             geo.longitude = payload.fetch('geometry', 'location', 'lng')

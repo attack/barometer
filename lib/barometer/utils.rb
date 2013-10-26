@@ -3,6 +3,7 @@ module Barometer
   end
 end
 
+require 'barometer/utils/api'
 require 'barometer/utils/config_reader'
 require 'barometer/utils/time'
 require 'barometer/utils/payload'
