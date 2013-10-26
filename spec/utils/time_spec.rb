@@ -78,9 +78,9 @@ describe Barometer::Utils::Time do
 
   def assert_times_are_equal(t1, t2)
     if t1.to_i == t2.to_i
-      t1.to_i.should == t2.to_i
+      expect( t1.to_i ).to eq t2.to_i
     else
-      t1.should == t2
+      expect( t1.to_i ).to be_within(2).of(t2.to_i)
     end
   end
 end
