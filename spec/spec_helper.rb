@@ -7,8 +7,7 @@ require 'pry'
 require 'vcr'
 require 'webmock/rspec'
 
-$:.unshift((File.join(File.dirname(__FILE__), '..', 'lib')))
-require 'barometer'
+require_relative '../lib/barometer'
 
 Dir["./spec/support/**/*.rb"].sort.each {|f| require f}
 

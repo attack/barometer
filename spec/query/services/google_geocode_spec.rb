@@ -1,54 +1,60 @@
 require_relative '../../spec_helper'
 
-describe Barometer::Query::Service::GoogleGeocode, vcr: {
-  cassette_name: 'Service::GoogleGeocode'
-} do
-  describe '.call' do
-    subject { Barometer::Query::Service::GoogleGeocode.call(query) }
+module Barometer::Query
+  describe Service::GoogleGeocode, vcr: {
+    cassette_name: 'Service::GoogleGeocode'
+  } do
+    describe '.call' do
+      context 'when the query is a :zipcode' do
+        it 'returns the correct Geo data' do
+          query = Barometer::Query.new('90210')
+          geo = Service::GoogleGeocode.call(query)
 
-    context 'when the query is a :zipcode' do
-      let(:query) { Barometer::Query.new('90210') }
+          expect( geo.query ).to eq '90210'
+          expect( geo.latitude ).to eq 34.1030032
+          expect( geo.longitude ).to eq -118.4104684
+          expect( geo.locality ).to eq 'Beverly Hills'
+          expect( geo.region ).to eq 'CA'
+          expect( geo.country ).to eq 'United States'
+          expect( geo.country_code ).to eq 'US'
+          expect( geo.address ).to be_nil
+          expect( geo.postal_code ).to eq '90210'
+        end
+      end
 
-      it { should be_a Barometer::Data::Geo }
-      its(:query) { should == '90210' }
-      its(:latitude) { should == 34.1030032 }
-      its(:longitude) { should == -118.4104684 }
-      its(:locality) { should == 'Beverly Hills' }
-      its(:region) { should == 'CA' }
-      its(:country) { should == 'United States' }
-      its(:country_code) { should == 'US' }
-      its(:address) { should be_nil }
-      its(:postal_code) { should == '90210' }
-    end
+      context 'when the query is a city/region' do
+        it 'returns the correct Geo data' do
+          query = Barometer::Query.new('New York, NY')
+          geo = Service::GoogleGeocode.call(query)
 
-    context 'when the query is a city/region' do
-      let(:query) { Barometer::Query.new('New York, NY') }
+          expect( geo.query ).to eq 'New York, NY, US'
+          expect( geo.latitude ).to eq 40.7143528
+          expect( geo.longitude ).to eq -74.00597309999999
+          expect( geo.locality ).to eq 'New York'
+          expect( geo.region ).to eq 'NY'
+          expect( geo.country ).to eq 'United States'
+          expect( geo.country_code ).to eq 'US'
+          expect( geo.address ).to be_nil
+          expect( geo.postal_code ).to be_nil
+        end
+      end
 
-      it { should be_a Barometer::Data::Geo }
-      its(:query) { should == 'New York, NY, US' }
-      its(:latitude) { should == 40.7143528 }
-      its(:longitude) { should == -74.00597309999999 }
-      its(:locality) { should == 'New York' }
-      its(:region) { should == 'NY' }
-      its(:country) { should == 'United States' }
-      its(:country_code) { should == 'US' }
-      its(:address) { should be_nil }
-      its(:postal_code) { should be_nil }
-    end
+      context 'when the query is :coordinates' do
+        it 'returns the correct Geo data' do
+          query = Barometer::Query.new('47,-114')
+          geo = Service::GoogleGeocode.call(query)
 
-    context 'when the query is :coordinates' do
-      let(:query) { Barometer::Query.new('47,-114') }
-
-      it { should be_a Barometer::Data::Geo }
-      its(:query) { should be_nil }
-      its(:latitude) { should == 47.000623 }
-      its(:longitude) { should == -114.0016495 }
-      its(:locality) { should == 'Missoula' }
-      its(:region) { should == 'MT' }
-      its(:country) { should == 'United States' }
-      its(:country_code) { should == 'US' }
-      its(:address) { should be_nil }
-      its(:postal_code) { should == '59808' }
+          expect( geo.query ).to be_nil
+          expect( geo.latitude ).to eq 47.000623
+          expect( geo.longitude ).to eq -114.0016495
+          expect( geo.locality ).to eq 'Missoula'
+          expect( geo.region ).to eq 'MT'
+          expect( geo.country ).to eq 'United States'
+          expect( geo.country_code ).to eq 'US'
+          expect( geo.address ).to be_nil
+          expect( geo.postal_code ).to eq '59808'
+        end
+      end
     end
   end
 end
