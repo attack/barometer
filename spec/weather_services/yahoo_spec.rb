@@ -22,7 +22,7 @@ describe Barometer::WeatherService::Yahoo, vcr: {
     it "includes the expected data" do
       subject.query.should == '90210'
       subject.format.should == :zipcode
-      subject.metric.should be_true
+      subject.should be_metric
 
       should have_data(:current, :observed_at).as_format(:time)
       should have_data(:current, :stale_at).as_format(:time)

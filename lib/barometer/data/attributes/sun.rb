@@ -7,8 +7,6 @@ module Barometer
             Barometer::Data::Sun.new
           elsif value.is_a?(Barometer::Data::Sun)
             value
-          else
-            Barometer::Data::Sun.new(*value)
           end
         end
       end

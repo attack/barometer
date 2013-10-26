@@ -1,11 +1,9 @@
-require 'barometer/utils/data_types'
 require 'virtus'
 
 module Barometer
   module Response
     class Prediction
       include Virtus.model
-      include Utils::DataTypes
 
       attribute :high, Data::Attribute::Temperature
       attribute :low, Data::Attribute::Temperature
@@ -17,10 +15,6 @@ module Barometer
       attribute :condition, String
 
       attr_reader :date
-
-      def initialize(metric=true)
-        @metric = metric
-      end
 
       def date=(args)
         args = [args] unless args.is_a?(Array)

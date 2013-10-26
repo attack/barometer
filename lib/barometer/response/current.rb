@@ -1,11 +1,9 @@
-require 'barometer/utils/data_types'
 require 'virtus'
 
 module Barometer
   module Response
     class Current
       include Virtus.model
-      include Utils::DataTypes
 
       attribute :temperature, Data::Attribute::Temperature
       attribute :dew_point, Data::Attribute::Temperature
@@ -20,10 +18,6 @@ module Barometer
       attribute :stale_at, Data::Attribute::Time
       attribute :icon, String
       attribute :condition, String
-
-      def initialize(metric=true)
-        @metric = metric
-      end
 
       def complete?
         !temperature.nil?

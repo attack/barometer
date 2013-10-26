@@ -23,7 +23,7 @@ module Barometer::WeatherService
       it "includes the expected data" do
         subject.query.should == 'Calgary,AB'
         subject.format.should == :geocode
-        subject.metric.should be_true
+        subject.should be_metric
 
         should have_data(:current, :observed_at).as_format(:time)
         should have_data(:current, :stale_at).as_format(:time)

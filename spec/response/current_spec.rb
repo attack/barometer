@@ -16,18 +16,6 @@ module Barometer::Response
     it { should have_field(:condition).of_type(String) }
     it { should have_field(:sun).of_type(Barometer::Data::Sun) }
 
-    describe ".new" do
-      it "initializes as metric" do
-        current = Current.new
-        expect( current ).to be_metric
-      end
-
-      it "initializes as imperial" do
-        current = Current.new(false)
-        expect( current ).not_to be_metric
-      end
-    end
-
     describe '#complete?' do
       let(:current) { Current.new }
 

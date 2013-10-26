@@ -1,13 +1,11 @@
-require 'barometer/utils/data_types'
 require 'virtus'
 
 module Barometer
   module Response
     class Base
       include Virtus.model
-      include Utils::DataTypes
 
-      attribute :weight, Data::Attribute::Integer, :default => 1
+      attribute :weight, Data::Attribute::Integer, default: 1
       attribute :status_code, Integer
       attribute :query, String
       attribute :location, Data::Attribute::Location
@@ -43,6 +41,10 @@ module Barometer
         @query = query.to_s
         @format = query.format
         @metric = query.metric?
+      end
+
+      def metric?
+        !!@metric
       end
 
       private

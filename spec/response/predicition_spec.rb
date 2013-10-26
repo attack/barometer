@@ -10,18 +10,6 @@ describe Barometer::Response::Prediction do
   it { should have_field(:condition).of_type(String) }
   it { should have_field(:sun).of_type(Barometer::Data::Sun) }
 
-  describe ".new" do
-    it "initializes as metric" do
-      result = Barometer::Response::Prediction.new
-      result.should be_metric
-    end
-
-    it "initializes as imperial" do
-      result = Barometer::Response::Prediction.new(false)
-      result.should_not be_metric
-    end
-  end
-
   describe "#date=" do
     it "raises an error if unable to make a Date" do
       expect { subject.date = 'invalid' }.to raise_error(ArgumentError)
