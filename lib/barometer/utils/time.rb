@@ -3,13 +3,12 @@ module Barometer
     module Time
       def self.parse(*args)
         return unless args.compact.size > 0
+        first_arg = args.first
 
-        if args.first.is_a? ::Time
-          args.first
-        elsif args.first.is_a? DateTime
-          ::Time.parse(args.first.to_s)
-        elsif args.first.respond_to?(:to_time)
-          args.first.to_time
+        if first_arg.is_a? ::Time
+          first_arg
+        elsif first_arg.is_a?(::DateTime) || first_arg.is_a?(::Date)
+          ::Time.parse(first_arg.to_s)
         elsif args.size == 1 || args.size == 2
           strptime(*args)
         else
@@ -23,9 +22,9 @@ module Barometer
 
       def self.strptime(str, format=nil)
         dt = if format
-          DateTime.strptime(str, format)
+          ::DateTime.strptime(str, format)
         else
-          DateTime.parse(str)
+          ::DateTime.parse(str)
         end
         ::Time.utc(dt.year, dt.month, dt.day, dt.hour, dt.min, dt.sec) - (dt.zone.to_f * 60 * 60)
       end
@@ -59,6 +58,20 @@ module Barometer
         return unless time
         one_hour = (60 * 60 * 1)
         time + one_hour
+      end
+
+      def self.start_of_day(time)
+        ::Time.utc(
+          time.year, time.month, time.day,
+          0, 0, 0
+        )
+      end
+
+      def self.end_of_day(time)
+        ::Time.utc(
+          time.year, time.month, time.day,
+          23, 59, 59
+        )
       end
     end
   end

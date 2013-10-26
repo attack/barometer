@@ -17,21 +17,15 @@ module Barometer
       attr_reader :date
 
       def date=(args)
-        args = [args] unless args.is_a?(Array)
+        args = Array(args)
         date = args.shift
         timezone = args.shift
 
-        if date.is_a?(Date)
-          @date = date
-        elsif date.respond_to?(:to_date)
-          @date = date.to_date
-        else
-          @date = Date.parse(date)
-        end
-        @starts_at = Time.utc(@date.year,@date.month,@date.day,0,0,0)
-        @ends_at = Time.utc(@date.year,@date.month,@date.day,23,59,59)
+        date_as_time = Utils::Time.parse(date)
+        @starts_at = Utils::Time.start_of_day(date_as_time)
+        @ends_at = Utils::Time.end_of_day(date_as_time)
+        @date = ::Date.new(@starts_at.year, @starts_at.month, @starts_at.day)
 
-        # NOT TESTED
         if timezone
           @starts_at = timezone.local_to_utc(@starts_at)
           @ends_at = timezone.local_to_utc(@ends_at)
