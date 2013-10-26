@@ -24,21 +24,17 @@ module Barometer
           compact.reject(&:empty?).join(', ')
       end
 
-      def merge(geo)
-        return unless geo.is_a?(Geo)
-
-        %w(
-          locality region country country_code postal_code
-          query address latitude longitude
-        ).each do |attr|
-          set_if_nil(attr, geo.send(attr))
-        end
+      def merge(other_geo)
+        return unless other_geo.is_a?(Data::Geo)
+        Data::Geo.new(merged_attributes(other_geo))
       end
 
       private
 
-      def set_if_nil(attr, value)
-        self.send("#{attr}=", value) if self.send(attr).nil?
+      def merged_attributes(other_geo)
+        attributes.merge(other_geo.attributes) do |key, oldval, newval|
+          oldval || newval
+        end
       end
     end
   end

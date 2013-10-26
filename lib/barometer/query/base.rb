@@ -51,7 +51,7 @@ module Barometer
       end
 
       def geo=(geo)
-        @geo.merge(geo)
+        @geo = @geo.merge(geo)
       end
 
       private
