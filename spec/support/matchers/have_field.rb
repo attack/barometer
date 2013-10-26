@@ -43,7 +43,7 @@ module Barometer
         elsif type_is_sun?
           rise = Time.utc(2013,1,1,10,15,30)
           set = Time.utc(2013,1,1,18,14,56)
-          set_value Data::Sun.new(rise, set)
+          set_value Data::Sun.new(rise: rise, set: set)
         else
           set_value 10
         end
@@ -57,7 +57,7 @@ module Barometer
         elsif type_is_sun?
           rise = Time.utc(2013,1,1,10,15,30)
           set = Time.utc(2013,1,1,18,14,56)
-          set_value Data::Sun.new(rise, set)
+          set_value Data::Sun.new(rise: rise, set: set)
           assert print_value == "rise: 10:15, set: 18:14", "expected value of 'rise: 10:15, set: 18:14'', got '#{print_value}'"
         else
           set_value 10

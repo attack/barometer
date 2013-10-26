@@ -62,7 +62,7 @@ module Barometer
           def sun(forecast_payload, starts_at, ends_at)
             utc_rise_time = Utils::Time.utc_merge_base_plus_time(starts_at, current_sun.rise)
             utc_set_time = Utils::Time.utc_merge_base_plus_time(ends_at, current_sun.set)
-            Data::Sun.new(utc_rise_time, utc_set_time)
+            Data::Sun.new(rise: utc_rise_time, set: utc_set_time)
           end
         end
       end

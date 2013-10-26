@@ -11,7 +11,7 @@ module Barometer
           end
 
           def parse
-            Data::Sun.new(local_sunrise_time, local_sunset_time)
+            Data::Sun.new(rise: local_sunrise_time, set: local_sunset_time)
           end
 
           private

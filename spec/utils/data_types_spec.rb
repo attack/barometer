@@ -336,7 +336,7 @@ module Barometer
         it "accepts Data::Sun" do
           rise = Time.utc(2013, 02, 10, 5, 30, 45)
           set = Time.utc(2013, 02, 10, 17, 30, 45)
-          sun = Barometer::Data::Sun.new(rise, set)
+          sun = Barometer::Data::Sun.new(rise: rise, set: set)
 
           subject.sun = sun
 
@@ -346,17 +346,9 @@ module Barometer
         it "clears the value" do
           rise = Time.utc(2013, 02, 10, 6, 0, 0)
           set = Time.utc(2013, 02, 10, 6, 0, 0)
-          subject.sun = Barometer::Data::Sun.new(rise, set)
+          subject.sun = Barometer::Data::Sun.new(rise: rise, set: set)
           subject.sun = nil
           subject.sun.should be_nil
-        end
-      end
-
-      context "when setting with invalid data" do
-        it "raises an error" do
-          expect {
-            subject.sun = "foo"
-          }.to raise_error{ ArgumentError }
         end
       end
 
@@ -364,7 +356,7 @@ module Barometer
         it "uses the passed in value" do
           rise = Time.utc(2013, 02, 10, 6, 0, 0)
           set = Time.utc(2013, 02, 10, 6, 0, 0)
-          sun = Barometer::Data::Sun.new(rise, set)
+          sun = Barometer::Data::Sun.new(rise: rise, set: set)
           subject.sun = sun
           subject.sun.should be_a(Barometer::Data::Sun)
           subject.sun.should == sun

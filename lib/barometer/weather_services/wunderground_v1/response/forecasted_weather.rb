@@ -64,7 +64,7 @@ module Barometer
           end
 
           def sun(starts_at, ends_at)
-            Data::Sun.new(sun_rise_utc(starts_at), sun_set_utc(ends_at))
+            Data::Sun.new(rise: sun_rise_utc(starts_at), set: sun_set_utc(ends_at))
           end
 
           def sun_rise_utc(starts_at)

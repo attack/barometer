@@ -10,7 +10,7 @@ module Barometer
 
           def parse
             return if local_rise_time.nil? || local_set_time.nil?
-            Data::Sun.new(utc_rise_time, utc_set_time)
+            Data::Sun.new(rise: utc_rise_time, set: utc_set_time)
           end
 
           private

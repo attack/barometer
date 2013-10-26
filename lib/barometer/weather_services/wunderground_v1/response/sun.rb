@@ -10,7 +10,7 @@ module Barometer
           end
 
           def parse
-            Data::Sun.new(utc_rise_time, utc_set_time)
+            Data::Sun.new(rise: utc_rise_time, set: utc_set_time)
           end
 
           private

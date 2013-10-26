@@ -61,7 +61,7 @@ module Barometer
           def sun(forecast_payload, starts_at, ends_at)
             utc_rise_time = time(forecast_payload.fetch('sunriseTime'))
             utc_set_time = time(forecast_payload.fetch('sunsetTime'))
-            Data::Sun.new(utc_rise_time, utc_set_time)
+            Data::Sun.new(rise: utc_rise_time, set: utc_set_time)
           end
 
           def time(timestamp)
