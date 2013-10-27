@@ -4,69 +4,101 @@ module Barometer
   module Query
     module Service
       class GoogleGeocode
-        def self.call(query)
+        def initialize(query)
+          @query = query
+        end
+
+        def call
           converted_query = query.get_conversion(:short_zipcode, :zipcode, :postalcode, :coordinates, :icao, :unknown)
           return unless converted_query
 
-          api = GoogleGeocode::Api.new(converted_query)
-          _parse_payload(api.get)
+          @payload = GoogleGeocode::Api.new(converted_query).get
+          parse_payload
         end
 
-        def self._parse_payload(payload)
-          Data::Geo.new.tap do |geo|
-            geo.latitude = payload.fetch('geometry', 'location', 'lat')
-            geo.longitude = payload.fetch('geometry', 'location', 'lng')
+        private
 
-            detected_query_types = payload.fetch('types')
-            query_parts = []
+        attr_reader :query, :payload
 
-            payload.each('address_components') do |address_payload|
-              skip unless address_payload.fetch('types')
+        def parse_payload
+          Data::Geo.new(
+            latitude: latitude,
+            longitude: longitude,
+            locality: locality,
+            region: region,
+            country: country,
+            country_code: country_code,
+            postal_code: postal_code,
+            query: full_query
+          )
+        end
 
-              _parse_locality(geo, address_payload)
-              _parse_region(geo, address_payload)
-              _parse_country(geo, address_payload)
-              _parse_postal_code(geo, address_payload)
-              _parse_query(geo, address_payload, detected_query_types, query_parts)
-            end
+        def latitude
+          payload.fetch('geometry', 'location', 'lat')
+        end
+
+        def longitude
+          payload.fetch('geometry', 'location', 'lng')
+        end
+
+        def locality
+          find_name('sublocality', 'long_name') || find_name('locality', 'long_name')
+        end
+
+        def region
+          find_name('administrative_area_level_1', 'short_name')
+        end
+
+        def country
+          find_name('country', 'long_name')
+        end
+
+        def country_code
+          find_name('country', 'short_name')
+        end
+
+        def postal_code
+          find_name('postal_code', 'short_name')
+        end
+
+        def full_query
+          return if query_is_street_address? || query_is_route?
+          find_detected_types.map{|address_component| address_component.fetch('short_name')}.join(', ')
+        end
+
+        def address_components
+          @address_components ||= payload.fetch('address_components').
+            select{|address_component| address_component.has_key? 'types'}
+        end
+
+        def find_type(address_component_type)
+          address_components.find do |address_component|
+            address_component.fetch('types').include?(address_component_type)
           end
         end
 
-        def self._parse_locality(geo, payload)
-          if payload.fetch('types').include?('sublocality')
-            geo.locality = payload.fetch('long_name')
-          end
-          if payload.fetch('types').include?('locality')
-            geo.locality ||= payload.fetch('long_name')
+        def find_name(address_component_type, name)
+          if result = find_type(address_component_type)
+            result.fetch(name)
           end
         end
 
-        def self._parse_region(geo, payload)
-          if payload.fetch('types').include?('administrative_area_level_1')
-            geo.region = payload.fetch('short_name')
+        def detected_query_types
+          @detected_query_types ||= payload.fetch('types')
+        end
+
+        def find_detected_types
+          address_components.select do |address_component|
+            (address_component.fetch('types') & detected_query_types).any?
           end
         end
 
-        def self._parse_country(geo, payload)
-          if payload.fetch('types').include?('country')
-            geo.country = payload.fetch('long_name')
-            geo.country_code = payload.fetch('short_name')
-          end
+        def query_is_street_address?
+          detected_query_types.include? 'street_address'
         end
 
-        def self._parse_postal_code(geo, payload)
-          if payload.fetch('types').include?('postal_code')
-            geo.postal_code = payload.fetch('short_name')
-          end
-        end
-
-        def self._parse_query(geo, payload, detected_types, query_parts)
-          return if (%w(street_address route) & detected_types).any?
-
-          if (payload.fetch('types') & detected_types).any?
-            query_parts << payload.fetch('short_name')
-            geo.query = query_parts.join(', ')
-          end
+        def query_is_route?
+          detected_query_types.include? 'route'
         end
       end
     end

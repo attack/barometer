@@ -8,7 +8,7 @@ module Barometer::Query
       context 'when the query is a :zipcode' do
         it 'returns the correct Geo data' do
           query = Barometer::Query.new('90210')
-          geo = Service::GoogleGeocode.call(query)
+          geo = Service::GoogleGeocode.new(query).call
 
           expect( geo.query ).to eq '90210'
           expect( geo.latitude ).to eq 34.1030032
@@ -25,7 +25,7 @@ module Barometer::Query
       context 'when the query is a city/region' do
         it 'returns the correct Geo data' do
           query = Barometer::Query.new('New York, NY')
-          geo = Service::GoogleGeocode.call(query)
+          geo = Service::GoogleGeocode.new(query).call
 
           expect( geo.query ).to eq 'New York, NY, US'
           expect( geo.latitude ).to eq 40.7143528
@@ -42,7 +42,7 @@ module Barometer::Query
       context 'when the query is :coordinates' do
         it 'returns the correct Geo data' do
           query = Barometer::Query.new('47,-114')
-          geo = Service::GoogleGeocode.call(query)
+          geo = Service::GoogleGeocode.new(query).call
 
           expect( geo.query ).to be_nil
           expect( geo.latitude ).to eq 47.000623
