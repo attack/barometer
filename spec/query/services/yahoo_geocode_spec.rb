@@ -4,19 +4,19 @@ module Barometer::Query
   describe Service::YahooGeocode, vcr: {
     cassette_name: 'Service::YahooGeocode'
   } do
-    describe ".call" do
+    describe '#call' do
       context 'when the query format is neither :weather_id or :woe_id' do
         let(:query) { Barometer::Query.new('90210') }
 
         it 'returns nothing' do
-          geo = Service::YahooGeocode.call(query)
+          geo = Service::YahooGeocode.new(query).call
           expect( geo ).to be_nil
         end
 
         context 'and a :weather_id conversion exists' do
           it 'returns the correct geo data' do
             query.add_conversion(:weather_id, 'USNY0996')
-            geo = Service::YahooGeocode.call(query)
+            geo = Service::YahooGeocode.new(query).call
 
             expect( geo.latitude ).to eq 40.67
             expect( geo.longitude ).to eq -73.94
@@ -34,7 +34,7 @@ module Barometer::Query
         context 'and a :woe_id conversion exists' do
           it 'returns the correct geo data' do
             query.add_conversion(:woe_id, '2459115')
-            geo = Service::YahooGeocode.call(query)
+            geo = Service::YahooGeocode.new(query).call
 
             expect( geo.latitude ).to eq 40.71
             expect( geo.longitude ).to eq -74.01
@@ -53,7 +53,7 @@ module Barometer::Query
       context 'when the query format is :weather_id' do
         it 'returns the correct geo data' do
           query = Barometer::Query.new('USNY0996')
-          geo = Service::YahooGeocode.call(query)
+          geo = Service::YahooGeocode.new(query).call
 
           expect( geo.latitude ).to eq 40.67
           expect( geo.longitude ).to eq -73.94
@@ -71,7 +71,7 @@ module Barometer::Query
       context 'when the query format is :woe_id' do
         it 'returns the correct geo data' do
           query = Barometer::Query.new('w2459115')
-          geo = Service::YahooGeocode.call(query)
+          geo = Service::YahooGeocode.new(query).call
 
           expect( geo.latitude ).to eq 40.71
           expect( geo.longitude ).to eq -74.01
