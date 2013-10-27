@@ -12,9 +12,12 @@ module Barometer
           _parse_content(api.get)
         end
 
-        def self._parse_content(content)
-          match = content.match(/loc id=[\\]?['|""]([0-9a-zA-Z]*)[\\]?['|""]/)
-          match ? match[1] : nil
+        def self._parse_content(payload)
+          if payload.fetch('loc').is_a? Array
+            payload.fetch('loc', 0, '@id')
+          else
+            payload.fetch('loc', '@id')
+          end
         end
       end
     end

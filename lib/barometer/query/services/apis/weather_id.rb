@@ -11,8 +11,8 @@ module Barometer
             { where: format_query }
           end
 
-          def get
-            Utils::Get.call(url, params).content
+          def unwrap_nodes
+            ['search']
           end
 
           private
