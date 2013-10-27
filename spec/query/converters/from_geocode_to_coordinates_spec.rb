@@ -5,10 +5,7 @@ describe Barometer::Query::Converter::FromGeocodeToCoordinates do
     query = Barometer::Query.new('USNY0996')
     query.add_conversion(:geocode, 'New York, NY')
 
-    query.geo = Barometer::Data::Geo.new
-    query.geo.latitude = 40.7143528
-    query.geo.longitude = -74.0059731
-    query.geo.country_code = 'US'
+    query.geo = Barometer::Data::Geo.new(latitude: 40.7143528, longitude: -74.0059731, country_code: 'US')
 
     converter = Barometer::Query::Converter::FromGeocodeToCoordinates.new(query)
     converted_query = converter.call

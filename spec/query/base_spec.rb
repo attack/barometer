@@ -131,10 +131,10 @@ module Barometer
       it 'includes the current country code value' do
         query.add_conversion(:geocode, 'Paris')
 
-        query.geo.country_code = nil
+        query.geo = Data::Geo.new(country_code: nil)
         query.get_conversion(:geocode, :woe_id).geo.country_code.should be_nil
 
-        query.geo.country_code = 'FR'
+        query.geo = Data::Geo.new(country_code: 'FR')
         query.get_conversion(:geocode, :woe_id).geo.country_code.should == 'FR'
       end
 
@@ -142,8 +142,7 @@ module Barometer
         query = Query::Base.new('34.1030032,-118.4104684')
         query.add_conversion(:geocode, 'Paris')
 
-        geo = Data::Geo.new
-        geo.locality = 'New York'
+        geo = Data::Geo.new(locality: 'New York')
         query.geo = geo
 
         query.get_conversion(:geocode, :woe_id).geo.to_s.should == geo.to_s
@@ -221,10 +220,7 @@ module Barometer
 
           query = Query::Base.new('90210')
           query.add_conversion(:geocode, 'Foo Bar')
-          query.geo = Data::Geo.new.tap do |geo|
-            geo.latitude = 12.34
-            geo.longitude = -56.78
-          end
+          query.geo = Data::Geo.new(latitude: 12.34, longitude: -56.78)
 
           converted_query = query.convert!(:coordinates)
           converted_query.q.should == '12.34,-56.78'
@@ -248,20 +244,14 @@ module Barometer
     describe '#geo=' do
       it 'updates the current geo values' do
         query = Query::Base.new('90210')
-        query.geo.tap do |geo|
-          geo.locality = 'foo'
-          geo.region = 'bar'
-          geo.country_code = 'FB'
-        end
+        query.geo = Data::Geo.new(locality: 'foo', region: 'bar')
 
-        geo = Data::Geo.new
-        geo.latitude = 12.34
-        geo.longitude = -56.78
+        geo = Data::Geo.new(latitude: 12.34, longitude: -56.78, country_code: 'FB')
 
         query.geo = geo
         query.geo.locality.should == 'foo'
         query.geo.region.should == 'bar'
-        query.geo.country_code.should == 'FB'
+        query.geo.country_code.should == 'US'
         query.geo.latitude.should == 12.34
         query.geo.longitude.should == -56.78
       end
