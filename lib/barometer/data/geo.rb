@@ -1,12 +1,6 @@
-require 'virtus'
-
 module Barometer
   module Data
-    class Geo
-      include Virtus.value_object
-
-      attribute :latitude, Float
-      attribute :longitude, Float
+    class Geo < Coordinates
       attribute :query, String
       attribute :address, String
       attribute :locality, String
@@ -14,10 +8,6 @@ module Barometer
       attribute :country, String
       attribute :country_code, String
       attribute :postal_code, String
-
-      def coordinates
-        [latitude, longitude].join(',')
-      end
 
       def to_s
         [address, locality, region, country || country_code].
