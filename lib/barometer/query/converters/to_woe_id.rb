@@ -3,7 +3,7 @@ module Barometer
     module Converter
       class ToWoeId
         def self.from
-          [:geocode, :unknown, :coordinates, :postalcode]
+          [:short_zipcode, :zipcode, :geocode, :unknown, :coordinates, :postalcode]
         end
 
         def initialize(query)
@@ -13,7 +13,7 @@ module Barometer
         def call
           return unless can_convert?
 
-          woe_id = Service::ToWoeId.call(@query)
+          woe_id = Service::ToWoeId.new(@query).call
           @query.add_conversion(:woe_id, woe_id)
         end
 

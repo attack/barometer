@@ -1,42 +1,27 @@
-require 'nokogiri'
+require_relative 'apis/yahoo_placefinder'
 
 module Barometer
   module Query
     module Service
       class ToWoeId
-        def self.call(query)
-          return unless _has_geocode_key?
+        def initialize(query)
+          @query = query
+        end
 
-          converted_query = query.get_conversion(:geocode, :unknown, :coordinates, :postalcode)
+        def call
+          converted_query = query.get_conversion(:short_zipcode, :zipcode, :geocode, :unknown, :coordinates, :postalcode)
           return unless converted_query
 
-          response = Barometer::Utils::Post.call(
-            'http://wherein.yahooapis.com/v1/document', {
-              documentContent: _construct_body(converted_query),
-              appid: Barometer.yahoo_placemaker_app_id
-            }
-          )
-
-          _parse_doc( Nokogiri::HTML.parse(response) )
+          @payload = YahooPlacefinder::Api.new(converted_query).get
+          parse_payload
         end
 
         private
 
-        def self._parse_doc(doc)
-          doc.search('woeid').group_by(&:content).max_by{|woeid,occurances| occurances.count}[0]
-        end
+        attr_reader :query, :payload
 
-        def self._construct_body(query)
-          output = query.q
-          if query.format == :coordinates
-            microformat = "<html><body><div class=\"geo\"><span class=\"latitude\">%s</span><span class=\"longitude\">%s</span></div></body></html>"
-            output = sprintf(microformat, query.q.to_s.split(',')[0], query.q.to_s.split(',')[1])
-          end
-          output
-        end
-
-        def self._has_geocode_key?
-          !Barometer.yahoo_placemaker_app_id.nil?
+        def parse_payload
+          payload.fetch('woeid')
         end
       end
     end
