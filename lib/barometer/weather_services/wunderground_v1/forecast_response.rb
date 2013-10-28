@@ -1,6 +1,6 @@
-require 'barometer/weather_services/wunderground_v1/response/full_timezone'
-require 'barometer/weather_services/wunderground_v1/response/forecasted_weather'
-require 'barometer/weather_services/wunderground_v1/response/sun'
+require_relative 'response/full_timezone'
+require_relative 'response/forecasted_weather'
+require_relative 'response/sun'
 
 module Barometer
   module WeatherService

@@ -1,7 +1,7 @@
-require 'barometer/weather_services/weather_bug/current_api'
-require 'barometer/weather_services/weather_bug/current_response'
-require 'barometer/weather_services/weather_bug/forecast_api'
-require 'barometer/weather_services/weather_bug/forecast_response'
+require_relative 'weather_bug/current_api'
+require_relative 'weather_bug/current_response'
+require_relative 'weather_bug/forecast_api'
+require_relative 'weather_bug/forecast_response'
 
 module Barometer
   module WeatherService

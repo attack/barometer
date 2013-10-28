@@ -1,5 +1,5 @@
-require 'barometer/weather_services/weather_bug/response/forecasted_weather'
-require 'barometer/weather_services/weather_bug/response/location'
+require_relative 'response/forecasted_weather'
+require_relative 'response/location'
 
 module Barometer
   module WeatherService

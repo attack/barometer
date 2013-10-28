@@ -1,7 +1,7 @@
-require 'barometer/weather_services/noaa/forecast_api'
-require 'barometer/weather_services/noaa/forecast_response'
-require 'barometer/weather_services/noaa/current_api'
-require 'barometer/weather_services/noaa/current_response'
+require_relative 'noaa/forecast_api'
+require_relative 'noaa/forecast_response'
+require_relative 'noaa/current_api'
+require_relative 'noaa/current_response'
 
 module Barometer
   module WeatherService

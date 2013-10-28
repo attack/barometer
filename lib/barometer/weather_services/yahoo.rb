@@ -1,5 +1,5 @@
-require 'barometer/weather_services/yahoo/api'
-require 'barometer/weather_services/yahoo/response'
+require_relative 'yahoo/api'
+require_relative 'yahoo/response'
 
 module Barometer
   module WeatherService

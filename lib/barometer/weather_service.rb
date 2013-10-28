@@ -1,5 +1,5 @@
-require 'barometer/weather_services/base'
-require 'barometer/weather_services/response'
+require_relative 'weather_services/base'
+require_relative 'weather_services/response'
 
 module Barometer
   module WeatherService
@@ -34,8 +34,8 @@ module Barometer
   end
 end
 
-require 'barometer/weather_services/wunderground_v1'
-require 'barometer/weather_services/yahoo'
-require 'barometer/weather_services/weather_bug'
-require 'barometer/weather_services/noaa'
-require 'barometer/weather_services/forecast_io'
+require_relative 'weather_services/wunderground_v1'
+require_relative 'weather_services/yahoo'
+require_relative 'weather_services/weather_bug'
+require_relative 'weather_services/noaa'
+require_relative 'weather_services/forecast_io'

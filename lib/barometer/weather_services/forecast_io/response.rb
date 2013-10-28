@@ -1,7 +1,7 @@
-require 'barometer/weather_services/forecast_io/response/timezone'
-require 'barometer/weather_services/forecast_io/response/location'
-require 'barometer/weather_services/forecast_io/response/current_weather'
-require 'barometer/weather_services/forecast_io/response/forecasted_weather'
+require_relative 'response/timezone'
+require_relative 'response/location'
+require_relative 'response/current_weather'
+require_relative 'response/forecasted_weather'
 
 module Barometer
   module WeatherService

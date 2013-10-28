@@ -1,7 +1,7 @@
-require 'barometer/weather_services/wunderground_v1/response/current_weather'
-require 'barometer/weather_services/wunderground_v1/response/station'
-require 'barometer/weather_services/wunderground_v1/response/location'
-require 'barometer/weather_services/wunderground_v1/response/timezone'
+require_relative 'response/current_weather'
+require_relative 'response/station'
+require_relative 'response/location'
+require_relative 'response/timezone'
 
 module Barometer
   module WeatherService

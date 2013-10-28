@@ -1,4 +1,4 @@
-require 'barometer/weather_services/noaa/forecast_query'
+require_relative 'forecast_query'
 
 module Barometer
   module WeatherService

@@ -5,5 +5,5 @@ module Barometer
   end
 end
 
-require 'barometer/weather_services/response/location'
-require 'barometer/weather_services/response/time_zone'
+require_relative 'response/location'
+require_relative 'response/time_zone'

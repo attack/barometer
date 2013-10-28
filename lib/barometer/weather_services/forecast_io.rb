@@ -1,5 +1,5 @@
-require 'barometer/weather_services/forecast_io/api'
-require 'barometer/weather_services/forecast_io/response'
+require_relative 'forecast_io/api'
+require_relative 'forecast_io/response'
 
 module Barometer
   module WeatherService

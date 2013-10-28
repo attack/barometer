@@ -1,4 +1,4 @@
-require 'barometer/weather_services/wunderground_v1/query'
+require_relative 'query'
 
 module Barometer
   module WeatherService

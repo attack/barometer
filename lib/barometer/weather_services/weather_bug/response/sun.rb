@@ -1,4 +1,4 @@
-require 'barometer/weather_services/weather_bug/response/time_helper'
+require_relative 'time_helper'
 
 module Barometer
   module WeatherService

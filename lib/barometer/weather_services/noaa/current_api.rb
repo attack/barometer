@@ -1,4 +1,4 @@
-require 'barometer/weather_services/noaa/current_query'
+require_relative 'current_query'
 
 module Barometer
   module WeatherService

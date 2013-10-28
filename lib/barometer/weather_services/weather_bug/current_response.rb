@@ -1,6 +1,6 @@
-require 'barometer/weather_services/weather_bug/response/timezone'
-require 'barometer/weather_services/weather_bug/response/current_weather'
-require 'barometer/weather_services/weather_bug/response/station'
+require_relative 'response/timezone'
+require_relative 'response/current_weather'
+require_relative 'response/station'
 
 module Barometer
   module WeatherService

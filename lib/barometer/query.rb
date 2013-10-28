@@ -1,7 +1,7 @@
-require 'barometer/query/base'
-require 'barometer/query/format'
-require 'barometer/query/converter'
-require 'barometer/query/service'
+require_relative 'query/base'
+require_relative 'query/format'
+require_relative 'query/converter'
+require_relative 'query/service'
 
 module Barometer
   class ConvertedQuery

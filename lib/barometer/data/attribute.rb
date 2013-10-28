@@ -7,13 +7,13 @@ module Barometer
   end
 end
 
-require 'barometer/data/attributes/temperature.rb'
-require 'barometer/data/attributes/vector.rb'
-require 'barometer/data/attributes/pressure.rb'
-require 'barometer/data/attributes/distance.rb'
-require 'barometer/data/attributes/location.rb'
-require 'barometer/data/attributes/zone.rb'
-require 'barometer/data/attributes/sun.rb'
-require 'barometer/data/attributes/time.rb'
-require 'barometer/data/attributes/float.rb'
-require 'barometer/data/attributes/integer.rb'
+require_relative 'attributes/temperature.rb'
+require_relative 'attributes/vector.rb'
+require_relative 'attributes/pressure.rb'
+require_relative 'attributes/distance.rb'
+require_relative 'attributes/location.rb'
+require_relative 'attributes/zone.rb'
+require_relative 'attributes/sun.rb'
+require_relative 'attributes/time.rb'
+require_relative 'attributes/float.rb'
+require_relative 'attributes/integer.rb'

@@ -1,4 +1,4 @@
-require 'barometer/weather_services/yahoo/response/sun'
+require_relative 'sun'
 require 'ostruct'
 
 module Barometer

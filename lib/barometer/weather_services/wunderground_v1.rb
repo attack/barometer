@@ -1,7 +1,7 @@
-require 'barometer/weather_services/wunderground_v1/current_api'
-require 'barometer/weather_services/wunderground_v1/current_response'
-require 'barometer/weather_services/wunderground_v1/forecast_api'
-require 'barometer/weather_services/wunderground_v1/forecast_response'
+require_relative 'wunderground_v1/current_api'
+require_relative 'wunderground_v1/current_response'
+require_relative 'wunderground_v1/forecast_api'
+require_relative 'wunderground_v1/forecast_response'
 
 module Barometer
   module WeatherService

@@ -1,7 +1,7 @@
-require 'barometer/weather_services/noaa/response/timezone'
-require 'barometer/weather_services/noaa/response/current_location'
-require 'barometer/weather_services/noaa/response/current_station'
-require 'barometer/weather_services/noaa/response/current_weather'
+require_relative 'response/timezone'
+require_relative 'response/current_location'
+require_relative 'response/current_station'
+require_relative 'response/current_weather'
 
 module Barometer
   module WeatherService

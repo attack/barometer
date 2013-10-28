@@ -1,4 +1,4 @@
-require 'barometer/weather_services/weather_bug/query'
+require_relative 'query'
 
 module Barometer
   module WeatherService

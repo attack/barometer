@@ -1,4 +1,4 @@
-require 'barometer/weather_services/yahoo/query'
+require_relative 'query'
 
 module Barometer
   module WeatherService
