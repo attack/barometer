@@ -3,13 +3,13 @@ require_relative 'apis/yahoo_weather'
 module Barometer
   module Query
     module Service
-      class YahooGeocode
+      class FromWeatherId
         def initialize(query)
           @query = query
         end
 
         def call
-          converted_query = query.get_conversion(:woe_id, :weather_id)
+          converted_query = query.get_conversion(:weather_id)
           return unless converted_query
 
           @payload = YahooWeather::Api.new(converted_query).get
