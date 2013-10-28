@@ -1,7 +1,7 @@
 module Barometer
   module Query
     module Service
-      class YahooGeocode
+      class YahooWeather
         class Api < Utils::Api
           def url
             'http://weather.yahooapis.com/forecastrss'

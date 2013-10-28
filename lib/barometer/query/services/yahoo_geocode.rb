@@ -1,4 +1,4 @@
-require_relative 'apis/yahoo_geocode'
+require_relative 'apis/yahoo_weather'
 
 module Barometer
   module Query
@@ -12,7 +12,7 @@ module Barometer
           converted_query = query.get_conversion(:woe_id, :weather_id)
           return unless converted_query
 
-          @payload = YahooGeocode::Api.new(converted_query).get
+          @payload = YahooWeather::Api.new(converted_query).get
           parse_payload
         end
 
