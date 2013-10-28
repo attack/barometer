@@ -76,11 +76,12 @@ module Barometer
 
       def do_conversion(format, preferred_formats)
         converters = Converter.find_all(format, preferred_formats)
-        converters.map do |converter|
+        result = converters.map do |converter|
           to_format = converter.keys.first
           converter_klass = converter.values.first
           get_conversion(to_format) || converter_klass.new(self).call
         end.last
+        get_conversion(*preferred_formats) || result
       end
     end
   end
