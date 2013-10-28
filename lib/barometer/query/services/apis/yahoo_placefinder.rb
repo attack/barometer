@@ -18,7 +18,15 @@ module Barometer
           private
 
           def format_query
-            "select * from geo.placefinder where text='#{query.q}' and gflags='R'"
+            "select * from geo.placefinder where #{field}='#{query.q}' and gflags='R'"
+          end
+
+          def field
+            if query.format == :woe_id
+              'woeid'
+            else
+              'text'
+            end
           end
         end
       end
