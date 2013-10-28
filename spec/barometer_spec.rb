@@ -18,23 +18,6 @@ describe Barometer do
     end
   end
 
-  describe ".yahoo_placemaker_app_id" do
-    around do |example|
-      cache_key = Barometer.yahoo_placemaker_app_id
-      example.run
-      Barometer.yahoo_placemaker_app_id = cache_key
-    end
-
-    it "has a default value" do
-      expect( Barometer.yahoo_placemaker_app_id ).to eq 'placemaker'
-    end
-
-    it "sets the Placemaker Yahoo! app ID" do
-      Barometer.yahoo_placemaker_app_id = "YAHOO KEY"
-      expect( Barometer.yahoo_placemaker_app_id ).to eq "YAHOO KEY"
-    end
-  end
-
   describe ".timeout" do
     it "has a default value" do
       expect( Barometer.timeout ).to eq 15
