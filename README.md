@@ -74,6 +74,7 @@ code (ICAO) and it will return the weather as expected.
 * weather.com ID
 * location name (ie address, city, state, landmark, etc.)
 * woeid (where on earth id, by Yahoo!)
+* IPv4 address
 
 ## Detailed Usage
 
