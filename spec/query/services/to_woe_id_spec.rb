@@ -35,6 +35,11 @@ module Barometer::Query
         expect( Service::ToWoeId.new(query).call ).to eq '12698082'
       end
 
+      it 'returns a weather_id if the query is format ipv4 address' do
+        query = Barometer::Query.new('98.139.183.24')
+        expect( Service::ToWoeId.new(query).call ).to eq '12763119'
+      end
+
       it 'returns a weather_id if the query has a converted geocode' do
         query = Barometer::Query.new('KJFK')
         query.add_conversion(:zipcode, '10001-5555')

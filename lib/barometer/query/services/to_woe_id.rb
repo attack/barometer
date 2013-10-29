@@ -9,7 +9,7 @@ module Barometer
         end
 
         def call
-          converted_query = query.get_conversion(:short_zipcode, :zipcode, :geocode, :unknown, :coordinates, :postalcode)
+          converted_query = query.get_conversion(:short_zipcode, :zipcode, :geocode, :unknown, :coordinates, :postalcode, :ipv4_address)
           return unless converted_query
 
           @payload = YahooPlacefinder::Api.new(converted_query).get
