@@ -29,7 +29,7 @@ module Barometer
           if converted_query.format == :short_zipcode
             {zipCode: converted_query.q}
           else
-            {lat: converted_query.latitude, long: converted_query.longitude}
+            {lat: converted_query.geo.latitude, long: converted_query.geo.longitude}
           end
         end
 
