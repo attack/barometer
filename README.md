@@ -212,6 +212,7 @@ Thank you to these developers who have contributed. No contribution is too small
 * plukevdh (https://github.com/plukevdh)
 * gkop (https://github.com/gkop)
 * avit (https://github.com/avit)
+* jimjeffers (https://github.com/jimjeffers)
 
 ## Links
 
