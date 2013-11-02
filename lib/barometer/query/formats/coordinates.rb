@@ -6,6 +6,13 @@ module Barometer
       #
       class Coordinates < Base
         def self.regex; /^[-]?[0-9\.]+[,]{1}\s?[-]?[0-9\.]+$/; end
+
+        def self.geo(query)
+          return unless query
+
+          coordinates = query.split(',')
+          {latitude: coordinates[0].to_f, longitude: coordinates[1].to_f}
+        end
       end
     end
   end

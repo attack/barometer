@@ -19,13 +19,15 @@ module Barometer
 
         # in some cases the first letter can designate the country
         #
-        def self.country_code(query)
+        def self.geo(query)
           return unless query && query.is_a?(String)
           $:.unshift(File.dirname(__FILE__))
           @@codes ||= YAML.load_file(@@codes_file)
           return unless @@codes && @@codes['one_letter'] && @@codes['two_letter']
-          @@codes['one_letter'][query[0..0].upcase.to_s] ||
+          country_code = @@codes['one_letter'][query[0..0].upcase.to_s] ||
             @@codes['two_letter'][query[0..1].upcase.to_s] || nil
+
+          {country_code: country_code}
         end
       end
     end

@@ -63,7 +63,7 @@ module Barometer
       def detect_format
         Format.match?(@q) do |key, klass|
           @format = key
-          @geo = Data::Geo.new(country_code: klass.country_code(@q))
+          @geo = Data::Geo.new(klass.geo(@q))
           @format_klass = klass
         end
       end

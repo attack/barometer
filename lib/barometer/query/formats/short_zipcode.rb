@@ -5,7 +5,7 @@ module Barometer
       # eg. 90210
       #
       class ShortZipcode < Base
-        def self.country_code(query); "US"; end
+        def self.geo(query); {country_code: 'US'}; end
         def self.regex; /(^[0-9]{5}$)/; end
       end
     end

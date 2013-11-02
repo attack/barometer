@@ -38,6 +38,8 @@ module Barometer
           query = Query::Base.new('40.756054,-73.986951')
           expect( query.format ).to eq :coordinates
           expect( query.geo.country_code ).to be_nil
+          expect( query.geo.latitude ).to eq 40.756054
+          expect( query.geo.longitude ).to eq -73.986951
         end
 
         it 'defaults to :unknown' do

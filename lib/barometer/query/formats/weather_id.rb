@@ -11,8 +11,11 @@ module Barometer
         @@fixes = nil
 
         def self.regex; /(^[A-Za-z]{4}[0-9]{4}$)/; end
-        def self.country_code(query)
-          (query && query.size >= 2) ? _fix_country(query[0..1]) : nil
+
+        def self.geo(query)
+          if query && query.size >= 2
+            { country_code: _fix_country(query[0..1]) }
+          end
         end
 
         private

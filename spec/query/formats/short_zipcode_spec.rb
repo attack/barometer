@@ -1,18 +1,20 @@
 require_relative '../../spec_helper'
 
-describe Barometer::Query::Format::ShortZipcode do
-  it ".country_code" do
-    Barometer::Query::Format::ShortZipcode.country_code(nil).should == "US"
-    Barometer::Query::Format::ShortZipcode.country_code("ignored").should == "US"
-  end
-
-  describe ".is?" do
-    it "recognizes a valid format" do
-      Barometer::Query::Format::ShortZipcode.is?("90210").should be_true
+module Barometer::Query
+  describe Format::ShortZipcode do
+    describe '.geo' do
+      specify { expect( Format::ShortZipcode.geo(nil) ).to eq({country_code: 'US'}) }
+      specify { expect( Format::ShortZipcode.geo('ignored') ).to eq({country_code: 'US'}) }
     end
 
-    it "recognizes non-valid format" do
-      Barometer::Query::Format::ShortZipcode.is?("90210-5555").should be_false
+    describe '.is?' do
+      it 'recognizes a valid format' do
+        expect( Format::ShortZipcode.is?('90210') ).to be_true
+      end
+
+      it 'recognizes non-valid format' do
+        expect( Format::ShortZipcode.is?('90210-5555') ).to be_false
+      end
     end
   end
 end
