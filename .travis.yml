@@ -8,3 +8,6 @@ script: 'rake'
 branches:
   only:
     - master
+matrix:
+  allow_failures:
+    - rvm: rbx-19mode
