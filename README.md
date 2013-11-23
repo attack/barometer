@@ -86,7 +86,7 @@ The current available sources are:
 * Yahoo! Weather (:yahoo)
 * WeatherBug.com (:weather_bug) [requires key]
 * NOAA (:noaa)
-* Forecast.io (:forecast_io) [requires key]
+* Forecast.io (:forecast_io) [requires key + [barometer-forecast_io gem](https://github.com/attack/barometer-forecast_io)]
 
 ### Source Configuration
 
