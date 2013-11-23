@@ -6,10 +6,9 @@ require 'cgi'
 require 'pry'
 require 'vcr'
 require 'webmock/rspec'
+require 'barometer/support'
 
 require_relative '../lib/barometer'
-
-Dir["./spec/support/**/*.rb"].sort.each {|f| require f}
 
 WEATHERBUG_CODE = Barometer::Support::KeyFileParser.find(:weather_bug, :code) || 'weatherbug'
 FORECAST_IO_APIKEY = Barometer::Support::KeyFileParser.find(:forecast_io, :apikey) || 'forecastio'
@@ -31,6 +30,6 @@ end
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true
+  config.include Barometer::Support::Matchers
+  config.include Barometer::Support::Factory
 end
-
-include Barometer::Matchers
