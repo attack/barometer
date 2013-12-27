@@ -1,13 +1,10 @@
 language: ruby
+cache: bundler
 rvm:
+  - 2.1.0
   - 2.0.0
   - 1.9.3
   - 1.9.2
-  - rbx-19mode
-script: 'rake'
 branches:
   only:
     - master
-matrix:
-  allow_failures:
-    - rvm: rbx-19mode
