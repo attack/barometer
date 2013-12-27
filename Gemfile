@@ -1,13 +1,17 @@
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
-group :assets do
-  platforms :rbx do
-    gem 'pelusa'
-  end
+gemspec
+
+gem 'rake'
+
+group :development, :test do
+  gem 'rspec', '>= 2.11'
+  gem 'pry'
 end
 
 group :test do
+  gem 'barometer-support'
+  gem 'webmock'
+  gem 'vcr'
   gem 'coveralls', require: false
 end
-
-gemspec

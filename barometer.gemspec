@@ -18,6 +18,9 @@ Gem::Specification.new do |s|
 
   s.rdoc_options = ['--charset=UTF-8']
 
+  s.platform = Gem::Platform::RUBY
+  s.required_ruby_version = '>= 1.9.0'
+
   s.add_dependency 'httpclient'
   s.add_dependency 'tzinfo', '>= 0.3.14'
   s.add_dependency 'nokogiri'
@@ -27,10 +30,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'multi_json', '~> 1.0'
   s.add_dependency 'virtus', '>= 1.0.0'
 
-  s.add_development_dependency 'rspec', '>= 2.11'
-  s.add_development_dependency 'webmock'
-  s.add_development_dependency 'rake'
-  s.add_development_dependency 'pry'
-  s.add_development_dependency 'vcr'
-  s.add_development_dependency 'barometer-support'
+  s.add_development_dependency 'bundler'
 end
