@@ -223,4 +223,4 @@ Thank you to these developers who have contributed. No contribution is too small
 
 ## Copyright
 
-Copyright (c) 2009-2013 Mark G. See LICENSE for details.
+Copyright (c) 2009-2014 Mark G. See LICENSE for details.
