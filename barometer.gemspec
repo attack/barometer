@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'addressable'
   s.add_dependency 'nori'
   s.add_dependency 'virtus', '>= 1.0.0'
+  s.add_dependency 'choc_mool'
 
   s.add_development_dependency 'bundler'
 end
