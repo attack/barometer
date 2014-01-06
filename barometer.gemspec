@@ -5,8 +5,8 @@ require 'barometer/version'
 Gem::Specification.new do |s|
   s.name = 'barometer'
   s.version = Barometer::VERSION
-  s.authors = ['Mark G']
-  s.email = ['barometer@attackcorp.com']
+  s.authors = ['Mark Gangl']
+  s.email = ['mark@attackcorp.com']
   s.description = 'A multi API consuming weather forecasting superstar.'
   s.summary = s.description
   s.homepage = 'http://github.com/attack/barometer'
