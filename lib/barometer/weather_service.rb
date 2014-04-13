@@ -36,5 +36,4 @@ end
 
 require_relative 'weather_services/wunderground_v1'
 require_relative 'weather_services/yahoo'
-require_relative 'weather_services/weather_bug'
 require_relative 'weather_services/noaa'

@@ -84,7 +84,7 @@ The current available sources are:
 
 * Wunderground.com (:wunderground) [default]
 * Yahoo! Weather (:yahoo)
-* WeatherBug.com (:weather_bug) [requires key]
+* WeatherBug.com (:weather_bug) [requires key + [barometer-weather_bug gem](https://github.com/attack/barometer-weather_bug)]]
 * NOAA (:noaa)
 * Forecast.io (:forecast_io) [requires key + [barometer-forecast_io gem](https://github.com/attack/barometer-forecast_io)]
 
