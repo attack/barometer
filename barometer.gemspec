@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ['--charset=UTF-8']
 
   s.platform = Gem::Platform::RUBY
-  s.required_ruby_version = '>= 1.9.0'
+  s.required_ruby_version = '>= 1.9.3'
 
   s.add_dependency 'httpclient'
   s.add_dependency 'tzinfo', '>= 0.3.14'
