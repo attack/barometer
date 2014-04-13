@@ -19,6 +19,12 @@ describe Barometer do
   end
 
   describe ".timeout" do
+    around do |example|
+      cached_timeout = Barometer.timeout
+      example.run
+      Barometer.timeout = cached_timeout
+    end
+
     it "has a default value" do
       expect( Barometer.timeout ).to eq 15
     end
