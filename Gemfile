@@ -10,7 +10,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'barometer-support'
+  gem 'barometer-support', '>= 0.0.3'
   gem 'webmock'
   gem 'vcr'
   gem 'coveralls', require: false
