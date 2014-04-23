@@ -1,0 +1,13 @@
+{
+  "lib/barometer/*.rb": {
+    "alternate": "spec/{}_spec.rb",
+    "command": "source",
+    "template": ["module Barometer", "end"]
+  },
+  "spec/*_spec.rb": {
+    "alternate": "lib/barometer/{}.rb",
+    "command": "spec",
+    "template": ["require_relative 'spec_helper'", "", "module Barometer", "end"]
+  },
+  "README.md": { "command": "doc" }
+}
