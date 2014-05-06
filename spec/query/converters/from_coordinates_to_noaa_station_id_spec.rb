@@ -1,35 +1,50 @@
 require_relative '../../spec_helper'
 
-describe Barometer::Query::Converter::FromCoordinatesToNoaaStationId, vcr: {
-  match_requests_on: [:method, :uri],
-  cassette_name: "Converter::FromCoordinatesToNoaaStationId"
-} do
+module Barometer
+  module Query
+    module Converter
+      describe FromCoordinatesToNoaaStationId, vcr: {
+        match_requests_on: [:method, :uri],
+        cassette_name: "Converter::FromCoordinatesToNoaaStationId"
+      } do
 
-  it "converts :coordinates -> :noaa_station_id" do
-    query = Barometer::Query.new('34.10,-118.41')
+        it 'registers as a :coordinates -> :noaa_station_id converter' do
+          result = Converter.find_all(:coordinates, :noaa_station_id)
 
-    converter = Barometer::Query::Converter::FromCoordinatesToNoaaStationId.new(query)
-    converted_query = converter.call
+          expect(result).to include(
+            {noaa_station_id: Barometer::Query::Converter::FromCoordinatesToNoaaStationId}
+          )
+        end
 
-    converted_query.q.should == 'KSMO'
-    converted_query.format.should == :noaa_station_id
-  end
+        describe '.call' do
+          it "converts :coordinates -> :noaa_station_id" do
+            query = Query.new('34.10,-118.41')
 
-  it "uses a previous coversion (if needed) on the query" do
-    query = Barometer::Query.new('90210')
-    query.add_conversion(:coordinates, '34.10,-118.41')
+            converter = FromCoordinatesToNoaaStationId.new(query)
+            converted_query = converter.call
 
-    converter = Barometer::Query::Converter::FromCoordinatesToNoaaStationId.new(query)
-    converted_query = converter.call
+            expect(converted_query.q).to eq 'KSMO'
+            expect(converted_query.format).to eq :noaa_station_id
+          end
 
-    converted_query.q.should == 'KSMO'
-    converted_query.format.should == :noaa_station_id
-  end
+          it "uses a previous coversion (if needed) on the query" do
+            query = Query.new('90210')
+            query.add_conversion(:coordinates, '34.10,-118.41')
 
-  it "does not convert any other format" do
-    query = Barometer::Query.new('KJFK')
+            converter = FromCoordinatesToNoaaStationId.new(query)
+            converted_query = converter.call
 
-    converter = Barometer::Query::Converter::FromCoordinatesToNoaaStationId.new(query)
-    converter.call.should be_nil
+            expect(converted_query.q).to eq 'KSMO'
+            expect(converted_query.format).to eq :noaa_station_id
+          end
+
+          it "does not convert any other format" do
+            query = Query.new('KJFK')
+            converter = FromCoordinatesToNoaaStationId.new(query)
+            expect(converter.call).to be_nil
+          end
+        end
+      end
+    end
   end
 end

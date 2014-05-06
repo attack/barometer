@@ -27,4 +27,4 @@ module Barometer
   end
 end
 
-Barometer::Query::Converter.register(:coordinates, Barometer::Query::Converter::FromCoordinatesToNoaaStationId)
+Barometer::Query::Converter.register(:noaa_station_id, Barometer::Query::Converter::FromCoordinatesToNoaaStationId)
