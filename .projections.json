@@ -1,13 +1,25 @@
 {
   "lib/barometer/*.rb": {
+    "type": "source",
     "alternate": "spec/{}_spec.rb",
-    "command": "source",
-    "template": ["module Barometer", "end"]
+    "template": [
+      "module Barometer",
+      "  class {camelcase|colons}",
+      "  end",
+      "end"
+    ]
   },
   "spec/*_spec.rb": {
+    "type": "spec",
     "alternate": "lib/barometer/{}.rb",
-    "command": "spec",
-    "template": ["require_relative 'spec_helper'", "", "module Barometer", "end"]
+    "template": [
+      "require_relative 'spec_helper'",
+      "",
+      "module Barometer",
+      "  describe {camelcase|colons} do",
+      "  end",
+      "end"
+    ]
   },
   "README.md": { "command": "doc" }
 }
