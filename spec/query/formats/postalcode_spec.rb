@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 module Barometer::Query
-  describe Format::Postalcode do
+  RSpec.describe Format::Postalcode do
     describe '.geo' do
       specify { expect( Format::Postalcode.geo(nil) ).to eq({country_code: 'CA'}) }
       specify { expect( Format::Postalcode.geo('ignored') ).to eq({country_code: 'CA'}) }

@@ -1,6 +1,6 @@
 require_relative '../../spec_helper'
 
-describe Barometer::Query::Service::ToWeatherId, vcr: {
+RSpec.describe Barometer::Query::Service::ToWeatherId, vcr: {
   cassette_name: "Service::ToWeatherId"
 } do
   describe ".call," do

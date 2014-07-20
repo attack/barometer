@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 module Barometer::Query
-  describe Service::ToWoeId, vcr: {
+  RSpec.describe Service::ToWoeId, vcr: {
     cassette_name: 'Service::ToWoeId'
   } do
     describe '.call,' do

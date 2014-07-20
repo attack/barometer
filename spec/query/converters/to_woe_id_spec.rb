@@ -1,6 +1,6 @@
 require_relative '../../spec_helper'
 
-describe Barometer::Query::Converter::ToWoeId, vcr: {
+RSpec.describe Barometer::Query::Converter::ToWoeId, vcr: {
   cassette_name: 'Converter::ToWoeId'
 } do
 

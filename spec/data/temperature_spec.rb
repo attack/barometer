@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 module Barometer::Data
-  describe Temperature do
+  RSpec.describe Temperature do
     describe '.initialize' do
       it 'sets C' do
         temperature = Temperature.new(20.0, nil)

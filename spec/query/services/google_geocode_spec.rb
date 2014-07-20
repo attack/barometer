@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 module Barometer::Query
-  describe Service::GoogleGeocode, vcr: {
+  RSpec.describe Service::GoogleGeocode, vcr: {
     cassette_name: 'Service::GoogleGeocode'
   } do
     describe '.call' do

@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 module Barometer::Data
-  describe Zone do
+  RSpec.describe Zone do
     describe '#new' do
       let(:zone) { double(:zone) }
 
@@ -37,7 +37,7 @@ module Barometer::Data
     end
   end
 
-  describe ZoneFull do
+  RSpec.describe ZoneFull do
     def stub_time(utc_now)
       now = double(:now, utc: utc_now)
       double(:time_class, now: now)
@@ -135,7 +135,7 @@ module Barometer::Data
     end
   end
 
-  describe ZoneOffset do
+  RSpec.describe ZoneOffset do
     def stub_time(utc_now)
       now = double(:now, utc: utc_now)
       double(:time_class, now: now)
@@ -210,7 +210,7 @@ module Barometer::Data
     end
   end
 
-  describe ZoneCode do
+  RSpec.describe ZoneCode do
     def stub_time(utc_now)
       now = double(:now, utc: utc_now)
       double(:time_class, now: now)

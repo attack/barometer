@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 module Barometer::Data
-  describe Distance do
+  RSpec.describe Distance do
     describe '.initialize' do
       it 'sets km' do
         distance = Distance.new(42.2, nil)

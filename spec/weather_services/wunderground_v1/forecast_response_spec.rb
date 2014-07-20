@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 module Barometer::WeatherService
-  describe WundergroundV1::ForecastResponse do
+  RSpec.describe WundergroundV1::ForecastResponse do
     let(:current_year) { Time.now.year }
     let(:current_response) { Barometer::Response.new }
 

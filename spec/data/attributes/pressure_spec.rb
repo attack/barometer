@@ -7,7 +7,7 @@ module Barometer
     attribute :pressure, Data::Attribute::Pressure
   end
 
-  describe Data::Attribute::Pressure do
+  RSpec.describe Data::Attribute::Pressure do
     let(:model) { TestClass.new }
 
     context 'when setting to nil' do

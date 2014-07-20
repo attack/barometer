@@ -1,6 +1,6 @@
 require_relative '../../spec_helper'
 
-describe Barometer::Query::Converter::ToGeocode, vcr: {
+RSpec.describe Barometer::Query::Converter::ToGeocode, vcr: {
   match_requests_on: [:method, :uri],
   cassette_name: "Converter::ToGeocode"
 } do

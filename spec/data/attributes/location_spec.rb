@@ -7,7 +7,7 @@ module Barometer
     attribute :location, Data::Attribute::Location
   end
 
-  describe Data::Attribute::Location do
+  RSpec.describe Data::Attribute::Location do
     let(:model) { TestClass.new }
 
     context 'when setting to nil' do

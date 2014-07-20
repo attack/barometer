@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 module Barometer
-  describe WeatherService::Base do
+  RSpec.describe WeatherService::Base do
     around do |example|
       services_cache = WeatherService.services
       WeatherService.services = Utils::VersionedRegistration.new

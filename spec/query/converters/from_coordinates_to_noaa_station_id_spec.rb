@@ -3,7 +3,7 @@ require_relative '../../spec_helper'
 module Barometer
   module Query
     module Converter
-      describe FromCoordinatesToNoaaStationId, vcr: {
+      RSpec.describe FromCoordinatesToNoaaStationId, vcr: {
         match_requests_on: [:method, :uri],
         cassette_name: "Converter::FromCoordinatesToNoaaStationId"
       } do

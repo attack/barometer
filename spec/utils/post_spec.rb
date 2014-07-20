@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe Barometer::Utils::Post do
+RSpec.describe Barometer::Utils::Post do
   describe ".call" do
     it "posts http content to a given address" do
       stub_request(:post, "www.example.com").to_return(body: "Hello World")

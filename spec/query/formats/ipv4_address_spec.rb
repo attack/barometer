@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 module Barometer::Query
-  describe Format::Ipv4Address do
+  RSpec.describe Format::Ipv4Address do
     describe '.is?' do
       describe 'when the query is an IPv4 address' do
         specify { expect( Format::Ipv4Address.is?('8.8.8.8') ).to be true }

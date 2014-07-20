@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 module Barometer
-  describe Utils::Get do
+  RSpec.describe Utils::Get do
     describe '.call' do
       it 'gets http content from a given address' do
         stub_request(:get, 'www.example.com?foo=bar').to_return(body: 'Hello World')

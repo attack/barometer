@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 module Barometer::Utils
-  describe Payload do
+  RSpec.describe Payload do
     describe '#fetch' do
       it 'returns the value for the key provided' do
         hash = {one: 1}

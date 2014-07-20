@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe Barometer::Utils::Address do
+RSpec.describe Barometer::Utils::Address do
   describe "#url" do
     it "returns the initialized url" do
       address = Barometer::Utils::Address.new("http://www.example.com")

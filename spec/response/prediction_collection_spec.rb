@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 module Barometer::Response
-  describe PredictionCollection do
+  RSpec.describe PredictionCollection do
     let(:prediction_collection) { PredictionCollection.new }
 
     describe "#<<" do

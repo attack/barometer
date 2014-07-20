@@ -7,7 +7,7 @@ module Barometer
     attribute :time, Data::Attribute::Time
   end
 
-  describe Data::Attribute::Time do
+  RSpec.describe Data::Attribute::Time do
     let(:model) { TestClass.new }
 
     context 'when nothing has been set' do

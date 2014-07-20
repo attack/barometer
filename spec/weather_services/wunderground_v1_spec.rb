@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 module Barometer::WeatherService
-  describe WundergroundV1, vcr: {
+  RSpec.describe WundergroundV1, vcr: {
     cassette_name: "WeatherService::WundergroundV1"
   } do
 

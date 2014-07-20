@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 module Barometer
-  describe Utils::Time do
+  RSpec.describe Utils::Time do
     describe ".parse" do
       it "accepts nil, does nothing" do
         time = Utils::Time.parse

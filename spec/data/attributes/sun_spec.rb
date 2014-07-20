@@ -7,7 +7,7 @@ module Barometer
     attribute :sun, Data::Attribute::Sun
   end
 
-  describe Data::Attribute::Sun do
+  RSpec.describe Data::Attribute::Sun do
     let(:model) { TestClass.new }
 
     context 'when setting to nil' do

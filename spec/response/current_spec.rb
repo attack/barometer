@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 module Barometer::Response
-  describe Current do
+  RSpec.describe Current do
     it { is_expected.to have_field(:observed_at).of_type(Time) }
     it { is_expected.to have_field(:stale_at).of_type(Time) }
     it { is_expected.to have_field(:temperature).of_type(Barometer::Data::Temperature) }

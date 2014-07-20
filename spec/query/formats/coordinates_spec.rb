@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 module Barometer::Query
-  describe Format::Coordinates do
+  RSpec.describe Format::Coordinates do
     describe '.geo' do
       specify { expect( Format::Coordinates.geo(nil) ).to be_nil }
 

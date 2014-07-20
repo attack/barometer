@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe Barometer::Base do
+RSpec.describe Barometer::Base do
   around do |example|
     cached_config = Barometer.config
     example.run

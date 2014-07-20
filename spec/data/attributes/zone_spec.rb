@@ -7,7 +7,7 @@ module Barometer
     attribute :timezone, Data::Attribute::Zone
   end
 
-  describe Data::Attribute::Zone do
+  RSpec.describe Data::Attribute::Zone do
     let(:model) { TestClass.new }
 
     context 'when nothing has been set' do

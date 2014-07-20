@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 module Barometer::Query
-  describe Format::Icao do
+  RSpec.describe Format::Icao do
     describe '.geo' do
       specify { expect( Format::Icao.geo(nil) ).to be_nil }
       specify { expect( Format::Icao.geo('KSFO') ).to eq({country_code: 'US'}) }

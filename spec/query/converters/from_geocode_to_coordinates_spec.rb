@@ -1,6 +1,6 @@
 require_relative '../../spec_helper'
 
-describe Barometer::Query::Converter::FromGeocodeToCoordinates do
+RSpec.describe Barometer::Query::Converter::FromGeocodeToCoordinates do
   it "converts :geocode -> :coordinates" do
     query = Barometer::Query.new('USNY0996')
     query.add_conversion(:geocode, 'New York, NY')

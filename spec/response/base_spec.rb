@@ -2,7 +2,7 @@ require_relative '../spec_helper'
 require 'time'
 
 module Barometer::Response
-  describe Base do
+  RSpec.describe Base do
     let(:query) { build_query }
     let(:response) { Base.new }
 

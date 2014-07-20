@@ -13,7 +13,7 @@ module Barometer::Data
     end
   end
 
-  describe ConvertableUnits do
+  RSpec.describe ConvertableUnits do
     describe '.initialize' do
       it 'sets metric value' do
         test_data = TestData.new(200.0, nil)

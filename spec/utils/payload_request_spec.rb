@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 module Barometer::Utils
-  describe PayloadRequest do
+  RSpec.describe PayloadRequest do
     describe '#get' do
       let(:api) { double(:api, url: nil, params: nil, unwrap_nodes: [], current_query: nil) }
       let(:payload_request) { PayloadRequest.new(api) }

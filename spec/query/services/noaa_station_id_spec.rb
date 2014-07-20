@@ -3,7 +3,7 @@ require_relative '../../spec_helper'
 module Barometer
   module Query
     module Service
-      describe NoaaStation, vcr: {
+      RSpec.describe NoaaStation, vcr: {
         cassette_name: 'Service::NoaaStation'
       } do
         describe '.fetch' do

@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 module Barometer::Data
-  describe Vector do
+  RSpec.describe Vector do
     describe '.initialize' do
       it 'sets kph' do
         vector = Vector.new(16.09, nil, nil)

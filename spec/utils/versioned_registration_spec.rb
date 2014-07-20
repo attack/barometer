@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe Barometer::Utils::VersionedRegistration do
+RSpec.describe Barometer::Utils::VersionedRegistration do
   describe "#register" do
     let(:registrations) { Barometer::Utils::VersionedRegistration.new }
 

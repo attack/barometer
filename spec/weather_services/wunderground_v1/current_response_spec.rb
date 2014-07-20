@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 module Barometer::WeatherService
-  describe WundergroundV1::CurrentResponse do
+  RSpec.describe WundergroundV1::CurrentResponse do
     it 'parses the timezones correctly' do
       payload = Barometer::Utils::Payload.new({
         'local_time' => 'May 18, 10:46 AM PDT'

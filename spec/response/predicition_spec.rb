@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe Barometer::Response::Prediction do
+RSpec.describe Barometer::Response::Prediction do
   it { is_expected.to have_field(:starts_at).of_type(Time) }
   it { is_expected.to have_field(:ends_at).of_type(Time) }
   it { is_expected.to have_field(:high).of_type(Barometer::Data::Temperature) }

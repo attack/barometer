@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe Barometer::Query::Converter do
+RSpec.describe Barometer::Query::Converter do
   def clear_converters
     @converters_cache = Barometer::Query::Converter.converters
     Barometer::Query::Converter.converters = {}

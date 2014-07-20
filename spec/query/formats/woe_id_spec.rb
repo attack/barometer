@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 module Barometer::Query
-  describe Format::WoeID do
+  RSpec.describe Format::WoeID do
     describe '.is?' do
       it 'recognizes a valid 4 digit code format' do
         expect( Format::WoeID.is?('8775') ).to be true

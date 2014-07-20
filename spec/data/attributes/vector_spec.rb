@@ -7,7 +7,7 @@ module Barometer
     attribute :vector, Data::Attribute::Vector
   end
 
-  describe Data::Attribute::Vector do
+  RSpec.describe Data::Attribute::Vector do
     let(:model) { TestClass.new }
 
     context 'when setting to nil' do

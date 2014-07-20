@@ -7,7 +7,7 @@ module Barometer
     attribute :distance, Data::Attribute::Distance
   end
 
-  describe Data::Attribute::Distance do
+  RSpec.describe Data::Attribute::Distance do
     let(:model) { TestClass.new }
 
     context 'when setting to nil' do

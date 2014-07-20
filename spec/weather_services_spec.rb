@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Barometer
-  describe WeatherService do
+  RSpec.describe WeatherService do
     around do |example|
       services_cache = WeatherService.services
       WeatherService.services = Utils::VersionedRegistration.new

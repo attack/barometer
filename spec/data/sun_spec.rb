@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 module Barometer::Data
-  describe Sun do
+  RSpec.describe Sun do
     let(:local_time_set) { Time.now + (60*60*8) }
     let(:local_time_rise) { Time.now }
 

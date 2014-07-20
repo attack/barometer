@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 module Barometer
-  describe Query::Base do
+  RSpec.describe Query::Base do
     describe '.initialize' do
       describe 'detecting the query format' do
         it 'detects :short_zipcode' do

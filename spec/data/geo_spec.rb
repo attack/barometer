@@ -1,7 +1,7 @@
 require_relative '../spec_helper'
 
 module Barometer::Data
-  describe Geo do
+  RSpec.describe Geo do
     describe '#coordinates' do
       it 'joins latitude and longitude' do
         geo = Geo.new(

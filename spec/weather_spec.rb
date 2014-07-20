@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Barometer
-  describe Weather do
+  RSpec.describe Weather do
     def fake_response(args)
       success = args.delete(:success?)
       weight = args.delete(:weight) || 1

@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 module Barometer::Query
-  describe Service::FromWeatherId, vcr: {
+  RSpec.describe Service::FromWeatherId, vcr: {
     cassette_name: 'Service::FromWeatherId'
   } do
     describe '#call' do

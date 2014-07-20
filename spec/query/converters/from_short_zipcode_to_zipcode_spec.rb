@@ -1,6 +1,6 @@
 require_relative '../../spec_helper'
 
-describe Barometer::Query::Converter::FromShortZipcodeToZipcode do
+RSpec.describe Barometer::Query::Converter::FromShortZipcodeToZipcode do
   it "converts :short_zipcode -> :zipcode" do
     query = Barometer::Query.new('90210')
 

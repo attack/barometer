@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 module Barometer::Query
-  describe Converter::FromWoeIdOrIpv4ToGeocode, vcr: {
+  RSpec.describe Converter::FromWoeIdOrIpv4ToGeocode, vcr: {
     match_requests_on: [:method, :uri],
     cassette_name: 'Converter::FromWoeIdOrIpv4ToGeocode'
   } do

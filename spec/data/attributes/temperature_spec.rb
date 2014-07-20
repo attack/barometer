@@ -7,7 +7,7 @@ module Barometer
     attribute :temperature, Data::Attribute::Temperature
   end
 
-  describe Data::Attribute::Temperature do
+  RSpec.describe Data::Attribute::Temperature do
     let(:model) { TestClass.new }
 
     context 'when setting to nil' do

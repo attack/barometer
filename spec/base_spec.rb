@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Barometer
-  describe Base do
+  RSpec.describe Base do
     let(:query) { build_query }
     let(:barometer) { Base.new(query) }
 

@@ -1,6 +1,6 @@
 require_relative '../spec_helper'
 
-describe Barometer::Query::Format do
+RSpec.describe Barometer::Query::Format do
   def clear_formats
     @formats_cache = Barometer::Query::Format.formats
     Barometer::Query::Format.formats = []

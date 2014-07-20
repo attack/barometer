@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 module Barometer::Query
-  describe Format::WeatherID do
+  RSpec.describe Format::WeatherID do
     describe '.geo' do
       specify { expect( Format::WeatherID.geo(nil) ).to be_nil }
       specify { expect( Format::WeatherID.geo('i') ).to be_nil }
