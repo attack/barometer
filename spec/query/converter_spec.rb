@@ -18,7 +18,7 @@ describe Barometer::Query::Converter do
       it "makes the converter available" do
         zipcode_converter = double(:converter, from: [:short_zipcode])
         Barometer::Query::Converter.register(:zipcode, zipcode_converter)
-        Barometer::Query::Converter.find(:short_zipcode, :zipcode).should == {zipcode: zipcode_converter}
+        expect(Barometer::Query::Converter.find(:short_zipcode, :zipcode)).to eq({zipcode: zipcode_converter})
       end
     end
 
@@ -26,8 +26,8 @@ describe Barometer::Query::Converter do
       it "makes the converter available to each format" do
         coordinates_converter = double(:converter, from: [:short_zipcode, :zipcode])
         Barometer::Query::Converter.register(:coordinates, coordinates_converter)
-        Barometer::Query::Converter.find(:short_zipcode, :coordinates).should == {coordinates: coordinates_converter}
-        Barometer::Query::Converter.find(:zipcode, :coordinates).should == {coordinates: coordinates_converter}
+        expect(Barometer::Query::Converter.find(:short_zipcode, :coordinates)).to eq({coordinates: coordinates_converter})
+        expect(Barometer::Query::Converter.find(:zipcode, :coordinates)).to eq({coordinates: coordinates_converter})
       end
     end
   end
@@ -42,7 +42,7 @@ describe Barometer::Query::Converter do
         Barometer::Query::Converter.register(:coordinates, coordinates_converter)
 
         converters = Barometer::Query::Converter.find_all(:short_zipcode, :coordinates)
-        converters.should == [{coordinates: coordinates_converter}]
+        expect(converters).to eq [{coordinates: coordinates_converter}]
       end
 
       it "respects preference" do
@@ -53,7 +53,7 @@ describe Barometer::Query::Converter do
         Barometer::Query::Converter.register(:coordinates, coordinates_converter)
 
         converters = Barometer::Query::Converter.find_all(:short_zipcode, [:foo, :coordinates, :zipcode])
-        converters.should == [{coordinates: coordinates_converter}]
+        expect(converters).to eq [{coordinates: coordinates_converter}]
       end
     end
 
@@ -66,7 +66,7 @@ describe Barometer::Query::Converter do
         Barometer::Query::Converter.register(:geocode, geocode_converter)
 
         converters = Barometer::Query::Converter.find_all(:short_zipcode, :coordinates)
-        converters.should == [
+        expect(converters).to eq [
           {geocode: geocode_converter}, {coordinates: coordinates_converter}
         ]
       end
@@ -82,7 +82,7 @@ describe Barometer::Query::Converter do
         Barometer::Query::Converter.register(:geocode, geocode_converter)
 
         converters = Barometer::Query::Converter.find_all(:short_zipcode, [:foo, :coordinates, :zipcode])
-        converters.should == [
+        expect(converters).to eq [
           {geocode: geocode_converter}, {coordinates: coordinates_converter}
         ]
       end
@@ -91,7 +91,7 @@ describe Barometer::Query::Converter do
     context "when the conversion cannot be made" do
       it "returns nil" do
         converters = Barometer::Query::Converter.find_all(:short_zipcode, :foo)
-        converters.should be_empty
+        expect(converters).to be_empty
       end
     end
   end

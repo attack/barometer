@@ -10,16 +10,16 @@ describe Barometer::Query::Converter::FromGeocodeToCoordinates do
     converter = Barometer::Query::Converter::FromGeocodeToCoordinates.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == '40.7143528,-74.0059731'
-    converted_query.format.should == :coordinates
-    converted_query.geo.country_code.should == 'US'
-    converted_query.geo.should_not be_nil
+    expect(converted_query.q).to eq '40.7143528,-74.0059731'
+    expect(converted_query.format).to eq :coordinates
+    expect(converted_query.geo.country_code).to eq 'US'
+    expect(converted_query.geo).not_to be_nil
   end
 
   it "does not convert other formats" do
     query = Barometer::Query.new('USGA0028')
 
     converter = Barometer::Query::Converter::FromGeocodeToCoordinates.new(query)
-    converter.call.should be_nil
+    expect(converter.call).to be_nil
   end
 end

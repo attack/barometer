@@ -45,7 +45,7 @@ describe Barometer::Utils::VersionedRegistration do
       end
 
       registrations.register(:foo, &registration)
-      registrations.find(:foo).should == registration
+      expect(registrations.find(:foo)).to eq registration
     end
 
     it "registers a block with a version" do
@@ -53,7 +53,7 @@ describe Barometer::Utils::VersionedRegistration do
       end
 
       registrations.register(:foo, :v1, &registration)
-      registrations.find(:foo, :v1).should == registration
+      expect(registrations.find(:foo, :v1)).to eq registration
     end
   end
 
@@ -64,8 +64,8 @@ describe Barometer::Utils::VersionedRegistration do
       registration = double(:bar)
       registrations.register(:foo, nil, registration)
 
-      registrations.find(:foo).should == registration
-      registrations.find(:foo, :v1).should == registration
+      expect(registrations.find(:foo)).to eq registration
+      expect(registrations.find(:foo, :v1)).to eq registration
     end
 
     it "finds the matching registration" do
@@ -76,18 +76,18 @@ describe Barometer::Utils::VersionedRegistration do
       registrations.register(:foo, :v1, registration_v1)
       registrations.register(:foo, :v2, registration_v2)
 
-      registrations.find(:foo, :v1).should == registration_v1
-      registrations.find(:foo, :v2).should == registration_v2
+      expect(registrations.find(:foo, :v1)).to eq registration_v1
+      expect(registrations.find(:foo, :v2)).to eq registration_v2
     end
 
     it "returns nothing if requested key not found" do
       registrations.register(:foo, nil, double(:bar))
-      registrations.find(:bar, :v1).should be_nil
+      expect(registrations.find(:bar, :v1)).to be_nil
     end
 
     it "returns nothing if requested version not found" do
       registrations.register(:foo, :v1, double(:bar))
-      registrations.find(:foo, :v2).should be_nil
+      expect(registrations.find(:foo, :v2)).to be_nil
     end
   end
 
@@ -99,7 +99,7 @@ describe Barometer::Utils::VersionedRegistration do
       registrations.register(:foo, nil, registration)
       registrations.register(:foo, :v1, registration)
       registrations.register(:bar, :v1, registration)
-      registrations.size.should == 3
+      expect(registrations.size).to eq 3
     end
   end
 end

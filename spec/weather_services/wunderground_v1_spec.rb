@@ -6,7 +6,7 @@ module Barometer::WeatherService
   } do
 
     it "auto-registers this weather service as :wunderground" do
-      Barometer::WeatherService.source(:wunderground, :v1).should == WundergroundV1
+      expect(Barometer::WeatherService.source(:wunderground, :v1)).to eq WundergroundV1
     end
 
     describe ".call" do
@@ -21,57 +21,59 @@ module Barometer::WeatherService
       end
 
       it "includes the expected data" do
-        subject.query.should == 'Calgary,AB'
-        subject.format.should == :geocode
-        subject.should be_metric
+        response = WundergroundV1.call(query)
 
-        should have_data(:current, :observed_at).as_format(:time)
-        should have_data(:current, :stale_at).as_format(:time)
+        expect(response.query).to eq 'Calgary,AB'
+        expect(response.format).to eq :geocode
+        expect(response).to be_metric
 
-        should have_data(:current, :humidity).as_format(:float)
-        should have_data(:current, :condition).as_format(:string)
-        should have_data(:current, :icon).as_format(:string)
-        should have_data(:current, :temperature).as_format(:temperature)
-        should have_data(:current, :dew_point).as_format(:temperature)
-        # should have_data(:current, :wind_chill).as_format(:temperature)
-        # should have_data(:current, :heat_index).as_format(:optional_string)
-        should have_data(:current, :wind).as_format(:vector)
-        should have_data(:current, :visibility).as_format(:distance)
-        should have_data(:current, :pressure).as_format(:pressure)
-        should have_data(:current, :sun, :rise).as_format(:time)
-        should have_data(:current, :sun, :set).as_format(:time)
+        expect(response).to have_data(:current, :observed_at).as_format(:time)
+        expect(response).to have_data(:current, :stale_at).as_format(:time)
 
-        should have_data(:station, :id).as_value("CYYC")
-        should have_data(:station, :name).as_value("Calgary,")
-        should have_data(:station, :city).as_value("Calgary")
-        should have_data(:station, :state_code).as_format(:optional_string)
-        should have_data(:station, :country_code).as_value("CA")
-        should have_data(:station, :latitude).as_value(51.11999893)
-        should have_data(:station, :longitude).as_value(-114.01999664)
+        expect(response).to have_data(:current, :humidity).as_format(:float)
+        expect(response).to have_data(:current, :condition).as_format(:string)
+        expect(response).to have_data(:current, :icon).as_format(:string)
+        expect(response).to have_data(:current, :temperature).as_format(:temperature)
+        expect(response).to have_data(:current, :dew_point).as_format(:temperature)
+        # expect(response).to have_data(:current, :wind_chill).as_format(:temperature)
+        # expect(response).to have_data(:current, :heat_index).as_format(:optional_string)
+        expect(response).to have_data(:current, :wind).as_format(:vector)
+        expect(response).to have_data(:current, :visibility).as_format(:distance)
+        expect(response).to have_data(:current, :pressure).as_format(:pressure)
+        expect(response).to have_data(:current, :sun, :rise).as_format(:time)
+        expect(response).to have_data(:current, :sun, :set).as_format(:time)
 
-        should have_data(:location, :name).as_value("Calgary, Alberta")
-        should have_data(:location, :city).as_value("Calgary")
-        should have_data(:location, :state_code).as_value("AB")
-        should have_data(:location, :state_name).as_value("Alberta")
-        should have_data(:location, :zip_code).as_value("00000")
-        should have_data(:location, :country_code).as_value("CA")
-        should have_data(:location, :latitude).as_value(51.11999893)
-        should have_data(:location, :longitude).as_value(-114.01999664)
+        expect(response).to have_data(:station, :id).as_value("CYYC")
+        expect(response).to have_data(:station, :name).as_value("Calgary,")
+        expect(response).to have_data(:station, :city).as_value("Calgary")
+        expect(response).to have_data(:station, :state_code).as_format(:optional_string)
+        expect(response).to have_data(:station, :country_code).as_value("CA")
+        expect(response).to have_data(:station, :latitude).as_value(51.11999893)
+        expect(response).to have_data(:station, :longitude).as_value(-114.01999664)
 
-        should have_data(:timezone, :code).as_format(/^M[DS]T$/i)
-        should have_data(:timezone, :to_s).as_value('America/Edmonton')
+        expect(response).to have_data(:location, :name).as_value("Calgary, Alberta")
+        expect(response).to have_data(:location, :city).as_value("Calgary")
+        expect(response).to have_data(:location, :state_code).as_value("AB")
+        expect(response).to have_data(:location, :state_name).as_value("Alberta")
+        expect(response).to have_data(:location, :zip_code).as_value("00000")
+        expect(response).to have_data(:location, :country_code).as_value("CA")
+        expect(response).to have_data(:location, :latitude).as_value(51.11999893)
+        expect(response).to have_data(:location, :longitude).as_value(-114.01999664)
 
-        subject.forecast.size.should == 6
-        should have_forecast(:starts_at).as_format(:time)
-        should have_forecast(:ends_at).as_format(:time)
+        expect(response).to have_data(:timezone, :code).as_format(/^M[DS]T$/i)
+        expect(response).to have_data(:timezone, :to_s).as_value('America/Edmonton')
 
-        subject.forecast[0].ends_at.to_i.should == (subject.forecast[0].starts_at + (60 * 60 * 24 - 1)).to_i
-        should have_forecast(:pop).as_format(:float)
-        should have_forecast(:icon).as_format(:string)
-        should have_forecast(:high).as_format(:temperature)
-        should have_forecast(:low).as_format(:temperature)
-        should have_forecast(:sun, :rise).as_format(:time)
-        should have_forecast(:sun, :set).as_format(:time)
+        expect(response.forecast.size).to eq 6
+        expect(response).to have_forecast(:starts_at).as_format(:time)
+        expect(response).to have_forecast(:ends_at).as_format(:time)
+
+        expect(response.forecast[0].ends_at.to_i).to eq (response.forecast[0].starts_at + (60 * 60 * 24 - 1)).to_i
+        expect(response).to have_forecast(:pop).as_format(:float)
+        expect(response).to have_forecast(:icon).as_format(:string)
+        expect(response).to have_forecast(:high).as_format(:temperature)
+        expect(response).to have_forecast(:low).as_format(:temperature)
+        expect(response).to have_forecast(:sun, :rise).as_format(:time)
+        expect(response).to have_forecast(:sun, :set).as_format(:time)
       end
     end
   end

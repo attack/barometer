@@ -7,8 +7,8 @@ describe Barometer::Query::Converter::FromShortZipcodeToZipcode do
     converter = Barometer::Query::Converter::FromShortZipcodeToZipcode.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == '90210'
-    converted_query.format.should == :zipcode
+    expect(converted_query.q).to eq '90210'
+    expect(converted_query.format).to eq :zipcode
   end
 
   it "uses a previous coversion (if needed) on the query" do
@@ -18,14 +18,14 @@ describe Barometer::Query::Converter::FromShortZipcodeToZipcode do
     converter = Barometer::Query::Converter::FromShortZipcodeToZipcode.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == '90210'
-    converted_query.format.should == :zipcode
+    expect(converted_query.q).to eq '90210'
+    expect(converted_query.format).to eq :zipcode
   end
 
   it "does not convert any other format" do
     query = Barometer::Query.new('Beverly Hills, CA, United States')
 
     converter = Barometer::Query::Converter::FromShortZipcodeToZipcode.new(query)
-    converter.call.should be_nil
+    expect(converter.call).to be_nil
   end
 end

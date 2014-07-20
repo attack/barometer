@@ -11,8 +11,8 @@ describe Barometer::Query::Converter::ToWeatherId, vcr: {
     converter = Barometer::Query::Converter::ToWeatherId.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == 'FRXX0076'
-    converted_query.format.should == :weather_id
+    expect(converted_query.q).to eq 'FRXX0076'
+    expect(converted_query.format).to eq :weather_id
   end
 
   it "uses a previous coversion (if needed) on the query" do
@@ -22,14 +22,14 @@ describe Barometer::Query::Converter::ToWeatherId, vcr: {
     converter = Barometer::Query::Converter::ToWeatherId.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == 'USNY0996'
-    converted_query.format.should == :weather_id
+    expect(converted_query.q).to eq 'USNY0996'
+    expect(converted_query.format).to eq :weather_id
   end
 
   it "does not convert any other format" do
     query = Barometer::Query.new('KJFK')
 
     converter = Barometer::Query::Converter::ToWeatherId.new(query)
-    converter.call.should be_nil
+    expect(converter.call).to be_nil
   end
 end

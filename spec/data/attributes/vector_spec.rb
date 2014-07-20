@@ -14,7 +14,7 @@ module Barometer
       it 'resets the value' do
         model.vector = Data::Vector.new(12, 270)
         model.vector = nil
-        model.vector.should be_nil
+        expect(model.vector).to be_nil
       end
     end
 

@@ -5,7 +5,7 @@ module Barometer
     describe ".parse" do
       it "accepts nil, does nothing" do
         time = Utils::Time.parse
-        time.should be_nil
+        expect(time).to be_nil
       end
 
       it "parses a Time object" do

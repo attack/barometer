@@ -43,7 +43,7 @@ describe Barometer::Query::Format do
       test_format = double(:test_format)
       Barometer::Query::Format.register(:test_format, test_format)
 
-      Barometer::Query::Format.find(:test_format).should == test_format
+      expect(Barometer::Query::Format.find(:test_format)).to eq test_format
     end
 
     it "raises an error if the format does not exist" do

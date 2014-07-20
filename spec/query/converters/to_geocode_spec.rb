@@ -11,9 +11,9 @@ describe Barometer::Query::Converter::ToGeocode, vcr: {
     converter = Barometer::Query::Converter::ToGeocode.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == 'Beverly Hills, CA, United States'
-    converted_query.format.should == :geocode
-    converted_query.geo.country_code.should == 'US'
+    expect(converted_query.q).to eq 'Beverly Hills, CA, United States'
+    expect(converted_query.format).to eq :geocode
+    expect(converted_query.geo.country_code).to eq 'US'
   end
 
   it "converts :zipcode -> :geocode" do
@@ -22,9 +22,9 @@ describe Barometer::Query::Converter::ToGeocode, vcr: {
     converter = Barometer::Query::Converter::ToGeocode.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == 'Beverly Hills, CA, United States'
-    converted_query.format.should == :geocode
-    converted_query.geo.country_code.should == 'US'
+    expect(converted_query.q).to eq 'Beverly Hills, CA, United States'
+    expect(converted_query.format).to eq :geocode
+    expect(converted_query.geo.country_code).to eq 'US'
   end
 
   it "converts :coordinates -> :geocode" do
@@ -33,9 +33,9 @@ describe Barometer::Query::Converter::ToGeocode, vcr: {
     converter = Barometer::Query::Converter::ToGeocode.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == 'Manhattan, NY, United States'
-    converted_query.format.should == :geocode
-    converted_query.geo.country_code.should == 'US'
+    expect(converted_query.q).to eq 'Manhattan, NY, United States'
+    expect(converted_query.format).to eq :geocode
+    expect(converted_query.geo.country_code).to eq 'US'
   end
 
   it "converts :postalcode -> :geocode" do
@@ -44,9 +44,9 @@ describe Barometer::Query::Converter::ToGeocode, vcr: {
     converter = Barometer::Query::Converter::ToGeocode.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == 'Edmonton, AB, Canada'
-    converted_query.format.should == :geocode
-    converted_query.geo.country_code.should == 'CA'
+    expect(converted_query.q).to eq 'Edmonton, AB, Canada'
+    expect(converted_query.format).to eq :geocode
+    expect(converted_query.geo.country_code).to eq 'CA'
   end
 
   it "converts :icao -> :geocode" do
@@ -55,9 +55,9 @@ describe Barometer::Query::Converter::ToGeocode, vcr: {
     converter = Barometer::Query::Converter::ToGeocode.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == 'San Francisco, CA, United States'
-    converted_query.format.should == :geocode
-    converted_query.geo.country_code.should == 'US'
+    expect(converted_query.q).to eq 'San Francisco, CA, United States'
+    expect(converted_query.format).to eq :geocode
+    expect(converted_query.geo.country_code).to eq 'US'
   end
 
   it "converts :unknown -> :geocode" do
@@ -66,9 +66,9 @@ describe Barometer::Query::Converter::ToGeocode, vcr: {
     converter = Barometer::Query::Converter::ToGeocode.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == 'Paris, IDF, France'
-    converted_query.format.should == :geocode
-    converted_query.geo.country_code.should == 'FR'
+    expect(converted_query.q).to eq 'Paris, IDF, France'
+    expect(converted_query.format).to eq :geocode
+    expect(converted_query.geo.country_code).to eq 'FR'
   end
 
   it "uses a previous coversion (if needed) on the query" do
@@ -78,22 +78,22 @@ describe Barometer::Query::Converter::ToGeocode, vcr: {
     converter = Barometer::Query::Converter::ToGeocode.new(query)
     converted_query = converter.call
 
-    converted_query.q.should == 'San Francisco, CA, United States'
-    converted_query.format.should == :geocode
-    converted_query.geo.country_code.should == 'US'
+    expect(converted_query.q).to eq 'San Francisco, CA, United States'
+    expect(converted_query.format).to eq :geocode
+    expect(converted_query.geo.country_code).to eq 'US'
   end
 
   it "does not convert :weather_id" do
     query = Barometer::Query.new('USGA0028')
 
     converter = Barometer::Query::Converter::ToGeocode.new(query)
-    converter.call.should be_nil
+    expect(converter.call).to be_nil
   end
 
   it "does not convert :woe_id" do
     query = Barometer::Query.new('615702')
 
     converter = Barometer::Query::Converter::ToGeocode.new(query)
-    converter.call.should be_nil
+    expect(converter.call).to be_nil
   end
 end
