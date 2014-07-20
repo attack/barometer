@@ -4,27 +4,27 @@ module Barometer::Query
   describe Format::WoeID do
     describe '.is?' do
       it 'recognizes a valid 4 digit code format' do
-        expect( Format::WoeID.is?('8775') ).to be_true
+        expect( Format::WoeID.is?('8775') ).to be true
       end
 
       it 'recognizes a valid 6 digit code format' do
-        expect( Format::WoeID.is?('615702') ).to be_true
+        expect( Format::WoeID.is?('615702') ).to be true
       end
 
       it 'recognizes a valid 7 digit code format' do
-        expect( Format::WoeID.is?('2459115') ).to be_true
+        expect( Format::WoeID.is?('2459115') ).to be true
       end
 
       it 'recognizes a valid 5 digit code with a prepended "w"' do
-        expect( Format::WoeID.is?('w90210') ).to be_true
+        expect( Format::WoeID.is?('w90210') ).to be true
       end
 
       it 'does not recognize a zip code' do
-        expect( Format::WoeID.is?('90210') ).to be_false
+        expect( Format::WoeID.is?('90210') ).to be false
       end
 
       it 'recognizes non-valid format' do
-        expect( Format::WoeID.is?('USGA0028') ).to be_false
+        expect( Format::WoeID.is?('USGA0028') ).to be false
       end
     end
 

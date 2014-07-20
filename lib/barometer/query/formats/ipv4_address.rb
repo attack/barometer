@@ -10,6 +10,7 @@ module Barometer
         def self.is?(query)
           (ipaddr = IPAddr.new(query.to_s)) && ipaddr.ipv4?
         rescue ArgumentError
+          false
         end
       end
     end

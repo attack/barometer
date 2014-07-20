@@ -9,11 +9,11 @@ module Barometer::Query
 
     describe '.is?' do
       it 'recognizes a valid format' do
-        expect( Format::Zipcode.is?('90210-5555') ).to be_true
+        expect( Format::Zipcode.is?('90210-5555') ).to be true
       end
 
       it 'recognizes non-valid format' do
-        expect( Format::Zipcode.is?('invalid') ).to be_false
+        expect( Format::Zipcode.is?('invalid') ).to be false
       end
     end
   end

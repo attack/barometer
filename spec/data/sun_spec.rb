@@ -31,24 +31,24 @@ module Barometer::Data
       describe '#after_rise?' do
         it 'returns true when after sun rise' do
           sun = Sun.new(rise: early_time, set: late_time)
-          expect( sun.after_rise?(mid_time) ).to be_true
+          expect( sun.after_rise?(mid_time) ).to be true
         end
 
         it 'returns false when before sun rise' do
           sun = Sun.new(rise: mid_time, set: late_time)
-          expect( sun.after_rise?(early_time) ).to be_false
+          expect( sun.after_rise?(early_time) ).to be false
         end
       end
 
       describe '#before_set?' do
         it 'returns true when before sun set' do
           sun = Sun.new(rise: early_time, set: late_time)
-          expect( sun.before_set?(mid_time) ).to be_true
+          expect( sun.before_set?(mid_time) ).to be true
         end
 
         it 'returns false when before sun set' do
           sun = Sun.new(rise: early_time, set: mid_time)
-          expect( sun.before_set?(late_time) ).to be_false
+          expect( sun.before_set?(late_time) ).to be false
         end
       end
     end

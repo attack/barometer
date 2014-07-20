@@ -4,7 +4,7 @@ module Barometer::Query
   describe Format::Geocode do
     describe '.is?' do
       it 'returns false' do
-        expect( Format::Geocode.is?('New York, NY') ).to be_false
+        expect( Format::Geocode.is?('New York, NY') ).to be false
       end
     end
   end

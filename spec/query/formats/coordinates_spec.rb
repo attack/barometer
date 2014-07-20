@@ -12,11 +12,11 @@ module Barometer::Query
 
     describe '.is?' do
       it 'returns true when valid' do
-        expect( Format::Coordinates.is?('40.756054,-73.986951') ).to be_true
+        expect( Format::Coordinates.is?('40.756054,-73.986951') ).to be true
       end
 
       it 'returns false when not valid' do
-        expect( Format::Coordinates.is?('90210') ).to be_false
+        expect( Format::Coordinates.is?('90210') ).to be false
       end
     end
   end

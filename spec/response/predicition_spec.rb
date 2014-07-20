@@ -54,12 +54,12 @@ describe Barometer::Response::Prediction do
   describe "#covers?" do
     it "returns true if the valid_date range includes the given date" do
       subject.date = Date.new(2009,05,05)
-      subject.covers?(Time.utc(2009,5,5,12,0,0)).should be_true
+      subject.covers?(Time.utc(2009,5,5,12,0,0)).should be true
     end
 
     it "returns false if the valid_date range excludes the given date" do
       subject.date = Date.new(2009,05,05)
-      subject.covers?(Time.utc(2009,5,4,12,0,0)).should be_false
+      subject.covers?(Time.utc(2009,5,4,12,0,0)).should be false
     end
   end
 end

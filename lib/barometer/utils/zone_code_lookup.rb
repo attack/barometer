@@ -12,7 +12,7 @@ module Barometer
 
       def self.exists?(code)
         _load_zone_codes unless @@zone_codes
-        (::Time.zone_offset(code.to_s) || @@zone_codes && @@zone_codes.has_key?(code))
+        (!!::Time.zone_offset(code.to_s) || @@zone_codes && @@zone_codes.has_key?(code))
       end
 
       # Known conflicts:

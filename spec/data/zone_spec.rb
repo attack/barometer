@@ -45,20 +45,20 @@ module Barometer::Data
 
     describe '.detect?' do
       it 'returns true when given a full timezone' do
-        expect( ZoneFull.detect?('America/Los_Angeles') ).to be_true
+        expect( ZoneFull.detect?('America/Los_Angeles') ).to be true
       end
 
       it 'returns false when given a timezone code' do
-        expect( ZoneFull.detect?('PST') ).to be_false
+        expect( ZoneFull.detect?('PST') ).to be false
       end
 
       it 'returns false when given an offset' do
-        expect( ZoneFull.detect?(10) ).to be_false
+        expect( ZoneFull.detect?(10) ).to be false
       end
 
       it 'returns false when given nothing' do
-        expect( ZoneFull.detect?('') ).to be_false
-        expect( ZoneFull.detect?(nil) ).to be_false
+        expect( ZoneFull.detect?('') ).to be false
+        expect( ZoneFull.detect?(nil) ).to be false
       end
     end
 
@@ -143,24 +143,24 @@ module Barometer::Data
 
     describe '.detect?' do
       it 'returns false when given a full timezone' do
-        expect( ZoneOffset.detect?('America/Los_Angeles') ).to be_false
+        expect( ZoneOffset.detect?('America/Los_Angeles') ).to be false
       end
 
       it 'returns false when given a timezone code' do
-        expect( ZoneOffset.detect?('PST') ).to be_false
+        expect( ZoneOffset.detect?('PST') ).to be false
       end
 
       it 'returns true when given an offset' do
-        expect( ZoneOffset.detect?(10) ).to be_true
+        expect( ZoneOffset.detect?(10) ).to be true
       end
 
       it 'returns false when given an offset out of range' do
-        expect( ZoneOffset.detect?(15) ).to be_false
+        expect( ZoneOffset.detect?(15) ).to be false
       end
 
       it 'returns false when given nothing' do
-        expect( ZoneOffset.detect?('') ).to be_false
-        expect( ZoneOffset.detect?(nil) ).to be_false
+        expect( ZoneOffset.detect?('') ).to be false
+        expect( ZoneOffset.detect?(nil) ).to be false
       end
     end
 
@@ -218,28 +218,28 @@ module Barometer::Data
 
     describe '.detect?' do
       it 'returns false when given a full timezone' do
-        expect( ZoneCode.detect?('America/Los_Angeles') ).to be_false
+        expect( ZoneCode.detect?('America/Los_Angeles') ).to be false
       end
 
       it 'returns true when given a timezone code' do
-        expect( ZoneCode.detect?('PST') ).to be_true
+        expect( ZoneCode.detect?('PST') ).to be true
       end
 
       it 'returns true when given an obscure timezone code' do
-        expect( ZoneCode.detect?('CEST') ).to be_true
+        expect( ZoneCode.detect?('CEST') ).to be true
       end
 
       it 'returns false when given an invalid timezone code' do
-        expect( ZoneCode.detect?('ABC') ).to be_false
+        expect( ZoneCode.detect?('ABC') ).to be false
       end
 
       it 'returns false when given an offset' do
-        expect( ZoneCode.detect?(10) ).to be_false
+        expect( ZoneCode.detect?(10) ).to be false
       end
 
       it 'returns false when given nothing' do
-        expect( ZoneCode.detect?('') ).to be_false
-        expect( ZoneCode.detect?(nil) ).to be_false
+        expect( ZoneCode.detect?('') ).to be false
+        expect( ZoneCode.detect?(nil) ).to be false
       end
     end
 
