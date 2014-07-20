@@ -18,7 +18,9 @@ VCR.configure do |config|
 end
 
 RSpec.configure do |config|
-  config.treat_symbols_as_metadata_keys_with_true_values = true
+  config.raise_errors_for_deprecations!
+  config.disable_monkey_patching!
+
   config.include Barometer::Support::Matchers
   config.include Barometer::Support::Factory
 end

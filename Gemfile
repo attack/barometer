@@ -5,7 +5,7 @@ gemspec
 gem 'rake'
 
 group :development, :test do
-  gem 'rspec', '>= 2.11'
+  gem 'rspec', '~> 3.0'
   gem 'pry'
 end
 
