@@ -32,7 +32,7 @@ describe Barometer::Base do
               true
             end
 
-            Barometer::Utils::ConfigReader.take_level_while(&b)
+            Barometer::Utils::ConfigReader.take_level_while(&m)
           }.to yield_successive_args(1, 2)
         end
       end
