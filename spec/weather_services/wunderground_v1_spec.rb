@@ -13,11 +13,14 @@ module Barometer::WeatherService
       let(:converted_query) { Barometer::ConvertedQuery.new('Calgary,AB', :geocode, :metric) }
       let(:query) { build_query.tap{|q|q.stub(:convert! => converted_query)} }
 
-      subject { WundergroundV1.call(query) }
-
       it "asks the query to convert to accepted formats" do
-        query.should_receive(:convert!).with(:zipcode, :postalcode, :icao, :coordinates, :geocode)
-        subject
+        allow(query).to receive(:convert!).and_return(converted_query)
+
+        WundergroundV1.call(query)
+
+        expect(query).to have_received(:convert!).
+          with(:zipcode, :postalcode, :icao, :coordinates, :geocode).
+          at_least(:once)
       end
 
       it "includes the expected data" do
