@@ -6,12 +6,14 @@ module Barometer::Utils
       let(:api) { double(:api, url: nil, params: nil, unwrap_nodes: [], current_query: nil) }
       let(:payload_request) { PayloadRequest.new(api) }
 
-      before { Get.stub(call: double(content: '<foo></foo>', headers: {})) }
+      before do
+        allow(Get).to receive(:call).and_return(double(content: '<foo></foo>', headers: {}))
+      end
 
       it 'makes a GET request' do
         url = double(:url)
         params = double(:params)
-        api.stub(url: url, params: params)
+        allow(api).to receive_messages(url: url, params: params)
 
         payload_request.get
 
@@ -20,10 +22,10 @@ module Barometer::Utils
 
       it 'XML parses the GET response by default' do
         content = double(:content)
-        Get.stub(call: double(content: content, headers: {}))
+        allow(Get).to receive(:call).and_return(double(content: content, headers: {}))
         unwrap_nodes = double(:unwrap_nodes)
-        api.stub(unwrap_nodes: unwrap_nodes)
-        XmlReader.stub(:parse)
+        allow(api).to receive(:unwrap_nodes).and_return(unwrap_nodes)
+        allow(XmlReader).to receive(:parse)
 
         payload_request.get
 
@@ -36,7 +38,7 @@ module Barometer::Utils
 
       it 'stores the query used to make the request' do
         current_query = double(:query)
-        api.stub(current_query: current_query)
+        allow(api).to receive(:current_query).and_return(current_query)
 
         payload = payload_request.get
 
@@ -45,8 +47,9 @@ module Barometer::Utils
 
       context 'when the returned content type is */xml' do
         it 'uses the XmlReader' do
-          Get.stub(call: double(content: '', headers: {'Content-Type' => 'text/xml'}))
-          XmlReader.stub(:parse)
+          allow(Get).to receive(:call).
+            and_return(double(content: '', headers: {'Content-Type' => 'text/xml'}))
+          allow(XmlReader).to receive(:parse)
 
           payload_request.get
 
@@ -56,8 +59,9 @@ module Barometer::Utils
 
       context 'when the returned content type is */json' do
         it 'uses the JsonReader' do
-          Get.stub(call: double(content: '', headers: {'Content-Type' => 'application/json'}))
-          JsonReader.stub(:parse)
+          allow(Get).to receive(:call).
+            and_return(double(content: '', headers: {'Content-Type' => 'application/json'}))
+          allow(JsonReader).to receive(:parse)
 
           payload_request.get
 

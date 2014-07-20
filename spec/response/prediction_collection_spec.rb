@@ -22,7 +22,7 @@ module Barometer::Response
 
       it "finds prediction by using #for when not passed a number" do
         index = double(:index)
-        prediction_collection.stub(:for)
+        allow(prediction_collection).to receive(:for)
 
         prediction_collection[index]
 

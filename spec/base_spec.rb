@@ -7,8 +7,8 @@ module Barometer
 
     describe "#measure" do
       let(:keys) { {fake_secret: 'ABC123'} }
-      let(:response_foo) { Response.new.tap{|r| r.stub(complete?: true)} }
-      let(:response_bar) { Response.new.tap{|r| r.stub(complete?: true)} }
+      let(:response_foo) { Response.new.tap{|r| allow(r).to receive(:complete?).and_return(true)} }
+      let(:response_bar) { Response.new.tap{|r| allow(r).to receive(:complete?).and_return(true)} }
       let(:foo_weather_service) { double(:weather_service, call: response_foo) }
       let(:bar_weather_service) { double(:weather_service, call: response_bar) }
 
@@ -40,7 +40,7 @@ module Barometer
       end
 
       context "when the first weather service is successful" do
-        before { response_foo.stub(success?: true) }
+        before { allow(response_foo).to receive(:success?).and_return(true) }
 
         it "measures the weather" do
           barometer.measure
@@ -79,7 +79,7 @@ module Barometer
       end
 
       context "when the first weather service is not successful" do
-        before { response_foo.stub(success?: false) }
+        before { allow(response_foo).to receive(:success?).and_return(false) }
 
         context "and there are no other weather services configured" do
           before { Barometer.config = {1 => :foo} }
@@ -94,7 +94,7 @@ module Barometer
         context "and another weather service is configured for the next service_level" do
           before do
             Barometer.config = {1 => [:foo, :bar], 2 => :bar}
-            response_bar.stub(success?: true)
+            allow(response_bar).to receive(:success?).and_return(true)
           end
 
           it "measures the weather using the next service_level" do

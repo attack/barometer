@@ -11,7 +11,7 @@ module Barometer::WeatherService
 
     describe ".call" do
       let(:converted_query) { Barometer::ConvertedQuery.new('Calgary,AB', :geocode, :metric) }
-      let(:query) { build_query.tap{|q|q.stub(:convert! => converted_query)} }
+      let(:query) { build_query.tap{|q| allow(q).to receive(:convert!).and_return(converted_query)} }
 
       it "asks the query to convert to accepted formats" do
         allow(query).to receive(:convert!).and_return(converted_query)

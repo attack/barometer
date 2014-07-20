@@ -120,8 +120,8 @@ module Barometer
       end
 
       it "returns nil when there is no valid data" do
-        response_one.stub(success?: false)
-        response_two.stub(success?: false)
+        allow(response_one).to receive(:success?).and_return(false)
+        allow(response_two).to receive(:success?).and_return(false)
         expect( weather.temperature ).to be_nil
       end
 
@@ -138,13 +138,13 @@ module Barometer
       end
 
       it "returns a weighted average temeprature" do
-        response_one.stub(weight: 3)
-        response_two.stub(weight: 1)
+        allow(response_one).to receive(:weight).and_return(3)
+        allow(response_two).to receive(:weight).and_return(1)
         expect( weather.temperature ).to eq Data::Temperature.new(:metric, 22.5)
       end
 
       it "respects response units" do
-        response_two.current.stub(temperature: Data::Temperature.new(:imperial, 68.0))
+        allow(response_two.current).to receive(:temperature).and_return(Data::Temperature.new(:imperial, 68.0))
         expect( weather.temperature.to_f ).to eq 20.0
       end
 
@@ -167,8 +167,8 @@ module Barometer
       end
 
       it "returns nil when there is no valid data" do
-        response_one.stub(success?: false)
-        response_two.stub(success?: false)
+        allow(response_one).to receive(:success?).and_return(false)
+        allow(response_two).to receive(:success?).and_return(false)
         expect( weather.humidity ).to be_nil
       end
 
@@ -185,8 +185,8 @@ module Barometer
       end
 
       it "returns a weighted average humidity" do
-        response_one.stub(weight: 3)
-        response_two.stub(weight: 1)
+        allow(response_one).to receive(:weight).and_return(3)
+        allow(response_two).to receive(:weight).and_return(1)
         expect( weather.humidity ).to eq 22.5
       end
     end

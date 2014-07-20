@@ -6,27 +6,27 @@ module Barometer::Data
       let(:zone) { double(:zone) }
 
       before do
-        ZoneFull.stub(detect?: false)
-        ZoneOffset.stub(detect?: false)
-        ZoneCode.stub(detect?: false)
+        allow(ZoneFull).to receive(:detect?).and_return(false)
+        allow(ZoneOffset).to receive(:detect?).and_return(false)
+        allow(ZoneCode).to receive(:detect?).and_return(false)
       end
 
       it 'detects a full timezone input' do
-        ZoneFull.stub(detect?: true, new: nil)
+        allow(ZoneFull).to receive_messages(detect?: true, new: nil)
         Zone.new(zone)
-        expect( ZoneFull ).to have_received(:new).with(zone)
+        expect(ZoneFull).to have_received(:new).with(zone)
       end
 
       it 'detects a timezone code input' do
-        ZoneOffset.stub(detect?: true, new: nil)
+        allow(ZoneOffset).to receive_messages(detect?: true, new: nil)
         Zone.new(zone)
-        expect( ZoneOffset ).to have_received(:new).with(zone)
+        expect(ZoneOffset).to have_received(:new).with(zone)
       end
 
       it 'detects a timezone offset input' do
-        ZoneCode.stub(detect?: true, new: nil)
+        allow(ZoneCode).to receive_messages(detect?: true, new: nil)
         Zone.new(zone)
-        expect( ZoneCode ).to have_received(:new).with(zone)
+        expect(ZoneCode).to have_received(:new).with(zone)
       end
 
       it 'raises an error when nothing detected' do

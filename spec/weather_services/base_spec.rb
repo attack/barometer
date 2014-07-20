@@ -16,7 +16,7 @@ module Barometer
       let(:test_response) { Response.new }
 
       before do
-        test_weather.stub(call: test_response)
+        allow(test_weather).to receive(:call).and_return(test_response)
         WeatherService.register(:test_weather, test_weather)
       end
 
@@ -70,42 +70,42 @@ module Barometer
 
       describe "error handling" do
         it "adds code 200 if no errors" do
-          test_response.stub(complete?: true)
+          allow(test_response).to receive(:complete?).and_return(true)
 
           response = WeatherService.new(:test_weather).measure(query)
           expect( response.status_code ).to eq 200
         end
 
         it "adds code 204 if service has no data" do
-          test_response.stub(complete?: false)
+          allow(test_response).to receive(:complete?).and_return(false)
 
           response = WeatherService.new(:test_weather).measure(query)
           expect( response.status_code ).to eq 204
         end
 
         it "adds code 401 if required key not provided" do
-          test_weather.stub(:call).and_raise(WeatherService::KeyRequired)
+          allow(test_weather).to receive(:call).and_raise(WeatherService::KeyRequired)
 
           response = WeatherService.new(:test_weather).measure(query)
           expect( response.status_code ).to eq 401
         end
 
         it "adds code 406 if query format unsupported" do
-          test_weather.stub(:call).and_raise(Query::ConversionNotPossible)
+          allow(test_weather).to receive(:call).and_raise(Query::ConversionNotPossible)
 
           response = WeatherService.new(:test_weather).measure(query)
           expect( response.status_code ).to eq 406
         end
 
         it "adds code 406 if query region unsupported" do
-          test_weather.stub(:call).and_raise(Query::UnsupportedRegion)
+          allow(test_weather).to receive(:call).and_raise(Query::UnsupportedRegion)
 
           response = WeatherService.new(:test_weather).measure(query)
           expect( response.status_code ).to eq 406
         end
 
         it "adds code 408 if service unavailable (timeout)" do
-          test_weather.stub(:call).and_raise(Timeout::Error)
+          allow(test_weather).to receive(:call).and_raise(Timeout::Error)
 
           response = WeatherService.new(:test_weather).measure(query)
           expect( response.status_code ).to eq 408

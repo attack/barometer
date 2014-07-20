@@ -166,7 +166,7 @@ module Barometer
           coordinates_converter = double(:converter_instance, call: coordinates)
           coordinates_converter_klass = double(:coordinates_converter, new: coordinates_converter)
 
-          Query::Converter.stub(find_all: [{coordinates: coordinates_converter_klass}])
+          allow(Query::Converter).to receive(:find_all).and_return([{coordinates: coordinates_converter_klass}])
 
           query = Query::Base.new('90210')
 
@@ -197,7 +197,7 @@ module Barometer
           geocode_converter = double(:geocode_converter_instance, call: geocode)
           geocode_converter_klass = double(:geocode_converter, new: geocode_converter)
 
-          Query::Converter.stub(find_all: [
+          allow(Query::Converter).to receive(:find_all).and_return([
             {geocode: geocode_converter_klass},
             {coordinates: coordinates_converter_klass}
           ])
@@ -216,7 +216,7 @@ module Barometer
 
           geocode_converter_klass = double(:geocode_converter)
 
-          Query::Converter.stub(find_all: [
+          allow(Query::Converter).to receive(:find_all).and_return([
             {geocode: geocode_converter_klass},
             {coordinates: coordinates_converter_klass}
           ])
@@ -246,7 +246,7 @@ module Barometer
             end
           end
 
-          Query::Converter.stub(find_all: [
+          allow(Query::Converter).to receive(:find_all).and_return([
             {geocode: FakeGeocodeConverter},
             {coordinates: FakeCoordinatesConverter}
           ])
@@ -263,7 +263,7 @@ module Barometer
         it 'raises ConversionNotPossible' do
           query = Query::Base.new('90210')
 
-          Query::Converter.stub(find_all: [])
+          allow(Query::Converter).to receive(:find_all).and_return([])
 
           expect {
             query.convert!(:zipcode)
