@@ -44,9 +44,9 @@ module Barometer
       end
 
       it "allows the serivce to be referenced by key" do
-        expect( WeatherService.services ).not_to have_key :test_weather
+        expect( WeatherService.services.find(:test_weather) ).to be_nil
         WeatherService.register(:test_weather, double(:weather_service))
-        expect( WeatherService.services ).to have_key :test_weather
+        expect( WeatherService.services.find(:test_weather) ).not_to be_nil
       end
 
       it "only registers a key once" do
