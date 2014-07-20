@@ -1,14 +1,14 @@
 require_relative '../spec_helper'
 
 describe Barometer::Response::Prediction do
-  it { should have_field(:starts_at).of_type(Time) }
-  it { should have_field(:ends_at).of_type(Time) }
-  it { should have_field(:high).of_type(Barometer::Data::Temperature) }
-  it { should have_field(:low).of_type(Barometer::Data::Temperature) }
-  it { should have_field(:pop).of_type(Float) }
-  it { should have_field(:icon).of_type(String) }
-  it { should have_field(:condition).of_type(String) }
-  it { should have_field(:sun).of_type(Barometer::Data::Sun) }
+  it { is_expected.to have_field(:starts_at).of_type(Time) }
+  it { is_expected.to have_field(:ends_at).of_type(Time) }
+  it { is_expected.to have_field(:high).of_type(Barometer::Data::Temperature) }
+  it { is_expected.to have_field(:low).of_type(Barometer::Data::Temperature) }
+  it { is_expected.to have_field(:pop).of_type(Float) }
+  it { is_expected.to have_field(:icon).of_type(String) }
+  it { is_expected.to have_field(:condition).of_type(String) }
+  it { is_expected.to have_field(:sun).of_type(Barometer::Data::Sun) }
 
   describe "#date=" do
     let(:prediction) { Barometer::Response::Prediction.new }
