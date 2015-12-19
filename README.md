@@ -27,6 +27,7 @@ support the query directly. See the "[Queries](#queries)" section for more info.
 * provides a simple plugin api to allow more weather services to be added
 * failover configuration
 * multiple services configuration to provide average values
+* DOES NOT RETURN HISTORICAL DATA
 
 ## Usage
 
