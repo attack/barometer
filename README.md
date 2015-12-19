@@ -130,7 +130,7 @@ Barometer.config = { 1 => [:yahoo, {weather_bug: {keys: {code: CODE_KEY} }}], 2 
 barometer = Barometer.new('Paris')
 weather = barometer.measure
 
-puts weather.current.temperture
+puts weather.current.temperature
 ```
 
 ### Command Line
