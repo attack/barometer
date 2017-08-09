@@ -59,7 +59,7 @@ module Barometer
     end
 
     class ZoneOffset
-      NUMERIC_OFFSET = /^([-+]?[01]?\d)(\d\d)?$/
+      NUMERIC_OFFSET = /(?:^| )([-+]?[01]?\d)(\d\d)?$/
 
       def self.detect?(zone)
         zone.respond_to?(:match) && zone.match(NUMERIC_OFFSET) { |m| zone = m[1].to_i }
