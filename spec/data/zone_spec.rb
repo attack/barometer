@@ -177,11 +177,11 @@ module Barometer::Data
       end
 
       it 'returns true when preceded by a space' do
-        expect('August 9, 6:56 AM -10').to be true
+        expect( ZoneOffset.detect?('August 9, 6:56 AM -10') ).to be true
       end
 
       it 'returns false when part of a date' do
-        expect('2017-10-10').to be false
+        expect( ZoneOffset.detect?('2017-10-10') ).to be false
       end
 
       it 'returns false when given an offset out of range' do
