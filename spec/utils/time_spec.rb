@@ -35,11 +35,19 @@ module Barometer
         assert_times_are_equal(time, start_of_local_day)
       end
 
-      it "parses a String (with no format), assumes UTC" do
+      it "parses a String with year (with no format), assumes UTC" do
         t = "March 15, 10:36 AM 2013"
 
         time = Utils::Time.parse(t)
         assert_times_are_equal(time, ::Time.utc(2013, 3, 15, 10, 36, 0))
+      end
+
+      it "parses a String without year (with no format), assumes UTC" do
+        t = "August 17, 1:16 AM"
+
+        time = Utils::Time.parse(t)
+        current_year = Time.now.year
+        assert_times_are_equal(time, ::Time.utc(current_year, 8, 17, 1, 16, 0))
       end
 
       it "parses a String (with optional format), assumes UTC" do
@@ -55,6 +63,13 @@ module Barometer
         t = "March 15, 10:36 AM -0800 2013"
 
         time = Utils::Time.parse(t, format)
+        assert_times_are_equal(time, ::Time.utc(2013, 3, 15, 18, 36, 0))
+      end
+
+      it "parses a timezoned String (with no format)" do
+        t = "March 15, 10:36 AM -0800 2013"
+
+        time = Utils::Time.parse(t)
         assert_times_are_equal(time, ::Time.utc(2013, 3, 15, 18, 36, 0))
       end
 
