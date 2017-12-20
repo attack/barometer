@@ -192,7 +192,7 @@ Barometer.config = { 1 => [:yahoo, :wunderground] }
 barometer = Barometer.new('90210')
 weather = barometer.measure
 
-puts weather.temperture
+puts weather.temperature
 ```
 
 This will calculate the average temperature as given by :yahoo and :wunderground
