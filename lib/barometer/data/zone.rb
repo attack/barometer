@@ -20,7 +20,7 @@ module Barometer
 
     class ZoneFull
       def self.detect?(zone)
-        zone.respond_to?(:match) && !!zone.match(/^[A-Za-z]+\/[A-Za-z_]+$/)
+        zone.respond_to?(:match) && !!zone.match(/^[A-Za-z]+\/[A-Za-z_-]+$/)
       end
 
       def initialize(zone, time_class=::Time)

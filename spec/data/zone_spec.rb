@@ -48,6 +48,10 @@ module Barometer::Data
         expect( ZoneFull.detect?('America/Los_Angeles') ).to be true
       end
 
+      it 'returns true when given a full timezone with hyphens' do
+        expect( ZoneFull.detect?('America/Port-au-Prince') ).to be true
+      end
+
       it 'returns false when given a timezone code' do
         expect( ZoneFull.detect?('PST') ).to be false
       end
