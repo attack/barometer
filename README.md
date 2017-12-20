@@ -213,6 +213,7 @@ Thank you to these developers who have contributed. No contribution is too small
 * gkop (https://github.com/gkop)
 * avit (https://github.com/avit)
 * jimjeffers (https://github.com/jimjeffers)
+* internethostage (https://github.com/internethostage)
 
 ## Links
 
@@ -223,4 +224,4 @@ Thank you to these developers who have contributed. No contribution is too small
 
 ## Copyright
 
-Copyright (c) 2009-2014 Mark Gangl. See LICENSE for details.
+Copyright (c) 2009-2018 Mark Gangl. See LICENSE for details.
