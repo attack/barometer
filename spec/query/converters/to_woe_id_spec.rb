@@ -14,23 +14,13 @@ RSpec.describe Barometer::Query::Converter::ToWoeId, vcr: {
     expect( converted_query.format ).to eq :woe_id
   end
 
-  it 'converts :zipcode -> :woe_id' do
-    query = Barometer::Query.new('10001-5555')
-
-    converter = Barometer::Query::Converter::ToWoeId.new(query)
-    converted_query = converter.call
-
-    expect( converted_query.q ).to eq '12761333'
-    expect( converted_query.format ).to eq :woe_id
-  end
-
   it 'converts :coordinates -> :woe_id' do
     query = Barometer::Query.new('40.756054,-73.986951')
 
     converter = Barometer::Query::Converter::ToWoeId.new(query)
     converted_query = converter.call
 
-    expect( converted_query.q ).to eq '12761367'
+    expect( converted_query.q ).to eq '91568254'
     expect( converted_query.format ).to eq :woe_id
   end
 
@@ -40,7 +30,7 @@ RSpec.describe Barometer::Query::Converter::ToWoeId, vcr: {
     converter = Barometer::Query::Converter::ToWoeId.new(query)
     converted_query = converter.call
 
-    expect( converted_query.q ).to eq '12727257'
+    expect( converted_query.q ).to eq '615702'
     expect( converted_query.format ).to eq :woe_id
   end
 
@@ -50,7 +40,7 @@ RSpec.describe Barometer::Query::Converter::ToWoeId, vcr: {
     converter = Barometer::Query::Converter::ToWoeId.new(query)
     converted_query = converter.call
 
-    expect( converted_query.q ).to eq '12698082'
+    expect( converted_query.q ).to eq '24354344'
     expect( converted_query.format ).to eq :woe_id
   end
 
@@ -61,7 +51,7 @@ RSpec.describe Barometer::Query::Converter::ToWoeId, vcr: {
     converter = Barometer::Query::Converter::ToWoeId.new(query)
     converted_query = converter.call
 
-    expect( converted_query.q ).to eq '12761339'
+    expect( converted_query.q ).to eq '2459115'
     expect( converted_query.format ).to eq :woe_id
   end
 

@@ -17,32 +17,31 @@ module Barometer::Query
 
       it 'returns a weather_id if the query is format zipcode' do
         query = Barometer::Query.new('10001-5555')
+        expect( Service::ToWoeId.new(query).call ).to be_nil
+
+        query = Barometer::Query.new('10001-5555')
+        query.add_conversion(:short_zipcode, '10001')
         expect( Service::ToWoeId.new(query).call ).to eq '12761333'
       end
 
       it 'returns a weather_id if the query is format unknown' do
         query = Barometer::Query.new('Paris, France')
-        expect( Service::ToWoeId.new(query).call ).to eq '12727257'
+        expect( Service::ToWoeId.new(query).call ).to eq '615702'
       end
 
       it 'returns a weather_id if the query is format coordinates' do
         query = Barometer::Query.new('40.756054,-73.986951')
-        expect( Service::ToWoeId.new(query).call ).to eq '12761367'
+        expect( Service::ToWoeId.new(query).call ).to eq '91568254'
       end
 
       it 'returns a weather_id if the query is format postal code' do
         query = Barometer::Query.new('T5B 4M9')
-        expect( Service::ToWoeId.new(query).call ).to eq '12698082'
-      end
-
-      it 'returns a weather_id if the query is format ipv4 address' do
-        query = Barometer::Query.new('98.139.183.24')
-        expect( Service::ToWoeId.new(query).call ).to eq '12763119'
+        expect( Service::ToWoeId.new(query).call ).to eq '24354344'
       end
 
       it 'returns a weather_id if the query has a converted geocode' do
         query = Barometer::Query.new('KJFK')
-        query.add_conversion(:zipcode, '10001-5555')
+        query.add_conversion(:short_zipcode, '10001')
 
         expect( Service::ToWoeId.new(query).call ).to eq '12761333'
       end

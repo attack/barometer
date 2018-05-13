@@ -3,7 +3,7 @@ module Barometer
     module Converter
       class ToWoeId
         def self.from
-          [:short_zipcode, :zipcode, :geocode, :unknown, :coordinates, :postalcode]
+          [:short_zipcode, :geocode, :unknown, :coordinates, :postalcode]
         end
 
         def initialize(query)
