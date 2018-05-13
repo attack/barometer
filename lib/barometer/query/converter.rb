@@ -55,7 +55,7 @@ module Barometer
 end
 
 require_relative 'converters/from_weather_id_to_geocode'
-require_relative 'converters/from_woe_id_or_ipv4_to_geocode'
+require_relative 'converters/from_woe_id_to_geocode'
 require_relative 'converters/to_woe_id'
 require_relative 'converters/to_geocode'
 require_relative 'converters/from_short_zipcode_to_zipcode'

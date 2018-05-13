@@ -24,7 +24,7 @@ module Barometer::Query
             expect( geo.region ).to eq 'Ile-de-France'
             expect( geo.country ).to eq 'France'
             expect( geo.country_code ).to eq 'FR'
-            expect( geo.postal_code ).to eq '75001'
+            expect( geo.postal_code ).to be_nil
 
             expect( geo.query ).to be_nil
             expect( geo.address ).to be_nil
@@ -43,25 +43,7 @@ module Barometer::Query
           expect( geo.region ).to eq 'Ile-de-France'
           expect( geo.country ).to eq 'France'
           expect( geo.country_code ).to eq 'FR'
-          expect( geo.postal_code ).to eq '75001'
-
-          expect( geo.query ).to be_nil
-          expect( geo.address ).to be_nil
-        end
-      end
-
-      context 'when the query format is :ipv4_address' do
-        it 'returns the correct geo data' do
-          query = Barometer::Query.new('8.8.8.8')
-          geo = Service::YahooGeocode.new(query).call
-
-          expect( geo.latitude ).to eq 37.418726
-          expect( geo.longitude ).to eq -122.072037
-          expect( geo.locality ).to eq 'Mountain View'
-          expect( geo.region ).to eq 'CA'
-          expect( geo.country_code ).to eq 'US'
-          expect( geo.country ).to eq 'United States'
-          expect( geo.postal_code ).to eq '94043'
+          expect( geo.postal_code ).to be_nil
 
           expect( geo.query ).to be_nil
           expect( geo.address ).to be_nil

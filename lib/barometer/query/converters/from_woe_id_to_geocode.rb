@@ -1,9 +1,9 @@
 module Barometer
   module Query
     module Converter
-      class FromWoeIdOrIpv4ToGeocode
+      class FromWoeIdToGeocode
         def self.from
-          [:woe_id, :ipv4_address]
+          [:woe_id]
         end
 
         def initialize(query)
@@ -29,4 +29,4 @@ module Barometer
   end
 end
 
-Barometer::Query::Converter.register(:geocode, Barometer::Query::Converter::FromWoeIdOrIpv4ToGeocode)
+Barometer::Query::Converter.register(:geocode, Barometer::Query::Converter::FromWoeIdToGeocode)

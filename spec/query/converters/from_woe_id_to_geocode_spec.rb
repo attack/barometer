@@ -1,15 +1,15 @@
 require_relative '../../spec_helper'
 
 module Barometer::Query
-  RSpec.describe Converter::FromWoeIdOrIpv4ToGeocode, vcr: {
+  RSpec.describe Converter::FromWoeIdToGeocode, vcr: {
     match_requests_on: [:method, :uri],
-    cassette_name: 'Converter::FromWoeIdOrIpv4ToGeocode'
+    cassette_name: 'Converter::FromWoeIdToGeocode'
   } do
     describe '.call' do
       it 'converts :woe_id -> :geocode' do
         query = Barometer::Query.new('615702')
 
-        converter = Converter::FromWoeIdOrIpv4ToGeocode.new(query)
+        converter = Converter::FromWoeIdToGeocode.new(query)
         converted_query = converter.call
 
         expect( converted_query.q ).to eq 'Paris, Ile-de-France, France'
@@ -21,7 +21,7 @@ module Barometer::Query
         query = Barometer::Query.new('40.697488,-73.979681')
         query.add_conversion(:woe_id, '615702')
 
-        converter = Converter::FromWoeIdOrIpv4ToGeocode.new(query)
+        converter = Converter::FromWoeIdToGeocode.new(query)
         converted_query = converter.call
 
         expect( converted_query.q ).to eq 'Paris, Ile-de-France, France'
@@ -29,21 +29,10 @@ module Barometer::Query
         expect( converted_query.geo ).not_to be_nil
       end
 
-      it 'converts :ipv4_address -> :geocode' do
-        query = Barometer::Query.new('8.8.8.8')
-
-        converter = Converter::FromWoeIdOrIpv4ToGeocode.new(query)
-        converted_query = converter.call
-
-        expect( converted_query.q ).to eq 'Mountain View, CA, United States'
-        expect( converted_query.format ).to eq :geocode
-        expect( converted_query.geo ).not_to be_nil
-      end
-
       it 'does not convert any other format' do
         query = Barometer::Query.new('90210')
 
-        converter = Converter::FromWoeIdOrIpv4ToGeocode.new(query)
+        converter = Converter::FromWoeIdToGeocode.new(query)
         expect( converter.call ).to be_nil
       end
     end

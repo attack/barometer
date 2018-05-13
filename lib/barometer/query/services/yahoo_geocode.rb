@@ -1,4 +1,4 @@
-require_relative 'apis/yahoo_placefinder'
+require_relative 'apis/yahoo'
 
 module Barometer
   module Query
@@ -9,10 +9,10 @@ module Barometer
         end
 
         def call
-          converted_query = query.get_conversion(:woe_id, :ipv4_address)
+          converted_query = query.get_conversion(:woe_id)
           return unless converted_query
 
-          @payload = YahooPlacefinder::Api.new(converted_query).get
+          @payload = Yahoo::Api.new(converted_query).get
           parse_payload
         end
 
@@ -34,31 +34,31 @@ module Barometer
         end
 
         def latitude
-          payload.fetch('latitude')
+          payload.fetch('centroid', 'latitude')
         end
 
         def longitude
-          payload.fetch('longitude')
+          payload.fetch('centroid', 'longitude')
         end
 
         def locality
-          payload.fetch('city')
+          payload.fetch('locality1', 'content')
         end
 
         def region
-          payload.fetch('statecode') || payload.fetch('state')
+          payload.fetch('admin1', 'content')
         end
 
         def country
-          payload.fetch('country')
+          payload.fetch('country', 'content')
         end
 
         def country_code
-          payload.fetch('countrycode')
+          payload.fetch('country', 'code')
         end
 
         def postal_code
-          payload.fetch('uzip')
+          payload.fetch('postal', 'content')
         end
 
         def full_query
