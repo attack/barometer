@@ -54,7 +54,6 @@ module Barometer
   end
 end
 
-require_relative 'converters/from_weather_id_to_geocode'
 require_relative 'converters/from_woe_id_to_geocode'
 require_relative 'converters/to_woe_id'
 require_relative 'converters/to_geocode'
