@@ -21,7 +21,7 @@ support the query directly. See the "[Queries](#queries)" section for more info.
 
 * works with ruby 1.9.3, 2.x (see
   [Travis CI status](https://travis-ci.org/attack/barometer) to confirm)
-* supports 5 weather services, more planned
+* supports 4 weather services, more planned
 * the same query can be used with any supported weather service
 * provides a powerful data object to hold the weather information
 * provides a simple plugin api to allow more weather services to be added
@@ -83,7 +83,6 @@ The current available sources are:
 
 * Wunderground.com (:wunderground) [default]
 * Yahoo! Weather (:yahoo) [requires [barometer-yahoo gem](https://github.com/attack/barometer-yahoo)]]
-* WeatherBug.com (:weather_bug) [requires key + [barometer-weather_bug gem](https://github.com/attack/barometer-weather_bug)]]
 * NOAA (:noaa) [requires [barometer-noaa gem](https://github.com/attack/barometer-noaa)]]
 * Forecast.io (:forecast_io) [requires key + [barometer-forecast_io gem](https://github.com/attack/barometer-forecast_io)]
 
@@ -115,7 +114,7 @@ Barometer.config = { 1 => [{wunderground: {weight: 2}}, :yahoo] }
 Weather services, one with keys.
 
 ```ruby
-Barometer.config = { 1 => [:yahoo, {weather_bug: {keys: {code: CODE_KEY} }}] }
+Barometer.config = { 1 => [:yahoo, {noaa: {keys: {code: CODE_KEY} }}] }
 ```
 
 #### Multiple weather API, with hierarchy
@@ -123,8 +122,8 @@ Barometer.config = { 1 => [:yahoo, {weather_bug: {keys: {code: CODE_KEY} }}] }
 ```ruby
 require 'barometer'
 
-# use yahoo and weather bug, if they both fail, use wunderground
-Barometer.config = { 1 => [:yahoo, {weather_bug: {keys: {code: CODE_KEY} }}], 2 => :wunderground }
+# use yahoo and noaag, if they both fail, use wunderground
+Barometer.config = { 1 => [:yahoo, :noaa], 2 => :wunderground }
 
 barometer = Barometer.new('Paris')
 weather = barometer.measure
