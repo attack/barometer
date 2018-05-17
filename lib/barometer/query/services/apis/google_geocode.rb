@@ -4,7 +4,7 @@ module Barometer
       class GoogleGeocode
         class Api < Utils::Api
           def url
-            'http://maps.googleapis.com/maps/api/geocode/json'
+            'https://maps.googleapis.com/maps/api/geocode/json'
           end
 
           def params
@@ -19,6 +19,7 @@ module Barometer
 
           def format_params
             params = { sensor: 'false' }
+            params[:key] = key if key
             params[:region] = query.geo.country_code if query.geo.country_code
 
             if query.format == :coordinates
@@ -27,6 +28,10 @@ module Barometer
               params[:address] = query.q.dup
             end
             params
+          end
+
+          def key
+            @key ||= Barometer::Support::KeyFileParser.find(:google, :apikey)
           end
         end
       end

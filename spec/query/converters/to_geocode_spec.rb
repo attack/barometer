@@ -2,7 +2,7 @@ require_relative '../../spec_helper'
 
 RSpec.describe Barometer::Query::Converter::ToGeocode, vcr: {
   match_requests_on: [:method, :uri],
-  cassette_name: "Converter::ToGeocode"
+  cassette_name: 'Converter::ToGeocode'
 } do
 
   it "converts :short_zipcode -> :geocode" do
@@ -66,7 +66,7 @@ RSpec.describe Barometer::Query::Converter::ToGeocode, vcr: {
     converter = Barometer::Query::Converter::ToGeocode.new(query)
     converted_query = converter.call
 
-    expect(converted_query.q).to eq 'Paris, IDF, France'
+    expect(converted_query.q).to eq 'Paris, Île-de-France, France'
     expect(converted_query.format).to eq :geocode
     expect(converted_query.geo.country_code).to eq 'FR'
   end

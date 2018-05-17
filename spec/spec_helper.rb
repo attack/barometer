@@ -10,10 +10,13 @@ require 'barometer/support'
 
 require_relative '../lib/barometer'
 
+GOOGLE_APIKEY = Barometer::Support::KeyFileParser.find(:google, :apikey) || 'google_api_key'
+
 VCR.configure do |config|
   config.cassette_library_dir = 'spec/cassettes'
   config.hook_into :webmock
   config.default_cassette_options = { record: :none, serialize_with: :json }
+  config.filter_sensitive_data('GOOGLE_APIKEY') { GOOGLE_APIKEY.to_s }
   config.configure_rspec_metadata!
 end
 
