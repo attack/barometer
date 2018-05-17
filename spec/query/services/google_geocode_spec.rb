@@ -2,6 +2,10 @@ require_relative '../../spec_helper'
 
 module Barometer::Query
   RSpec.describe Service::GoogleGeocode, vcr: {
+    match_requests_on: [
+      :method,
+      VCR.request_matchers.uri_without_param(:key)
+    ],
     cassette_name: 'Service::GoogleGeocode'
   } do
     describe '.call' do

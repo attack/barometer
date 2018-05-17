@@ -1,7 +1,10 @@
 require_relative '../../spec_helper'
 
 RSpec.describe Barometer::Query::Converter::ToGeocode, vcr: {
-  match_requests_on: [:method, :uri],
+  match_requests_on: [
+    :method,
+    VCR.request_matchers.uri_without_param(:key)
+  ],
   cassette_name: 'Converter::ToGeocode'
 } do
 
