@@ -5,7 +5,7 @@ module Barometer
     module Converter
       RSpec.describe FromCoordinatesToNoaaStationId, vcr: {
         match_requests_on: [:method, :uri],
-        cassette_name: "Converter::FromCoordinatesToNoaaStationId"
+        cassette_name: 'Converter::FromCoordinatesToNoaaStationId'
       } do
 
         it 'registers as a :coordinates -> :noaa_station_id converter' do

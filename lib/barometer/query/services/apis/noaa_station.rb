@@ -4,25 +4,16 @@ module Barometer
       class NoaaStation
         class Api < Utils::Api
           def url
-            'http://forecast.weather.gov/MapClick.php'
+            "https://api.weather.gov/points/#{query.q}/stations"
           end
 
-          def params
-            { textField1: latitude, textField2: longitude }
+          def unwrap_nodes
+            ['features', 0, 'properties', 'stationIdentifier']
           end
 
           def get
-            Utils::Get.call(url, params).content
-          end
-
-          private
-
-          def latitude
-            query.q.split(',')[0]
-          end
-
-          def longitude
-            query.q.split(',')[1]
+            content = Utils::GetContent.call(url)
+            Utils::JsonReader.parse(content, *unwrap_nodes)
           end
         end
       end
