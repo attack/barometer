@@ -1,7 +1,7 @@
 require_relative '../../spec_helper'
 
 RSpec.describe Barometer::Query::Service::ToWeatherId, vcr: {
-  cassette_name: "Service::ToWeatherId"
+  cassette_name: 'Service::ToWeatherId'
 } do
   describe ".call," do
     it "returns nothing if query doesn't have a supported format" do

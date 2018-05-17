@@ -2,7 +2,7 @@ require_relative '../../spec_helper'
 
 RSpec.describe Barometer::Query::Converter::ToWeatherId, vcr: {
   match_requests_on: [:method, :uri],
-  cassette_name: "Converter::ToWeatherId"
+  cassette_name: 'Converter::ToWeatherId'
 } do
 
   it "converts :unknown -> :weather_id" do
