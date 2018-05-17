@@ -19,7 +19,7 @@ support the query directly. See the "[Queries](#queries)" section for more info.
 
 ## Key Features
 
-* works with ruby 1.9.3, 2.x (see
+* works and tested with ruby >= 2.2, but might be fine >= 1.9.3 (see
   [Travis CI status](https://travis-ci.org/attack/barometer) to confirm)
 * supports 4 weather services, more planned
 * the same query can be used with any supported weather service
