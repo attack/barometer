@@ -2,7 +2,7 @@ require_relative '../spec_helper'
 
 module Barometer::WeatherService
   RSpec.describe WundergroundV1, vcr: {
-    cassette_name: "WeatherService::WundergroundV1"
+    cassette_name: 'WeatherService::WundergroundV1'
   } do
 
     it "auto-registers this weather service as :wunderground" do
@@ -60,8 +60,8 @@ module Barometer::WeatherService
         expect(response).to have_data(:location, :state_name).as_value("Alberta")
         expect(response).to have_data(:location, :zip_code).as_value("00000")
         expect(response).to have_data(:location, :country_code).as_value("CA")
-        expect(response).to have_data(:location, :latitude).as_value(51.11999893)
-        expect(response).to have_data(:location, :longitude).as_value(-114.01999664)
+        expect(response).to have_data(:location, :latitude).as_value(51.04999924)
+        expect(response).to have_data(:location, :longitude).as_value(-114.05999756)
 
         expect(response).to have_data(:timezone, :code).as_format(/^M[DS]T$/i)
         expect(response).to have_data(:timezone, :to_s).as_value('America/Edmonton')
