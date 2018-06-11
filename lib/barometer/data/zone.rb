@@ -59,21 +59,27 @@ module Barometer
     end
 
     class ZoneOffset
+      NUMERIC_OFFSET = /(?:^| )([-+]?[01]?\d)(\d\d)?$/
+
       def self.detect?(zone)
+        zone.respond_to?(:match) && zone.match(NUMERIC_OFFSET) { |m| zone = m[1].to_i }
         zone.respond_to?(:abs) && zone.abs <= 14
       end
 
       def initialize(zone, time_class=::Time)
         @zone = zone
+        @offset = case zone
+                  when Integer
+                    zone * 60 * 60
+                  when NUMERIC_OFFSET
+                    h = $1.to_i * 60 * 60
+                    m = $2.to_i * 60
+                    h < 0 ? h - m : h + m
+                  end
         @time_class = time_class
       end
 
-      def code
-      end
-
-      def offset
-        zone.to_f * 60 * 60
-      end
+      attr_reader :code, :offset
 
       def now
         time_class.now.utc + offset

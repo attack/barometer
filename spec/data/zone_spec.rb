@@ -154,12 +154,42 @@ module Barometer::Data
         expect( ZoneOffset.detect?('PST') ).to be false
       end
 
-      it 'returns true when given an offset' do
+      it 'returns true when given a numeric offset' do
         expect( ZoneOffset.detect?(10) ).to be true
       end
 
+      it 'returns true when given a one-digit hour offset' do
+        expect( ZoneOffset.detect?('1') ).to be true
+        expect( ZoneOffset.detect?('+1') ).to be true
+        expect( ZoneOffset.detect?('-1') ).to be true
+      end
+
+      it 'returns true when given a two-digit hour offset' do
+        expect( ZoneOffset.detect?('09') ).to be true
+        expect( ZoneOffset.detect?('+09') ).to be true
+        expect( ZoneOffset.detect?('-09') ).to be true
+      end
+
+      it 'returns true when given a four-digit offset' do
+        expect( ZoneOffset.detect?('0100') ).to be true
+        expect( ZoneOffset.detect?('+0100') ).to be true
+        expect( ZoneOffset.detect?('-1200') ).to be true
+      end
+
+      it 'returns true when preceded by a space' do
+        expect( ZoneOffset.detect?('August 9, 6:56 AM -10') ).to be true
+      end
+
+      it 'returns false when only given a year' do
+        expect( ZoneOffset.detect?('August 9, 6:56 AM 2017') ).to be false
+      end
+
+      it 'returns false when part of a date' do
+        expect( ZoneOffset.detect?('2017-10-10') ).to be false
+      end
+
       it 'returns false when given an offset out of range' do
-        expect( ZoneOffset.detect?(15) ).to be false
+        expect( ZoneOffset.detect?('15') ).to be false
       end
 
       it 'returns false when given nothing' do
@@ -177,6 +207,11 @@ module Barometer::Data
     describe '#offset' do
       it 'converts the input from hours to seconds' do
         expect( ZoneOffset.new(5).offset ).to eq(5 * 60 * 60)
+      end
+
+      it 'converts 4-digit input from HHMM to seconds' do
+        expect( ZoneOffset.new('+0130').offset ).to eq(90 * 60)
+        expect( ZoneOffset.new('-0130').offset ).to eq(-90 * 60)
       end
     end
 

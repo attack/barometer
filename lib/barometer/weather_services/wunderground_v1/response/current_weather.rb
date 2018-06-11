@@ -9,7 +9,7 @@ module Barometer
           end
 
           def parse
-            current.observed_at = observed_at, '%B %e, %l:%M %p %Z'
+            current.observed_at = observed_at
             current.stale_at = stale_at
             current.humidity = humidity
             current.condition = condition
